@@ -1,13 +1,11 @@
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
-import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.types.Node;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,7 +49,8 @@ public class Symfinder {
 
             TypeFinderVisitor v = new TypeFinderVisitor();
             cu.accept(v);
-            System.out.println(neoGraph.getNbOverloads("Double"));
+            neoGraph.setMethodsOverloads();
+            neoGraph.setConstructorsOverloads();
         }
     }
 

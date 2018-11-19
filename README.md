@@ -29,7 +29,6 @@ java -jar target/symfinder-1.0-SNAPSHOT.jar
 ```
 
 During the execution, the classes and methods detected are output.
-After the execution, the number of occurences for each method is displayed.
 
 ## Visualizing the graph
 
@@ -44,5 +43,5 @@ In order to delete all nodes and relationships in the graph, run
 
 ```
 MATCH (n)
-DETACH DELETE n
+DETACH DELETE (n)
 ```

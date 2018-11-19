@@ -22,16 +22,21 @@ public class NeoGraph {
         driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
     }
 
+    /**
+     * Creates a node of corresponding name and type and returns it.
+     * @param name Node name
+     * @param type Node type
+     */
     public Node createNode(String name, NodeType type) {
         return submitRequest(String.format("CREATE (n:%s { name: '%s' }) RETURN (n)", type, name))
                 .list().get(0).get(0).asNode();
     }
 
     /**
-     * node1 -> node2
+     * Creates the relationship node1 -> node2 of the given type.
      *
-     * @param node1
-     * @param node2
+     * @param node1 source node
+     * @param node2 target node
      */
     public void linkTwoNodes(Node node1, Node node2, RelationType type) {
         submitRequest(String.format("MATCH(a)\n" +
@@ -43,6 +48,23 @@ public class NeoGraph {
                 "CREATE (a)-[r:%s]->(b)", node1.id(), node2.id(), type));
     }
 
+    /**
+     * Returns a map containing for each overloaded method the number of overloads it has in the class.
+     *
+     * Example of a class containing the following methods:
+     *  - public void add(Point2D pt)
+     *  - public void add(Rectangle2D r)
+     *  - public void add(Rectangle2D r)
+     *  - public PathIterator getPathIterator(AffineTransform at)
+     *  - public PathIterator getPathIterator(AffineTransform at, double flatness)
+     *  - public void setFrame(double x, double y, double w, double h)
+     *
+     *  The returned map will be : {"add": 3, "getPathIterator": 2}
+     *  As setFrame is not overloaded, it will not appear in the map.
+     *
+     * @param parent
+     * @return
+     */
     public Map <String, Long> getNbOverloads(String parent) {
         return submitRequest(String.format(
                 "MATCH (:CLASS { name: '%s' })-->(a:METHOD) MATCH (:CLASS { name: '%s' })-->(b:METHOD)\n" +
@@ -57,10 +79,55 @@ public class NeoGraph {
 
     }
 
-    public void createVPs(NodeType type){
-        submitRequest(String.format("MATCH classes=(c:%s) FOREACH (cl IN nodes(classes) | CREATE (n:VP { name: cl.name }))", type));
+    /**
+     * Sets the number of methods with different names defined more than once in the class.
+     *
+     * Example of a class containing the following methods:
+     *  - public void add(Point2D pt)
+     *  - public void add(Rectangle2D r)
+     *  - public void add(Rectangle2D r)
+     *  - public PathIterator getPathIterator(AffineTransform at)
+     *  - public PathIterator getPathIterator(AffineTransform at, double flatness)
+     *
+     * Two methods are overloaded, therefore the value returned will be 2.
+     * This is independent of the numbers of overloads for each method.
+     * If no method is overloaded, the property is not set.
+     */
+    public void setMethodsOverloads(){
+        submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
+                "WHERE a.name = b.name AND a.name <> c.name AND ID(a) <> ID(b)\n" +
+                "WITH count(DISTINCT a.name) AS cnt, c\n" +
+                "SET c.methods = cnt");
     }
 
+    /**
+     * The reasoning is the same as for 'setMethodsOverloads'.
+     * However, as all constructors have the same name, an overloaded constructor results in a returned value of 1.
+     * If the constructor is not overloaded, the property is not set.
+     */
+    public void setConstructorsOverloads(){
+        submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
+                "WHERE a.name = b.name AND a.name = c.name AND ID(a) <> ID(b)\n" +
+                "WITH count(DISTINCT a.name) AS cnt, c\n" +
+                "SET c.constructors = cnt");
+    }
+
+    public void createVPs(){
+        submitRequest("MATCH classes=(c:CLASS)-[:INNER_CLASS]->(ic:CLASS) FOREACH (cl IN nodes(classes) | CREATE (n:VP { name: cl.name })-[r:rel]->(m:INNER_CLASS))");
+    }
+
+    public void createVPs2(){
+        submitRequest("MATCH (:CLASS { name: c.name })-->(a:METHOD) MATCH (:CLASS { name: c.name })-->(b:METHOD) " +
+                "WHERE a.name = b.name AND ID(a) <> ID(b) " +
+                "WITH count(DISTINCT a) AS cnt " +
+                "MATCH classes=(:CLASS) FOREACH (c IN nodes(classes) | SET c.methods = cnt)");
+    }
+
+    /**
+     * Returns the node if it exists, creates it and returns it otherwise.
+     * @param name Node name
+     * @param type Node type
+     */
     public Node getOrCreateNode(String name, NodeType type){
         List <Record> matchingNodes = submitRequest(String.format("MATCH (n:%s) WHERE n.name = '%s' RETURN (n)", type, name)).list();
         if(matchingNodes.isEmpty()){
@@ -69,11 +136,14 @@ public class NeoGraph {
         return matchingNodes.get(0).get("n").asNode();
     }
 
+    /**
+     * Deletes all nodes and relationships in the graph.
+     */
     public void deleteGraph() {
         submitRequest("MATCH (n) DETACH DELETE (n)");
     }
 
-    public StatementResult submitRequest(String request) {
+    private StatementResult submitRequest(String request) {
         try (Session session = driver.session()) {
             return session.writeTransaction(tx -> tx.run(request));
         }
