@@ -25,7 +25,7 @@ You can then start the Java application.
 To do this, run
 
 ```bash
-java -jar target/jdt-test-1.0-SNAPSHOT.jar
+java -jar target/symfinder-1.0-SNAPSHOT.jar
 ```
 
 During the execution, the classes and methods detected are output.

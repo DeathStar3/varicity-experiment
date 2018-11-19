@@ -23,3 +23,5 @@
 hs_err_pid*
 
 .idea
+neo4j/data
+target

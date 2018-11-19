@@ -1,7 +1,9 @@
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.types.Node;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class NeoGraph {
@@ -41,10 +43,11 @@ public class NeoGraph {
                 "CREATE (a)-[r:%s]->(b)", node1.id(), node2.id(), type));
     }
 
-    public Map <String, Long> getNbOverloads() {
-        return submitRequest("MATCH (a:METHOD) MATCH (b:METHOD)\n" +
-                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
-                "return DISTINCT a.name, count(DISTINCT a)")
+    public Map <String, Long> getNbOverloads(String parent) {
+        return submitRequest(String.format(
+                "MATCH (:CLASS { name: '%s' })-->(a:METHOD) MATCH (:CLASS { name: '%s' })-->(b:METHOD)\n" +
+                        "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
+                        "return DISTINCT a.name, count(DISTINCT a)", parent, parent))
                 .list()
                 .stream()
                 .map(Record::asMap)
@@ -53,6 +56,14 @@ public class NeoGraph {
                         recordMap -> (Long) recordMap.get("count(DISTINCT a)"))
                 );
 
+    }
+
+    public Optional<Node> getNode(String name, NodeType type) {
+        List <Record> matchingNodes = submitRequest(String.format("MATCH (n:%s) WHERE n.name = '%s' RETURN (n)", type, name)).list();
+        if(matchingNodes.isEmpty()){
+            return Optional.empty();
+        }
+        return Optional.of(matchingNodes.get(0).get("n").asNode());
     }
 
     public void deleteGraph() {
