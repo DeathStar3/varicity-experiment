@@ -13,7 +13,7 @@ public class NeoGraph {
     }
 
     enum RelationType {
-        METHOD
+        METHOD, INNER_CLASS
     }
 
     private Driver driver;
@@ -53,17 +53,20 @@ public class NeoGraph {
                 .map(Record::asMap)
                 .collect(Collectors.toMap(
                         recordMap -> (String) recordMap.get("a.name"),
-                        recordMap -> (Long) recordMap.get("count(DISTINCT a)"))
-                );
+                        recordMap -> (Long) recordMap.get("count(DISTINCT a)")));
 
     }
 
-    public Optional<Node> getNode(String name, NodeType type) {
+    public void createVPs(NodeType type){
+        submitRequest(String.format("MATCH classes=(c:%s) FOREACH (cl IN nodes(classes) | CREATE (n:VP { name: cl.name }))", type));
+    }
+
+    public Node getOrCreateNode(String name, NodeType type){
         List <Record> matchingNodes = submitRequest(String.format("MATCH (n:%s) WHERE n.name = '%s' RETURN (n)", type, name)).list();
         if(matchingNodes.isEmpty()){
-            return Optional.empty();
+            return createNode(name, type);
         }
-        return Optional.of(matchingNodes.get(0).get("n").asNode());
+        return matchingNodes.get(0).get("n").asNode();
     }
 
     public void deleteGraph() {

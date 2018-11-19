@@ -65,24 +65,23 @@ class TypeFinderVisitor extends ASTVisitor {
     public boolean visit(MethodDeclaration method) {
         SimpleName methodName = method.getName();
         String parentClassName = method.resolveBinding().getDeclaringClass().getName();
-        System.out.printf("Method : %s, parent : %s\n", methodName, parentClassName);
+        System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
         Node methodNode = neoGraph.createNode(methodName.getIdentifier(), NeoGraph.NodeType.METHOD);
-        Optional <Node> optionalNode = neoGraph.getNode(parentClassName, NeoGraph.NodeType.CLASS);
-        Node parentClassNode = optionalNode.orElseGet(() -> neoGraph.createNode(parentClassName, NeoGraph.NodeType.CLASS));
+        Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, NeoGraph.NodeType.CLASS);
         neoGraph.linkTwoNodes(parentClassNode, methodNode, NeoGraph.RelationType.METHOD);
         return true;
     }
-/*
+
     @Override
     public boolean visit(TypeDeclaration type) {
-        if (type.isPackageMemberTypeDeclaration()) {
-            classNode = Optional.of(neoGraph.createNode(type.getName().getIdentifier(), NeoGraph.NodeType.CLASS));
-            System.out.println("Class : " + type.getName());
-            return true;
-        } else {
-            System.out.println("Inner Class : " + type.getName());
-            return true;
+        // If the class is an inner class
+        if (!type.isPackageMemberTypeDeclaration()) {
+            System.out.println("Inner class: "+ type.getName());
+            Node thisNode = neoGraph.getOrCreateNode(type.getName().getIdentifier(), NeoGraph.NodeType.CLASS);
+            Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getName(), NeoGraph.NodeType.CLASS);
+            neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER_CLASS);
         }
+        return true;
     }
-*/
+
 }
