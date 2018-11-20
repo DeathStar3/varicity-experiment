@@ -54,7 +54,7 @@ public class NeoGraph {
      * Example of a class containing the following methods:
      *  - public void add(Point2D pt)
      *  - public void add(Rectangle2D r)
-     *  - public void add(Rectangle2D r)
+     *  - public void add(double newx, double newy)
      *  - public PathIterator getPathIterator(AffineTransform at)
      *  - public PathIterator getPathIterator(AffineTransform at, double flatness)
      *  - public void setFrame(double x, double y, double w, double h)
@@ -85,7 +85,7 @@ public class NeoGraph {
      * Example of a class containing the following methods:
      *  - public void add(Point2D pt)
      *  - public void add(Rectangle2D r)
-     *  - public void add(Rectangle2D r)
+     *  - public void add(double newx, double newy)
      *  - public PathIterator getPathIterator(AffineTransform at)
      *  - public PathIterator getPathIterator(AffineTransform at, double flatness)
      *

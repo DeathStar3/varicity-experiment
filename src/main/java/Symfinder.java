@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,40 +20,43 @@ public class Symfinder {
     private static NeoGraph neoGraph = new NeoGraph("bolt://localhost:7687", "neo4j", "root");
 
     public static void main(String[] args) throws IOException {
+        String sourcesPackagePath = "src/main/resources";
         String filePath = "src/main/resources/Rectangle2D.java";
-        String packagePath = "src/main/java";
+        String javaPackagePath = "src/main/java";
         String classpathPath = "/usr/lib/jvm/java-8-openjdk";
 
-        File file = new File(filePath);
-        try (Stream <String> lines = Files.lines(file.toPath(), Charset.defaultCharset())) {
-            String fileContent = lines.collect(Collectors.joining("\n"));
+        List <File> files = Files.walk(Paths.get(sourcesPackagePath))
+                .filter(Files::isRegularFile)
+                .map(Path::toFile)
+                .collect(Collectors.toList());
 
-            ASTParser parser = ASTParser.newParser(AST.JLS8);
-            parser.setResolveBindings(true);
-            parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        for(File file : files){
+            try (Stream <String> lines = Files.lines(file.toPath(), Charset.defaultCharset())) {
+                String fileContent = lines.collect(Collectors.joining("\n"));
 
-            parser.setBindingsRecovery(true);
+                ASTParser parser = ASTParser.newParser(AST.JLS8);
+                parser.setResolveBindings(true);
+                parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
-            parser.setCompilerOptions(JavaCore.getOptions());
+                parser.setBindingsRecovery(true);
 
-            parser.setUnitName(filePath);
+                parser.setCompilerOptions(JavaCore.getOptions());
 
-            String[] sources = {packagePath};
-            String[] classpath = {classpathPath};
+                parser.setUnitName(filePath);
 
-            parser.setEnvironment(classpath, sources, new String[]{"UTF-8"}, true);
-            parser.setSource(fileContent.toCharArray());
+                String[] sources = {javaPackagePath};
+                String[] classpath = {classpathPath};
 
-            CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+                parser.setEnvironment(classpath, sources, new String[]{"UTF-8"}, true);
+                parser.setSource(fileContent.toCharArray());
 
-            if (cu.getAST().hasBindingsRecovery()) {
-                System.out.println("Binding activated.");
+                CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+
+                TypeFinderVisitor v = new TypeFinderVisitor();
+                cu.accept(v);
+                neoGraph.setMethodsOverloads();
+                neoGraph.setConstructorsOverloads();
             }
-
-            TypeFinderVisitor v = new TypeFinderVisitor();
-            cu.accept(v);
-            neoGraph.setMethodsOverloads();
-            neoGraph.setConstructorsOverloads();
         }
     }
 
