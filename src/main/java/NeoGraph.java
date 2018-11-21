@@ -1,9 +1,14 @@
+import org.json.JSONObject;
 import org.neo4j.driver.v1.*;
+import org.neo4j.driver.v1.types.MapAccessor;
 import org.neo4j.driver.v1.types.Node;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class NeoGraph {
@@ -24,6 +29,7 @@ public class NeoGraph {
 
     /**
      * Creates a node of corresponding name and type and returns it.
+     *
      * @param name Node name
      * @param type Node type
      */
@@ -50,19 +56,20 @@ public class NeoGraph {
 
     /**
      * Returns a map containing for each overloaded method the number of overloads it has in the class.
-     *
+     * <p>
      * Example of a class containing the following methods:
-     *  - public void add(Point2D pt)
-     *  - public void add(Rectangle2D r)
-     *  - public void add(double newx, double newy)
-     *  - public PathIterator getPathIterator(AffineTransform at)
-     *  - public PathIterator getPathIterator(AffineTransform at, double flatness)
-     *  - public void setFrame(double x, double y, double w, double h)
-     *
-     *  The returned map will be : {"add": 3, "getPathIterator": 2}
-     *  As setFrame is not overloaded, it will not appear in the map.
+     * - public void add(Point2D pt)
+     * - public void add(Rectangle2D r)
+     * - public void add(double newx, double newy)
+     * - public PathIterator getPathIterator(AffineTransform at)
+     * - public PathIterator getPathIterator(AffineTransform at, double flatness)
+     * - public void setFrame(double x, double y, double w, double h)
+     * <p>
+     * The returned map will be : {"add": 3, "getPathIterator": 2}
+     * As setFrame is not overloaded, it will not appear in the map.
      *
      * @param parent
+     *
      * @return
      */
     public Map <String, Long> getNbOverloads(String parent) {
@@ -81,23 +88,26 @@ public class NeoGraph {
 
     /**
      * Sets the number of methods with different names defined more than once in the class.
-     *
+     * <p>
      * Example of a class containing the following methods:
-     *  - public void add(Point2D pt)
-     *  - public void add(Rectangle2D r)
-     *  - public void add(double newx, double newy)
-     *  - public PathIterator getPathIterator(AffineTransform at)
-     *  - public PathIterator getPathIterator(AffineTransform at, double flatness)
-     *
+     * - public void add(Point2D pt)
+     * - public void add(Rectangle2D r)
+     * - public void add(double newx, double newy)
+     * - public PathIterator getPathIterator(AffineTransform at)
+     * - public PathIterator getPathIterator(AffineTransform at, double flatness)
+     * <p>
      * Two methods are overloaded, therefore the value returned will be 2.
      * This is independent of the numbers of overloads for each method.
      * If no method is overloaded, the property is not set.
      */
-    public void setMethodsOverloads(){
+    public void setMethodsOverloads() {
         submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
                 "WHERE a.name = b.name AND a.name <> c.name AND ID(a) <> ID(b)\n" +
                 "WITH count(DISTINCT a.name) AS cnt, c\n" +
                 "SET c.methods = cnt");
+        submitRequest("MATCH (c:CLASS)\n" +
+                "WHERE NOT EXISTS(c.methods)\n" +
+                "SET c.methods = 0");
     }
 
     /**
@@ -105,18 +115,21 @@ public class NeoGraph {
      * However, as all constructors have the same name, an overloaded constructor results in a returned value of 1.
      * If the constructor is not overloaded, the property is not set.
      */
-    public void setConstructorsOverloads(){
+    public void setConstructorsOverloads() {
         submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
                 "WHERE a.name = b.name AND a.name = c.name AND ID(a) <> ID(b)\n" +
                 "WITH count(DISTINCT a.name) AS cnt, c\n" +
                 "SET c.constructors = cnt");
+        submitRequest("MATCH (c:CLASS)\n" +
+                "WHERE NOT EXISTS(c.constructors)\n" +
+                "SET c.constructors = 0");
     }
 
-    public void createVPs(){
+    public void createVPs() {
         submitRequest("MATCH classes=(c:CLASS)-[:INNER_CLASS]->(ic:CLASS) FOREACH (cl IN nodes(classes) | CREATE (n:VP { name: cl.name })-[r:rel]->(m:INNER_CLASS))");
     }
 
-    public void createVPs2(){
+    public void createVPs2() {
         submitRequest("MATCH (:CLASS { name: c.name })-->(a:METHOD) MATCH (:CLASS { name: c.name })-->(b:METHOD) " +
                 "WHERE a.name = b.name AND ID(a) <> ID(b) " +
                 "WITH count(DISTINCT a) AS cnt " +
@@ -125,15 +138,50 @@ public class NeoGraph {
 
     /**
      * Returns the node if it exists, creates it and returns it otherwise.
+     *
      * @param name Node name
      * @param type Node type
      */
-    public Node getOrCreateNode(String name, NodeType type){
+    public Node getOrCreateNode(String name, NodeType type) {
         List <Record> matchingNodes = submitRequest(String.format("MATCH (n:%s) WHERE n.name = '%s' RETURN (n)", type, name)).list();
-        if(matchingNodes.isEmpty()){
+        if (matchingNodes.isEmpty()) {
             return createNode(name, type);
         }
         return matchingNodes.get(0).get("n").asNode();
+    }
+
+    public void writeGraphFile(String filePath) {
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(filePath))) {
+            bw.write(generateJsonGraph());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String generateJsonGraph() {
+        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson());
+    }
+
+    private String getNodesAsJson() {
+        return submitRequest("MATCH (c:CLASS) RETURN collect({name:c.name, nodeSize:c.methods, intensity:c.constructors})")
+                .list()
+                .get(0)
+                .get(0)
+                .asList(MapAccessor::asMap)
+                .stream()
+                .map(o -> new JSONObject(o).toString())
+                .collect(Collectors.joining(","));
+    }
+
+    private String getLinksAsJson() {
+        return submitRequest("MATCH (c1:CLASS)-[r]->(c2:CLASS) RETURN collect({source:c1.name, target:c2.name})")
+                .list()
+                .get(0)
+                .get(0)
+                .asList(MapAccessor::asMap)
+                .stream()
+                .map(o -> new JSONObject(o).toString())
+                .collect(Collectors.joining(","));
     }
 
     /**

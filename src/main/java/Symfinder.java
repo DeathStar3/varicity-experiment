@@ -58,6 +58,7 @@ public class Symfinder {
                 neoGraph.setConstructorsOverloads();
             }
         }
+        neoGraph.writeGraphFile("d3/graph.json");
     }
 
 }
