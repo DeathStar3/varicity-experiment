@@ -26,8 +26,8 @@
         .interpolate(d3.interpolateRgb)
         .range([d3.rgb("#FFFFFF"), d3.rgb('#FF0000')]);
 
-    var width = 960,
-        height = 500
+    var width = window.innerWidth,
+        height = window.innerHeight - 10;
 
     var svg = d3.select("body").append("svg")
         .attr("width", width)
@@ -42,18 +42,9 @@
     d3.json("graph.json", function (json) {
 
         json.links = json.links.map(function (l) {
-            var sourceNode = json.nodes.filter(function (n) {
-                    return n.name === l.source;
-                })[0],
-                targetNode = json.nodes.filter(function (n) {
-                    return n.name === l.target;
-                })[0];
-
-            return {
-                source: sourceNode,
-                target: targetNode,
-                value: l.value
-            };
+            var sourceNode = json.nodes.filter(function (n) {return n.name === l.source;})[0],
+                targetNode = json.nodes.filter(function (n) {return n.name === l.target;})[0];
+            return {source: sourceNode, target: targetNode};
         });
 
         force
@@ -74,37 +65,24 @@
             .call(force.drag);
 
         node.append("circle")
-            .attr("r", function (d) {
-                return 10 + d.nodeSize;
-            })
-            .style("fill", function (d) {
-                return color(d.intensity);
-            });
+            .attr("r", function (d) {return 10 + d.nodeSize;})
+            .style("fill", function (d) {return color(d.intensity);});
 
         node.append("text")
             .attr("dx", 12)
             .attr("dy", ".35em")
-            .text(function (d) {
-                return d.name
-            });
+            .text(function (d) {return d.name});
 
         force.on("tick", function () {
-            link.attr("x1", function (d) {
-                return d.source.x;
-            })
-                .attr("y1", function (d) {
-                    return d.source.y;
-                })
-                .attr("x2", function (d) {
-                    return d.target.x;
-                })
-                .attr("y2", function (d) {
-                    return d.target.y;
-                });
+            node.attr("cx", function (d) {return d.x = Math.max(20, Math.min(width - 20, d.x));})
+                .attr("cy", function (d) {return d.y = Math.max(20, Math.min(height - 20, d.y));});
 
-            node.attr("transform", function (d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
+            link.attr("x1", function (d) {return d.source.x;})
+                .attr("y1", function (d) {return d.source.y;})
+                .attr("x2", function (d) {return d.target.x;})
+                .attr("y2", function (d) {return d.target.y;});
+
+            node.attr("transform", function (d) {return "translate(" + d.x + "," + d.y + ")";});
         });
     });
 

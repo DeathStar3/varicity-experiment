@@ -20,7 +20,7 @@ public class Symfinder {
     private static NeoGraph neoGraph = new NeoGraph("bolt://localhost:7687", "neo4j", "root");
 
     public static void main(String[] args) throws IOException {
-        String sourcesPackagePath = "src/main/resources";
+        String sourcesPackagePath = args[0];
         String filePath = "src/main/resources/Rectangle2D.java";
         String javaPackagePath = "src/main/java";
         String classpathPath = "/usr/lib/jvm/java-8-openjdk";
