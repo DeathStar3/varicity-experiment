@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,14 +51,18 @@ public class Symfinder {
                 parser.setEnvironment(classpath, sources, new String[]{"UTF-8"}, true);
                 parser.setSource(fileContent.toCharArray());
 
+                Map<String, String> options = JavaCore.getOptions();
+                options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+                parser.setCompilerOptions(options);
+
                 CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 
                 TypeFinderVisitor v = new TypeFinderVisitor();
                 cu.accept(v);
-                neoGraph.setMethodsOverloads();
-                neoGraph.setConstructorsOverloads();
             }
         }
+        neoGraph.setMethodsOverloads();
+        neoGraph.setConstructorsOverloads();
         neoGraph.writeGraphFile("d3/graph.json");
     }
 
@@ -69,10 +74,10 @@ class TypeFinderVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(MethodDeclaration method) {
-        SimpleName methodName = method.getName();
+        String methodName = method.getName().getIdentifier();
         String parentClassName = method.resolveBinding().getDeclaringClass().getName();
         System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
-        Node methodNode = neoGraph.createNode(methodName.getIdentifier(), NeoGraph.NodeType.METHOD);
+        Node methodNode = neoGraph.createNode(methodName, NeoGraph.NodeType.METHOD);
         Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, NeoGraph.NodeType.CLASS);
         neoGraph.linkTwoNodes(parentClassNode, methodNode, NeoGraph.RelationType.METHOD);
         return true;
