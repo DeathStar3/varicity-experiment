@@ -47,8 +47,7 @@
             return {source: sourceNode, target: targetNode};
         });
 
-        var sort = json.nodes.map(a => parseInt(a.intensity)).sort((a, b) => a - b);
-        console.log(sort);
+        var sort = json.nodes.filter(a => a.type === "CLASS").map(a => parseInt(a.intensity)).sort((a, b) => a - b);
         color.domain([sort[0]-3, sort[sort.length - 1]]); // TODO deal with magic number
 
         //set up the simulation and add forces
@@ -92,8 +91,8 @@
             .data(json.nodes)
             .enter()
             .append("circle")
-            .attr("r", function (d) {return 10 + d.nodeSize;})
-            .attr("fill", function (d) {return color(d.intensity);})
+            .attr("r", function (d) {return d.type == "CLASS" ? 10 + d.nodeSize : 10})
+            .attr("fill", function (d) {return d.type == "CLASS" ? color(d.intensity) : "black"})
             .on("mouseover", function(d){ console.log(d.name) })
             .on("mouseout", function(d){ console.log(d.name) });
 

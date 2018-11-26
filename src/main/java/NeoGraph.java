@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 public class NeoGraph {
 
     enum NodeType {
-        CLASS, METHOD, CONSTRUCTOR
+        CLASS, METHOD, CONSTRUCTOR, INTERFACE
     }
 
     enum RelationType {
-        METHOD, INNER_CLASS
+        METHOD, INNER_CLASS, IMPLEMENTS, EXTENDS
     }
 
     private Driver driver;
@@ -151,7 +151,7 @@ public class NeoGraph {
     }
 
     private String getNodesAsJson() {
-        return submitRequest("MATCH (c:CLASS) RETURN collect({name:c.name, nodeSize:c.methods, intensity:c.constructors})")
+        return submitRequest("MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c)[0], name:c.name, nodeSize:c.methods, intensity:c.constructors})")
                 .list()
                 .get(0)
                 .get(0)
@@ -162,7 +162,7 @@ public class NeoGraph {
     }
 
     private String getLinksAsJson() {
-        return submitRequest("MATCH (c1:CLASS)-[r]->(c2:CLASS) RETURN collect({source:c1.name, target:c2.name})")
+        return submitRequest("MATCH (c1)-[:INNER_CLASS|:EXTENDS|:IMPLEMENTS]->(c2) RETURN collect({source:c1.name, target:c2.name})")
                 .list()
                 .get(0)
                 .get(0)

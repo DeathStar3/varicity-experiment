@@ -30,7 +30,7 @@ public class Symfinder {
                 .map(Path::toFile)
                 .collect(Collectors.toList());
 
-        for(File file : files){
+        for (File file : files) {
             try (Stream <String> lines = Files.lines(file.toPath(), Charset.defaultCharset())) {
                 String fileContent = lines.collect(Collectors.joining("\n"));
 
@@ -50,7 +50,7 @@ public class Symfinder {
                 parser.setEnvironment(classpath, sources, new String[]{"UTF-8"}, true);
                 parser.setSource(fileContent.toCharArray());
 
-                Map<String, String> options = JavaCore.getOptions();
+                Map <String, String> options = JavaCore.getOptions();
                 options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
                 parser.setCompilerOptions(options);
 
@@ -74,7 +74,7 @@ class TypeFinderVisitor extends ASTVisitor {
     @Override
     public boolean visit(MethodDeclaration method) {
         // Ignoring methods in anonymous classes
-        if(! method.resolveBinding().getDeclaringClass().isAnonymous()){
+        if (! method.resolveBinding().getDeclaringClass().isAnonymous()) {
             String methodName = method.getName().getIdentifier();
             String parentClassName = method.resolveBinding().getDeclaringClass().getName();
             System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
@@ -88,12 +88,23 @@ class TypeFinderVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(TypeDeclaration type) {
+        Node thisNode = neoGraph.getOrCreateNode(type.getName().getIdentifier(), NeoGraph.NodeType.CLASS);
+
         // If the class is an inner class
-        if (!type.isPackageMemberTypeDeclaration()) {
-            System.out.println("Inner class: "+ type.getName());
-            Node thisNode = neoGraph.getOrCreateNode(type.getName().getIdentifier(), NeoGraph.NodeType.CLASS);
+        if (! type.isPackageMemberTypeDeclaration()) {
             Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getName(), NeoGraph.NodeType.CLASS);
             neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER_CLASS);
+        }
+        // Link to implemented interfaces if exist
+        for (Object o : type.superInterfaceTypes()) {
+            Node interfaceNode = neoGraph.getOrCreateNode(((Type) o).resolveBinding().getName(), NeoGraph.NodeType.INTERFACE);
+            neoGraph.linkTwoNodes(interfaceNode, thisNode, NeoGraph.RelationType.IMPLEMENTS);
+        }
+        // Link to superclass if exists
+        Type superclassType = type.getSuperclassType();
+        if(superclassType != null){
+            Node superclassNode = neoGraph.getOrCreateNode(superclassType.resolveBinding().getName(), NeoGraph.NodeType.CLASS);
+            neoGraph.linkTwoNodes(superclassNode, thisNode, NeoGraph.RelationType.EXTENDS);
         }
         return true;
     }
