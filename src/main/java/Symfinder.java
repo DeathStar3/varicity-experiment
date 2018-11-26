@@ -22,7 +22,6 @@ public class Symfinder {
 
     public static void main(String[] args) throws IOException {
         String sourcesPackagePath = args[0];
-        String filePath = "src/main/resources/Rectangle2D.java";
         String javaPackagePath = "src/main/java";
         String classpathPath = "/usr/lib/jvm/java-8-openjdk";
 
@@ -43,7 +42,7 @@ public class Symfinder {
 
                 parser.setCompilerOptions(JavaCore.getOptions());
 
-                parser.setUnitName(filePath);
+                parser.setUnitName(file.getCanonicalPath());
 
                 String[] sources = {javaPackagePath};
                 String[] classpath = {classpathPath};

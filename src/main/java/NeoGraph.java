@@ -116,9 +116,9 @@ public class NeoGraph {
      * If the constructor is not overloaded, the property is not set.
      */
     public void setConstructorsOverloads() {
-        submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
-                "WHERE a.name = b.name AND a.name = c.name AND ID(a) <> ID(b)\n" +
-                "WITH count(DISTINCT a.name) AS cnt, c\n" +
+        submitRequest("MATCH (c:CLASS)-->(a:METHOD)\n" +
+                "WHERE a.name = c.name\n" +
+                "WITH count(a.name) AS cnt, c\n" +
                 "SET c.constructors = cnt");
         submitRequest("MATCH (c:CLASS)\n" +
                 "WHERE NOT EXISTS(c.constructors)\n" +
