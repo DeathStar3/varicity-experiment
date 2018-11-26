@@ -73,12 +73,15 @@ class TypeFinderVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(MethodDeclaration method) {
-        String methodName = method.getName().getIdentifier();
-        String parentClassName = method.resolveBinding().getDeclaringClass().getName();
-        System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
-        Node methodNode = neoGraph.createNode(methodName, NeoGraph.NodeType.METHOD);
-        Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, NeoGraph.NodeType.CLASS);
-        neoGraph.linkTwoNodes(parentClassNode, methodNode, NeoGraph.RelationType.METHOD);
+        // Ignoring methods in anonymous classes
+        if(! method.resolveBinding().getDeclaringClass().isAnonymous()){
+            String methodName = method.getName().getIdentifier();
+            String parentClassName = method.resolveBinding().getDeclaringClass().getName();
+            System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
+            Node methodNode = neoGraph.createNode(methodName, NeoGraph.NodeType.METHOD);
+            Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, NeoGraph.NodeType.CLASS);
+            neoGraph.linkTwoNodes(parentClassNode, methodNode, NeoGraph.RelationType.METHOD);
+        }
         return true;
     }
 

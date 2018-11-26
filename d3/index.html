@@ -27,7 +27,6 @@
         height = window.innerHeight - 10;
 
     var color = d3.scaleLinear()
-        .domain([-1, 2])
         .range(["#FFFFFF", '#FF0000'])
         .interpolate(d3.interpolateRgb);
 
@@ -47,6 +46,10 @@
                 })[0];
             return {source: sourceNode, target: targetNode};
         });
+
+        var sort = json.nodes.map(a => parseInt(a.intensity)).sort((a, b) => a - b);
+        console.log(sort);
+        color.domain([sort[0]-3, sort[sort.length - 1]]); // TODO deal with magic number
 
         //set up the simulation and add forces
         var simulation = d3.forceSimulation()
