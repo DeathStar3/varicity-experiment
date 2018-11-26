@@ -78,7 +78,8 @@ class TypeFinderVisitor extends ASTVisitor {
             String methodName = method.getName().getIdentifier();
             String parentClassName = method.resolveBinding().getDeclaringClass().getName();
             System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
-            Node methodNode = neoGraph.createNode(methodName, NeoGraph.NodeType.METHOD);
+            NeoGraph.NodeType methodType = method.isConstructor() ? NeoGraph.NodeType.CONSTRUCTOR : NeoGraph.NodeType.METHOD;
+            Node methodNode = neoGraph.createNode(methodName, methodType);
             Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, NeoGraph.NodeType.CLASS);
             neoGraph.linkTwoNodes(parentClassNode, methodNode, NeoGraph.RelationType.METHOD);
         }

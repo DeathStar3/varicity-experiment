@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class NeoGraph {
 
     enum NodeType {
-        CLASS, METHOD
+        CLASS, METHOD, CONSTRUCTOR
     }
 
     enum RelationType {
@@ -102,7 +102,7 @@ public class NeoGraph {
      */
     public void setMethodsOverloads() {
         submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
-                "WHERE a.name = b.name AND a.name <> c.name AND ID(a) <> ID(b)\n" +
+                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
                 "WITH count(DISTINCT a.name) AS cnt, c\n" +
                 "SET c.methods = cnt");
         submitRequest("MATCH (c:CLASS)\n" +
@@ -116,24 +116,12 @@ public class NeoGraph {
      * If the constructor is not overloaded, the property is not set.
      */
     public void setConstructorsOverloads() {
-        submitRequest("MATCH (c:CLASS)-->(a:METHOD)\n" +
-                "WHERE a.name = c.name\n" +
+        submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
                 "WITH count(a.name) AS cnt, c\n" +
                 "SET c.constructors = cnt");
         submitRequest("MATCH (c:CLASS)\n" +
                 "WHERE NOT EXISTS(c.constructors)\n" +
                 "SET c.constructors = 0");
-    }
-
-    public void createVPs() {
-        submitRequest("MATCH classes=(c:CLASS)-[:INNER_CLASS]->(ic:CLASS) FOREACH (cl IN nodes(classes) | CREATE (n:VP { name: cl.name })-[r:rel]->(m:INNER_CLASS))");
-    }
-
-    public void createVPs2() {
-        submitRequest("MATCH (:CLASS { name: c.name })-->(a:METHOD) MATCH (:CLASS { name: c.name })-->(b:METHOD) " +
-                "WHERE a.name = b.name AND ID(a) <> ID(b) " +
-                "WITH count(DISTINCT a) AS cnt " +
-                "MATCH classes=(:CLASS) FOREACH (c IN nodes(classes) | SET c.methods = cnt)");
     }
 
     /**
