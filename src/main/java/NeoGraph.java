@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class NeoGraph {
 
     enum NodeType {
-        CLASS, METHOD, CONSTRUCTOR, INTERFACE
+        CLASS, INNER_CLASS, METHOD, CONSTRUCTOR, INTERFACE
     }
 
     enum RelationType {
@@ -162,7 +162,7 @@ public class NeoGraph {
     }
 
     private String getLinksAsJson() {
-        return submitRequest("MATCH (c1)-[:INNER_CLASS|:EXTENDS|:IMPLEMENTS]->(c2) RETURN collect({source:c1.name, target:c2.name})")
+        return submitRequest("MATCH (c1)-[r:INNER_CLASS|:EXTENDS|:IMPLEMENTS]->(c2) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})")
                 .list()
                 .get(0)
                 .get(0)

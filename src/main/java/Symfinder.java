@@ -92,7 +92,7 @@ class TypeFinderVisitor extends ASTVisitor {
 
         // If the class is an inner class
         if (! type.isPackageMemberTypeDeclaration()) {
-            Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getName(), NeoGraph.NodeType.CLASS);
+            Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getName(), NeoGraph.NodeType.INNER_CLASS);
             neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER_CLASS);
         }
         // Link to implemented interfaces if exist
