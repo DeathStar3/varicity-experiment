@@ -1,6 +1,6 @@
 package sources.paperexample;
 
-import java.awt.*;
+import sources.paperexample.Shape;
 
 public class Rectangle extends Shape {
 

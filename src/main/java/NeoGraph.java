@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 public class NeoGraph {
 
     enum NodeType {
-        CLASS, INNER_CLASS, METHOD, CONSTRUCTOR, INTERFACE
+        CLASS, ABSTRACT, INNER_CLASS, METHOD, CONSTRUCTOR, INTERFACE
     }
 
     enum RelationType {
@@ -28,13 +29,15 @@ public class NeoGraph {
     }
 
     /**
-     * Creates a node of corresponding name and type and returns it.
+     * Creates a node of corresponding name and types and returns it.
      *
      * @param name Node name
-     * @param type Node type
+     * @param types Node types
      */
-    public Node createNode(String name, NodeType type) {
-        return submitRequest(String.format("CREATE (n:%s { name: '%s' }) RETURN (n)", type, name))
+    public Node createNode(String name, NodeType... types) {
+        return submitRequest(String.format("CREATE (n:%s { name: '%s' }) RETURN (n)",
+                Arrays.stream(types).map(Enum::toString).collect(Collectors.joining(":")),
+                name))
                 .list().get(0).get(0).asNode();
     }
 
@@ -126,16 +129,22 @@ public class NeoGraph {
 
     /**
      * Returns the node if it exists, creates it and returns it otherwise.
+     * As we use qualified names, each name is unique. Therefore, we can match only on node name.
+     * If the node does not exist, it is created with the specified types as labels.
+     * If it exists, the types are added as labels to the node.
      *
      * @param name Node name
-     * @param type Node type
+     * @param types Node types
      */
-    public Node getOrCreateNode(String name, NodeType type) {
-        List <Record> matchingNodes = submitRequest(String.format("MATCH (n:%s) WHERE n.name = '%s' RETURN (n)", type, name)).list();
+    public Node getOrCreateNode(String name, NodeType... types) {
+        List <Record> matchingNodes = submitRequest(String.format("MATCH (n) WHERE n.name = '%s' RETURN (n)", name)).list();
         if (matchingNodes.isEmpty()) {
-            return createNode(name, type);
+            return createNode(name, types);
         }
-        return matchingNodes.get(0).get("n").asNode();
+        return submitRequest(String.format("MATCH (n) WHERE ID(n) = %s SET n:%s RETURN (n)",
+                matchingNodes.get(0).get("n").asNode().id(),
+                Arrays.stream(types).map(Enum::toString).collect(Collectors.joining(":"))))
+                .list().get(0).get("n").asNode();
     }
 
     public void writeGraphFile(String filePath) {
@@ -151,7 +160,7 @@ public class NeoGraph {
     }
 
     private String getNodesAsJson() {
-        return submitRequest("MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c)[0], name:c.name, nodeSize:c.methods, intensity:c.constructors})")
+        return submitRequest("MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, nodeSize:c.methods, intensity:c.constructors})")
                 .list()
                 .get(0)
                 .get(0)

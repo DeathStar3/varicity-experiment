@@ -76,7 +76,7 @@ class TypeFinderVisitor extends ASTVisitor {
         // Ignoring methods in anonymous classes
         if (! method.resolveBinding().getDeclaringClass().isAnonymous()) {
             String methodName = method.getName().getIdentifier();
-            String parentClassName = method.resolveBinding().getDeclaringClass().getName();
+            String parentClassName = method.resolveBinding().getDeclaringClass().getQualifiedName();
             System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
             NeoGraph.NodeType methodType = method.isConstructor() ? NeoGraph.NodeType.CONSTRUCTOR : NeoGraph.NodeType.METHOD;
             Node methodNode = neoGraph.createNode(methodName, methodType);
@@ -88,22 +88,29 @@ class TypeFinderVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(TypeDeclaration type) {
-        Node thisNode = neoGraph.getOrCreateNode(type.getName().getIdentifier(), NeoGraph.NodeType.CLASS);
+        Node thisNode;
+        // If the class is abstract
+        if (Modifier.isAbstract(type.getModifiers())) {
+            thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS, NeoGraph.NodeType.ABSTRACT);
+        } else {
+            thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS);
+        }
 
         // If the class is an inner class
+        // FIXME: 11/27/18 handle this properly
         if (! type.isPackageMemberTypeDeclaration()) {
-            Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getName(), NeoGraph.NodeType.INNER_CLASS);
-            neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER_CLASS);
+//            Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getQualifiedName(), NeoGraph.NodeType.INNER_CLASS);
+//            neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER_CLASS);
         }
         // Link to implemented interfaces if exist
         for (Object o : type.superInterfaceTypes()) {
-            Node interfaceNode = neoGraph.getOrCreateNode(((Type) o).resolveBinding().getName(), NeoGraph.NodeType.INTERFACE);
+            Node interfaceNode = neoGraph.getOrCreateNode(((Type) o).resolveBinding().getQualifiedName(), NeoGraph.NodeType.INTERFACE);
             neoGraph.linkTwoNodes(interfaceNode, thisNode, NeoGraph.RelationType.IMPLEMENTS);
         }
         // Link to superclass if exists
-        Type superclassType = type.getSuperclassType();
-        if(superclassType != null){
-            Node superclassNode = neoGraph.getOrCreateNode(superclassType.resolveBinding().getName(), NeoGraph.NodeType.CLASS);
+        ITypeBinding superclassType = type.resolveBinding().getSuperclass();
+        if (superclassType != null) {
+            Node superclassNode = neoGraph.getOrCreateNode(superclassType.getQualifiedName(), NeoGraph.NodeType.CLASS);
             neoGraph.linkTwoNodes(superclassNode, thisNode, NeoGraph.RelationType.EXTENDS);
         }
         return true;

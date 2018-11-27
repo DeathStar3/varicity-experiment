@@ -8,18 +8,13 @@
         stroke-opacity: 0.6;
     }
 
-    .nodes circle {
-        stroke: black	;
-        stroke-width: 0px;
-    }
-
     .node text {
         stroke: #333;
         cursos: pointer;
     }
 </style>
 <svg width="800" height="500"></svg>
-<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
 <script>
 
 
@@ -37,8 +32,9 @@
 
     d3.json("graph.json", function (json) {
 
-        json.links = json.links.filter(l => l.type != "INNER_CLASS");
-        json.nodes = json.nodes.filter(l => l.type != "INNER_CLASS");
+        // json.links = json.links.filter(l => l.type != "INNER_CLASS");
+        // json.nodes = json.nodes.filter(l => !l.type.includes("INNER_CLASS"));
+        console.log(json.links[36]);
 
         json.links = json.links.map(function (l) {
             var sourceNode = json.nodes.filter(function (n) {
@@ -50,7 +46,7 @@
             return {source: sourceNode, target: targetNode};
         });
 
-        var sort = json.nodes.filter(a => a.type == "CLASS").map(a => parseInt(a.intensity)).sort((a, b) => a - b);
+        var sort = json.nodes.filter(a => a.type.includes("CLASS")).map(a => parseInt(a.intensity)).sort((a, b) => a - b);
         color.domain([sort[0]-3, sort[sort.length - 1]]); // TODO deal with magic number
 
         //set up the simulation and add forces
@@ -92,8 +88,10 @@
             .data(json.nodes)
             .enter()
             .append("circle")
-            .attr("r", function (d) {return d.type == "CLASS" ? 10 + d.nodeSize : 10})
-            .attr("fill", function (d) {return d.type == "CLASS" ? color(d.intensity) : "black"})
+            .attr("stroke-width", 2)
+            .style("stroke", function (d) {return d.type.includes("ABSTRACT") ? "black" : "none"})
+            .attr("r", function (d) {return d.type.includes("CLASS") ? 10 + d.nodeSize : 10})
+            .attr("fill", function (d) {return d.type.includes("CLASS") ? color(d.intensity) : "black"})
             .on("mouseover", function(d){ console.log(d.name) })
             .on("mouseout", function(d){ console.log(d.name) });
 
@@ -103,7 +101,10 @@
             .data(json.nodes)
             .enter()
             .append("text")
-            .text(function (d) { return d.name; })
+            .text(function (d) {
+                var split = d.name.split(".");
+                return split[split.length - 1]
+            })
             .style("text-anchor", "middle")
             .style("fill", "#555")
             .style("font-family", "Arial")

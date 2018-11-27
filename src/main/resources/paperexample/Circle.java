@@ -1,5 +1,7 @@
 package sources.paperexample;
 
+import sources.paperexample.Shape;
+
 public class Circle extends Shape {
 
     private final double radius;
