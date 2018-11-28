@@ -119,14 +119,22 @@ class TypeFinderVisitor extends ASTVisitor {
         // Link to superclass if exists
         // TODO: 11/28/18 filter on package (not in studied package → remove)
         ITypeBinding superclassType = type.resolveBinding().getSuperclass();
-        if (superclassType != null) {
-            String superclassQualifiedName = superclassType.getQualifiedName();
-            if(! superclassQualifiedName.equals(Configuration.getProperty("exclude"))){
-                Node superclassNode = neoGraph.getOrCreateNode(superclassQualifiedName, NeoGraph.NodeType.CLASS);
-                neoGraph.linkTwoNodes(superclassNode, thisNode, NeoGraph.RelationType.EXTENDS);
-            }
+        if (superclassType != null && isExcluded(superclassType.getPackage())) {
+            Node superclassNode = neoGraph.getOrCreateNode(superclassType.getQualifiedName(), NeoGraph.NodeType.CLASS);
+            neoGraph.linkTwoNodes(superclassNode, thisNode, NeoGraph.RelationType.EXTENDS);
         }
         return true;
+    }
+
+    private boolean isExcluded(IPackageBinding classPackage) {
+        String[] excludedPackage = Configuration.getProperty("exclude").split(".");
+        String[] classPackageComponents = classPackage.getNameComponents();
+        for(int i = 0 ; i < classPackageComponents.length && i < excludedPackage.length ; i++){
+            if(! excludedPackage[i].equals(classPackageComponents[i])){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
