@@ -18,10 +18,16 @@ import java.util.stream.Stream;
  */
 public class Symfinder {
 
-    private static NeoGraph neoGraph = new NeoGraph("bolt://localhost:7687", "neo4j", "root");
+    private NeoGraph neoGraph;
 
-    public static void main(String[] args) throws IOException {
-        String sourcesPackagePath = args[0];
+    public Symfinder() {
+        neoGraph = new NeoGraph(Configuration.getProperty("neo4j_bolt_address"),
+                Configuration.getProperty("neo4j_user"),
+                Configuration.getProperty("neo4j_password"));
+    }
+
+    public void run() throws IOException {
+        String sourcesPackagePath = Configuration.getProperty("source_package");
         String javaPackagePath = "src/main/java";
         String classpathPath = "/usr/lib/jvm/java-8-openjdk";
 
