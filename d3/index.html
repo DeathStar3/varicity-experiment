@@ -101,10 +101,7 @@
             .data(json.nodes)
             .enter()
             .append("text")
-            .text(function (d) {
-                var split = d.name.split(".");
-                return split[split.length - 1]
-            })
+            .text(function (d) { return d.name; })
             .style("text-anchor", "middle")
             .style("fill", "#555")
             .style("font-family", "Arial")
