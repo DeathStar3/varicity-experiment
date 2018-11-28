@@ -89,6 +89,15 @@ class TypeFinderVisitor extends ASTVisitor {
     @Override
     public boolean visit(TypeDeclaration type) {
         Node thisNode;
+
+        // If the class is an inner class
+        // TODO: 11/28/18 test this
+        if (! type.isPackageMemberTypeDeclaration()) {
+            thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS);
+            Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getQualifiedName(), NeoGraph.NodeType.CLASS);
+            neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER_CLASS);
+        }
+
         // If the class is abstract
         if (Modifier.isAbstract(type.getModifiers())) {
             thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS, NeoGraph.NodeType.ABSTRACT);
@@ -96,18 +105,13 @@ class TypeFinderVisitor extends ASTVisitor {
             thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS);
         }
 
-        // If the class is an inner class
-        // FIXME: 11/27/18 handle this properly
-        if (! type.isPackageMemberTypeDeclaration()) {
-//            Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getQualifiedName(), NeoGraph.NodeType.INNER_CLASS);
-//            neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER_CLASS);
-        }
         // Link to implemented interfaces if exist
         for (Object o : type.superInterfaceTypes()) {
             Node interfaceNode = neoGraph.getOrCreateNode(((Type) o).resolveBinding().getQualifiedName(), NeoGraph.NodeType.INTERFACE);
             neoGraph.linkTwoNodes(interfaceNode, thisNode, NeoGraph.RelationType.IMPLEMENTS);
         }
         // Link to superclass if exists
+        // TODO: 11/28/18 filter on package (not in studied package → remove)
         ITypeBinding superclassType = type.resolveBinding().getSuperclass();
         if (superclassType != null) {
             Node superclassNode = neoGraph.getOrCreateNode(superclassType.getQualifiedName(), NeoGraph.NodeType.CLASS);
