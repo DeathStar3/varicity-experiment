@@ -21,13 +21,13 @@ public class Symfinder {
     private NeoGraph neoGraph;
 
     public Symfinder() {
-        neoGraph = new NeoGraph(Configuration.getProperty("neo4j_bolt_address"),
-                Configuration.getProperty("neo4j_user"),
-                Configuration.getProperty("neo4j_password"));
+        neoGraph = new NeoGraph(Configuration.getNeo4JParameter("bolt_address"),
+                Configuration.getNeo4JParameter("user"),
+                Configuration.getNeo4JParameter("password"));
     }
 
     public void run() throws IOException {
-        String sourcesPackagePath = Configuration.getProperty("source_package");
+        String sourcesPackagePath = Configuration.getSourcePackage();
         String javaPackagePath = "src/main/java";
         String classpathPath = "/usr/lib/jvm/java-8-openjdk";
 
@@ -68,14 +68,16 @@ public class Symfinder {
         }
         neoGraph.setMethodsOverloads();
         neoGraph.setConstructorsOverloads();
-        neoGraph.writeGraphFile("d3/graph.json");
+        neoGraph.writeGraphFile(Configuration.getGraphOutputPath());
     }
 
 }
 
 class TypeFinderVisitor extends ASTVisitor {
 
-    private NeoGraph neoGraph = new NeoGraph("bolt://localhost:7687", "neo4j", "root");
+    private NeoGraph neoGraph = new NeoGraph(Configuration.getNeo4JParameter("bolt_address"),
+            Configuration.getNeo4JParameter("user"),
+            Configuration.getNeo4JParameter("password"));
 
     @Override
     public boolean visit(MethodDeclaration method) {
@@ -126,12 +128,15 @@ class TypeFinderVisitor extends ASTVisitor {
         return true;
     }
 
+    // TODO: 11/28/18 test this
     private boolean isExcluded(IPackageBinding classPackage) {
-        String[] excludedPackage = Configuration.getProperty("exclude").split(".");
-        String[] classPackageComponents = classPackage.getNameComponents();
-        for(int i = 0 ; i < classPackageComponents.length && i < excludedPackage.length ; i++){
-            if(! excludedPackage[i].equals(classPackageComponents[i])){
-                return true;
+        for (String excludedPackage : Configuration.getExcludedPackages()){
+            String[] excludedPackageSplit = excludedPackage.split(".");
+            String[] classPackageComponents = classPackage.getNameComponents();
+            for(int i = 0 ; i < classPackageComponents.length && i < excludedPackageSplit.length ; i++){
+                if(! excludedPackageSplit[i].equals(classPackageComponents[i])){
+                    return true;
+                }
             }
         }
         return false;

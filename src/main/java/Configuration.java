@@ -1,7 +1,10 @@
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.List;
+import java.util.Map;
 
 public class Configuration {
     private static Configuration ourInstance = new Configuration();
@@ -10,16 +13,17 @@ public class Configuration {
         return ourInstance;
     }
 
-    private static Properties properties;
+    private static Map<String, Object> properties;
 
     private Configuration(){
-        this("symfinder.properties");
+        this("symfinder.yaml");
     }
 
     private Configuration(String propertiesFile) {
         try (FileInputStream fis = new FileInputStream(propertiesFile)) {
-            properties = new Properties();
-            properties.load(fis);
+            Yaml yaml = new Yaml();
+            properties = yaml.load(fis);
+            System.out.println(properties);
         } catch (FileNotFoundException e) {
             e.printStackTrace(); // TODO: 11/28/18 create exception
         } catch (IOException e) {
@@ -27,7 +31,23 @@ public class Configuration {
         }
     }
 
-    public static String getProperty(String str){
-        return properties.getProperty(str);
+    // TODO: 11/28/18 do this properly
+    public static String getNeo4JParameter(String param){
+        return ((Map <String, String>) properties.get("neo4j")).get(param);
     }
+
+    public static String getSourcePackage(){
+        return String.valueOf(properties.get("source_package"));
+    }
+
+    public static String getGraphOutputPath(){
+        return String.valueOf(properties.get("output_path"));
+    }
+
+    public static List<String> getExcludedPackages(){
+        return (List <String>) properties.get("excluded");
+    }
+
+
+
 }
