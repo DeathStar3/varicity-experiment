@@ -28,6 +28,10 @@ public class NeoGraph {
         driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
     }
 
+    public NeoGraph(Driver driver) {
+        this.driver = driver;
+    }
+
     /**
      * Creates a node of corresponding name and types and returns it.
      *
