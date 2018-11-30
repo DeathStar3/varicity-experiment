@@ -32,16 +32,21 @@ public class NeoGraph {
         this.driver = driver;
     }
 
+    public Node createNode(String name, NodeType... types) {
+        return createNode(name, name, types);
+    }
+
     /**
      * Creates a node of corresponding name and types and returns it.
      *
      * @param name Node name
      * @param types Node types
      */
-    public Node createNode(String name, NodeType... types) {
-        return submitRequest(String.format("CREATE (n:%s { name: '%s' }) RETURN (n)",
+    public Node createNode(String name, String shortName, NodeType... types) {
+        return submitRequest(String.format("CREATE (n:%s { name: '%s', shortname: '%s' }) RETURN (n)",
                 Arrays.stream(types).map(Enum::toString).collect(Collectors.joining(":")),
-                name))
+                name,
+                shortName))
                 .list().get(0).get(0).asNode();
     }
 
@@ -131,6 +136,10 @@ public class NeoGraph {
                 "SET c.constructors = 0");
     }
 
+    public Node getOrCreateNode(String name, NodeType... types) {
+        return getOrCreateNode(name, name, types);
+    }
+
     /**
      * Returns the node if it exists, creates it and returns it otherwise.
      * As we use qualified names, each name is unique. Therefore, we can match only on node name.
@@ -140,10 +149,10 @@ public class NeoGraph {
      * @param name Node name
      * @param types Node types
      */
-    public Node getOrCreateNode(String name, NodeType... types) {
+    public Node getOrCreateNode(String name, String shortName, NodeType... types) {
         List <Record> matchingNodes = submitRequest(String.format("MATCH (n) WHERE n.name = '%s' RETURN (n)", name)).list();
         if (matchingNodes.isEmpty()) {
-            return createNode(name, types);
+            return createNode(name, shortName, types);
         }
         return submitRequest(String.format("MATCH (n) WHERE ID(n) = %s SET n:%s RETURN (n)",
                 matchingNodes.get(0).get("n").asNode().id(),
@@ -164,7 +173,7 @@ public class NeoGraph {
     }
 
     private String getNodesAsJson() {
-        return submitRequest("MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, nodeSize:c.methods, intensity:c.constructors})")
+        return submitRequest("MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors})")
                 .list()
                 .get(0)
                 .get(0)

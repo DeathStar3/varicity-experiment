@@ -34,7 +34,7 @@
 
         // json.links = json.links.filter(l => l.type != "INNER_CLASS");
         // json.nodes = json.nodes.filter(l => !l.type.includes("INNER_CLASS"));
-        console.log(json.links[36]);
+        console.log(json.nodes);
 
         json.links = json.links.map(function (l) {
             var sourceNode = json.nodes.filter(function (n) {
@@ -101,7 +101,7 @@
             .data(json.nodes)
             .enter()
             .append("text")
-            .text(function (d) { return d.name; })
+            .text(function (d) { return d.shortname; })
             .style("text-anchor", "middle")
             .style("fill", "#555")
             .style("font-family", "Arial")
