@@ -207,4 +207,8 @@ public class NeoGraph {
         }
     }
 
+    public void closeDriver(){
+        driver.close();
+    }
+
 }
