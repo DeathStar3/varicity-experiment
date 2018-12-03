@@ -167,53 +167,6 @@
                 .attr("y", function (d) {return d.y - 10; });
         }
 
-        //	general update pattern for updating the graph
-        function update() {
-            //	UPDATE
-            node = node.data(json.nodes, function(d) { return d.id;});
-            //	EXIT
-            node.exit().remove();
-            //	ENTER
-            var newNode = node.enter().append("circle")
-                .attr("class", "node")
-                .attr("r", radius)
-                .attr("fill", function(d) {return color(d.group);})
-                .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended)
-                )
-
-            newNode.append("title")
-                .text(function(d) { return "group: " + d.group + "\n" + "id: " + d.id; });
-            //	ENTER + UPDATE
-            node = node.merge(newNode);
-
-            //	UPDATE
-            link = link.data(json.links, function(d) { return d.id;});
-            //	EXIT
-            link.exit().remove();
-            //	ENTER
-            newLink = link.enter().append("line")
-                .attr("class", "link");
-
-            newLink.append("title")
-                .text(function(d) { return "source: " + d.source + "\n" + "target: " + d.target; });
-            //	ENTER + UPDATE
-            link = link.merge(newLink);
-
-            //	update simulation nodes, links, and alpha
-            simulation
-                .nodes(json.nodes)
-                .on("tick", ticked);
-
-            simulation.force("link")
-                .links(json.links);
-
-            simulation.alpha(1).alphaTarget(0).restart();
-        }
-
-
     });
 
 

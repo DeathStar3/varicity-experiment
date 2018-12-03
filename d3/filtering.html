@@ -56,10 +56,17 @@
     var radius = 10;
 
     //	d3 color scales
-    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    var color = d3.scaleLinear()
+        .range(["#FFFFFF", '#FF0000'])
+        .interpolate(d3.interpolateRgb);
 
-    var link = svg.append("g").selectAll(".link"),
-        node = svg.append("g").selectAll(".node");
+
+    //add encompassing group for the zoom
+    var g = svg.append("g")
+        .attr("class", "everything");
+
+    var link = g.append("g").selectAll(".link"),
+        node = g.append("g").selectAll(".node");
 
     //	force simulation initialization
     var simulation = d3.forceSimulation()
@@ -88,6 +95,9 @@
     d3.json("graph.json", function(err, g) {
         if (err) throw err;
 
+        var sort = g.nodes.filter(a => a.type.includes("CLASS")).map(a => parseInt(a.intensity)).sort((a, b) => a - b);
+        color.domain([sort[0]-3, sort[sort.length - 1]]); // TODO deal with magic number
+
         var nodeByID = {};
 
         g.nodes.forEach(function(n) {
@@ -114,16 +124,28 @@
         //	ENTER
         var newNode = node.enter().append("circle")
             .attr("class", "node")
-            .attr("r", radius)
-            .attr("fill", function(d) {return color(d.type[0]);})
+            .style("stroke", function (d) {return d.type.includes("ABSTRACT") ? "black" : "none"})
+            .attr("r", function (d) {return d.type.includes("CLASS") ? 10 + d.nodeSize : 10})
+            .attr("fill", function (d) {return d.type.includes("CLASS") ? color(d.intensity) : "black"})
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended)
-            )
+            );
+
+        //Zoom functions
+        function zoom_actions(){
+            g.attr("transform", d3.event.transform)
+        }
+
+        //add zoom capabilities
+        var zoom_handler = d3.zoom()
+            .on("zoom", zoom_actions);
+
+        zoom_handler(svg);
 
         newNode.append("title")
-            .text(function(d) { return "group: " + d.type + "\n" + "name: " + d.name; });
+            .text(function(d) { return "type: " + d.type + "\n" + "name: " + d.name; });
         //	ENTER + UPDATE
         node = node.merge(newNode);
 
@@ -172,8 +194,9 @@
     //	tick event handler with bounded box
     function ticked() {
         node
-            .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-            .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+            // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+            .attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; });
 
         link
             .attr("x1", function(d) { return d.source.x; })
@@ -183,7 +206,7 @@
     }
 
     function isListElementInFilterList(li){
-        return li.every(value => !typeFilterList.includes(value));
+        return li.every(value => typeFilterList.includes(value));
     }
 
     //	filter function
