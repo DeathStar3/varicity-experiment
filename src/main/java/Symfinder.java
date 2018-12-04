@@ -120,32 +120,12 @@ public class Symfinder {
                 neoGraph.linkTwoNodes(interfaceNode, thisNode, NeoGraph.RelationType.IMPLEMENTS);
             }
             // Link to superclass if exists
-            // TODO: 11/28/18 filter on package (not in studied package → remove)
             ITypeBinding superclassType = type.resolveBinding().getSuperclass();
-            if (superclassType != null && ! isExcluded(superclassType.getPackage())) {
+            if (superclassType != null) {
                 Node superclassNode = neoGraph.getOrCreateNode(superclassType.getQualifiedName(), superclassType.getName(), NeoGraph.NodeType.CLASS);
                 neoGraph.linkTwoNodes(superclassNode, thisNode, NeoGraph.RelationType.EXTENDS);
             }
             return true;
-        }
-
-        // TODO: 11/28/18 test this
-        private boolean isExcluded(IPackageBinding classPackage) {
-            for (String excludedPackage : Configuration.getExcludedPackages()) {
-                String[] excludedPackageSplit = excludedPackage.split("\\.");
-                String[] classPackageComponents = classPackage.getNameComponents();
-                boolean exc = true;
-                for (int i = 0 ; i < classPackageComponents.length && i < excludedPackageSplit.length ; i++) {
-                    if (! excludedPackageSplit[i].equals(classPackageComponents[i])) {
-                        exc = false;
-                        break;
-                    }
-                }
-                if (exc) {
-                    return true;
-                }
-            }
-            return false;
         }
 
     }
