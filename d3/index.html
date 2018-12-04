@@ -4,7 +4,7 @@
 <style>
     /*	style definitions	*/
     button {
-        position: absolute;
+        position: relative;
     }
 
     #blue {
@@ -33,8 +33,12 @@
     }
 
 </style>
+<body>
 <button type="button" class="filter-btn" id="alone" value="ALONE">Filter isolated nodes</button>
-<button type="button" class="filter-btn" id="util" value="java.lang">java.lang</button>
+<button type="button" class="filter-btn" id="lang" value="java.lang">java.lang</button>
+<button type="button" class="filter-btn" id="util" value="java.util">java.util</button>
+<button type="button" class="filter-btn" id="io" value="java.io">java.io</button>
+</body>
 <svg width="960" height="500"></svg>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script
@@ -45,6 +49,7 @@
 
     //	data stores
     var graph, store;
+    var difference = [];
 
     var width = window.innerWidth,
         height = window.innerHeight - 10;
@@ -209,33 +214,34 @@
     //	filter function
     function filter(value) {
         if(value === "ALONE"){
-            //	add and remove links from data based on availability of nodes
-            var presentNodes = new Set();
-            store.links.forEach(function(l) {
-                presentNodes.add(l.source);
-                presentNodes.add(l.target);
-            });
-            var difference = new Set([...store.nodes].map(n => n.name).filter(x => !presentNodes.has(x)));
-            console.log(difference);
+            // Nodes are filtered, need to bring them back
+            if( !!difference && difference.length > 0){
+                difference.forEach(function(n){
+                    graph.nodes.push($.extend(true, {}, n));
+                });
+                difference = [];
+            // Nodes need to be filtered
+            } else {
+                var tmp = graph;
+                var linkedNodes = new Set();
+                tmp.links.forEach(l => {
+                    linkedNodes.add(l.source);
+                    linkedNodes.add(l.target);
+                });
 
-            store.nodes.forEach(function(n) {
-                if(difference.has(n.name)){
-                    if (n.filteredAlone) {
-                        n.filteredAlone = false;
-                        graph.nodes.push($.extend(true, {}, n));
-                    } else {
-                        n.filteredAlone = true;
-                        graph.nodes.forEach(function(d, i) {
-                            if (n.name === d.name) {
-                                graph.nodes.splice(i, 1);
-                            }
-                        });
-                    }
-                }
-            });
-        }
-        if (value === "java.lang"){
-            var matchingNodes = new Set([...store.nodes].map(n => n.name).filter(name => name.startsWith("java.lang")));
+                difference = [...tmp.nodes].filter(n => !linkedNodes.has(n));
+
+                difference.forEach(function (n) {
+                    graph.nodes.forEach(function(d, i) {
+                        if (n.name === d.name) {
+                            graph.nodes.splice(i, 1);
+                        }
+                    });
+                });
+            }
+            console.log(difference);
+        } else {
+            var matchingNodes = new Set([...store.nodes].map(n => n.name).filter(name => name.startsWith(value)));
 
             store.nodes.forEach(function(n) {
                 if(matchingNodes.has(n.name)){
@@ -269,7 +275,6 @@
                 }
             });
         }
-
     }
 
 </script>
