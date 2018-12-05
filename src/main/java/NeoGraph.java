@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class NeoGraph {
 
     enum NodeType {
-        CLASS, ABSTRACT, INNER_CLASS, METHOD, CONSTRUCTOR, INTERFACE
+        CLASS, ABSTRACT, INNER_CLASS, METHOD, CONSTRUCTOR, INTERFACE, STRATEGY
     }
 
     enum RelationType {
@@ -160,12 +160,29 @@ public class NeoGraph {
                 .list().get(0).get("n").asNode();
     }
 
+    public void addLabelToNode(Node node, String label){
+        submitRequest(String.format("MATCH (n) WHERE ID(n) = %s SET n:%s RETURN (n)", node.id(), label));
+    }
+
     public void writeGraphFile(String filePath) {
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(filePath))) {
             bw.write(generateJsonGraph());
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    /**
+     * Get number of subclasses of a class
+     * @param node Node corresponding to the class
+     * @return Number of subclasses
+     */
+    public int getNbSubclasses(Node node){
+        return submitRequest(String.format("MATCH (c:CLASS)-[:EXTENDS]->(c2:CLASS) " +
+                "WHERE ID(c) = %s " +
+                "RETURN count(c2)", node.id()))
+                .list().get(0).get(0).asInt();
     }
 
     private String generateJsonGraph() {

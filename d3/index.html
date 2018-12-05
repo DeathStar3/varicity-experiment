@@ -7,21 +7,6 @@
         position: relative;
     }
 
-    #blue {
-        top: 1em;
-        left: 1em;
-    }
-
-    #orange {
-        top: 1em;
-        left: 8em;
-    }
-
-    #green {
-        top: 1em;
-        left: 16em;
-    }
-
     .node {
         stroke: white;
         stroke-width: 2px;
@@ -46,6 +31,8 @@
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous"></script>
 <script>
+
+    var graphFilename = new URLSearchParams(window.location.search).get("graph");
 
     //	data stores
     var graph, store;
@@ -96,7 +83,7 @@
     });
 
     //	data read and store
-    d3.json("junit-no-filter.json", function(err, g) {
+    d3.json("awt.json", function(err, g) {
         if (err) throw err;
 
         var sort = g.nodes.filter(a => a.type.includes("CLASS")).map(a => parseInt(a.intensity)).sort((a, b) => a - b);
@@ -126,11 +113,14 @@
         //	EXIT
         node.exit().remove();
         //	ENTER
-        var newNode = node.enter().append("circle")
+        var node1 = node.enter().append("g");
+
+        var newNode = node1.append("circle")
             .attr("class", "node")
             .style("stroke", function (d) {return d.type.includes("ABSTRACT") ? "black" : "none"})
+            .style("stroke-dasharray", function (d) {return d.type.includes("STRATEGY") ? ("3,5") : "none"})
             .attr("r", function (d) {return d.type.includes("CLASS") ? 10 + d.nodeSize : 10})
-            .attr("fill", function (d) {return d.type.includes("CLASS") ? color(d.intensity) : "black"})
+            .attr("fill", function (d) {return d.type.includes("INTERFACE") ? "black" : color(d.intensity)})
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
@@ -148,8 +138,12 @@
 
         zoom_handler(svg);
 
-        newNode.append("title")
-            .text(function(d) { return "type: " + d.type + "\n" + "name: " + d.name; });
+        newNode.append("title").text(function(d) { return "type: " + d.type + "\n" + "name: " + d.name; });
+        // node1.append("text")
+        //     .attr("x", function(d){ console.log(d.vx);})
+        //     .attr("y", 6)
+        //     .text(function(d) { return d.type.includes("STRATEGY") ? "S" : ""; });
+
         //	ENTER + UPDATE
         node = node.merge(newNode);
 

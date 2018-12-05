@@ -36,6 +36,19 @@ public class Symfinder {
                 .map(Path::toFile)
                 .collect(Collectors.toList());
 
+        visitPackage(javaPackagePath, classpathPath, files, new GraphBuilderVisitor());
+
+        neoGraph.setMethodsOverloads();
+        neoGraph.setConstructorsOverloads();
+
+        visitPackage(javaPackagePath, classpathPath, files, new StrategyVisitor());
+
+        neoGraph.writeGraphFile(Configuration.getGraphOutputPath());
+        neoGraph.closeDriver();
+
+    }
+
+    private void visitPackage(String javaPackagePath, String classpathPath, List <File> files, ASTVisitor visitor) throws IOException {
         for (File file : files) {
             try (Stream <String> lines = Files.lines(file.toPath(), Charset.defaultCharset())) {
                 String fileContent = lines.collect(Collectors.joining("\n"));
@@ -61,23 +74,17 @@ public class Symfinder {
                 parser.setCompilerOptions(options);
 
                 CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-
-                TypeFinderVisitor v = new TypeFinderVisitor();
-                cu.accept(v);
+                cu.accept(visitor);
             }
         }
-        neoGraph.setMethodsOverloads();
-        neoGraph.setConstructorsOverloads();
-        neoGraph.writeGraphFile(Configuration.getGraphOutputPath());
-        neoGraph.closeDriver();
     }
 
-    private class TypeFinderVisitor extends ASTVisitor {
+    private class GraphBuilderVisitor extends ASTVisitor {
 
         @Override
         public boolean visit(MethodDeclaration method) {
             // Ignoring methods in anonymous classes
-            if (! method.resolveBinding().getDeclaringClass().isAnonymous()) {
+            if ((! (method.resolveBinding() == null)) && ! method.resolveBinding().getDeclaringClass().isAnonymous()) {
                 String methodName = method.getName().getIdentifier();
                 String parentClassName = method.resolveBinding().getDeclaringClass().getQualifiedName();
                 System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
@@ -106,10 +113,10 @@ public class Symfinder {
             // If the class is abstract
             if (Modifier.isAbstract(type.getModifiers())) {
                 thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), NeoGraph.NodeType.CLASS, NeoGraph.NodeType.ABSTRACT);
-            // If the type is an interface
+                // If the type is an interface
             } else if (type.isInterface()) {
                 thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), NeoGraph.NodeType.INTERFACE);
-            // The type is a class
+                // The type is a class
             } else {
                 thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), NeoGraph.NodeType.CLASS);
             }
@@ -124,6 +131,18 @@ public class Symfinder {
             if (superclassType != null) {
                 Node superclassNode = neoGraph.getOrCreateNode(superclassType.getQualifiedName(), superclassType.getName(), NeoGraph.NodeType.CLASS);
                 neoGraph.linkTwoNodes(superclassNode, thisNode, NeoGraph.RelationType.EXTENDS);
+            }
+            return true;
+        }
+    }
+
+    private class StrategyVisitor extends ASTVisitor {
+
+        @Override
+        public boolean visit(FieldDeclaration field) {
+            Node typeNode = neoGraph.getOrCreateNode(field.getType().resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS);
+            if (field.getType().resolveBinding().getName().contains("Strategy") || neoGraph.getNbSubclasses(typeNode) >= 2){
+                neoGraph.addLabelToNode(typeNode, NeoGraph.NodeType.STRATEGY.toString());
             }
             return true;
         }
