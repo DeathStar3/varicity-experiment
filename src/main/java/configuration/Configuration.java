@@ -25,7 +25,6 @@ public class Configuration {
         try (FileInputStream fis = new FileInputStream(propertiesFile)) {
             Yaml yaml = new Yaml();
             properties = yaml.loadAs(fis, ParametersObject.class);
-            System.out.println(properties);
         } catch (FileNotFoundException e) {
             e.printStackTrace(); // TODO: 11/28/18 create exception
         } catch (IOException e) {
