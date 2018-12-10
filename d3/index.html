@@ -84,7 +84,7 @@
     });
 
     //	data read and store
-    d3.json("awt.json", function(err, g) {
+    d3.json("junit.json", function(err, g) {
         if (err) throw err;
 
         var sort = g.nodes.filter(a => a.type.includes("CLASS")).map(a => parseInt(a.intensity)).sort((a, b) => a - b);

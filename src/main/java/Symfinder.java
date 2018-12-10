@@ -1,3 +1,4 @@
+import configuration.Configuration;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.neo4j.driver.v1.types.Node;
@@ -19,31 +20,33 @@ import java.util.stream.Stream;
 public class Symfinder {
 
     private NeoGraph neoGraph;
+    private String sourcePackage;
+    private String graphOutputPath;
 
-    public Symfinder() {
-        neoGraph = new NeoGraph(Configuration.getNeo4JParameter("bolt_address"),
-                Configuration.getNeo4JParameter("user"),
-                Configuration.getNeo4JParameter("password"));
+    public Symfinder(String sourcePackage, String graphOutputPath) {
+        this.sourcePackage = sourcePackage;
+        this.graphOutputPath = graphOutputPath;
+        this.neoGraph = new NeoGraph(Configuration.getNeo4JBoltAddress(),
+                Configuration.getNeo4JUser(),
+                Configuration.getNeo4JPassword());
     }
 
     public void run() throws IOException {
-        String sourcesPackagePath = Configuration.getSourcePackage();
         String javaPackagePath = "src/main/java";
         String classpathPath = "/usr/lib/jvm/java-8-openjdk";
 
-        List <File> files = Files.walk(Paths.get(sourcesPackagePath))
+        List <File> files = Files.walk(Paths.get(sourcePackage))
                 .filter(Files::isRegularFile)
                 .map(Path::toFile)
                 .collect(Collectors.toList());
 
         visitPackage(javaPackagePath, classpathPath, files, new GraphBuilderVisitor());
+        visitPackage(javaPackagePath, classpathPath, files, new StrategyVisitor());
 
         neoGraph.setMethodsOverloads();
         neoGraph.setConstructorsOverloads();
-
-        visitPackage(javaPackagePath, classpathPath, files, new StrategyVisitor());
-
-        neoGraph.writeGraphFile(Configuration.getGraphOutputPath());
+        neoGraph.writeGraphFile(graphOutputPath);
+        neoGraph.deleteGraph();
         neoGraph.closeDriver();
 
     }
@@ -140,10 +143,23 @@ public class Symfinder {
 
         @Override
         public boolean visit(FieldDeclaration field) {
-            Node typeNode = neoGraph.getOrCreateNode(field.getType().resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS);
-            if (field.getType().resolveBinding().getName().contains("Strategy") || neoGraph.getNbSubclasses(typeNode) >= 2){
-                neoGraph.addLabelToNode(typeNode, NeoGraph.NodeType.STRATEGY.toString());
+            System.out.println(field);
+            System.out.println(field.getType());
+            if (field.getType().resolveBinding() != null) { // TODO: 12/6/18 log this
+                Node typeNode = neoGraph.getOrCreateNode(field.getType().resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS);
+                if (field.getType().resolveBinding().getName().contains("Strategy") || neoGraph.getNbSubclasses(typeNode) >= 2){
+                    neoGraph.addLabelToNode(typeNode, NeoGraph.NodeType.STRATEGY.toString());
+                }
             }
+            return true;
+        }
+
+    }
+
+    private class FactoryVisitor extends ASTVisitor {
+
+        @Override
+        public boolean visit(TypeDeclaration type) {
             return true;
         }
 

@@ -1,10 +1,12 @@
+package configuration;
+
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Configuration {
     private static Configuration ourInstance = new Configuration();
@@ -13,16 +15,17 @@ public class Configuration {
         return ourInstance;
     }
 
-    private static Map<String, Object> properties;
+    private static ParametersObject properties;
 
-    private Configuration(){
+    private Configuration() {
         this("symfinder.yaml");
     }
 
     private Configuration(String propertiesFile) {
         try (FileInputStream fis = new FileInputStream(propertiesFile)) {
             Yaml yaml = new Yaml();
-            properties = yaml.load(fis);
+            properties = yaml.loadAs(fis, ParametersObject.class);
+            System.out.println(properties);
         } catch (FileNotFoundException e) {
             e.printStackTrace(); // TODO: 11/28/18 create exception
         } catch (IOException e) {
@@ -30,23 +33,20 @@ public class Configuration {
         }
     }
 
-    // TODO: 11/28/18 do this properly
-    public static String getNeo4JParameter(String param){
-        return ((Map <String, String>) properties.get("neo4j")).get(param);
+    public static String getNeo4JBoltAddress() {
+        return properties.getNeo4j().getBoltAddress();
     }
 
-    public static String getSourcePackage(){
-        return String.valueOf(properties.get("source_package"));
+    public static String getNeo4JUser() {
+        return properties.getNeo4j().getUser();
     }
 
-    public static String getGraphOutputPath(){
-        return String.valueOf(properties.get("output_path"));
+    public static String getNeo4JPassword() {
+        return properties.getNeo4j().getPassword();
     }
 
-    public static List<String> getExcludedPackages(){
-        return (List <String>) properties.get("excluded");
+    public static List <Experience> getExperiences() {
+        return new ArrayList <>(properties.getExperiences().values());
     }
-
-
 
 }
