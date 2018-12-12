@@ -108,11 +108,10 @@ public class Symfinder {
             if (! isTestClass(type.resolveBinding())) {
                 Node thisNode;
 
-                // If the class is an inner class
+                // If the class is an inner class / interface
                 // TODO: 11/28/18 test this
-                // TODO: 12/3/18 deal with the inner interface case
                 if (! type.isPackageMemberTypeDeclaration()) {
-                    thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), NeoGraph.NodeType.CLASS);
+                    thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), NeoGraph.NodeType.CLASS, NeoGraph.NodeType.INNER);
                     Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getQualifiedName(), type.resolveBinding().getDeclaringClass().getName(), NeoGraph.NodeType.CLASS);
                     neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER_CLASS);
                 }

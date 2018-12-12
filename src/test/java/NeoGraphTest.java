@@ -154,4 +154,39 @@ public class NeoGraphTest {
             }
         }
     }
+
+    @Test
+    public void addLabelToNode() {
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            org.neo4j.driver.v1.types.Node node = graph.createNode("class", NeoGraph.NodeType.CLASS);
+            graph.addLabelToNode(node, NeoGraph.NodeType.STRATEGY.toString());
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                Node nodeFromGraph = graphDatabaseService.getNodeById(node.id());
+                assertTrue(nodeFromGraph.hasLabel(Label.label(NeoGraph.NodeType.CLASS.toString())));
+                assertTrue(nodeFromGraph.hasLabel(Label.label(NeoGraph.NodeType.STRATEGY.toString())));
+                tx.success();
+            }
+        }
+    }
+
+    @Test
+    public void getNbSubclasses() {
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            org.neo4j.driver.v1.types.Node nodeClass = graph.createNode("class", NeoGraph.NodeType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeSubclass1 = graph.createNode("subclass1", NeoGraph.NodeType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeSubclass2 = graph.createNode("subclass2", NeoGraph.NodeType.CLASS);
+            NeoGraph.RelationType relationType = NeoGraph.RelationType.EXTENDS;
+            graph.linkTwoNodes(nodeClass, nodeSubclass1, relationType);
+            graph.linkTwoNodes(nodeClass, nodeSubclass2, relationType);
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                assertEquals(2, graph.getNbSubclasses(nodeClass));
+                assertEquals(0, graph.getNbSubclasses(nodeSubclass1));
+                assertEquals(0, graph.getNbSubclasses(nodeSubclass2));
+                tx.success();
+            }
+        }
+    }
+
 }
