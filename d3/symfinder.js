@@ -1,38 +1,10 @@
-<!DOCTYPE html>
-<html>
-<meta charset="UTF-8">
-<style>
-    /*	style definitions	*/
-    button {
-        position: relative;
-    }
+function displayGraph(jsonFile){
+    d3.selectAll("svg > *").remove();
+    generateGraph(jsonFile);
+}
 
-    .node {
-        stroke: white;
-        stroke-width: 2px;
-    }
-
-    .link {
-        stroke: gray;
-        stroke-width: 4px;
-    }
-
-</style>
-<body>
-<button type="button" class="filter-btn" id="alone" value="ALONE">Filter isolated nodes</button>
-<button type="button" class="filter-btn" id="lang" value="java.lang">java.lang</button>
-<button type="button" class="filter-btn" id="util" value="java.util">java.util</button>
-<button type="button" class="filter-btn" id="io" value="java.io">java.io</button>
-</body>
-<svg width="960" height="500"></svg>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script
-        src="https://code.jquery.com/jquery-3.2.1.min.js"
-        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"></script>
-<script>
-
-    var graphFilename = new URLSearchParams(window.location.search).get("graph");
+function generateGraph(jsonFile){
+    // document.getElementsByTagName("svg")[0].innerHTML = "";
 
     //	data stores
     var graph, store;
@@ -67,6 +39,7 @@
         .force("charge", d3.forceManyBody()
             .strength(function(d) { return -50;}))
         .force("center", d3.forceCenter(width / 2, height / 2));
+    // console.log(simulation);
 
     //	filtered types
     typeFilterList = [];
@@ -84,7 +57,7 @@
     });
 
     //	data read and store
-    d3.json("junit.json", function(err, g) {
+    d3.json(jsonFile, function(err, g) {
         if (err) throw err;
 
         var sort = g.nodes.filter(a => a.type.includes("CLASS")).map(a => parseInt(a.intensity)).sort((a, b) => a - b);
@@ -168,6 +141,8 @@
         //	ENTER + UPDATE
         label = label.merge(newLabel);
 
+        console.log(graph.nodes);
+
         //	update simulation nodes, links, and alpha
         simulation
             .nodes(graph.nodes)
@@ -200,8 +175,8 @@
     //	tick event handler with bounded box
     function ticked() {
         node
-            // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-            // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+        // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+        // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
             .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
 
@@ -225,7 +200,7 @@
                     graph.nodes.push($.extend(true, {}, n));
                 });
                 difference = [];
-            // Nodes need to be filtered
+                // Nodes need to be filtered
             } else {
                 var tmp = graph;
                 var linkedNodes = new Set();
@@ -244,7 +219,6 @@
                     });
                 });
             }
-            console.log(difference);
         } else {
             var matchingNodes = new Set([...store.nodes].map(n => n.name).filter(name => name.startsWith(value)));
 
@@ -281,5 +255,4 @@
             });
         }
     }
-
-</script>
+}

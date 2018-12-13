@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>$title</title>
+</head>
+<body>
+<button type="button" class="filter-btn" id="alone" value="ALONE">Filter isolated nodes</button>
+<button type="button" class="filter-btn" id="lang" value="java.lang">java.lang</button>
+<button type="button" class="filter-btn" id="util" value="java.util">java.util</button>
+<button type="button" class="filter-btn" id="io" value="java.io">java.io</button>
+</body>
+<svg width="960" height="500"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+<script src="symfinder.js"></script>
+<script type="text/javascript">
+    function display() {
+        displayGraph("$jsonFile");
+    }
+    window.onload = display;
+</script>

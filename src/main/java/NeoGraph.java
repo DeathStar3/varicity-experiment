@@ -6,6 +6,7 @@ import org.neo4j.driver.v1.types.Node;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +20,7 @@ public class NeoGraph {
     }
 
     enum RelationType {
-        METHOD, INNER_CLASS, IMPLEMENTS, EXTENDS
+        METHOD, INNER, IMPLEMENTS, EXTENDS
     }
 
     private Driver driver;
@@ -39,7 +40,7 @@ public class NeoGraph {
     /**
      * Creates a node of corresponding name and types and returns it.
      *
-     * @param name Node name
+     * @param name  Node name
      * @param types Node types
      */
     public Node createNode(String name, String shortName, NodeType... types) {
@@ -146,7 +147,7 @@ public class NeoGraph {
      * If the node does not exist, it is created with the specified types as labels.
      * If it exists, the types are added as labels to the node.
      *
-     * @param name Node name
+     * @param name  Node name
      * @param types Node types
      */
     public Node getOrCreateNode(String name, String shortName, NodeType... types) {
@@ -160,13 +161,20 @@ public class NeoGraph {
                 .list().get(0).get("n").asNode();
     }
 
-    public void addLabelToNode(Node node, String label){
+    public void addLabelToNode(Node node, String label) {
         submitRequest(String.format("MATCH (n) WHERE ID(n) = %s SET n:%s RETURN (n)", node.id(), label));
     }
 
     public void writeGraphFile(String filePath) {
-        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(filePath))) {
-            bw.write(generateJsonGraph());
+        Path path = Paths.get(filePath);
+        try {
+            if (path.toFile().getParentFile().exists() || (path.toFile().getParentFile().mkdirs() && path.toFile().createNewFile())) {
+                try (BufferedWriter bw = Files.newBufferedWriter(path)) {
+                    bw.write(generateJsonGraph());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -175,10 +183,12 @@ public class NeoGraph {
 
     /**
      * Get number of subclasses of a class
+     *
      * @param node Node corresponding to the class
+     *
      * @return Number of subclasses
      */
-    public int getNbSubclasses(Node node){
+    public int getNbSubclasses(Node node) {
         return submitRequest(String.format("MATCH (c:CLASS)-[:EXTENDS]->(c2:CLASS) " +
                 "WHERE ID(c) = %s " +
                 "RETURN count(c2)", node.id()))
@@ -201,7 +211,7 @@ public class NeoGraph {
     }
 
     private String getLinksAsJson() {
-        return submitRequest("MATCH (c1)-[r:INNER_CLASS|:EXTENDS|:IMPLEMENTS]->(c2) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})")
+        return submitRequest("MATCH (c1)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})")
                 .list()
                 .get(0)
                 .get(0)
@@ -224,7 +234,7 @@ public class NeoGraph {
         }
     }
 
-    public void closeDriver(){
+    public void closeDriver() {
         driver.close();
     }
 

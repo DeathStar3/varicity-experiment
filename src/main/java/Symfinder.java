@@ -113,7 +113,7 @@ public class Symfinder {
                 if (! type.isPackageMemberTypeDeclaration()) {
                     thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), NeoGraph.NodeType.CLASS, NeoGraph.NodeType.INNER);
                     Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getQualifiedName(), type.resolveBinding().getDeclaringClass().getName(), NeoGraph.NodeType.CLASS);
-                    neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER_CLASS);
+                    neoGraph.linkTwoNodes(parentNode, thisNode, NeoGraph.RelationType.INNER);
                 }
 
 

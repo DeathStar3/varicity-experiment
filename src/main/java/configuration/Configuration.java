@@ -5,8 +5,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 public class Configuration {
     private static Configuration ourInstance = new Configuration();
@@ -44,8 +43,8 @@ public class Configuration {
         return properties.getNeo4j().getPassword();
     }
 
-    public static List <Experience> getExperiences() {
-        return new ArrayList <>(properties.getExperiences().values());
+    public static Map <String, Experience> getExperiences() {
+        return properties.getExperiences();
     }
 
 }
