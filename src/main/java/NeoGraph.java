@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class NeoGraph {
 
     enum NodeType {
-        CLASS, ABSTRACT, INNER, METHOD, CONSTRUCTOR, INTERFACE, STRATEGY
+        CLASS, ABSTRACT, INNER, METHOD, CONSTRUCTOR, INTERFACE, STRATEGY, FACTORY
     }
 
     enum RelationType {

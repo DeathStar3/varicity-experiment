@@ -23,7 +23,6 @@ function generateGraph(jsonFile){
         .range(["#FFFFFF", '#FF0000'])
         .interpolate(d3.interpolateRgb);
 
-
     //add encompassing group for the zoom
     var g = svg.append("g")
         .attr("class", "everything");
@@ -91,7 +90,7 @@ function generateGraph(jsonFile){
             .attr("class", "node")
             .style("stroke", function (d) {return d.type.includes("ABSTRACT") ? "black" : "none"})
             .attr("r", function (d) {return d.type.includes("CLASS") ? 10 + d.nodeSize : 10})
-            .attr("fill", function (d) {return d.type.includes("INTERFACE") ? "black" : color(d.intensity)})
+            .attr("fill", function (d) {return d.type.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.intensity))})
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
@@ -136,12 +135,17 @@ function generateGraph(jsonFile){
         var newLabel = label.enter().append("g").append("text")
             .attr("dx", -5)
             .attr("dy", ".35em")
-            .text(function(d) { return d.type.includes("STRATEGY") ? "S" : ""; });
+            .attr("fill", function (d) {
+                var nodeColor = d.type.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.intensity));
+                return contrastColor(nodeColor);
+                // return d3.rgb(255 - nodeColor.r, 255 - nodeColor.g, 255 - nodeColor.b);
+            })
+            .text(function(d) {
+                return ["STRATEGY", "FACTORY"].filter(p => d.type.includes(p)).map(p => p[0]).join(", ");
+            });
 
         //	ENTER + UPDATE
         label = label.merge(newLabel);
-
-        console.log(graph.nodes);
 
         //	update simulation nodes, links, and alpha
         simulation
@@ -254,5 +258,20 @@ function generateGraph(jsonFile){
                 }
             });
         }
+    }
+
+    function contrastColor(color)
+    {
+        var d = 0;
+
+        // Counting the perceptive luminance - human eye favors green color...
+        const luminance = ( 0.299 * color.r + 0.587 * color.g + 0.114 * color.b)/255;
+
+        if (luminance > 0.5)
+            d = 0; // bright colors - black font
+        else
+            d = 255; // dark colors - white font
+
+        return  d3.rgb(d, d, d);
     }
 }

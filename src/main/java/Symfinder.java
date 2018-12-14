@@ -44,6 +44,7 @@ public class Symfinder {
 
         visitPackage(javaPackagePath, classpathPath, files, new GraphBuilderVisitor());
         visitPackage(javaPackagePath, classpathPath, files, new StrategyVisitor());
+        visitPackage(javaPackagePath, classpathPath, files, new FactoryVisitor());
 
         neoGraph.setMethodsOverloads();
         neoGraph.setConstructorsOverloads();
@@ -164,9 +165,12 @@ public class Symfinder {
 
         @Override
         public boolean visit(TypeDeclaration type) {
+            Node typeNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS);
+            if (type.resolveBinding().getName().contains("Factory")) {
+                neoGraph.addLabelToNode(typeNode, NeoGraph.NodeType.FACTORY.toString());
+            }
             return true;
         }
-
     }
 
     private boolean isTestClass(ITypeBinding classBinding) {
