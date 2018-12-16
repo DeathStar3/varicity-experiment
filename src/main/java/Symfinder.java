@@ -5,6 +5,7 @@ import org.neo4j.driver.v1.types.Node;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,33 +57,52 @@ public class Symfinder {
 
     private void visitPackage(String javaPackagePath, String classpathPath, List <File> files, ASTVisitor visitor) throws IOException {
         for (File file : files) {
-            try (Stream <String> lines = Files.lines(file.toPath(), Charset.forName("UTF-8"))) {
-                String fileContent = lines.collect(Collectors.joining("\n"));
+            String fileContent = getFileLines(file);
 
-                ASTParser parser = ASTParser.newParser(AST.JLS8);
-                parser.setResolveBindings(true);
-                parser.setKind(ASTParser.K_COMPILATION_UNIT);
+            ASTParser parser = ASTParser.newParser(AST.JLS8);
+            parser.setResolveBindings(true);
+            parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
-                parser.setBindingsRecovery(true);
+            parser.setBindingsRecovery(true);
 
-                parser.setCompilerOptions(JavaCore.getOptions());
+            parser.setCompilerOptions(JavaCore.getOptions());
 
-                parser.setUnitName(file.getCanonicalPath());
+            parser.setUnitName(file.getCanonicalPath());
 
-                String[] sources = {javaPackagePath};
-                String[] classpath = {classpathPath};
+            String[] sources = {javaPackagePath};
+            String[] classpath = {classpathPath};
 
-                parser.setEnvironment(classpath, sources, new String[]{"UTF-8"}, true);
-                parser.setSource(fileContent.toCharArray());
+            parser.setEnvironment(classpath, sources, new String[]{"UTF-8"}, true);
+            parser.setSource(fileContent.toCharArray());
 
-                Map <String, String> options = JavaCore.getOptions();
-                options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-                parser.setCompilerOptions(options);
+            Map <String, String> options = JavaCore.getOptions();
+            options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+            parser.setCompilerOptions(options);
 
-                CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-                cu.accept(visitor);
+            CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+            cu.accept(visitor);
+        }
+    }
+
+    private String getFileLines(File file) {
+        for (Charset charset : Charset.availableCharsets().values()) {
+            String lines = getFileLinesWithEncoding(file, charset);
+            if (lines != null) {
+                return lines;
             }
         }
+        return null;
+    }
+
+    private String getFileLinesWithEncoding(File file, Charset charset) {
+        try (Stream <String> lines = Files.lines(file.toPath(), charset)) {
+            return lines.collect(Collectors.joining("\n"));
+        } catch (UncheckedIOException e) {
+            System.out.println(charset.displayName() + ": wrong encoding");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private class GraphBuilderVisitor extends ASTVisitor {
@@ -119,19 +139,21 @@ public class Symfinder {
 
 
                 // If the class is abstract
+                NeoGraph.NodeType[] nodeTypes;
                 if (Modifier.isAbstract(type.getModifiers())) {
-                    thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), NeoGraph.NodeType.CLASS, NeoGraph.NodeType.ABSTRACT);
+                    nodeTypes = new NeoGraph.NodeType[]{NeoGraph.NodeType.CLASS, NeoGraph.NodeType.ABSTRACT};
                     // If the type is an interface
                 } else if (type.isInterface()) {
-                    thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), NeoGraph.NodeType.INTERFACE);
+                    nodeTypes = new NeoGraph.NodeType[]{NeoGraph.NodeType.INTERFACE};
                     // The type is a class
                 } else {
-                    thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), NeoGraph.NodeType.CLASS);
+                    nodeTypes = new NeoGraph.NodeType[]{NeoGraph.NodeType.CLASS};
                 }
+                thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), nodeTypes);
 
                 // Link to implemented interfaces if exist
-                for (Object o : type.superInterfaceTypes()) {
-                    Node interfaceNode = neoGraph.getOrCreateNode(((Type) o).resolveBinding().getQualifiedName(), ((Type) o).resolveBinding().getName(), NeoGraph.NodeType.INTERFACE);
+                for (ITypeBinding o : type.resolveBinding().getInterfaces()) {
+                    Node interfaceNode = neoGraph.getOrCreateNode(o.getQualifiedName(), o.getName(), NeoGraph.NodeType.INTERFACE);
                     neoGraph.linkTwoNodes(interfaceNode, thisNode, NeoGraph.RelationType.IMPLEMENTS);
                 }
                 // Link to superclass if exists
@@ -165,9 +187,10 @@ public class Symfinder {
 
         @Override
         public boolean visit(TypeDeclaration type) {
-            Node typeNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), NeoGraph.NodeType.CLASS);
-            if (type.resolveBinding().getName().contains("Factory")) {
-                neoGraph.addLabelToNode(typeNode, NeoGraph.NodeType.FACTORY.toString());
+            NeoGraph.NodeType nodeType = type.isInterface() ? NeoGraph.NodeType.INTERFACE : NeoGraph.NodeType.CLASS;
+            String qualifiedName = type.resolveBinding().getQualifiedName();
+            if (qualifiedName.contains("Factory")) {
+                neoGraph.addLabelToNode(neoGraph.getOrCreateNode(qualifiedName, nodeType), NeoGraph.NodeType.FACTORY.toString());
             }
             return true;
         }

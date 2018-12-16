@@ -1,3 +1,6 @@
+//	data stores
+var graph, store;
+
 function displayGraph(jsonFile){
     d3.selectAll("svg > *").remove();
     generateGraph(jsonFile);
@@ -6,8 +9,6 @@ function displayGraph(jsonFile){
 function generateGraph(jsonFile){
     // document.getElementsByTagName("svg")[0].innerHTML = "";
 
-    //	data stores
-    var graph, store;
     var difference = [];
 
     var width = window.innerWidth,
@@ -138,7 +139,6 @@ function generateGraph(jsonFile){
             .attr("fill", function (d) {
                 var nodeColor = d.type.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.intensity));
                 return contrastColor(nodeColor);
-                // return d3.rgb(255 - nodeColor.r, 255 - nodeColor.g, 255 - nodeColor.b);
             })
             .text(function(d) {
                 return ["STRATEGY", "FACTORY"].filter(p => d.type.includes(p)).map(p => p[0]).join(", ");
