@@ -1,0 +1,13 @@
+sourcePackage: resources
+
+experiences:
+  jhipster:
+    repositoryUrl: https://github.com/jhipster/jhipster
+    tagId: 2.0.28
+    sourcePackage:  src/main/resources/jhipster
+    outputPath: d3/data/jhipster.json
+  javaGeom:
+    repositoryUrl: https://github.com/dlegland/javaGeom
+    commitId: 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
+    sourcePackage: src/main/resources/javaGeom
+    outputPath: d3/data/javaGeom.json

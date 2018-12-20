@@ -4,12 +4,9 @@ neo4j:
   password: root
 
 experiences:
-  factory:
-    sourcePackage: /home/ardenia/projects/polytech/PFE/dev/java-design-patterns-1.20.0/factory-kit/src/main
-    outputPath: d3/data/factory.json
   paperexample:
     sourcePackage: src/main/resources/paperexample
     outputPath: d3/data/example.json
-  Strategy:
+  strategy:
     sourcePackage: src/main/resources/strategy
     outputPath: d3/data/strategy.json
