@@ -1,13 +1,14 @@
 sourcePackage: resources
 
 experiences:
+  junit:
+    repositoryUrl: https://github.com/junit-team/junit4
+    tagIds:
+      - r4.12
+      - r4.11
   jhipster:
     repositoryUrl: https://github.com/jhipster/jhipster
-    tagId: 2.0.28
-    sourcePackage:  src/main/resources/jhipster
-    outputPath: d3/data/jhipster.json
-  javaGeom:
-    repositoryUrl: https://github.com/dlegland/javaGeom
-    commitId: 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
-    sourcePackage: src/main/resources/javaGeom
-    outputPath: d3/data/javaGeom.json
+    commitIds:
+      - ad1a84c659cffa67b9e36bf14a8ce0bca9d2cbc3
+      - 6f1a52a4aabe99fb3d2310019f61555d4682e763
+

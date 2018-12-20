@@ -6,7 +6,11 @@
 git_commit(){
 	git clone $1 $2
 	cd $2
-	git checkout $3
+	for i in "${@:3}"; do
+        git checkout $i
+        mkdir ../$2-$i/
+        cp -r * ../$2-$i/
+    done
 }
 
 # $1: repository URL
@@ -15,23 +19,17 @@ git_commit(){
 git_tag(){
 	git clone $1 $2
 	cd $2
-	git checkout tags/$3
+	for i in "${@:3}"; do
+        git checkout tags/$i
+        mkdir ../$2-$i/
+        cp -r * ../$2-$i/
+    done
 }
-
-# $1: repository URL
-# $2: destination directory
-download_archive(){
-	curl $1 -O $2/archive.zip
-	cd $2
-	unzip $2
-	rm $2
-}
-
 
 case "$1" in
 	"commit")
     	git_commit $2 $3 $4
-        ;;         
+        ;;
     "tag")
         git_tag $2 $3 $4
         ;;
