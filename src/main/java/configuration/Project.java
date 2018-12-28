@@ -1,7 +1,5 @@
 package configuration;
 
-import org.apache.commons.io.FilenameUtils;
-
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;

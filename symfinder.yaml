@@ -1,21 +1,49 @@
+projectsPackage: resources
+
 neo4j:
   boltAddress: bolt://localhost:7687
   user: neo4j
   password: root
 
-projectsPackage: resources
-
 experiences:
+  cxf:
+    repositoryUrl: https://github.com/apache/cxf
+    sourcePackage: core/src/main/java/org/apache/cxf
+    tagIds:
+      - cxf-3.2.7
   junit:
     repositoryUrl: https://github.com/junit-team/junit4
     sourcePackage: src/main/java
     tagIds:
       - r4.12
-      - r4.11
+  maven:
+    repositoryUrl: https://github.com/apache/maven
+    sourcePackage: .
+    tagIds:
+      - maven-3.6.0
   jhipster:
     repositoryUrl: https://github.com/jhipster/jhipster
     sourcePackage: jhipster-framework/src/main/java
+    tagIds:
+      - 2.0.28
+  jfreechart:
+    repositoryUrl: https://github.com/jfree/jfreechart
+    sourcePackage: src/main/java/org/jfree/
+    tagIds:
+      - v1.5.0
+  graph-pl:
+    repositoryUrl: https://github.com/ternava/Graph-PL
+    sourcePackage: GraphPL/src/
     commitIds:
-      - ad1a84c659cffa67b9e36bf14a8ce0bca9d2cbc3
-      - 6f1a52a4aabe99fb3d2310019f61555d4682e763
+      - 447b468b96ad402af548fb924d7d9aa6a4030eb9
+  graph-pl2:
+    repositoryUrl: https://github.com/ternava/Graph-PL
+    sourcePackage: Graph2-PL/GraphPL2
+    commitIds:
+      - 447b468b96ad402af548fb924d7d9aa6a4030eb9
+  javaGeom:
+    repositoryUrl: https://github.com/dlegland/javaGeom
+    sourcePackage: src
+    commitIds:
+      - 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
 

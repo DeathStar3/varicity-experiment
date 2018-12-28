@@ -23,25 +23,35 @@ docker-compose up
 	- Password: `neo4j`
 - You will be prompted a new password : enter a password of your choice
 
-### Java application configuration
+### symfinder configuration
 
 The application's settings are set up using a YAML file, called `symfinder.yaml`, that must be at the root of the project.
-Here is the sample one which allows you to run the experiments on the repository.
+Here is an example:
 
 ```yaml
+projectsPackage: resources
+
 neo4j:
   boltAddress: bolt://localhost:7687
   user: neo4j
   password: <your_new_password>
 
 experiences:
-  paperexample:
-    sourcePackage: src/main/resources/paperexample
-    outputPath: d3/data/example.json
-  strategy:
-    sourcePackage: src/main/resources/strategy
-    outputPath: d3/data/strategy.json
+  junit:
+    repositoryUrl: https://github.com/junit-team/junit4
+    sourcePackage: src/main/java
+    tagIds:
+      - r4.12
+  javaGeom:
+    repositoryUrl: https://github.com/dlegland/javaGeom
+    sourcePackage: src
+    commitIds:
+      - 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
 ```
+
+#### General parameters
+
+- `projectsPackage`: directory where the sources for all projects will be downloaded
 
 #### Neo4J parameters
 
@@ -51,21 +61,38 @@ experiences:
 
 #### Experiences
 
-`experiences` corresponds to the different source codes you want to analyze
+`experiences` corresponds to the different source codes you want to analyze.
 You can specify as many experiences as you want.
-Each project is defined by two parameters:
-- `sourcePackage`: path of the directory containing the sources of the project to analyze
-- `outputPath`: path of the generated JSON file which will be used to visualize the data
+Each project is defined by different parameters:
+- `repositoryUrl`: URL of the project's Git repository
+- `sourcePackage`: relative path of the package containing the sources of the project to analyze. `.` corresponds to the root of the project to be analyzed.
+- `commitIds`: IDs of the commits to checkout
+- `tagsIds`: IDs of the tags to checkout
 
-### Run the Java application
+For an experience, you can mix different commits and different tags to checkout. For example, we could have :
 
-You can then start the Java application.
+```yaml
+junit:
+  repositoryUrl: https://github.com/junit-team/junit4
+  sourcePackage: src/main/java
+  tagIds:
+    - r4.12
+    - r4.11
+  commitIds:
+    - c3715204786394f461d94953de9a66a4cec684e9
+```
+
+Each checkout of tag or commit ID `<id>` will be placed in a directory whose path is : `<projectsPackage>/<experienceName>-<id>`.
+
+### Run the project
+
 To do this, run
 
 ```bash
-java -jar target/symfinder-1.0-SNAPSHOT.jar # mvn exec:java
+./run.sh
 ```
 
+This script will first execute a Python script to download the sources of the projects, then execute the symfinder Java application to analyze them.
 During the execution, the classes and methods detected are output.
 
 ### Visualize the generated graphs
