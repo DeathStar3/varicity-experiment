@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static j2html.TagCreator.*;
@@ -26,10 +25,10 @@ public class Visualisation {
     }
 
     public static void createVisualisations(){
-        for (Map.Entry <String, Experience> entry : Configuration.getExperiences().entrySet()) {
-            try(BufferedWriter bf = new BufferedWriter(new FileWriter(String.format("d3/%s.html", entry.getKey())))){ // TODO: 12/13/18 deal with directory name
+        for (Experience experience : Configuration.getExperiences()) {
+            try(BufferedWriter bf = new BufferedWriter(new FileWriter(String.format("d3/%s.html", experience.getExperienceName())))){ // TODO: 12/13/18 deal with directory name
                 String fileContent = new String(Files.readAllBytes(Paths.get("d3/template.html")));
-                fileContent = fileContent.replace("$title", entry.getKey()).replace("$jsonFile", entry.getValue().getOutputPath().replace("d3/", ""));
+                fileContent = fileContent.replace("$title", experience.getExperienceName()).replace("$jsonFile", experience.getOutputPath().replace("d3/", ""));
                 bf.write(fileContent);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -53,7 +52,8 @@ public class Visualisation {
     }
 
     private static List <Tag> getLinks() {
-        return Configuration.getExperiences().keySet().stream()
+        return Configuration.getExperiences().stream()
+                .map(Experience::getExperienceName)
                 .map(key -> graphLink(key, key + ".html"))
                 .collect(Collectors.toList());
     }

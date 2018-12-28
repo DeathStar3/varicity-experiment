@@ -53,7 +53,7 @@ experiences:
 
 `experiences` corresponds to the different source codes you want to analyze
 You can specify as many experiences as you want.
-Each experience is defined by two parameters:
+Each project is defined by two parameters:
 - `sourcePackage`: path of the directory containing the sources of the project to analyze
 - `outputPath`: path of the generated JSON file which will be used to visualize the data
 
@@ -63,7 +63,7 @@ You can then start the Java application.
 To do this, run
 
 ```bash
-java -jar target/symfinder-1.0-SNAPSHOT.jar
+java -jar target/symfinder-1.0-SNAPSHOT.jar # mvn exec:java
 ```
 
 During the execution, the classes and methods detected are output.

@@ -31,6 +31,8 @@ public class Symfinder {
         this.neoGraph = new NeoGraph(Configuration.getNeo4JBoltAddress(),
                 Configuration.getNeo4JUser(),
                 Configuration.getNeo4JPassword());
+        System.out.println("sourcePackage: " + sourcePackage);
+        System.out.println("graphOutputPath :" + graphOutputPath);
     }
 
     public void run() throws IOException {

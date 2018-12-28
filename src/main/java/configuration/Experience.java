@@ -2,8 +2,19 @@ package configuration;
 
 public class Experience {
 
-    public String sourcePackage;
-    public String outputPath;
+    private String experienceName;
+    private String sourcePackage;
+    private String outputPath;
+
+    public Experience(String experienceName, String sourcePackage, String outputPath) {
+        this.experienceName = experienceName;
+        this.sourcePackage = sourcePackage;
+        this.outputPath = outputPath;
+    }
+
+    public String getExperienceName() {
+        return experienceName;
+    }
 
     public String getSourcePackage() {
         return sourcePackage;
@@ -12,5 +23,4 @@ public class Experience {
     public String getOutputPath() {
         return outputPath;
     }
-
 }
