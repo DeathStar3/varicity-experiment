@@ -37,7 +37,12 @@ public class Symfinder {
 
     public void run() throws IOException {
         String javaPackagePath = "src/main/java";
-        String classpathPath = "/usr/lib/jvm/java-8-openjdk";
+        String classpathPath = null;
+
+        classpathPath = System.getenv("JAVA_HOME");
+        if (classpathPath == null) { // default to linux openJDK 8 path
+            classpathPath = "/usr/lib/jvm/java-8-openjdk";
+        }
 
         List <File> files = Files.walk(Paths.get(sourcePackage))
                 .filter(Files::isRegularFile)

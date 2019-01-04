@@ -86,7 +86,7 @@ Each checkout of tag or commit ID `<id>` will be placed in a directory whose pat
 
 ### Run the project
 
-To do this, run
+To do this, the JAVA_HOME environment variable should be correctly set on your OS. Then run
 
 ```bash
 ./run.sh
