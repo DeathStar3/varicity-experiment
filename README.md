@@ -4,7 +4,7 @@
 
 - Docker
 - JDK 8 (might be running with 9 to 11, but not tested)
-- Python 3 with YAML lib
+- Python 3 with YAML lib (`pip3 install PyYAML`)
 - Firefox for displaying output graph locally (file:/// urls)
 
 ## Setup and Running
@@ -15,14 +15,14 @@ You first need to deploy an instance of a Neo4J database.
 To do this, go to the `neo4j` directory, then launch :
 
 ```bash
-docker-compose up
+docker-compose up -d
 ```
 
 - Point your browser to http://localhost:7474/
 - You will arrive on a login page. Default credentials are :
 	- Username: `neo4j`
 	- Password: `neo4j`
-- You will be prompted a new password : enter a password of your choice
+- You will be prompted a new password : enter `root` to work with the default experimental configuration provided, or a password of your choice
 
 ### symfinder configuration
 
@@ -96,6 +96,11 @@ To do this, the JAVA_HOME environment variable should be correctly set on your O
 This script will first execute a Python script to download the sources of the projects, then execute the symfinder Java application to analyze them.
 During the execution, the classes and methods detected are output on the console.
 
+If you just want to rerun the analyses, run
+
+```bash
+./rerun.sh
+```
 
 ### Visualizing the generated graphs
 
