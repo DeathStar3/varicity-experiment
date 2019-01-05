@@ -25,3 +25,5 @@ hs_err_pid*
 .idea
 neo4j/data*
 target
+d3/data
+resources
