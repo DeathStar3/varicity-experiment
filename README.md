@@ -1,14 +1,15 @@
 # symfinder
 
-## Building the project
+## Technical Requirements
 
-```bash
-mvn clean install
-```
+- Docker
+- JDK 8 (might be running with 9 to 11, but not tested)
+- Python 3 with YAML lib
+- Firefox for displaying output graph locally (file:/// urls)
 
-## Reproducing the experiment
+## Setup and Running
 
-### Deploy a Neo4J instance
+### Deploying a Neo4J instance
 
 You first need to deploy an instance of a Neo4J database.  
 To do this, go to the `neo4j` directory, then launch :
@@ -84,7 +85,7 @@ junit:
 
 Each checkout of tag or commit ID `<id>` will be placed in a directory whose path is : `<projectsPackage>/<experienceName>-<id>`.
 
-### Run the project
+### Running the project
 
 To do this, the JAVA_HOME environment variable should be correctly set on your OS. Then run
 
@@ -93,9 +94,13 @@ To do this, the JAVA_HOME environment variable should be correctly set on your O
 ```
 
 This script will first execute a Python script to download the sources of the projects, then execute the symfinder Java application to analyze them.
-During the execution, the classes and methods detected are output.
+During the execution, the classes and methods detected are output on the console.
 
-### Visualize the generated graphs
 
-Open the `d3/index.html` file in your browser.
-It contains a list of the analyzed projects, and redirects you to the pages containing the graphs for each project.
+### Visualizing the generated graphs
+
+Open the `./d3/index.html` file in your (Firefox) browser. It contains a list of the analyzed projects, and redirects you to the pages containing the graphs for each project.
+
+Currently only Firefox (and not Chrome) is correctly displaying the D3 output locally. If you have a blank screen in your Browser, you need to install a web server locally, as other browsers are prohibiting AJAX requests to file:/// urls (https://stackoverflow.com/questions/18972460/d3-bar-graph-example-not-working-locally).
+
+
