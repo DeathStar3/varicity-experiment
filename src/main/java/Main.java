@@ -16,10 +16,10 @@ public class Main {
         experiences.forEach(experience -> {
             try {
                 new Symfinder(Paths.get(Configuration.getProjectsPackage()).resolve(experience.getSourcePackage()).toString(), experience.getOutputPath()).run();
-                System.exit(0);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+        System.exit(0);
     }
 }
