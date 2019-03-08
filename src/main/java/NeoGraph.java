@@ -131,7 +131,7 @@ public class NeoGraph {
     public void setConstructorsOverloads() {
         submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
                 "WITH count(a.name) AS cnt, c\n" +
-                "SET c.constructors = cnt");
+                "SET c.constructors = cnt -1");
         submitRequest("MATCH (c:CLASS)\n" +
                 "WHERE NOT EXISTS(c.constructors)\n" +
                 "SET c.constructors = 0");
@@ -194,6 +194,51 @@ public class NeoGraph {
                 "RETURN count(c2)", node.id()))
                 .list().get(0).get(0).asInt();
     }
+
+    /**
+     * Get total number of constructors overloads
+     *
+     * @return Number of constructors overloads
+     */
+    public int getTotalNbConstructorsOverloads() {
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constructors))")
+                .list().get(0).get(0).asInt();
+    }
+
+    /**
+     * Get total number of methods overloads
+     *
+     * @return Number of methods overloads
+     */
+    public int getTotalNbMethodsOverloads() {
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methods))")
+                .list().get(0).get(0).asInt();
+    }
+
+    /**
+     * Get total number of method level overloads.
+     * These are :
+     * - methods overloads
+     * - constructors overloads
+     *
+     * @return Number of method level overloads
+     */
+    public int getNbMethodLevelOverloads() {
+        return getTotalNbMethodsOverloads() + getTotalNbConstructorsOverloads();
+    }
+
+    /**
+     * Get total number of class level overloads.
+     * These are :
+     * - inheritance
+     *
+     * @return Number of method level overloads
+     */
+    public int getNbClassLevelOverloads() {
+        return submitRequest("MATCH (n)-[r:EXTENDS]->() RETURN COUNT (r)")
+                .list().get(0).get(0).asInt();
+    }
+
 
     private String generateJsonGraph() {
         return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson());

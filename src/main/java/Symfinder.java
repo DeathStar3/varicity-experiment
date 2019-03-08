@@ -31,8 +31,6 @@ public class Symfinder {
         this.neoGraph = new NeoGraph(Configuration.getNeo4JBoltAddress(),
                 Configuration.getNeo4JUser(),
                 Configuration.getNeo4JPassword());
-        System.out.println("sourcePackage: " + sourcePackage);
-        System.out.println("graphOutputPath :" + graphOutputPath);
     }
 
     public void run() throws IOException {
@@ -57,6 +55,10 @@ public class Symfinder {
         neoGraph.setMethodsOverloads();
         neoGraph.setConstructorsOverloads();
         neoGraph.writeGraphFile(graphOutputPath);
+        System.out.println("Number of methods overloads : " + neoGraph.getTotalNbMethodsOverloads());
+        System.out.println("Number of constructors overloads : " + neoGraph.getTotalNbConstructorsOverloads());
+        System.out.println("Number of method level overloads : " + neoGraph.getNbMethodLevelOverloads());
+        System.out.println("Number of class level overloads : " + neoGraph.getNbClassLevelOverloads());
         neoGraph.deleteGraph();
         neoGraph.closeDriver();
 

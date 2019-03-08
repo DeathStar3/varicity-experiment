@@ -11,6 +11,10 @@ public class Rectangle extends Shape {
         this.length = length;
     }
 
+    public Rectangle(Point p1, Point p2) {
+        // building rectangle with point coordinates
+    }
+
     public double area() {
         return width * length;
     }
