@@ -12,7 +12,6 @@ public class Main {
         Visualisation.createIndex();
         Visualisation.createVisualisations();
         List <Experience> experiences = Configuration.getExperiences();
-        System.out.println(experiences);
         experiences.forEach(experience -> {
             try {
                 new Symfinder(Paths.get(Configuration.getProjectsPackage()).resolve(experience.getSourcePackage()).toString(), experience.getOutputPath()).run();

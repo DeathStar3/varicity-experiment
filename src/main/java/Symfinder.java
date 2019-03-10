@@ -55,11 +55,7 @@ public class Symfinder {
         neoGraph.setMethodsOverloads();
         neoGraph.setConstructorsOverloads();
         neoGraph.writeGraphFile(graphOutputPath);
-        System.out.println("Number of methods overloads : " + neoGraph.getTotalNbMethodsOverloads());
-        System.out.println("Number of constructors overloads : " + neoGraph.getTotalNbConstructorsOverloads());
-        System.out.println("Number of method level overloads : " + neoGraph.getNbMethodLevelOverloads());
-        System.out.println("Number of class level overloads : " + neoGraph.getNbClassLevelOverloads());
-        System.out.println("Number of design patterns present : " + neoGraph.getNbNodesHavingDesignPatterns());
+        neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         neoGraph.deleteGraph();
         neoGraph.closeDriver();
 

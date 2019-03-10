@@ -193,18 +193,26 @@ public class NeoGraph {
                 .list().get(0).get(0).asInt();
     }
 
-    public static String getClauseForNodesMatchingLabels(NodeType... types){
+    public static String getClauseForNodesMatchingLabels(NodeType... types) {
         String whereClause = Arrays.stream(types).map(nodeType -> "n:" + nodeType.toString()).collect(Collectors.joining(" OR "));
         return String.format("MATCH (n) WHERE %s RETURN COUNT(n)", whereClause);
 
     }
 
     public void writeGraphFile(String filePath) {
+        writeToFile(filePath, generateJsonGraph());
+    }
+
+    public void writeStatisticsFile(String filePath) {
+        writeToFile(filePath, generateStatisticsJson());
+    }
+
+    public void writeToFile(String filePath, String content) {
         Path path = Paths.get(filePath);
         try {
             if (path.toFile().getParentFile().exists() || (path.toFile().getParentFile().mkdirs() && path.toFile().createNewFile())) {
                 try (BufferedWriter bw = Files.newBufferedWriter(path)) {
-                    bw.write(generateJsonGraph());
+                    bw.write(content);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -298,6 +306,15 @@ public class NeoGraph {
                 .stream()
                 .map(o -> new JSONObject(o).toString())
                 .collect(Collectors.joining(","));
+    }
+
+    public String generateStatisticsJson() {
+        return new JSONObject()
+                .put("methodsOverloads", getTotalNbMethodsOverloads())
+                .put("constructorsOverloads", getTotalNbConstructorsOverloads())
+                .put("classLevelOverloads", getNbClassLevelOverloads())
+                .put("methodLevelOverloads", getNbMethodLevelOverloads())
+                .put("designPatterns", getNbNodesHavingDesignPatterns()).toString();
     }
 
     /**
