@@ -35,7 +35,7 @@ public class NeoGraphTest {
     public void createNode() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            NeoGraph.NodeType nodeType = NeoGraph.NodeType.CLASS;
+            NeoGraph.NodeType nodeType = NeoGraph.EntityType.CLASS;
             graph.createNode("n", nodeType);
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 ResourceIterable <Node> allNodes = graphDatabaseService.getAllNodes();
@@ -53,8 +53,8 @@ public class NeoGraphTest {
     public void linkTwoNodes() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node node1 = graph.createNode("n1", NeoGraph.NodeType.CLASS);
-            org.neo4j.driver.v1.types.Node node2 = graph.createNode("n2", NeoGraph.NodeType.METHOD);
+            org.neo4j.driver.v1.types.Node node1 = graph.createNode("n1", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node node2 = graph.createNode("n2", NeoGraph.EntityType.METHOD);
             NeoGraph.RelationType relationType = NeoGraph.RelationType.METHOD;
             graph.linkTwoNodes(node1, node2, relationType);
             try (Transaction tx = graphDatabaseService.beginTx()) {
@@ -74,10 +74,10 @@ public class NeoGraphTest {
     public void setMethodsOverloads() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", NeoGraph.NodeType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeMethod1 = graph.createNode("method1", NeoGraph.NodeType.METHOD);
-            org.neo4j.driver.v1.types.Node nodeMethod11 = graph.createNode("method1", NeoGraph.NodeType.METHOD);
-            org.neo4j.driver.v1.types.Node nodeMethod2 = graph.createNode("method2", NeoGraph.NodeType.METHOD);
+            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeMethod1 = graph.createNode("method1", NeoGraph.EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node nodeMethod11 = graph.createNode("method1", NeoGraph.EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node nodeMethod2 = graph.createNode("method2", NeoGraph.EntityType.METHOD);
             NeoGraph.RelationType relationType = NeoGraph.RelationType.METHOD;
             graph.linkTwoNodes(nodeClass1, nodeMethod1, relationType);
             graph.linkTwoNodes(nodeClass1, nodeMethod11, relationType);
@@ -85,7 +85,7 @@ public class NeoGraphTest {
             graph.setMethodsOverloads();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
-                        .filter(node -> node.hasLabel(Label.label(NeoGraph.NodeType.CLASS.toString())))
+                        .filter(node -> node.hasLabel(Label.label(NeoGraph.EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
                 Node classNode = allNodes.get(0);
@@ -100,10 +100,10 @@ public class NeoGraphTest {
     public void setConstructorsOverloads() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", NeoGraph.NodeType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeConstructor1 = graph.createNode("constructor", NeoGraph.NodeType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node nodeConstructor11 = graph.createNode("constructor", NeoGraph.NodeType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node nodeMethod = graph.createNode("method", NeoGraph.NodeType.METHOD);
+            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeConstructor1 = graph.createNode("constructor", NeoGraph.EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node nodeConstructor11 = graph.createNode("constructor", NeoGraph.EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node nodeMethod = graph.createNode("method", NeoGraph.EntityType.METHOD);
             NeoGraph.RelationType relationType = NeoGraph.RelationType.METHOD;
             graph.linkTwoNodes(nodeClass1, nodeConstructor1, relationType);
             graph.linkTwoNodes(nodeClass1, nodeConstructor11, relationType);
@@ -111,12 +111,12 @@ public class NeoGraphTest {
             graph.setConstructorsOverloads();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
-                        .filter(node -> node.hasLabel(Label.label(NeoGraph.NodeType.CLASS.toString())))
+                        .filter(node -> node.hasLabel(Label.label(NeoGraph.EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
                 Node classNode = allNodes.get(0);
                 assertTrue(classNode.getAllProperties().containsKey("constructors"));
-                assertEquals(2L, classNode.getProperty("constructors"));
+                assertEquals(1L, classNode.getProperty("constructors"));
                 tx.success();
             }
         }
@@ -126,7 +126,7 @@ public class NeoGraphTest {
     public void getOrCreateNode() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            NeoGraph.NodeType nodeType = NeoGraph.NodeType.CLASS;
+            NeoGraph.NodeType nodeType = NeoGraph.EntityType.CLASS;
             for (int i = 0 ; i < 2 ; i++) {
                 graph.getOrCreateNode("n", nodeType);
                 try (Transaction tx = graphDatabaseService.beginTx()) {
@@ -159,12 +159,12 @@ public class NeoGraphTest {
     public void addLabelToNode() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node node = graph.createNode("class", NeoGraph.NodeType.CLASS);
-            graph.addLabelToNode(node, NeoGraph.NodeType.STRATEGY.toString());
+            org.neo4j.driver.v1.types.Node node = graph.createNode("class", NeoGraph.EntityType.CLASS);
+            graph.addLabelToNode(node, NeoGraph.DesignPatternType.STRATEGY.toString());
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 Node nodeFromGraph = graphDatabaseService.getNodeById(node.id());
-                assertTrue(nodeFromGraph.hasLabel(Label.label(NeoGraph.NodeType.CLASS.toString())));
-                assertTrue(nodeFromGraph.hasLabel(Label.label(NeoGraph.NodeType.STRATEGY.toString())));
+                assertTrue(nodeFromGraph.hasLabel(Label.label(NeoGraph.EntityType.CLASS.toString())));
+                assertTrue(nodeFromGraph.hasLabel(Label.label(NeoGraph.DesignPatternType.STRATEGY.toString())));
                 tx.success();
             }
         }
@@ -174,9 +174,9 @@ public class NeoGraphTest {
     public void getNbSubclasses() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node nodeClass = graph.createNode("class", NeoGraph.NodeType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeSubclass1 = graph.createNode("subclass1", NeoGraph.NodeType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeSubclass2 = graph.createNode("subclass2", NeoGraph.NodeType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeClass = graph.createNode("class", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeSubclass1 = graph.createNode("subclass1", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeSubclass2 = graph.createNode("subclass2", NeoGraph.EntityType.CLASS);
             NeoGraph.RelationType relationType = NeoGraph.RelationType.EXTENDS;
             graph.linkTwoNodes(nodeClass, nodeSubclass1, relationType);
             graph.linkTwoNodes(nodeClass, nodeSubclass2, relationType);
@@ -187,6 +187,13 @@ public class NeoGraphTest {
                 tx.success();
             }
         }
+    }
+
+    @Test
+    public void getClauseForNodesMatchingLabelsTest(){
+        assertEquals("MATCH (n) WHERE n:STRATEGY RETURN COUNT(n)", NeoGraph.getClauseForNodesMatchingLabels(NeoGraph.DesignPatternType.STRATEGY));
+        assertEquals("MATCH (n) WHERE n:STRATEGY OR n:FACTORY RETURN COUNT(n)", NeoGraph.getClauseForNodesMatchingLabels(NeoGraph.DesignPatternType.STRATEGY, NeoGraph.DesignPatternType.FACTORY));
+        assertEquals("MATCH (n) WHERE n:FACTORY OR n:STRATEGY RETURN COUNT(n)", NeoGraph.getClauseForNodesMatchingLabels(NeoGraph.DesignPatternType.FACTORY, NeoGraph.DesignPatternType.STRATEGY));
     }
 
 }

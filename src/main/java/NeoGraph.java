@@ -15,12 +15,35 @@ import java.util.stream.Collectors;
 
 public class NeoGraph {
 
-    enum NodeType {
-        CLASS, ABSTRACT, INNER, METHOD, CONSTRUCTOR, INTERFACE, STRATEGY, FACTORY
+    interface NodeType {
+        String getString();
     }
 
-    enum RelationType {
-        METHOD, INNER, IMPLEMENTS, EXTENDS
+    enum EntityType implements NodeType {
+        CLASS, ABSTRACT, INNER, METHOD, CONSTRUCTOR, INTERFACE;
+
+        @Override
+        public String getString() {
+            return this.toString();
+        }
+    }
+
+    enum DesignPatternType implements NodeType {
+        STRATEGY, FACTORY;
+
+        @Override
+        public String getString() {
+            return this.toString();
+        }
+    }
+
+    enum RelationType implements NodeType {
+        METHOD, INNER, IMPLEMENTS, EXTENDS;
+
+        @Override
+        public String getString() {
+            return this.toString();
+        }
     }
 
     private Driver driver;
@@ -45,7 +68,7 @@ public class NeoGraph {
      */
     public Node createNode(String name, String shortName, NodeType... types) {
         return submitRequest(String.format("CREATE (n:%s { name: '%s', shortname: '%s' }) RETURN (n)",
-                Arrays.stream(types).map(Enum::toString).collect(Collectors.joining(":")),
+                Arrays.stream(types).map(NodeType::getString).collect(Collectors.joining(":")),
                 name,
                 shortName))
                 .list().get(0).get(0).asNode();
@@ -157,12 +180,23 @@ public class NeoGraph {
         }
         return submitRequest(String.format("MATCH (n) WHERE ID(n) = %s SET n:%s RETURN (n)",
                 matchingNodes.get(0).get("n").asNode().id(),
-                Arrays.stream(types).map(Enum::toString).collect(Collectors.joining(":"))))
+                Arrays.stream(types).map(NodeType::getString).collect(Collectors.joining(":"))))
                 .list().get(0).get("n").asNode();
     }
 
     public void addLabelToNode(Node node, String label) {
         submitRequest(String.format("MATCH (n) WHERE ID(n) = %s SET n:%s RETURN (n)", node.id(), label));
+    }
+
+    public int getNbNodesHavingDesignPatterns() {
+        return submitRequest(getClauseForNodesMatchingLabels(DesignPatternType.values()))
+                .list().get(0).get(0).asInt();
+    }
+
+    public static String getClauseForNodesMatchingLabels(NodeType... types){
+        String whereClause = Arrays.stream(types).map(nodeType -> "n:" + nodeType.toString()).collect(Collectors.joining(" OR "));
+        return String.format("MATCH (n) WHERE %s RETURN COUNT(n)", whereClause);
+
     }
 
     public void writeGraphFile(String filePath) {
