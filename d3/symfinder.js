@@ -1,12 +1,12 @@
 //	data stores
 var graph, store;
 
-function displayGraph(jsonFile){
+function displayGraph(jsonFile, jsonStatsFile){
     d3.selectAll("svg > *").remove();
-    generateGraph(jsonFile);
+    generateGraph(jsonFile, jsonStatsFile);
 }
 
-function generateGraph(jsonFile){
+function generateGraph(jsonFile, jsonStatsFile){
     // document.getElementsByTagName("svg")[0].innerHTML = "";
 
     var difference = [];
@@ -58,6 +58,19 @@ function generateGraph(jsonFile){
 
     //	data read and store
     d3.json(jsonFile, function(err, g) {
+
+        d3.json(jsonStatsFile, function(err, stats){
+            var statisticsContent =
+                "Number of constructor overloards: "+ stats["constructorsOverloads"] + "<br>" +
+                "Number of methods overloards: "+ stats["methodsOverloads"] + "<br>" +
+                "Number of method level overloards: "+ stats["methodLevelOverloads"] + "<br>" +
+                "Number of class level overloards: "+ stats["classLevelOverloads"] + "<br>" +
+                "Number of design patterns overloards: "+ stats["designPatterns"];
+            console.log(statisticsContent);
+            document.getElementsByTagName("p")[0].innerHTML = statisticsContent;
+
+        });
+
         if (err) throw err;
 
         var sort = g.nodes.filter(a => a.type.includes("CLASS")).map(a => parseInt(a.intensity)).sort((a, b) => a - b);

@@ -28,7 +28,9 @@ public class Visualisation {
         for (Experience experience : Configuration.getExperiences()) {
             try(BufferedWriter bf = new BufferedWriter(new FileWriter(String.format("d3/%s.html", experience.getExperienceName())))){ // TODO: 12/13/18 deal with directory name
                 String fileContent = new String(Files.readAllBytes(Paths.get("d3/template.html")));
-                fileContent = fileContent.replace("$title", experience.getExperienceName()).replace("$jsonFile", experience.getOutputPath().replace("d3/", ""));
+                String jsonFile = experience.getOutputPath().replace("d3/", "");
+                String jsonStatsFile = jsonFile.replace(".json", "-stats.json");
+                fileContent = fileContent.replace("$title", experience.getExperienceName()).replace("$jsonFile", jsonFile).replace("$jsonStatsFile", jsonStatsFile);
                 bf.write(fileContent);
             } catch (IOException e) {
                 e.printStackTrace();
