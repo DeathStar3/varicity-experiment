@@ -6,13 +6,38 @@ neo4j:
   password: root
 
 experiences:
-  paperexample:
-     repositoryUrl: https://github.com/DeathStar3/symfinder
-     sourcePackage: src/main/resources/paperexample/
-     commitIds:
-        - feeace75f91e8883a0cd4c8263b186d444fbad18
-  strategy:
-     repositoryUrl: https://github.com/DeathStar3/symfinder
-     sourcePackage: src/main/resources/strategy/
-     commitIds:
-        - feeace75f91e8883a0cd4c8263b186d444fbad18
+  cxf:
+    repositoryUrl: https://github.com/apache/cxf
+    sourcePackage: core/src/main/java/org/apache/cxf
+    tagIds:
+      - cxf-3.2.7
+  junit:
+    repositoryUrl: https://github.com/junit-team/junit4
+    sourcePackage: src/main/java
+    tagIds:
+      - r4.12
+  maven:
+    repositoryUrl: https://github.com/apache/maven
+    sourcePackage: .
+    tagIds:
+      - maven-3.6.0
+  jhipster:
+    repositoryUrl: https://github.com/jhipster/jhipster
+    sourcePackage: jhipster-framework/src/main/java
+    tagIds:
+      - 2.0.28
+  jfreechart:
+    repositoryUrl: https://github.com/jfree/jfreechart
+    sourcePackage: src/main/java/org/jfree/
+    tagIds:
+      - v1.5.0
+  javaGeom:
+    repositoryUrl: https://github.com/dlegland/javaGeom
+    sourcePackage: src
+    commitIds:
+      - 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
+  argoUML:
+    repositoryUrl: https://github.com/ternava/argouml-spl-benchmark
+    sourcePackage: .
+    commitIds:
+      - 92f6d3cbc386e662ee687f4b9606068ab73f3781
