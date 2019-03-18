@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class NeoGraphTest {
 
@@ -117,6 +116,124 @@ public class NeoGraphTest {
                 Node classNode = allNodes.get(0);
                 assertTrue(classNode.getAllProperties().containsKey("constructors"));
                 assertEquals(1L, classNode.getProperty("constructors"));
+                tx.success();
+            }
+        }
+    }
+
+    @Test
+    public void setNbSubclassesPropertyTest(){
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeSubclass1 = graph.createNode("subclass1", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeSubclass2 = graph.createNode("subclass2", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeMethod = graph.createNode("method", NeoGraph.EntityType.METHOD);
+            graph.linkTwoNodes(nodeClass1, nodeSubclass1, NeoGraph.RelationType.EXTENDS);
+            graph.linkTwoNodes(nodeClass1, nodeSubclass2, NeoGraph.RelationType.EXTENDS);
+            graph.linkTwoNodes(nodeClass1, nodeMethod, NeoGraph.RelationType.METHOD);
+            graph.setNbSubclassesProperty();
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                List <Node> allClassNodes = graphDatabaseService.getAllNodes().stream()
+                        .filter(node -> node.hasLabel(Label.label(NeoGraph.EntityType.CLASS.toString())))
+                        .collect(Collectors.toList());
+                assertEquals(3, allClassNodes.size());
+                allClassNodes.stream().filter(node -> node.getProperty("name").equals("class"))
+                        .findFirst()
+                        .ifPresent(node -> assertEquals(2L, node.getProperty("nbSubclasses")));
+                allClassNodes.stream().filter(node -> node.getProperty("name").equals("subclass1"))
+                        .findFirst()
+                        .ifPresent(node -> assertEquals(0L, node.getProperty("nbSubclasses")));
+                tx.success();
+            }
+        }
+    }
+
+    @Test
+    public void setVPLabelClassTest(){
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeSubclass1 = graph.createNode("subclass1", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeSubclass2 = graph.createNode("subclass2", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeMethod = graph.createNode("method", NeoGraph.EntityType.METHOD);
+            graph.linkTwoNodes(nodeClass1, nodeSubclass1, NeoGraph.RelationType.EXTENDS);
+            graph.linkTwoNodes(nodeClass1, nodeSubclass2, NeoGraph.RelationType.EXTENDS);
+            graph.linkTwoNodes(nodeSubclass1, nodeMethod, NeoGraph.RelationType.METHOD);
+            graph.setNbSubclassesProperty();
+            graph.setVPLabels();
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                List <Node> allClassNodes = graphDatabaseService.getAllNodes().stream()
+                        .filter(node -> node.hasLabel(Label.label(NeoGraph.EntityType.CLASS.toString())))
+                        .collect(Collectors.toList());
+                assertEquals(3, allClassNodes.size());
+                allClassNodes.stream().filter(node -> node.getProperty("name").equals("class"))
+                        .findFirst()
+                        .ifPresent(node -> assertTrue(node.hasLabel(Label.label(NeoGraph.EntityType.VP.getString()))));
+                allClassNodes.stream().filter(node -> node.getProperty("name").equals("subclass1"))
+                        .findFirst()
+                        .ifPresent(node -> assertFalse(node.hasLabel(Label.label(NeoGraph.EntityType.VP.getString()))));
+                allClassNodes.stream().filter(node -> node.getProperty("name").equals("subclass2"))
+                        .findFirst()
+                        .ifPresent(node -> assertFalse(node.hasLabel(Label.label(NeoGraph.EntityType.VP.getString()))));
+                tx.success();
+            }
+        }
+    }
+
+    @Test
+    public void setVPLabelMethodTest(){
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeMethod1 = graph.createNode("method", NeoGraph.EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node nodeMethod2 = graph.createNode("method", NeoGraph.EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node nodeConstructor1 = graph.createNode("constructor", NeoGraph.EntityType.CONSTRUCTOR);
+            graph.linkTwoNodes(nodeClass1, nodeMethod1, NeoGraph.RelationType.METHOD);
+            graph.linkTwoNodes(nodeClass1, nodeMethod2, NeoGraph.RelationType.METHOD);
+            graph.linkTwoNodes(nodeClass1, nodeConstructor1, NeoGraph.RelationType.METHOD);
+            graph.setMethodsOverloads();
+            graph.setVPLabels();
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                List <Node> allClassNodes = graphDatabaseService.getAllNodes().stream()
+                        .filter(node -> node.hasLabel(Label.label(NeoGraph.EntityType.CLASS.toString())))
+                        .collect(Collectors.toList());
+                assertEquals(1, allClassNodes.size());
+                allClassNodes.stream()
+                        .findFirst()
+                        .ifPresent(node -> {
+                            assertEquals(1L, node.getProperty("methods"));
+                            assertTrue(node.hasLabel(Label.label(NeoGraph.EntityType.VP.getString())));
+                        });
+                tx.success();
+            }
+        }
+    }
+
+    @Test
+    public void setVPLabelConstructorTest(){
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", NeoGraph.EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node nodeMethod1 = graph.createNode("method", NeoGraph.EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node nodeMethod2 = graph.createNode("constructor", NeoGraph.EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node nodeConstructor1 = graph.createNode("constructor", NeoGraph.EntityType.CONSTRUCTOR);
+            graph.linkTwoNodes(nodeClass1, nodeMethod1, NeoGraph.RelationType.METHOD);
+            graph.linkTwoNodes(nodeClass1, nodeMethod2, NeoGraph.RelationType.METHOD);
+            graph.linkTwoNodes(nodeClass1, nodeConstructor1, NeoGraph.RelationType.METHOD);
+            graph.setConstructorsOverloads();
+            graph.setVPLabels();
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                List <Node> allClassNodes = graphDatabaseService.getAllNodes().stream()
+                        .filter(node -> node.hasLabel(Label.label(NeoGraph.EntityType.CLASS.toString())))
+                        .collect(Collectors.toList());
+                assertEquals(1, allClassNodes.size());
+                allClassNodes.stream()
+                        .findFirst()
+                        .ifPresent(node -> {
+                            assertEquals(1L, node.getProperty("constructors"));
+                            assertTrue(node.hasLabel(Label.label(NeoGraph.EntityType.VP.toString())));
+                        });
                 tx.success();
             }
         }

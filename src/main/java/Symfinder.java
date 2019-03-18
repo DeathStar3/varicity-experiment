@@ -54,6 +54,8 @@ public class Symfinder {
 
         neoGraph.setMethodsOverloads();
         neoGraph.setConstructorsOverloads();
+        neoGraph.setNbSubclassesProperty();
+        neoGraph.setVPLabels();
         neoGraph.writeGraphFile(graphOutputPath);
         System.out.println("Number of methods overloads : " + neoGraph.getTotalNbMethodsOverloads());
         System.out.println("Number of constructors overloads : " + neoGraph.getTotalNbConstructorsOverloads());
@@ -177,6 +179,12 @@ public class Symfinder {
             }
             return true;
         }
+    }
+
+    private class VPVisitor extends ASTVisitor {
+
+
+
     }
 
     private class StrategyVisitor extends ASTVisitor {

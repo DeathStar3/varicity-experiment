@@ -20,7 +20,7 @@ public class NeoGraph {
     }
 
     enum EntityType implements NodeType {
-        CLASS, ABSTRACT, INNER, METHOD, CONSTRUCTOR, INTERFACE;
+        CLASS, ABSTRACT, INNER, METHOD, CONSTRUCTOR, INTERFACE, VP;
 
         @Override
         public String getString() {
@@ -160,6 +160,23 @@ public class NeoGraph {
                 "SET c.constructors = 0");
     }
 
+    /**
+     * Creates for all class nodes a property nbSubclasses expressing the number of subclasses it contains.
+     */
+    public void setNbSubclassesProperty(){
+        submitRequest("MATCH (c:CLASS)-[:EXTENDS]->(sc:CLASS) WITH count(sc) AS nbVar, c SET c.nbSubclasses = nbVar");
+        submitRequest("MATCH (c:CLASS) WHERE NOT EXISTS (c.nbSubclasses) SET c.nbSubclasses = 0");
+
+    }
+
+    /**
+     * Adds a VP label to the node if it is a VP.
+     * A node is a VP if it has subclasses or methods / constructors overloads.
+     */
+    public void setVPLabels(){
+        submitRequest(String.format("MATCH (c:CLASS) WHERE (EXISTS(c.nbSubclasses) AND c.nbSubclasses > 0) OR c.methods > 0 OR c.constructors > 0 SET c:%s", EntityType.VP));
+    }
+
     public Node getOrCreateNode(String name, NodeType... types) {
         return getOrCreateNode(name, name, types);
     }
@@ -287,7 +304,7 @@ public class NeoGraph {
     }
 
     private String getNodesAsJson() {
-        return submitRequest("MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors})")
+        return submitRequest("MATCH (c:VP) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors, strokeWidth:c.nbSubclasses})")
                 .list()
                 .get(0)
                 .get(0)
@@ -298,7 +315,7 @@ public class NeoGraph {
     }
 
     private String getLinksAsJson() {
-        return submitRequest("MATCH (c1)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})")
+        return submitRequest("MATCH (c1:VP)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2:VP) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})")
                 .list()
                 .get(0)
                 .get(0)
