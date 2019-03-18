@@ -57,6 +57,7 @@ public class Symfinder {
         neoGraph.setNbSubclassesProperty();
         neoGraph.setVPLabels();
         neoGraph.writeGraphFile(graphOutputPath);
+        neoGraph.writeVPGraphFile(graphOutputPath.replace(".json", "-vp.json"));
         System.out.println("Number of methods overloads : " + neoGraph.getTotalNbMethodsOverloads());
         System.out.println("Number of constructors overloads : " + neoGraph.getTotalNbConstructorsOverloads());
         System.out.println("Number of method level overloads : " + neoGraph.getNbMethodLevelOverloads());

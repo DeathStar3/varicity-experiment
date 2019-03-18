@@ -26,15 +26,31 @@ public class Visualisation {
 
     public static void createVisualisations(){
         for (Experience experience : Configuration.getExperiences()) {
-            try(BufferedWriter bf = new BufferedWriter(new FileWriter(String.format("d3/%s.html", experience.getExperienceName())))){ // TODO: 12/13/18 deal with directory name
-                String fileContent = new String(Files.readAllBytes(Paths.get("d3/template.html")));
-                String jsonFile = experience.getOutputPath().replace("d3/", "");
-                String jsonStatsFile = jsonFile.replace(".json", "-stats.json");
-                fileContent = fileContent.replace("$title", experience.getExperienceName()).replace("$jsonFile", jsonFile).replace("$jsonStatsFile", jsonStatsFile);
-                bf.write(fileContent);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String jsonFile = experience.getOutputPath().replace("d3/", "");
+            String jsonStatsFile = jsonFile.replace(".json", "-stats.json");
+            createVisualisation(experience,
+                    String.format("d3/%s.html", experience.getExperienceName()),
+                    jsonFile,
+                    jsonStatsFile,
+                    "symfinder.js");
+            createVisualisation(experience,
+                    String.format("d3/%s-vp.html", experience.getExperienceName()),
+                    jsonFile.replace(".json", "-vp.json"),
+                    jsonStatsFile,
+                    "symfinder-vp.js");
+        }
+    }
+
+    private static void createVisualisation(Experience experience, String filePath, String jsonFile, String jsonStatsFile, String jsScriptFile) {
+        try(BufferedWriter bf = new BufferedWriter(new FileWriter(filePath))){ // TODO: 12/13/18 deal with directory name
+            String fileContent = new String(Files.readAllBytes(Paths.get("d3/template.html")));
+            fileContent = fileContent.replace("$title", experience.getExperienceName())
+                    .replace("$jsScriptFile", jsScriptFile)
+                    .replace("$jsonFile", jsonFile)
+                    .replace("$jsonStatsFile", jsonStatsFile);
+            bf.write(fileContent);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -56,11 +72,13 @@ public class Visualisation {
     private static List <Tag> getLinks() {
         return Configuration.getExperiences().stream()
                 .map(Experience::getExperienceName)
-                .map(key -> graphLink(key, key + ".html"))
+                .map(Visualisation::graphLink)
                 .collect(Collectors.toList());
     }
 
-    private static Tag graphLink(String project, String htmlFile) {
-        return li().with(a(project).withHref(htmlFile));
+    private static Tag graphLink(String project) {
+        return p(project).with(ul()
+                .with(li().with(a("all").withHref(project + ".html")))
+                .with(li().with(a("only VP-s").withHref(project + "-vp.html"))));
     }
 }

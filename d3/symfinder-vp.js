@@ -59,6 +59,8 @@ function generateGraph(jsonFile, jsonStatsFile){
     //	data read and store
     d3.json(jsonFile, function(err, g) {
 
+        // g.nodes = g.nodes.filter(n => n.strokeWidth > 0);
+
         d3.json(jsonStatsFile, function(err, stats){
             var statisticsContent =
                 "Number of constructor overloads: "+ stats["constructorsOverloads"] + "<br>" +
@@ -102,7 +104,9 @@ function generateGraph(jsonFile, jsonStatsFile){
         //	ENTER
         var newNode = node.enter().append("g").append("circle")
             .attr("class", "node")
-            .style("stroke", function (d) {return d.type.includes("ABSTRACT") ? "black" : "none"})
+            .style("stroke-dasharray", function (d) {return d.type.includes("ABSTRACT") ? "3,3" : "3,0"})
+            .style("stroke", "black")
+            .style("stroke-width", function (d) {return d.strokeWidth})
             .attr("r", function (d) {return d.type.includes("CLASS") ? 10 + d.nodeSize : 10})
             .attr("fill", function (d) {return d.type.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.intensity))})
             .call(d3.drag()

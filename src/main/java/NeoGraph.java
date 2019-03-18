@@ -220,6 +220,10 @@ public class NeoGraph {
         writeToFile(filePath, generateJsonGraph());
     }
 
+    public void writeVPGraphFile(String filePath) {
+        writeToFile(filePath, generateVPJsonGraph());
+    }
+
     public void writeStatisticsFile(String filePath) {
         writeToFile(filePath, generateStatisticsJson());
     }
@@ -298,13 +302,19 @@ public class NeoGraph {
                 .list().get(0).get(0).asInt();
     }
 
-
     private String generateJsonGraph() {
-        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson());
+        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(false), getLinksAsJson(false));
     }
 
-    private String getNodesAsJson() {
-        return submitRequest("MATCH (c:VP) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors, strokeWidth:c.nbSubclasses})")
+    private String generateVPJsonGraph() {
+        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(true), getLinksAsJson(true));
+    }
+
+    private String getNodesAsJson(boolean onlyVPs) {
+        String request = onlyVPs ?
+                "MATCH (c:VP) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors, strokeWidth:c.nbSubclasses})" :
+                "MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors})";
+        return submitRequest(request)
                 .list()
                 .get(0)
                 .get(0)
@@ -314,8 +324,11 @@ public class NeoGraph {
                 .collect(Collectors.joining(","));
     }
 
-    private String getLinksAsJson() {
-        return submitRequest("MATCH (c1:VP)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2:VP) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})")
+    private String getLinksAsJson(boolean onlyVPs) {
+        String request = onlyVPs ?
+                "MATCH (c1:VP)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2:VP) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
+                "MATCH (c1)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+        return submitRequest(request)
                 .list()
                 .get(0)
                 .get(0)
