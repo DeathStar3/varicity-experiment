@@ -17,6 +17,21 @@ function generateGraph(jsonFile, jsonStatsFile){
 
     //	svg selection and sizing
     var svg = d3.select("svg").attr("width", width).attr("height", height);
+
+    svg.append('defs').append('marker')
+        .attr('id', 'arrowhead')
+        .attr('viewBox', '-0 -5 10 10')
+        .attr('refX', 13)
+        .attr('refY', 0)
+        .attr('orient', 'auto')
+        .attr('markerWidth', 4)
+        .attr('markerHeight', 4)
+        .attr('xoverflow', 'visible')
+        .append('svg:path')
+        .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+        .attr('fill', 'gray')
+        .style('stroke','none');
+
     var radius = 10;
 
     //	d3 color scales
@@ -81,6 +96,7 @@ function generateGraph(jsonFile, jsonStatsFile){
         var nodeByID = {};
 
         g.nodes.forEach(function(n) {
+            n.radius = n.type.includes("CLASS") ? 10 + n.nodeSize : 10;
             nodeByID[n.name] = n;
         });
 
@@ -107,7 +123,7 @@ function generateGraph(jsonFile, jsonStatsFile){
             .style("stroke-dasharray", function (d) {return d.type.includes("ABSTRACT") ? "3,3" : "3,0"})
             .style("stroke", "black")
             .style("stroke-width", function (d) {return d.strokeWidth})
-            .attr("r", function (d) {return d.type.includes("CLASS") ? 10 + d.nodeSize : 10})
+            .attr("r", function (d) {return d.radius})
             .attr("fill", function (d) {return d.type.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.intensity))})
             .call(d3.drag()
                 .on("start", dragstarted)
@@ -138,7 +154,9 @@ function generateGraph(jsonFile, jsonStatsFile){
         //	ENTER
         newLink = link.enter().append("line")
             .attr("stroke-width", 1)
-            .attr("class", "link");
+            .attr("class", "link")
+            .attr('marker-end',"url(#arrowhead)")
+            .style("pointer-events", "none");
 
         newLink.append("title")
             .text(function(d) { return "source: " + d.source + "\n" + "target: " + d.target; });
