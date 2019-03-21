@@ -20,15 +20,14 @@ function generateGraph(jsonFile, jsonStatsFile){
 
     svg.append('defs').append('marker')
         .attr('id', 'arrowhead')
-        .attr('viewBox', '-0 -5 10 10')
-        .attr('refX', 13)
-        .attr('refY', 0)
-        .attr('orient', 'auto')
-        .attr('markerWidth', 4)
-        .attr('markerHeight', 4)
-        .attr('xoverflow', 'visible')
-        .append('svg:path')
-        .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", -5)
+            .attr("refY", 0)
+            .attr("markerWidth", 4)
+            .attr("markerHeight", 4)
+            .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,0L10,-5L10,5")
         .attr('fill', 'gray')
         .style('stroke','none');
 
@@ -155,7 +154,7 @@ function generateGraph(jsonFile, jsonStatsFile){
         newLink = link.enter().append("line")
             .attr("stroke-width", 1)
             .attr("class", "link")
-            .attr('marker-end',"url(#arrowhead)")
+            .attr('marker-start',"url(#arrowhead)")
             .style("pointer-events", "none");
 
         newLink.append("title")

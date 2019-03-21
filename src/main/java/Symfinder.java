@@ -182,12 +182,6 @@ public class Symfinder {
         }
     }
 
-    private class VPVisitor extends ASTVisitor {
-
-
-
-    }
-
     private class StrategyVisitor extends ASTVisitor {
 
         @Override
