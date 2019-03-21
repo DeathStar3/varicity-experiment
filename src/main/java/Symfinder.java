@@ -209,11 +209,32 @@ public class Symfinder {
             }
             return true;
         }
+
+        @Override
+        public boolean visit(ReturnStatement node) {
+            String typeOfReturnedObject = node.getExpression().resolveTypeBinding().getQualifiedName();
+//            System.out.println("typeOfReturnedObject : " + typeOfReturnedObject);
+            String methodReturnType = getParentMethodDeclarationOfNode(node).getReturnType2().resolveBinding().getQualifiedName();
+//            System.out.println("methodReturnType : " + methodReturnType.resolveBinding().getQualifiedName());
+            Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, NeoGraph.EntityType.CLASS);
+            if (! typeOfReturnedObject.equals(methodReturnType) && neoGraph.getNbSubclasses(methodReturnTypeNode) >= 2) {
+                neoGraph.addLabelToNode(methodReturnTypeNode, NeoGraph.DesignPatternType.FACTORY.toString());
+            }
+            return true;
+        }
     }
 
     private boolean isTestClass(ITypeBinding classBinding) {
         return classBinding.getQualifiedName().contains("Test") ||
                 Arrays.asList(classBinding.getPackage().getNameComponents()).contains("test");
+    }
+
+    private MethodDeclaration getParentMethodDeclarationOfNode(ASTNode node) {
+        ASTNode parentNode = node.getParent();
+        while (parentNode.getNodeType() != ASTNode.METHOD_DECLARATION) {
+            parentNode = parentNode.getParent();
+        }
+        return (MethodDeclaration) parentNode;
     }
 }
 
