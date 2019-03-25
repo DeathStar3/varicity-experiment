@@ -21,12 +21,12 @@ public class NeoGraphTest {
     private GraphDatabaseService graphDatabaseService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         graphDatabaseService = neo4jRule.getGraphDatabaseService();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         graphDatabaseService.shutdown();
     }
 
@@ -288,7 +288,7 @@ public class NeoGraphTest {
     }
 
     @Test
-    public void getNbSubclasses() {
+    public void getNbVariants() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node nodeClass = graph.createNode("class", NeoGraph.EntityType.CLASS);

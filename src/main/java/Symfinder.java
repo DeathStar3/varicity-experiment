@@ -60,8 +60,8 @@ public class Symfinder {
         neoGraph.writeVPGraphFile(graphOutputPath.replace(".json", "-vp.json"));
         System.out.println("Number of methods overloads : " + neoGraph.getTotalNbMethodsOverloads());
         System.out.println("Number of constructors overloads : " + neoGraph.getTotalNbConstructorsOverloads());
-        System.out.println("Number of method level overloads : " + neoGraph.getNbMethodLevelOverloads());
-        System.out.println("Number of class level overloads : " + neoGraph.getNbClassLevelOverloads());
+        System.out.println("Number of method level overloads : " + neoGraph.getNbMethodLevelVPs());
+        System.out.println("Number of class level overloads : " + neoGraph.getNbClassLevelVPs());
         System.out.println("Number of design patterns present : " + neoGraph.getNbNodesHavingDesignPatterns());
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         System.out.println(neoGraph.generateStatisticsJson());
@@ -222,7 +222,7 @@ public class Symfinder {
                     String parsedClassType = methodDeclaration.resolveBinding().getDeclaringClass().getQualifiedName();
                     System.out.println(parsedClassType);
                     Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, NeoGraph.EntityType.CLASS);
-                    Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, NeoGraph.EntityType.CLASS);
+                    Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, NeoGraph.EntityType.CLASS); // FIXME: 3/25/19 add interface case
                     if (! typeOfReturnedObject.equals(methodReturnType) && neoGraph.getNbVariants(methodReturnTypeNode) >= 2) {
                         neoGraph.addLabelToNode(parsedClassNode, NeoGraph.DesignPatternType.FACTORY.toString());
                     }

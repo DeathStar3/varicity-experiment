@@ -283,7 +283,7 @@ public class NeoGraph {
      *
      * @return Number of method level overloads
      */
-    public int getNbMethodLevelOverloads() {
+    public int getNbMethodLevelVPs() {
         return getTotalNbMethodsOverloads() + getTotalNbConstructorsOverloads();
     }
 
@@ -294,9 +294,11 @@ public class NeoGraph {
      *
      * @return Number of method level overloads
      */
-    public int getNbClassLevelOverloads() {
-        return submitRequest("MATCH (n)-[r:EXTENDS]->() RETURN COUNT (r)")
-                .list().get(0).get(0).asInt();
+    public int getNbClassLevelVPs() {
+        int nbInterfaces = submitRequest("MATCH (n:INTERFACE) RETURN COUNT (n)").list().get(0).get(0).asInt();
+        int nbAbstractClasses = submitRequest("MATCH (n:CLASS:ABSTRACT) RETURN COUNT (n)").list().get(0).get(0).asInt();
+        int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() RETURN COUNT (n)").list().get(0).get(0).asInt();
+        return nbInterfaces + nbAbstractClasses + nbExtendedClasses;
     }
 
     private String generateJsonGraph() {
@@ -339,8 +341,8 @@ public class NeoGraph {
         return new JSONObject()
                 .put("methodsOverloads", getTotalNbMethodsOverloads())
                 .put("constructorsOverloads", getTotalNbConstructorsOverloads())
-                .put("classLevelOverloads", getNbClassLevelOverloads())
-                .put("methodLevelOverloads", getNbMethodLevelOverloads())
+                .put("classLevelVPs", getNbClassLevelVPs())
+                .put("methodLevelVPs", getNbMethodLevelVPs())
                 .put("designPatterns", getNbNodesHavingDesignPatterns()).toString();
     }
 
