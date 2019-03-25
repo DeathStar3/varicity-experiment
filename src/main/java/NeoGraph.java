@@ -1,3 +1,7 @@
+import neo4j_types.DesignPatternType;
+import neo4j_types.EntityType;
+import neo4j_types.NodeType;
+import neo4j_types.RelationType;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.types.MapAccessor;
@@ -14,37 +18,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class NeoGraph {
-
-    interface NodeType {
-        String getString();
-    }
-
-    enum EntityType implements NodeType {
-        CLASS, ABSTRACT, INNER, METHOD, CONSTRUCTOR, INTERFACE, VP;
-
-        @Override
-        public String getString() {
-            return this.toString();
-        }
-    }
-
-    enum DesignPatternType implements NodeType {
-        STRATEGY, FACTORY;
-
-        @Override
-        public String getString() {
-            return this.toString();
-        }
-    }
-
-    enum RelationType implements NodeType {
-        METHOD, INNER, IMPLEMENTS, EXTENDS;
-
-        @Override
-        public String getString() {
-            return this.toString();
-        }
-    }
 
     private Driver driver;
 
@@ -256,11 +229,11 @@ public class NeoGraph {
     }
 
     /**
-     * Get total number of constructors overloads
+     * Get total number of overloaded constructors
      *
-     * @return Number of constructors overloads
+     * @return Number of overloaded constructors
      */
-    public int getTotalNbConstructorsOverloads() {
+    public int getTotalNbOverloadedConstructors() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constructors))")
                 .list().get(0).get(0).asInt();
     }
@@ -276,15 +249,15 @@ public class NeoGraph {
     }
 
     /**
-     * Get total number of method level overloads.
+     * Get total number of method level VPs.
      * These are :
-     * - methods overloads
-     * - constructors overloads
+     * - number of methods overloads
+     * - number of overloaded constructors
      *
-     * @return Number of method level overloads
+     * @return Number of method level VPs
      */
     public int getNbMethodLevelVPs() {
-        return getTotalNbMethodsOverloads() + getTotalNbConstructorsOverloads();
+        return getTotalNbMethodsOverloads() + getTotalNbOverloadedConstructors();
     }
 
     /**
@@ -297,7 +270,7 @@ public class NeoGraph {
     public int getNbClassLevelVPs() {
         int nbInterfaces = submitRequest("MATCH (n:INTERFACE) RETURN COUNT (n)").list().get(0).get(0).asInt();
         int nbAbstractClasses = submitRequest("MATCH (n:CLASS:ABSTRACT) RETURN COUNT (n)").list().get(0).get(0).asInt();
-        int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() RETURN COUNT (n)").list().get(0).get(0).asInt();
+        int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE NOT n:ABSTRACT RETURN COUNT (n)").list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
         return nbInterfaces + nbAbstractClasses + nbExtendedClasses;
     }
 
@@ -340,7 +313,7 @@ public class NeoGraph {
     public String generateStatisticsJson() {
         return new JSONObject()
                 .put("methodsOverloads", getTotalNbMethodsOverloads())
-                .put("constructorsOverloads", getTotalNbConstructorsOverloads())
+                .put("constructorsOverloads", getTotalNbOverloadedConstructors())
                 .put("classLevelVPs", getNbClassLevelVPs())
                 .put("methodLevelVPs", getNbMethodLevelVPs())
                 .put("designPatterns", getNbNodesHavingDesignPatterns()).toString();

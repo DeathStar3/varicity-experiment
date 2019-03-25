@@ -1,3 +1,5 @@
+import neo4j_types.EntityType;
+import neo4j_types.RelationType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,30 +13,16 @@ import org.neo4j.harness.junit.Neo4jRule;
 
 import static org.junit.Assert.assertEquals;
 
-public class MethodLevelVPsTest {
-
-    @Rule
-    public Neo4jRule neo4jRule = new Neo4jRule();
-    private GraphDatabaseService graphDatabaseService;
-
-    @Before
-    public void setUp() {
-        graphDatabaseService = neo4jRule.getGraphDatabaseService();
-    }
-
-    @After
-    public void tearDown() {
-        graphDatabaseService.shutdown();
-    }
+public class MethodLevelVPsTest extends Neo4JTest {
 
     @Test
     public void NoMethodOverloadNoConstructorOverload(){
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", NeoGraph.EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node shapeConstructor = graph.createNode("Shape", NeoGraph.EntityType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node displayMethod = graph.createNode("display", NeoGraph.EntityType.METHOD);
-            NeoGraph.RelationType relationType = NeoGraph.RelationType.METHOD;
+            org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node shapeConstructor = graph.createNode("Shape", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node displayMethod = graph.createNode("display", EntityType.METHOD);
+            RelationType relationType = RelationType.METHOD;
             graph.linkTwoNodes(shapeClass, shapeConstructor, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod, relationType);
             graph.setMethodsOverloads();
@@ -50,11 +38,11 @@ public class MethodLevelVPsTest {
     public void OneMethodOverloadNoConstructorOverload(){
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", NeoGraph.EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node shapeConstructor = graph.createNode("Shape", NeoGraph.EntityType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node displayMethod1 = graph.createNode("display", NeoGraph.EntityType.METHOD);
-            org.neo4j.driver.v1.types.Node displayMethod2 = graph.createNode("display", NeoGraph.EntityType.METHOD);
-            NeoGraph.RelationType relationType = NeoGraph.RelationType.METHOD;
+            org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node shapeConstructor = graph.createNode("Shape", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node displayMethod1 = graph.createNode("display", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node displayMethod2 = graph.createNode("display", EntityType.METHOD);
+            RelationType relationType = RelationType.METHOD;
             graph.linkTwoNodes(shapeClass, shapeConstructor, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod1, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod2, relationType);
@@ -71,11 +59,11 @@ public class MethodLevelVPsTest {
     public void NoMethodOverloadOneConstructorOverload(){
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", NeoGraph.EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node shapeConstructor1 = graph.createNode("Shape", NeoGraph.EntityType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node shapeConstructor2 = graph.createNode("Shape", NeoGraph.EntityType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node displayMethod = graph.createNode("display", NeoGraph.EntityType.METHOD);
-            NeoGraph.RelationType relationType = NeoGraph.RelationType.METHOD;
+            org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node shapeConstructor1 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node shapeConstructor2 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node displayMethod = graph.createNode("display", EntityType.METHOD);
+            RelationType relationType = RelationType.METHOD;
             graph.linkTwoNodes(shapeClass, shapeConstructor1, relationType);
             graph.linkTwoNodes(shapeClass, shapeConstructor2, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod, relationType);
@@ -92,12 +80,12 @@ public class MethodLevelVPsTest {
     public void OneMethodOverloadOneConstructorOverload(){
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", NeoGraph.EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node shapeConstructor1 = graph.createNode("Shape", NeoGraph.EntityType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node shapeConstructor2 = graph.createNode("Shape", NeoGraph.EntityType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node displayMethod1 = graph.createNode("display", NeoGraph.EntityType.METHOD);
-            org.neo4j.driver.v1.types.Node displayMethod2 = graph.createNode("display", NeoGraph.EntityType.METHOD);
-            NeoGraph.RelationType relationType = NeoGraph.RelationType.METHOD;
+            org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node shapeConstructor1 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node shapeConstructor2 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node displayMethod1 = graph.createNode("display", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node displayMethod2 = graph.createNode("display", EntityType.METHOD);
+            RelationType relationType = RelationType.METHOD;
             graph.linkTwoNodes(shapeClass, shapeConstructor1, relationType);
             graph.linkTwoNodes(shapeClass, shapeConstructor2, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod1, relationType);
