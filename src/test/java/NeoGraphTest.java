@@ -122,7 +122,7 @@ public class NeoGraphTest {
     }
 
     @Test
-    public void setNbSubclassesPropertyTest(){
+    public void setNbVariantsPropertyTest(){
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", NeoGraph.EntityType.CLASS);
@@ -132,7 +132,7 @@ public class NeoGraphTest {
             graph.linkTwoNodes(nodeClass1, nodeSubclass1, NeoGraph.RelationType.EXTENDS);
             graph.linkTwoNodes(nodeClass1, nodeSubclass2, NeoGraph.RelationType.EXTENDS);
             graph.linkTwoNodes(nodeClass1, nodeMethod, NeoGraph.RelationType.METHOD);
-            graph.setNbSubclassesProperty();
+            graph.setNbVariantsProperty();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allClassNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(NeoGraph.EntityType.CLASS.toString())))
@@ -140,10 +140,10 @@ public class NeoGraphTest {
                 assertEquals(3, allClassNodes.size());
                 allClassNodes.stream().filter(node -> node.getProperty("name").equals("class"))
                         .findFirst()
-                        .ifPresent(node -> assertEquals(2L, node.getProperty("nbSubclasses")));
+                        .ifPresent(node -> assertEquals(2L, node.getProperty("nbVariants")));
                 allClassNodes.stream().filter(node -> node.getProperty("name").equals("subclass1"))
                         .findFirst()
-                        .ifPresent(node -> assertEquals(0L, node.getProperty("nbSubclasses")));
+                        .ifPresent(node -> assertEquals(0L, node.getProperty("nbVariants")));
                 tx.success();
             }
         }
@@ -160,7 +160,7 @@ public class NeoGraphTest {
             graph.linkTwoNodes(nodeClass1, nodeSubclass1, NeoGraph.RelationType.EXTENDS);
             graph.linkTwoNodes(nodeClass1, nodeSubclass2, NeoGraph.RelationType.EXTENDS);
             graph.linkTwoNodes(nodeSubclass1, nodeMethod, NeoGraph.RelationType.METHOD);
-            graph.setNbSubclassesProperty();
+            graph.setNbVariantsProperty();
             graph.setVPLabels();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allClassNodes = graphDatabaseService.getAllNodes().stream()
@@ -298,9 +298,9 @@ public class NeoGraphTest {
             graph.linkTwoNodes(nodeClass, nodeSubclass1, relationType);
             graph.linkTwoNodes(nodeClass, nodeSubclass2, relationType);
             try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(2, graph.getNbSubclasses(nodeClass));
-                assertEquals(0, graph.getNbSubclasses(nodeSubclass1));
-                assertEquals(0, graph.getNbSubclasses(nodeSubclass2));
+                assertEquals(2, graph.getNbVariants(nodeClass));
+                assertEquals(0, graph.getNbVariants(nodeSubclass1));
+                assertEquals(0, graph.getNbVariants(nodeSubclass2));
                 tx.success();
             }
         }
@@ -308,9 +308,10 @@ public class NeoGraphTest {
 
     @Test
     public void getClauseForNodesMatchingLabelsTest(){
-        assertEquals("MATCH (n) WHERE n:STRATEGY RETURN COUNT(n)", NeoGraph.getClauseForNodesMatchingLabels(NeoGraph.DesignPatternType.STRATEGY));
-        assertEquals("MATCH (n) WHERE n:STRATEGY OR n:FACTORY RETURN COUNT(n)", NeoGraph.getClauseForNodesMatchingLabels(NeoGraph.DesignPatternType.STRATEGY, NeoGraph.DesignPatternType.FACTORY));
-        assertEquals("MATCH (n) WHERE n:FACTORY OR n:STRATEGY RETURN COUNT(n)", NeoGraph.getClauseForNodesMatchingLabels(NeoGraph.DesignPatternType.FACTORY, NeoGraph.DesignPatternType.STRATEGY));
+        assertEquals("n:STRATEGY", NeoGraph.getClauseForNodesMatchingLabels("n", NeoGraph.DesignPatternType.STRATEGY));
+        assertEquals("cl:STRATEGY", NeoGraph.getClauseForNodesMatchingLabels("cl", NeoGraph.DesignPatternType.STRATEGY));
+        assertEquals("n:STRATEGY OR n:FACTORY", NeoGraph.getClauseForNodesMatchingLabels("n", NeoGraph.DesignPatternType.STRATEGY, NeoGraph.DesignPatternType.FACTORY));
+        assertEquals("n:FACTORY OR n:STRATEGY", NeoGraph.getClauseForNodesMatchingLabels("n", NeoGraph.DesignPatternType.FACTORY, NeoGraph.DesignPatternType.STRATEGY));
     }
 
 }

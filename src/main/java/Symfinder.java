@@ -54,7 +54,7 @@ public class Symfinder {
 
         neoGraph.setMethodsOverloads();
         neoGraph.setConstructorsOverloads();
-        neoGraph.setNbSubclassesProperty();
+        neoGraph.setNbVariantsProperty();
         neoGraph.setVPLabels();
         neoGraph.writeGraphFile(graphOutputPath);
         neoGraph.writeVPGraphFile(graphOutputPath.replace(".json", "-vp.json"));
@@ -189,7 +189,7 @@ public class Symfinder {
             System.out.println(field);
             if (field.getType().resolveBinding() != null) { // TODO: 12/6/18 log this
                 Node typeNode = neoGraph.getOrCreateNode(field.getType().resolveBinding().getQualifiedName(), NeoGraph.EntityType.CLASS);
-                if (field.getType().resolveBinding().getName().contains("Strategy") || neoGraph.getNbSubclasses(typeNode) >= 2) {
+                if (field.getType().resolveBinding().getName().contains("Strategy") || neoGraph.getNbVariants(typeNode) >= 2) {
                     neoGraph.addLabelToNode(typeNode, NeoGraph.DesignPatternType.STRATEGY.toString());
                 }
             }
@@ -212,13 +212,21 @@ public class Symfinder {
 
         @Override
         public boolean visit(ReturnStatement node) {
-            String typeOfReturnedObject = node.getExpression().resolveTypeBinding().getQualifiedName();
-//            System.out.println("typeOfReturnedObject : " + typeOfReturnedObject);
-            String methodReturnType = getParentMethodDeclarationOfNode(node).getReturnType2().resolveBinding().getQualifiedName();
-//            System.out.println("methodReturnType : " + methodReturnType.resolveBinding().getQualifiedName());
-            Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, NeoGraph.EntityType.CLASS);
-            if (! typeOfReturnedObject.equals(methodReturnType) && neoGraph.getNbSubclasses(methodReturnTypeNode) >= 2) {
-                neoGraph.addLabelToNode(methodReturnTypeNode, NeoGraph.DesignPatternType.FACTORY.toString());
+            String typeOfReturnedObject;
+            if (node.getExpression() != null && node.getExpression().resolveTypeBinding() != null && (typeOfReturnedObject = node.getExpression().resolveTypeBinding().getQualifiedName()) != null) {
+                System.out.println("typeOfReturnedObject : " + typeOfReturnedObject);
+                MethodDeclaration methodDeclaration = (MethodDeclaration) getParentOfNodeWithType(node, ASTNode.METHOD_DECLARATION);
+                if(methodDeclaration.getReturnType2().resolveBinding() != null){ // TODO: 3/22/19 find why this returns null in core/src/main/java/org/apache/cxf/bus/managers/BindingFactoryManagerImpl.java
+                    String methodReturnType = methodDeclaration.getReturnType2().resolveBinding().getQualifiedName();
+                    System.out.println("methodReturnType : " + methodReturnType);
+                    String parsedClassType = methodDeclaration.resolveBinding().getDeclaringClass().getQualifiedName();
+                    System.out.println(parsedClassType);
+                    Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, NeoGraph.EntityType.CLASS);
+                    Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, NeoGraph.EntityType.CLASS);
+                    if (! typeOfReturnedObject.equals(methodReturnType) && neoGraph.getNbVariants(methodReturnTypeNode) >= 2) {
+                        neoGraph.addLabelToNode(parsedClassNode, NeoGraph.DesignPatternType.FACTORY.toString());
+                    }
+                }
             }
             return true;
         }
@@ -229,12 +237,12 @@ public class Symfinder {
                 Arrays.asList(classBinding.getPackage().getNameComponents()).contains("test");
     }
 
-    private MethodDeclaration getParentMethodDeclarationOfNode(ASTNode node) {
+    private ASTNode getParentOfNodeWithType(ASTNode node, int astNodeType) {
         ASTNode parentNode = node.getParent();
-        while (parentNode.getNodeType() != ASTNode.METHOD_DECLARATION) {
+        while (parentNode.getNodeType() != astNodeType) {
             parentNode = parentNode.getParent();
         }
-        return (MethodDeclaration) parentNode;
+        return parentNode;
     }
 }
 

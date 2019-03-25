@@ -161,20 +161,19 @@ public class NeoGraph {
     }
 
     /**
-     * Creates for all class nodes a property nbSubclasses expressing the number of subclasses it contains.
+     * Creates for all class and interfaces nodes a property nbVariants expressing the number of subclasses it contains.
      */
-    public void setNbSubclassesProperty(){
-        submitRequest("MATCH (c:CLASS)-[:EXTENDS]->(sc:CLASS) WITH count(sc) AS nbVar, c SET c.nbSubclasses = nbVar");
-        submitRequest("MATCH (c:CLASS) WHERE NOT EXISTS (c.nbSubclasses) SET c.nbSubclasses = 0");
-
+    public void setNbVariantsProperty(){
+        submitRequest("MATCH (c)-[:EXTENDS|:IMPLEMENTS]->(sc:CLASS) WITH count(sc) AS nbVar, c SET c.nbVariants = nbVar");
+        submitRequest("MATCH (c) WHERE ((c:CLASS OR c:INTERFACE) AND NOT EXISTS (c.nbVariants)) SET c.nbVariants = 0");
     }
 
     /**
      * Adds a VP label to the node if it is a VP.
-     * A node is a VP if it has subclasses or methods / constructors overloads.
+     * A node is a VP if it has class or method level variants (subclasses / implementations or methods / constructors overloads), or has a design pattern.
      */
     public void setVPLabels(){
-        submitRequest(String.format("MATCH (c:CLASS) WHERE (EXISTS(c.nbSubclasses) AND c.nbSubclasses > 0) OR c.methods > 0 OR c.constructors > 0 SET c:%s", EntityType.VP));
+        submitRequest(String.format("MATCH (c) WHERE (%s) OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0 SET c:%s", getClauseForNodesMatchingLabels("c", DesignPatternType.values()), EntityType.VP));
     }
 
     public Node getOrCreateNode(String name, NodeType... types) {
@@ -206,14 +205,12 @@ public class NeoGraph {
     }
 
     public int getNbNodesHavingDesignPatterns() {
-        return submitRequest(getClauseForNodesMatchingLabels(DesignPatternType.values()))
+        return submitRequest(String.format("MATCH (n) WHERE %s RETURN COUNT(n)", getClauseForNodesMatchingLabels("n", DesignPatternType.values())))
                 .list().get(0).get(0).asInt();
     }
 
-    public static String getClauseForNodesMatchingLabels(NodeType... types) {
-        String whereClause = Arrays.stream(types).map(nodeType -> "n:" + nodeType.toString()).collect(Collectors.joining(" OR "));
-        return String.format("MATCH (n) WHERE %s RETURN COUNT(n)", whereClause);
-
+    public static String getClauseForNodesMatchingLabels(String nodeName, NodeType... types) {
+        return Arrays.stream(types).map(nodeType -> nodeName+":" + nodeType.toString()).collect(Collectors.joining(" OR "));
     }
 
     public void writeGraphFile(String filePath) {
@@ -245,14 +242,14 @@ public class NeoGraph {
 
 
     /**
-     * Get number of subclasses of a class
+     * Get number of subclasses of a class or implementations of an interface
      *
      * @param node Node corresponding to the class
      *
-     * @return Number of subclasses
+     * @return Number of subclasses or implementations
      */
-    public int getNbSubclasses(Node node) {
-        return submitRequest(String.format("MATCH (c:CLASS)-[:EXTENDS]->(c2:CLASS) " +
+    public int getNbVariants(Node node) {
+        return submitRequest(String.format("MATCH (c:CLASS)-[:EXTENDS|:IMPLEMENTS]->(c2:CLASS) " +
                 "WHERE ID(c) = %s " +
                 "RETURN count(c2)", node.id()))
                 .list().get(0).get(0).asInt();
@@ -312,7 +309,7 @@ public class NeoGraph {
 
     private String getNodesAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH (c:VP) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors, strokeWidth:c.nbSubclasses})" :
+                "MATCH (c:VP) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors, strokeWidth:c.nbVariants})" :
                 "MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors})";
         return submitRequest(request)
                 .list()
