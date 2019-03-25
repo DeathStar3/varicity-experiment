@@ -136,7 +136,7 @@ public class NeoGraph {
     /**
      * Creates for all class and interfaces nodes a property nbVariants expressing the number of subclasses it contains.
      */
-    public void setNbVariantsProperty(){
+    public void setNbVariantsProperty() {
         submitRequest("MATCH (c)-[:EXTENDS|:IMPLEMENTS]->(sc:CLASS) WITH count(sc) AS nbVar, c SET c.nbVariants = nbVar");
         submitRequest("MATCH (c) WHERE ((c:CLASS OR c:INTERFACE) AND NOT EXISTS (c.nbVariants)) SET c.nbVariants = 0");
     }
@@ -145,7 +145,7 @@ public class NeoGraph {
      * Adds a VP label to the node if it is a VP.
      * A node is a VP if it has class or method level variants (subclasses / implementations or methods / constructors overloads), or has a design pattern.
      */
-    public void setVPLabels(){
+    public void setVPLabels() {
         submitRequest(String.format("MATCH (c) WHERE (%s) OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0 SET c:%s", getClauseForNodesMatchingLabels("c", DesignPatternType.values()), EntityType.VP));
     }
 
@@ -183,7 +183,7 @@ public class NeoGraph {
     }
 
     public static String getClauseForNodesMatchingLabels(String nodeName, NodeType... types) {
-        return Arrays.stream(types).map(nodeType -> nodeName+":" + nodeType.toString()).collect(Collectors.joining(" OR "));
+        return Arrays.stream(types).map(nodeType -> nodeName + ":" + nodeType.toString()).collect(Collectors.joining(" OR "));
     }
 
     public void writeGraphFile(String filePath) {
@@ -229,6 +229,53 @@ public class NeoGraph {
     }
 
     /**
+     * Get number of variants at class level.
+     * This corresponds to the number of concrete classes without a subclass and extending a class or implementing an interface.
+     *
+     * @return Number of class level variants
+     */
+    public int getNbClassLevelVariants() {
+        return submitRequest("MATCH (c:CLASS) WHERE (NOT c:ABSTRACT) AND ()-[:EXTENDS|:IMPLEMENTS]->(c) AND (NOT (c)-[:EXTENDS]->()) RETURN (COUNT(c))")
+                .list().get(0).get(0).asInt();
+    }
+
+    /**
+     * Get number of variants at class level.
+     * This corresponds to the number of concrete classes without a subclass and extending a class or implementing an interface.
+     *
+     * @return Number of class level variants
+     */
+    public int getNbMethodLevelVariants() {
+        return getNbMethodVariants() + getNbConstructorVariants();
+    }
+
+    /**
+     * Get number of variants caused by method overloading.
+     * This corresponds to the total number of overloaded methods.
+     *
+     * @return Number of overloaded methods
+     */
+    public int getNbMethodVariants() {
+        return submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
+                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
+                "return count(DISTINCT a)")
+                .list().get(0).get(0).asInt();
+    }
+
+    /**
+     * Get number of variants caused by constructor overloading.
+     * This corresponds to the total number of constructor overloads.
+     *
+     * @return Number of constructor overloads
+     */
+    public int getNbConstructorVariants() {
+        return submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR) MATCH (c:CLASS)-->(b:CONSTRUCTOR)\n" +
+                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
+                "return count(DISTINCT a)")
+                .list().get(0).get(0).asInt();
+    }
+
+    /**
      * Get total number of overloaded constructors
      *
      * @return Number of overloaded constructors
@@ -239,11 +286,11 @@ public class NeoGraph {
     }
 
     /**
-     * Get total number of methods overloads
+     * Get total number of overloaded methods
      *
-     * @return Number of methods overloads
+     * @return Number of overloaded methods
      */
-    public int getTotalNbMethodsOverloads() {
+    public int getTotalNbOverloadedMethods() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methods))")
                 .list().get(0).get(0).asInt();
     }
@@ -257,7 +304,7 @@ public class NeoGraph {
      * @return Number of method level VPs
      */
     public int getNbMethodLevelVPs() {
-        return getTotalNbMethodsOverloads() + getTotalNbOverloadedConstructors();
+        return getTotalNbOverloadedMethods() + getTotalNbOverloadedConstructors();
     }
 
     /**
@@ -312,7 +359,7 @@ public class NeoGraph {
 
     public String generateStatisticsJson() {
         return new JSONObject()
-                .put("methodsOverloads", getTotalNbMethodsOverloads())
+                .put("methodsOverloads", getTotalNbOverloadedMethods())
                 .put("constructorsOverloads", getTotalNbOverloadedConstructors())
                 .put("classLevelVPs", getNbClassLevelVPs())
                 .put("methodLevelVPs", getNbMethodLevelVPs())

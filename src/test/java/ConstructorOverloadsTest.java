@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 public class ConstructorOverloadsTest extends Neo4JTest {
 
     @Test
-    public void OneClassNoConstructorOverload(){
+    public void OneClassNoConstructorOverload() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -31,7 +31,7 @@ public class ConstructorOverloadsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneClassOneConstructorOverload(){
+    public void OneClassOneConstructorOverload() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -48,7 +48,7 @@ public class ConstructorOverloadsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneClassTwoConstructorOverloads(){
+    public void OneClassTwoConstructorOverloads() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -67,7 +67,7 @@ public class ConstructorOverloadsTest extends Neo4JTest {
     }
 
     @Test
-    public void TwoClassesNoConstructorOverload(){
+    public void TwoClassesNoConstructorOverload() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -85,7 +85,7 @@ public class ConstructorOverloadsTest extends Neo4JTest {
     }
 
     @Test
-    public void TwoClassesOneConstructorOverload(){
+    public void TwoClassesOneConstructorOverload() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -105,7 +105,7 @@ public class ConstructorOverloadsTest extends Neo4JTest {
     }
 
     @Test
-    public void TwoClassesTwoConstructorOverloads(){
+    public void TwoClassesTwoConstructorOverloads() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);

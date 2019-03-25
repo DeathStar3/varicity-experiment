@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 public class ClassLevelVPsTest extends Neo4JTest {
 
     @Test
-    public void OneInterface(){
+    public void OneInterface() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             graph.createNode("Shape", EntityType.INTERFACE);
@@ -29,7 +29,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneAbstractClass(){
+    public void OneAbstractClass() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             graph.createNode("Shape", EntityType.ABSTRACT, EntityType.CLASS);
@@ -41,7 +41,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneExtendedClass(){
+    public void OneExtendedClass() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -55,7 +55,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneClass(){
+    public void OneClass() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             graph.createNode("Shape", EntityType.CLASS);
@@ -67,7 +67,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void NoClass(){
+    public void NoClass() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             try (Transaction tx = graphDatabaseService.beginTx()) {
@@ -78,7 +78,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneAbstractClassOneInterface(){
+    public void OneAbstractClassOneInterface() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             graph.createNode("Serializable", EntityType.INTERFACE);
@@ -91,7 +91,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneExtendedAbstractClass(){
+    public void OneExtendedAbstractClass() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             Node shapeClass = graph.createNode("Shape", EntityType.ABSTRACT, EntityType.CLASS);
@@ -105,7 +105,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneExtendedInterface(){
+    public void OneExtendedInterface() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             Node shapeClass = graph.createNode("Shape", EntityType.INTERFACE);
@@ -119,7 +119,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void TwoLevelsClassVP(){
+    public void TwoLevelsClassVP() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             Node shapeClass = graph.createNode("Shape", EntityType.ABSTRACT, EntityType.CLASS);

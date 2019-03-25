@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 public class MethodLevelVPsTest extends Neo4JTest {
 
     @Test
-    public void NoMethodOverloadNoConstructorOverload(){
+    public void NoMethodOverloadNoConstructorOverload() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -35,7 +35,7 @@ public class MethodLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneMethodOverloadNoConstructorOverload(){
+    public void OneMethodOverloadNoConstructorOverload() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -56,7 +56,7 @@ public class MethodLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void NoMethodOverloadOneConstructorOverload(){
+    public void NoMethodOverloadOneConstructorOverload() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -77,7 +77,7 @@ public class MethodLevelVPsTest extends Neo4JTest {
     }
 
     @Test
-    public void OneMethodOverloadOneConstructorOverload(){
+    public void OneMethodOverloadOneConstructorOverload() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node shapeClass = graph.createNode("Shape", EntityType.CLASS);

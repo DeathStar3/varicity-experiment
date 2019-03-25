@@ -62,10 +62,14 @@ public class Symfinder {
         neoGraph.setVPLabels();
         neoGraph.writeGraphFile(graphOutputPath);
         neoGraph.writeVPGraphFile(graphOutputPath.replace(".json", "-vp.json"));
-        System.out.println("Number of methods overloads : " + neoGraph.getTotalNbMethodsOverloads());
-        System.out.println("Number of constructors overloads : " + neoGraph.getTotalNbOverloadedConstructors());
-        System.out.println("Number of method level overloads : " + neoGraph.getNbMethodLevelVPs());
-        System.out.println("Number of class level overloads : " + neoGraph.getNbClassLevelVPs());
+        System.out.println("Number of methods VPs : " + neoGraph.getTotalNbOverloadedMethods());
+        System.out.println("Number of constructors VPs : " + neoGraph.getTotalNbOverloadedConstructors());
+        System.out.println("Number of method level VPs : " + neoGraph.getNbMethodLevelVPs());
+        System.out.println("Number of class level VPs : " + neoGraph.getNbClassLevelVPs());
+        System.out.println("Number of methods variants : " + neoGraph.getNbMethodVariants());
+        System.out.println("Number of constructors variants : " + neoGraph.getNbConstructorVariants());
+        System.out.println("Number of method level variants : " + neoGraph.getNbMethodLevelVariants());
+        System.out.println("Number of class level variants : " + neoGraph.getNbClassLevelVariants());
         System.out.println("Number of design patterns present : " + neoGraph.getNbNodesHavingDesignPatterns());
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         System.out.println(neoGraph.generateStatisticsJson());

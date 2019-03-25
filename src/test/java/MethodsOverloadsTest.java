@@ -22,7 +22,7 @@ public class MethodsOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(nodeClass, nodeMethod2, relationType);
             graph.setMethodsOverloads();
             try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(0, graph.getTotalNbMethodsOverloads());
+                assertEquals(0, graph.getTotalNbOverloadedMethods());
                 tx.success();
             }
         }
@@ -44,7 +44,7 @@ public class MethodsOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(polygonNode, polygonMethod2, RelationType.METHOD);
             graph.setMethodsOverloads();
             try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(0, graph.getTotalNbMethodsOverloads());
+                assertEquals(0, graph.getTotalNbOverloadedMethods());
                 tx.success();
             }
         }
@@ -62,7 +62,7 @@ public class MethodsOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(nodeClass, nodeMethod2, relationType);
             graph.setMethodsOverloads();
             try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(1, graph.getTotalNbMethodsOverloads());
+                assertEquals(1, graph.getTotalNbOverloadedMethods());
                 tx.success();
             }
         }
@@ -84,7 +84,7 @@ public class MethodsOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(polygonNode, polygonMethod2, RelationType.METHOD);
             graph.setMethodsOverloads();
             try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(1, graph.getTotalNbMethodsOverloads());
+                assertEquals(1, graph.getTotalNbOverloadedMethods());
                 tx.success();
             }
         }
@@ -106,7 +106,7 @@ public class MethodsOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(polygonNode, polygonMethod2, RelationType.METHOD);
             graph.setMethodsOverloads();
             try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(2, graph.getTotalNbMethodsOverloads());
+                assertEquals(2, graph.getTotalNbOverloadedMethods());
                 tx.success();
             }
         }

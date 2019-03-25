@@ -112,7 +112,7 @@ public class NeoGraphTest extends Neo4JTest {
     }
 
     @Test
-    public void setNbVariantsPropertyTest(){
+    public void setNbVariantsPropertyTest() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
@@ -140,7 +140,7 @@ public class NeoGraphTest extends Neo4JTest {
     }
 
     @Test
-    public void setVPLabelClassTest(){
+    public void setVPLabelClassTest() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
@@ -172,7 +172,7 @@ public class NeoGraphTest extends Neo4JTest {
     }
 
     @Test
-    public void setVPLabelMethodTest(){
+    public void setVPLabelMethodTest() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
@@ -201,7 +201,7 @@ public class NeoGraphTest extends Neo4JTest {
     }
 
     @Test
-    public void setVPLabelConstructorTest(){
+    public void setVPLabelConstructorTest() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
@@ -297,7 +297,7 @@ public class NeoGraphTest extends Neo4JTest {
     }
 
     @Test
-    public void getClauseForNodesMatchingLabelsTest(){
+    public void getClauseForNodesMatchingLabelsTest() {
         assertEquals("n:STRATEGY", NeoGraph.getClauseForNodesMatchingLabels("n", DesignPatternType.STRATEGY));
         assertEquals("cl:STRATEGY", NeoGraph.getClauseForNodesMatchingLabels("cl", DesignPatternType.STRATEGY));
         assertEquals("n:STRATEGY OR n:FACTORY", NeoGraph.getClauseForNodesMatchingLabels("n", DesignPatternType.STRATEGY, DesignPatternType.FACTORY));
