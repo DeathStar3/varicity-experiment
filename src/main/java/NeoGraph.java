@@ -308,11 +308,13 @@ public class NeoGraph {
     }
 
     /**
-     * Get total number of class level overloads.
+     * Get total number of class level VPs.
      * These are :
-     * - inheritance
+     * - interfaces
+     * - abstract classes
+     * - extended classes
      *
-     * @return Number of method level overloads
+     * @return Number of class level VPs
      */
     public int getNbClassLevelVPs() {
         int nbInterfaces = submitRequest("MATCH (n:INTERFACE) RETURN COUNT (n)").list().get(0).get(0).asInt();
@@ -359,11 +361,14 @@ public class NeoGraph {
 
     public String generateStatisticsJson() {
         return new JSONObject()
-                .put("methodsOverloads", getTotalNbOverloadedMethods())
-                .put("constructorsOverloads", getTotalNbOverloadedConstructors())
-                .put("classLevelVPs", getNbClassLevelVPs())
+                .put("methodsVPs", getTotalNbOverloadedMethods())
+                .put("constructorsVPs", getTotalNbOverloadedConstructors())
                 .put("methodLevelVPs", getNbMethodLevelVPs())
-                .put("designPatterns", getNbNodesHavingDesignPatterns()).toString();
+                .put("classLevelVPs", getNbClassLevelVPs())
+                .put("methodsVariants", getNbMethodVariants())
+                .put("constructorsVariants", getNbConstructorVariants())
+                .put("methodLevelVariants", getNbMethodLevelVariants())
+                .put("classLevelVariants", getNbClassLevelVariants()).toString();
     }
 
     /**

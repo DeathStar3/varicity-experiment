@@ -77,11 +77,14 @@ function generateGraph(jsonFile, jsonStatsFile){
 
         d3.json(jsonStatsFile, function(err, stats){
             var statisticsContent =
-                "Number of constructor overloads: "+ stats["constructorsOverloads"] + "<br>" +
-                "Number of methods overloads: "+ stats["methodsOverloads"] + "<br>" +
-                "Number of method level overloads: "+ stats["methodLevelOverloads"] + "<br>" +
-                "Number of class level overloads: "+ stats["classLevelOverloads"] + "<br>" +
-                "Number of design patterns overloads: "+ stats["designPatterns"];
+                "Number of methods VPs: "+ stats["methodsVPs"] + "<br>" +
+                "Number of constructors VPs: "+ stats["constructorsVPs"] + "<br>" +
+                "Number of method level VPs: "+ stats["methodLevelVPs"] + "<br>" +
+                "Number of class level VPs: "+ stats["classLevelVPs"] + "<br>" +
+                "Number of methods variants: "+ stats["methodsVariants"] + "<br>" +
+                "Number of constructors variants: "+ stats["constructorsVariants"] + "<br>" +
+                "Number of method level variants: "+ stats["methodLevelVariants"] + "<br>" +
+                "Number of class level variants: "+ stats["classLevelVariants"];
             console.log(statisticsContent);
             document.getElementsByTagName("p")[0].innerHTML = statisticsContent;
 
