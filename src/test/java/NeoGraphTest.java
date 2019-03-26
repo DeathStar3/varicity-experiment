@@ -21,18 +21,89 @@ import static org.junit.Assert.*;
 public class NeoGraphTest extends Neo4JTest {
 
     @Test
-    public void createNode() {
+    public void createNodeOneLabel() {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             NodeType nodeType = EntityType.CLASS;
-            graph.createNode("n", nodeType);
+            String nodeName = "n";
+            graph.createNode(nodeName, nodeType);
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 ResourceIterable <Node> allNodes = graphDatabaseService.getAllNodes();
                 assertEquals(1, allNodes.stream().count());
                 Optional <Node> optionalNode = allNodes.stream().findFirst();
                 assertTrue(optionalNode.isPresent());
                 assertTrue(optionalNode.get().hasLabel(Label.label(nodeType.toString())));
-                // TODO: 11/29/18 Check name
+                assertEquals(optionalNode.get().getProperty("name"), nodeName);
+                tx.success();
+            }
+        }
+    }
+
+    @Test
+    public void createNodeTwoLabels() {
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            NodeType nodeType1 = EntityType.CLASS;
+            NodeType nodeType2 = EntityType.ABSTRACT;
+            String nodeName = "n";
+            graph.createNode(nodeName, nodeType1, nodeType2);
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                ResourceIterable <Node> allNodes = graphDatabaseService.getAllNodes();
+                assertEquals(1, allNodes.stream().count());
+                Optional <Node> optionalNode = allNodes.stream().findFirst();
+                assertTrue(optionalNode.isPresent());
+                assertTrue(optionalNode.get().hasLabel(Label.label(nodeType1.toString())));
+                assertTrue(optionalNode.get().hasLabel(Label.label(nodeType2.toString())));
+                assertEquals(optionalNode.get().getProperty("name"), nodeName);
+                tx.success();
+            }
+        }
+    }
+
+    @Test
+    public void getNode() {
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            NodeType nodeType = EntityType.CLASS;
+            String nodeName = "n";
+            graph.createNode(nodeName, nodeType);
+            org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType);
+            assertEquals(node.get("name").asString(), nodeName);
+        }
+    }
+
+    @Test
+    public void getOrCreateNodeCreation() {
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            NodeType nodeType = EntityType.CLASS;
+            String nodeName = "n";
+            org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType);
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                ResourceIterable <Node> allNodes = graphDatabaseService.getAllNodes();
+                assertEquals(1, allNodes.stream().count());
+                assertEquals(node.get("name").asString(), nodeName);
+                assertTrue(node.hasLabel(nodeType.toString()));
+                tx.success();
+            }
+        }
+    }
+
+    @Test
+    public void getOrCreateNodeGetting() {
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+            NeoGraph graph = new NeoGraph(driver);
+            NodeType nodeType1 = EntityType.CLASS;
+            NodeType nodeType2 = EntityType.INTERFACE;
+            String nodeName = "n";
+            graph.getOrCreateNode(nodeName, nodeType1);
+            org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType2);
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                ResourceIterable <Node> allNodes = graphDatabaseService.getAllNodes();
+                assertEquals(1, allNodes.stream().count());
+                assertEquals(node.get("name").asString(), nodeName);
+                assertTrue(node.hasLabel(nodeType1.toString()));
+                assertFalse(node.hasLabel(nodeType2.toString()));
                 tx.success();
             }
         }
@@ -135,116 +206,6 @@ public class NeoGraphTest extends Neo4JTest {
                         .findFirst()
                         .ifPresent(node -> assertEquals(0L, node.getProperty("nbVariants")));
                 tx.success();
-            }
-        }
-    }
-
-    @Test
-    public void setVPLabelClassTest() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeSubclass1 = graph.createNode("subclass1", EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeSubclass2 = graph.createNode("subclass2", EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeMethod = graph.createNode("method", EntityType.METHOD);
-            graph.linkTwoNodes(nodeClass1, nodeSubclass1, RelationType.EXTENDS);
-            graph.linkTwoNodes(nodeClass1, nodeSubclass2, RelationType.EXTENDS);
-            graph.linkTwoNodes(nodeSubclass1, nodeMethod, RelationType.METHOD);
-            graph.setNbVariantsProperty();
-            graph.setVPLabels();
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                List <Node> allClassNodes = graphDatabaseService.getAllNodes().stream()
-                        .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
-                        .collect(Collectors.toList());
-                assertEquals(3, allClassNodes.size());
-                allClassNodes.stream().filter(node -> node.getProperty("name").equals("class"))
-                        .findFirst()
-                        .ifPresent(node -> assertTrue(node.hasLabel(Label.label(EntityType.VP.getString()))));
-                allClassNodes.stream().filter(node -> node.getProperty("name").equals("subclass1"))
-                        .findFirst()
-                        .ifPresent(node -> assertFalse(node.hasLabel(Label.label(EntityType.VP.getString()))));
-                allClassNodes.stream().filter(node -> node.getProperty("name").equals("subclass2"))
-                        .findFirst()
-                        .ifPresent(node -> assertFalse(node.hasLabel(Label.label(EntityType.VP.getString()))));
-                tx.success();
-            }
-        }
-    }
-
-    @Test
-    public void setVPLabelMethodTest() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeMethod1 = graph.createNode("method", EntityType.METHOD);
-            org.neo4j.driver.v1.types.Node nodeMethod2 = graph.createNode("method", EntityType.METHOD);
-            org.neo4j.driver.v1.types.Node nodeConstructor1 = graph.createNode("constructor", EntityType.CONSTRUCTOR);
-            graph.linkTwoNodes(nodeClass1, nodeMethod1, RelationType.METHOD);
-            graph.linkTwoNodes(nodeClass1, nodeMethod2, RelationType.METHOD);
-            graph.linkTwoNodes(nodeClass1, nodeConstructor1, RelationType.METHOD);
-            graph.setMethodsOverloads();
-            graph.setVPLabels();
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                List <Node> allClassNodes = graphDatabaseService.getAllNodes().stream()
-                        .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
-                        .collect(Collectors.toList());
-                assertEquals(1, allClassNodes.size());
-                allClassNodes.stream()
-                        .findFirst()
-                        .ifPresent(node -> {
-                            assertEquals(1L, node.getProperty("methods"));
-                            assertTrue(node.hasLabel(Label.label(EntityType.VP.getString())));
-                        });
-                tx.success();
-            }
-        }
-    }
-
-    @Test
-    public void setVPLabelConstructorTest() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
-            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeMethod1 = graph.createNode("method", EntityType.METHOD);
-            org.neo4j.driver.v1.types.Node nodeMethod2 = graph.createNode("constructor", EntityType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node nodeConstructor1 = graph.createNode("constructor", EntityType.CONSTRUCTOR);
-            graph.linkTwoNodes(nodeClass1, nodeMethod1, RelationType.METHOD);
-            graph.linkTwoNodes(nodeClass1, nodeMethod2, RelationType.METHOD);
-            graph.linkTwoNodes(nodeClass1, nodeConstructor1, RelationType.METHOD);
-            graph.setConstructorsOverloads();
-            graph.setVPLabels();
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                List <Node> allClassNodes = graphDatabaseService.getAllNodes().stream()
-                        .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
-                        .collect(Collectors.toList());
-                assertEquals(1, allClassNodes.size());
-                allClassNodes.stream()
-                        .findFirst()
-                        .ifPresent(node -> {
-                            assertEquals(1L, node.getProperty("constructors"));
-                            assertTrue(node.hasLabel(Label.label(EntityType.VP.toString())));
-                        });
-                tx.success();
-            }
-        }
-    }
-
-    @Test
-    public void getOrCreateNode() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
-            NodeType nodeType = EntityType.CLASS;
-            for (int i = 0 ; i < 2 ; i++) {
-                graph.getOrCreateNode("n", nodeType);
-                try (Transaction tx = graphDatabaseService.beginTx()) {
-                    ResourceIterable <Node> allNodes = graphDatabaseService.getAllNodes();
-                    assertEquals(1, allNodes.stream().count());
-                    Optional <Node> optionalNode = allNodes.stream().findFirst();
-                    assertTrue(optionalNode.isPresent());
-                    assertTrue(optionalNode.get().hasLabel(Label.label(nodeType.toString())));
-                    // TODO: 11/29/18 Check name
-                    tx.success();
-                }
             }
         }
     }

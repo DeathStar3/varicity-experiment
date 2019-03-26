@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +30,8 @@ public class NeoGraph {
         this.driver = driver;
     }
 
-    public Node createNode(String name, NodeType... types) {
-        return createNode(name, name, types);
+    public Node createNode(String name, NodeType type, NodeType... types) {
+        return createNode(name, name, type, types);
     }
 
     /**
@@ -39,11 +40,39 @@ public class NeoGraph {
      * @param name  Node name
      * @param types Node types
      */
-    public Node createNode(String name, String shortName, NodeType... types) {
+    public Node createNode(String name, String shortName, NodeType type, NodeType... types) {
+        List <NodeType> nodeTypes = new ArrayList <>(Arrays.asList(types));
+        nodeTypes.add(type);
         return submitRequest(String.format("CREATE (n:%s { name: '%s', shortname: '%s' }) RETURN (n)",
-                Arrays.stream(types).map(NodeType::getString).collect(Collectors.joining(":")),
+                nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":")),
                 name,
                 shortName))
+                .list().get(0).get(0).asNode();
+    }
+
+    public Node getNode(String name) {
+        return submitRequest(String.format("MATCH (n {name: '%s'}) RETURN (n)", name)).list().get(0).get(0).asNode();
+    }
+
+    public Node getOrCreateNode(String name, NodeType type, NodeType... types) {
+        return getOrCreateNode(name, name, type, types);
+    }
+
+    /**
+     * Returns the node if it exists, creates it and returns it otherwise.
+     * As we use qualified names, each name is unique. Therefore, we can match only on node name.
+     * If the node does not exist, it is created with the specified types as labels.
+     *
+     * @param name  Node name
+     * @param types Node types
+     */
+    public Node getOrCreateNode(String name, String shortName, NodeType type, NodeType... types) {
+        List <NodeType> nodeTypes = new ArrayList <>(Arrays.asList(types));
+        nodeTypes.add(type);
+        return submitRequest(String.format("MERGE (n {name: '%s', shortname: '%s'}) ON CREATE SET n:%s RETURN (n)",
+                name,
+                shortName,
+                nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":"))))
                 .list().get(0).get(0).asNode();
     }
 
@@ -143,34 +172,14 @@ public class NeoGraph {
 
     /**
      * Adds a VP label to the node if it is a VP.
-     * A node is a VP if it has class or method level variants (subclasses / implementations or methods / constructors overloads), or has a design pattern.
+     * A node is a VP if it:
+     * - is an abstract class
+     * - is an interface
+     * - has class or method level variants (subclasses / implementations or methods / constructors overloads)
+     * - has a design pattern.
      */
     public void setVPLabels() {
-        submitRequest(String.format("MATCH (c) WHERE (%s) OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0 SET c:%s", getClauseForNodesMatchingLabels("c", DesignPatternType.values()), EntityType.VP));
-    }
-
-    public Node getOrCreateNode(String name, NodeType... types) {
-        return getOrCreateNode(name, name, types);
-    }
-
-    /**
-     * Returns the node if it exists, creates it and returns it otherwise.
-     * As we use qualified names, each name is unique. Therefore, we can match only on node name.
-     * If the node does not exist, it is created with the specified types as labels.
-     * If it exists, the types are added as labels to the node.
-     *
-     * @param name  Node name
-     * @param types Node types
-     */
-    public Node getOrCreateNode(String name, String shortName, NodeType... types) {
-        List <Record> matchingNodes = submitRequest(String.format("MATCH (n) WHERE n.name = '%s' RETURN (n)", name)).list();
-        if (matchingNodes.isEmpty()) {
-            return createNode(name, shortName, types);
-        }
-        return submitRequest(String.format("MATCH (n) WHERE ID(n) = %s SET n:%s RETURN (n)",
-                matchingNodes.get(0).get("n").asNode().id(),
-                Arrays.stream(types).map(NodeType::getString).collect(Collectors.joining(":"))))
-                .list().get(0).get("n").asNode();
+        submitRequest(String.format("MATCH (c) WHERE ((%s) OR c:ABSTRACT OR c:INTERFACE OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0) SET c:%s", getClauseForNodesMatchingLabels("c", DesignPatternType.values()), EntityType.VP));
     }
 
     public void addLabelToNode(Node node, String label) {

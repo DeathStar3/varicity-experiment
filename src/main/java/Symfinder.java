@@ -131,14 +131,15 @@ public class Symfinder {
         @Override
         public boolean visit(MethodDeclaration method) {
             // Ignoring methods in anonymous classes
-            if ((! (method.resolveBinding() == null)) && ! method.resolveBinding().getDeclaringClass().isAnonymous()) {
-                if (! isTestClass(method.resolveBinding().getDeclaringClass())) {
+            ITypeBinding declaringClass = method.resolveBinding().getDeclaringClass();
+            if ((! (method.resolveBinding() == null)) && ! declaringClass.isAnonymous()) {
+                if (! isTestClass(declaringClass)) {
                     String methodName = method.getName().getIdentifier();
-                    String parentClassName = method.resolveBinding().getDeclaringClass().getQualifiedName();
+                    String parentClassName = declaringClass.getQualifiedName();
                     System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
                     NodeType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
                     Node methodNode = neoGraph.createNode(methodName, methodType);
-                    Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, method.resolveBinding().getDeclaringClass().getName(), EntityType.CLASS);
+                    Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, declaringClass.getName(), declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
                     neoGraph.linkTwoNodes(parentClassNode, methodNode, RelationType.METHOD);
                 }
             }
@@ -147,38 +148,45 @@ public class Symfinder {
 
         @Override
         public boolean visit(TypeDeclaration type) {
-            if (! isTestClass(type.resolveBinding())) {
+            ITypeBinding classBinding = type.resolveBinding();
+            if (! isTestClass(classBinding)) {
                 Node thisNode;
 
                 // If the class is an inner class / interface
                 // TODO: 11/28/18 test this
                 if (! type.isPackageMemberTypeDeclaration()) {
-                    thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), EntityType.CLASS, EntityType.INNER);
-                    Node parentNode = neoGraph.getOrCreateNode(type.resolveBinding().getDeclaringClass().getQualifiedName(), type.resolveBinding().getDeclaringClass().getName(), EntityType.CLASS);
+                    EntityType nodeType = classBinding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS;
+                    EntityType parentNodeType = classBinding.getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS;
+                    thisNode = neoGraph.getOrCreateNode(classBinding.getQualifiedName(), classBinding.getName(), nodeType, EntityType.INNER);
+                    Node parentNode = neoGraph.getOrCreateNode(classBinding.getDeclaringClass().getQualifiedName(), classBinding.getDeclaringClass().getName(), parentNodeType);
                     neoGraph.linkTwoNodes(parentNode, thisNode, RelationType.INNER);
                 }
 
 
-                // If the class is abstract
+                NodeType nodeType;
                 NodeType[] nodeTypes;
+                // If the class is abstract
                 if (Modifier.isAbstract(type.getModifiers())) {
-                    nodeTypes = new NodeType[]{EntityType.CLASS, EntityType.ABSTRACT};
+                    nodeType = EntityType.CLASS;
+                    nodeTypes = new NodeType[]{EntityType.ABSTRACT};
                     // If the type is an interface
                 } else if (type.isInterface()) {
-                    nodeTypes = new NodeType[]{EntityType.INTERFACE};
+                    nodeType = EntityType.INTERFACE;
+                    nodeTypes = new NodeType[]{};
                     // The type is a class
                 } else {
-                    nodeTypes = new NodeType[]{EntityType.CLASS};
+                    nodeType = EntityType.CLASS;
+                    nodeTypes = new NodeType[]{};
                 }
-                thisNode = neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), type.resolveBinding().getName(), nodeTypes);
+                thisNode = neoGraph.getOrCreateNode(classBinding.getQualifiedName(), classBinding.getName(), nodeType, nodeTypes);
 
                 // Link to implemented interfaces if exist
-                for (ITypeBinding o : type.resolveBinding().getInterfaces()) {
+                for (ITypeBinding o : classBinding.getInterfaces()) {
                     Node interfaceNode = neoGraph.getOrCreateNode(o.getQualifiedName(), o.getName(), EntityType.INTERFACE);
                     neoGraph.linkTwoNodes(interfaceNode, thisNode, RelationType.IMPLEMENTS);
                 }
                 // Link to superclass if exists
-                ITypeBinding superclassType = type.resolveBinding().getSuperclass();
+                ITypeBinding superclassType = classBinding.getSuperclass();
                 if (superclassType != null) {
                     Node superclassNode = neoGraph.getOrCreateNode(superclassType.getQualifiedName(), superclassType.getName(), EntityType.CLASS);
                     neoGraph.linkTwoNodes(superclassNode, thisNode, RelationType.EXTENDS);
@@ -193,9 +201,10 @@ public class Symfinder {
         @Override
         public boolean visit(FieldDeclaration field) {
             System.out.println(field);
-            if (field.getType().resolveBinding() != null) { // TODO: 12/6/18 log this
-                Node typeNode = neoGraph.getOrCreateNode(field.getType().resolveBinding().getQualifiedName(), EntityType.CLASS);
-                if (field.getType().resolveBinding().getName().contains("Strategy") || neoGraph.getNbVariants(typeNode) >= 2) {
+            ITypeBinding binding = field.getType().resolveBinding();
+            if (binding != null) { // TODO: 12/6/18 log this
+                Node typeNode = neoGraph.getOrCreateNode(binding.getQualifiedName(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
+                if (binding.getName().contains("Strategy") || neoGraph.getNbVariants(typeNode) >= 2) {
                     neoGraph.addLabelToNode(typeNode, DesignPatternType.STRATEGY.toString());
                 }
             }
@@ -208,10 +217,9 @@ public class Symfinder {
 
         @Override
         public boolean visit(TypeDeclaration type) {
-            NodeType nodeType = type.isInterface() ? EntityType.INTERFACE : EntityType.CLASS;
             String qualifiedName = type.resolveBinding().getQualifiedName();
             if (qualifiedName.contains("Factory")) {
-                neoGraph.addLabelToNode(neoGraph.getOrCreateNode(qualifiedName, nodeType), DesignPatternType.FACTORY.toString());
+                neoGraph.addLabelToNode(neoGraph.getNode(qualifiedName), DesignPatternType.FACTORY.toString());
             }
             return true;
         }
@@ -227,8 +235,8 @@ public class Symfinder {
                     System.out.println("methodReturnType : " + methodReturnType);
                     String parsedClassType = methodDeclaration.resolveBinding().getDeclaringClass().getQualifiedName();
                     System.out.println(parsedClassType);
-                    Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, EntityType.CLASS);
-                    Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, EntityType.CLASS); // FIXME: 3/25/19 add interface case
+                    Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, methodDeclaration.getReturnType2().resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
+                    Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, methodDeclaration.resolveBinding().getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
                     if (! typeOfReturnedObject.equals(methodReturnType) && neoGraph.getNbVariants(methodReturnTypeNode) >= 2) {
                         neoGraph.addLabelToNode(parsedClassNode, DesignPatternType.FACTORY.toString());
                     }
