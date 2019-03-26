@@ -5,7 +5,6 @@ import org.neo4j.driver.v1.Config;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.types.Node;
-import org.neo4j.graphdb.Transaction;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,10 +17,7 @@ public class MethodVariantsTest extends Neo4JTest {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node drawMethod = graph.createNode("draw", EntityType.METHOD);
             graph.linkTwoNodes(rectangleClass, drawMethod, RelationType.METHOD);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(0, graph.getNbMethodVariants());
-                tx.success();
-            }
+            assertEquals(0, graph.getNbMethodVariants());
         }
     }
 
@@ -34,10 +30,7 @@ public class MethodVariantsTest extends Neo4JTest {
             Node drawMethod2 = graph.createNode("draw", EntityType.METHOD);
             graph.linkTwoNodes(rectangleClass, drawMethod1, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, drawMethod2, RelationType.METHOD);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(2, graph.getNbMethodVariants());
-                tx.success();
-            }
+            assertEquals(2, graph.getNbMethodVariants());
         }
     }
 
@@ -52,10 +45,7 @@ public class MethodVariantsTest extends Neo4JTest {
             graph.linkTwoNodes(rectangleClass, drawMethod1, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, drawMethod2, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, drawMethod3, RelationType.METHOD);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(3, graph.getNbMethodVariants());
-                tx.success();
-            }
+            assertEquals(3, graph.getNbMethodVariants());
         }
     }
 
@@ -70,10 +60,7 @@ public class MethodVariantsTest extends Neo4JTest {
             graph.linkTwoNodes(rectangleClass, drawMethod1, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, displayMethod1, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, displayMethod2, RelationType.METHOD);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(2, graph.getNbMethodVariants());
-                tx.success();
-            }
+            assertEquals(2, graph.getNbMethodVariants());
         }
     }
 
@@ -94,10 +81,7 @@ public class MethodVariantsTest extends Neo4JTest {
             graph.linkTwoNodes(rectangleClass, showMethod1, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, showMethod2, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, showMethod3, RelationType.METHOD);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(5, graph.getNbMethodVariants());
-                tx.success();
-            }
+            assertEquals(5, graph.getNbMethodVariants());
         }
     }
 
@@ -112,10 +96,7 @@ public class MethodVariantsTest extends Neo4JTest {
             Node drawCircleMethod = graph.createNode("draw", EntityType.METHOD);
             graph.linkTwoNodes(rectangleClass, drawRectangleMethod, RelationType.METHOD);
             graph.linkTwoNodes(circleClass, drawCircleMethod, RelationType.METHOD);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(0, graph.getNbMethodVariants());
-                tx.success();
-            }
+            assertEquals(0, graph.getNbMethodVariants());
         }
     }
 
@@ -133,10 +114,7 @@ public class MethodVariantsTest extends Neo4JTest {
             graph.linkTwoNodes(rectangleClass, drawRectangleMethod2, RelationType.METHOD);
             graph.linkTwoNodes(circleClass, drawCircleMethod1, RelationType.METHOD);
             graph.linkTwoNodes(circleClass, drawCircleMethod2, RelationType.METHOD);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(4, graph.getNbMethodVariants());
-                tx.success();
-            }
+            assertEquals(4, graph.getNbMethodVariants());
         }
     }
 
@@ -159,10 +137,7 @@ public class MethodVariantsTest extends Neo4JTest {
             graph.linkTwoNodes(circleClass, displayCircleMethod, RelationType.METHOD);
             graph.linkTwoNodes(circleClass, drawCircleMethod1, RelationType.METHOD);
             graph.linkTwoNodes(circleClass, drawCircleMethod2, RelationType.METHOD);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(4, graph.getNbMethodVariants());
-                tx.success();
-            }
+            assertEquals(4, graph.getNbMethodVariants());
         }
     }
 }

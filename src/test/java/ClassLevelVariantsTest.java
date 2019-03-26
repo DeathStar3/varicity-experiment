@@ -5,7 +5,6 @@ import org.neo4j.driver.v1.Config;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.types.Node;
-import org.neo4j.graphdb.Transaction;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,10 +15,7 @@ public class ClassLevelVariantsTest extends Neo4JTest {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(0, graph.getNbClassLevelVariants());
-                tx.success();
-            }
+            assertEquals(0, graph.getNbClassLevelVariants());
         }
     }
 
@@ -28,10 +24,7 @@ public class ClassLevelVariantsTest extends Neo4JTest {
         try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             graph.createNode("Shape", EntityType.CLASS);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(0, graph.getNbClassLevelVariants());
-                tx.success();
-            }
+            assertEquals(0, graph.getNbClassLevelVariants());
         }
     }
 
@@ -42,10 +35,7 @@ public class ClassLevelVariantsTest extends Neo4JTest {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(1, graph.getNbClassLevelVariants());
-                tx.success();
-            }
+            assertEquals(1, graph.getNbClassLevelVariants());
         }
     }
 
@@ -60,10 +50,7 @@ public class ClassLevelVariantsTest extends Neo4JTest {
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
             graph.linkTwoNodes(shapeClass, rectangleClass, RelationType.EXTENDS);
             graph.linkTwoNodes(shapeClass, triangleClass, RelationType.EXTENDS);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(3, graph.getNbClassLevelVariants());
-                tx.success();
-            }
+            assertEquals(3, graph.getNbClassLevelVariants());
         }
     }
 
@@ -75,10 +62,7 @@ public class ClassLevelVariantsTest extends Neo4JTest {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
             Node polygonClass = graph.createNode("Polygon", EntityType.CLASS, EntityType.ABSTRACT);
             graph.linkTwoNodes(shapeClass, polygonClass, RelationType.EXTENDS);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(0, graph.getNbClassLevelVariants());
-                tx.success();
-            }
+            assertEquals(0, graph.getNbClassLevelVariants());
         }
     }
 }
