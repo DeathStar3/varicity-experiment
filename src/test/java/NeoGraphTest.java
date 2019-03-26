@@ -2,15 +2,8 @@ import neo4j_types.DesignPatternType;
 import neo4j_types.EntityType;
 import neo4j_types.NodeType;
 import neo4j_types.RelationType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.neo4j.driver.v1.Config;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.graphdb.*;
-import org.neo4j.harness.junit.Neo4jRule;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +15,7 @@ public class NeoGraphTest extends Neo4JTest {
 
     @Test
     public void createNodeOneLabel() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             NodeType nodeType = EntityType.CLASS;
             String nodeName = "n";
             graph.createNode(nodeName, nodeType);
@@ -36,13 +28,12 @@ public class NeoGraphTest extends Neo4JTest {
                 assertEquals(optionalNode.get().getProperty("name"), nodeName);
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void createNodeTwoLabels() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             NodeType nodeType1 = EntityType.CLASS;
             NodeType nodeType2 = EntityType.ABSTRACT;
             String nodeName = "n";
@@ -57,25 +48,23 @@ public class NeoGraphTest extends Neo4JTest {
                 assertEquals(optionalNode.get().getProperty("name"), nodeName);
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void getNode() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             NodeType nodeType = EntityType.CLASS;
             String nodeName = "n";
             graph.createNode(nodeName, nodeType);
             org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType);
             assertEquals(node.get("name").asString(), nodeName);
-        }
+        });
     }
 
     @Test
     public void getOrCreateNodeCreation() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             NodeType nodeType = EntityType.CLASS;
             String nodeName = "n";
             org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType);
@@ -86,13 +75,12 @@ public class NeoGraphTest extends Neo4JTest {
                 assertTrue(node.hasLabel(nodeType.toString()));
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void getOrCreateNodeGetting() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             NodeType nodeType1 = EntityType.CLASS;
             NodeType nodeType2 = EntityType.INTERFACE;
             String nodeName = "n";
@@ -106,13 +94,12 @@ public class NeoGraphTest extends Neo4JTest {
                 assertFalse(node.hasLabel(nodeType2.toString()));
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void linkTwoNodes() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             org.neo4j.driver.v1.types.Node node1 = graph.createNode("n1", EntityType.CLASS);
             org.neo4j.driver.v1.types.Node node2 = graph.createNode("n2", EntityType.METHOD);
             RelationType relationType = RelationType.METHOD;
@@ -127,13 +114,12 @@ public class NeoGraphTest extends Neo4JTest {
                 assertTrue(optionalRelationship.get().isType(RelationshipType.withName(relationType.toString())));
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void setMethodsOverloads() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
             org.neo4j.driver.v1.types.Node nodeMethod1 = graph.createNode("method1", EntityType.METHOD);
             org.neo4j.driver.v1.types.Node nodeMethod11 = graph.createNode("method1", EntityType.METHOD);
@@ -153,13 +139,12 @@ public class NeoGraphTest extends Neo4JTest {
                 assertEquals(1L, classNode.getProperty("methods"));
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void setConstructorsOverloads() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
             org.neo4j.driver.v1.types.Node nodeConstructor1 = graph.createNode("constructor", EntityType.CONSTRUCTOR);
             org.neo4j.driver.v1.types.Node nodeConstructor11 = graph.createNode("constructor", EntityType.CONSTRUCTOR);
@@ -179,13 +164,12 @@ public class NeoGraphTest extends Neo4JTest {
                 assertEquals(1L, classNode.getProperty("constructors"));
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void setNbVariantsPropertyTest() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
             org.neo4j.driver.v1.types.Node nodeSubclass1 = graph.createNode("subclass1", EntityType.CLASS);
             org.neo4j.driver.v1.types.Node nodeSubclass2 = graph.createNode("subclass2", EntityType.CLASS);
@@ -207,26 +191,24 @@ public class NeoGraphTest extends Neo4JTest {
                         .ifPresent(node -> assertEquals(0L, node.getProperty("nbVariants")));
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void deleteGraph() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             graph.deleteGraph();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 ResourceIterable <Node> allNodes = graphDatabaseService.getAllNodes();
                 assertEquals(0, allNodes.stream().count());
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void addLabelToNode() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             org.neo4j.driver.v1.types.Node node = graph.createNode("class", EntityType.CLASS);
             graph.addLabelToNode(node, DesignPatternType.STRATEGY.toString());
             try (Transaction tx = graphDatabaseService.beginTx()) {
@@ -235,26 +217,22 @@ public class NeoGraphTest extends Neo4JTest {
                 assertTrue(nodeFromGraph.hasLabel(Label.label(DesignPatternType.STRATEGY.toString())));
                 tx.success();
             }
-        }
+        });
     }
 
     @Test
     public void getNbVariants() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             org.neo4j.driver.v1.types.Node nodeClass = graph.createNode("class", EntityType.CLASS);
             org.neo4j.driver.v1.types.Node nodeSubclass1 = graph.createNode("subclass1", EntityType.CLASS);
             org.neo4j.driver.v1.types.Node nodeSubclass2 = graph.createNode("subclass2", EntityType.CLASS);
             RelationType relationType = RelationType.EXTENDS;
             graph.linkTwoNodes(nodeClass, nodeSubclass1, relationType);
             graph.linkTwoNodes(nodeClass, nodeSubclass2, relationType);
-            try (Transaction tx = graphDatabaseService.beginTx()) {
-                assertEquals(2, graph.getNbVariants(nodeClass));
-                assertEquals(0, graph.getNbVariants(nodeSubclass1));
-                assertEquals(0, graph.getNbVariants(nodeSubclass2));
-                tx.success();
-            }
-        }
+            assertEquals(2, graph.getNbVariants(nodeClass));
+            assertEquals(0, graph.getNbVariants(nodeSubclass1));
+            assertEquals(0, graph.getNbVariants(nodeSubclass2));
+        });
     }
 
     @Test

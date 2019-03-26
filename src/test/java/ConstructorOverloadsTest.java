@@ -1,9 +1,6 @@
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
 import org.junit.Test;
-import org.neo4j.driver.v1.Config;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.types.Node;
 
 import static org.junit.Assert.assertEquals;
@@ -12,20 +9,18 @@ public class ConstructorOverloadsTest extends Neo4JTest {
 
     @Test
     public void OneClassNoConstructorOverload() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
             Node shapeConstructor = graph.createNode("Shape", EntityType.CONSTRUCTOR);
             graph.linkTwoNodes(shapeClass, shapeConstructor, RelationType.METHOD);
             graph.setConstructorsOverloads();
             assertEquals(0, graph.getTotalNbOverloadedConstructors());
-        }
+        });
     }
 
     @Test
     public void OneClassOneConstructorOverload() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
             Node shapeConstructor1 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
             Node shapeConstructor2 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
@@ -33,13 +28,12 @@ public class ConstructorOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(shapeClass, shapeConstructor2, RelationType.METHOD);
             graph.setConstructorsOverloads();
             assertEquals(1, graph.getTotalNbOverloadedConstructors());
-        }
+        });
     }
 
     @Test
     public void OneClassTwoConstructorOverloads() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
             Node shapeConstructor1 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
             Node shapeConstructor2 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
@@ -49,13 +43,12 @@ public class ConstructorOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(shapeClass, shapeConstructor3, RelationType.METHOD);
             graph.setConstructorsOverloads();
             assertEquals(2, graph.getTotalNbOverloadedConstructors());
-        }
+        });
     }
 
     @Test
     public void TwoClassesNoConstructorOverload() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
             Node shapeConstructor1 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
             Node polygonClass = graph.createNode("Polygon", EntityType.CLASS);
@@ -64,13 +57,12 @@ public class ConstructorOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(polygonClass, polygonConstructor, RelationType.METHOD);
             graph.setConstructorsOverloads();
             assertEquals(0, graph.getTotalNbOverloadedConstructors());
-        }
+        });
     }
 
     @Test
     public void TwoClassesOneConstructorOverload() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
             Node shapeConstructor1 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
             Node shapeConstructor2 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
@@ -81,13 +73,12 @@ public class ConstructorOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(polygonClass, polygonConstructor, RelationType.METHOD);
             graph.setConstructorsOverloads();
             assertEquals(1, graph.getTotalNbOverloadedConstructors());
-        }
+        });
     }
 
     @Test
     public void TwoClassesTwoConstructorOverloads() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
             Node shapeConstructor1 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
             Node shapeConstructor2 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
@@ -100,7 +91,7 @@ public class ConstructorOverloadsTest extends Neo4JTest {
             graph.linkTwoNodes(polygonClass, polygonConstructor2, RelationType.METHOD);
             graph.setConstructorsOverloads();
             assertEquals(2, graph.getTotalNbOverloadedConstructors());
-        }
+        });
     }
 
 }

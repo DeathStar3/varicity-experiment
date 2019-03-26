@@ -12,8 +12,7 @@ public class MethodLevelVariantsTest extends Neo4JTest {
 
     @Test
     public void OneClassNoConstructorVariantNoMethodVariant() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node rectangleConstructor = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
             Node drawMethod = graph.createNode("draw", EntityType.METHOD);
@@ -22,13 +21,12 @@ public class MethodLevelVariantsTest extends Neo4JTest {
             assertEquals(0, graph.getNbMethodVariants());
             assertEquals(0, graph.getNbConstructorVariants());
             assertEquals(0, graph.getNbMethodLevelVariants());
-        }
+        });
     }
 
     @Test
     public void OneClassNoConstructorVariantTwoMethodVariants() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node rectangleConstructor = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
             Node drawMethod1 = graph.createNode("draw", EntityType.METHOD);
@@ -39,13 +37,12 @@ public class MethodLevelVariantsTest extends Neo4JTest {
             assertEquals(2, graph.getNbMethodVariants());
             assertEquals(0, graph.getNbConstructorVariants());
             assertEquals(2, graph.getNbMethodLevelVariants());
-        }
+        });
     }
 
     @Test
     public void OneClassTwoConstructorVariantsNoMethodVariant() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node rectangleConstructor1 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
             Node rectangleConstructor2 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
@@ -56,13 +53,12 @@ public class MethodLevelVariantsTest extends Neo4JTest {
             assertEquals(0, graph.getNbMethodVariants());
             assertEquals(2, graph.getNbConstructorVariants());
             assertEquals(2, graph.getNbMethodLevelVariants());
-        }
+        });
     }
 
     @Test
     public void OneClassTwoConstructorVariantsTwoMethodVariants() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node rectangleConstructor1 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
             Node rectangleConstructor2 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
@@ -75,14 +71,13 @@ public class MethodLevelVariantsTest extends Neo4JTest {
             assertEquals(2, graph.getNbMethodVariants());
             assertEquals(2, graph.getNbConstructorVariants());
             assertEquals(4, graph.getNbMethodLevelVariants());
-        }
+        });
     }
 
 
     @Test
     public void TwoClasses() {
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
-            NeoGraph graph = new NeoGraph(driver);
+        runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node rectangleConstructor1 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
             Node rectangleConstructor2 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
@@ -98,7 +93,7 @@ public class MethodLevelVariantsTest extends Neo4JTest {
             assertEquals(3, graph.getNbMethodVariants());
             assertEquals(2, graph.getNbConstructorVariants());
             assertEquals(5, graph.getNbMethodLevelVariants());
-        }
+        });
     }
 
 }
