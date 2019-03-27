@@ -5,7 +5,7 @@ import org.neo4j.driver.v1.types.Node;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConstructorOverloadsTest extends Neo4JTest {
+public class ConstructorVPsTest extends Neo4JTest {
 
     @Test
     public void OneClassNoConstructorOverload() {

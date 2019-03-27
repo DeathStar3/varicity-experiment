@@ -118,50 +118,177 @@ public class NeoGraphTest extends Neo4JTest {
     }
 
     @Test
-    public void setMethodsOverloads() {
+    public void setMethodsOverloadsNoOverload() {
         runTest(graph -> {
-            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeMethod1 = graph.createNode("method1", EntityType.METHOD);
-            org.neo4j.driver.v1.types.Node nodeMethod11 = graph.createNode("method1", EntityType.METHOD);
-            org.neo4j.driver.v1.types.Node nodeMethod2 = graph.createNode("method2", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node classNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node drawNode1 = graph.createNode("draw", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node areaNode = graph.createNode("area", EntityType.METHOD);
             RelationType relationType = RelationType.METHOD;
-            graph.linkTwoNodes(nodeClass1, nodeMethod1, relationType);
-            graph.linkTwoNodes(nodeClass1, nodeMethod11, relationType);
-            graph.linkTwoNodes(nodeClass1, nodeMethod2, relationType);
+            graph.linkTwoNodes(classNode, drawNode1, relationType);
+            graph.linkTwoNodes(classNode, areaNode, relationType);
             graph.setMethodsOverloads();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
-                Node classNode = allNodes.get(0);
-                assertTrue(classNode.getAllProperties().containsKey("methods"));
-                assertEquals(1L, classNode.getProperty("methods"));
+                Node node = allNodes.get(0);
+                assertTrue(node.getAllProperties().containsKey("methods"));
+                assertEquals(0L, node.getProperty("methods"));
                 tx.success();
             }
         });
     }
 
     @Test
-    public void setConstructorsOverloads() {
+    public void setMethodsOverloadsOneOverloadTwoVariants() {
         runTest(graph -> {
-            org.neo4j.driver.v1.types.Node nodeClass1 = graph.createNode("class", EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeConstructor1 = graph.createNode("constructor", EntityType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node nodeConstructor11 = graph.createNode("constructor", EntityType.CONSTRUCTOR);
-            org.neo4j.driver.v1.types.Node nodeMethod = graph.createNode("method", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node classNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node drawNode1 = graph.createNode("draw", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node drawNode2 = graph.createNode("draw", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node areaNode = graph.createNode("area", EntityType.METHOD);
             RelationType relationType = RelationType.METHOD;
-            graph.linkTwoNodes(nodeClass1, nodeConstructor1, relationType);
-            graph.linkTwoNodes(nodeClass1, nodeConstructor11, relationType);
-            graph.linkTwoNodes(nodeClass1, nodeMethod, relationType);
+            graph.linkTwoNodes(classNode, drawNode1, relationType);
+            graph.linkTwoNodes(classNode, drawNode2, relationType);
+            graph.linkTwoNodes(classNode, areaNode, relationType);
+            graph.setMethodsOverloads();
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
+                        .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
+                        .collect(Collectors.toList());
+                assertEquals(1, allNodes.size());
+                Node node = allNodes.get(0);
+                assertTrue(node.getAllProperties().containsKey("methods"));
+                assertEquals(1L, node.getProperty("methods"));
+                tx.success();
+            }
+        });
+    }
+
+    @Test
+    public void setMethodsOverloadsOneOverloadThreeVariants() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node classNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node drawNode1 = graph.createNode("draw", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node drawNode2 = graph.createNode("draw", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node drawNode3 = graph.createNode("draw", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node areaNode = graph.createNode("area", EntityType.METHOD);
+            RelationType relationType = RelationType.METHOD;
+            graph.linkTwoNodes(classNode, drawNode1, relationType);
+            graph.linkTwoNodes(classNode, drawNode2, relationType);
+            graph.linkTwoNodes(classNode, drawNode3, relationType);
+            graph.linkTwoNodes(classNode, areaNode, relationType);
+            graph.setMethodsOverloads();
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
+                        .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
+                        .collect(Collectors.toList());
+                assertEquals(1, allNodes.size());
+                Node node = allNodes.get(0);
+                assertTrue(node.getAllProperties().containsKey("methods"));
+                assertEquals(1L, node.getProperty("methods"));
+                tx.success();
+            }
+        });
+    }
+
+    @Test
+    public void setMethodsOverloadsTwoOverloads() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node classNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node drawNode1 = graph.createNode("draw", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node drawNode2 = graph.createNode("draw", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node areaNode1 = graph.createNode("area", EntityType.METHOD);
+            org.neo4j.driver.v1.types.Node areaNode2 = graph.createNode("area", EntityType.METHOD);
+            RelationType relationType = RelationType.METHOD;
+            graph.linkTwoNodes(classNode, drawNode1, relationType);
+            graph.linkTwoNodes(classNode, drawNode2, relationType);
+            graph.linkTwoNodes(classNode, areaNode1, relationType);
+            graph.linkTwoNodes(classNode, areaNode2, relationType);
+            graph.setMethodsOverloads();
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
+                        .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
+                        .collect(Collectors.toList());
+                assertEquals(1, allNodes.size());
+                Node node = allNodes.get(0);
+                assertTrue(node.getAllProperties().containsKey("methods"));
+                assertEquals(2L, node.getProperty("methods"));
+                tx.success();
+            }
+        });
+    }
+
+    @Test
+    public void setConstructorsOverloadsNoOverload() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node classNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node constructorNode = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node methodNode = graph.createNode("draw", EntityType.METHOD);
+            RelationType relationType = RelationType.METHOD;
+            graph.linkTwoNodes(classNode, constructorNode, relationType);
+            graph.linkTwoNodes(classNode, methodNode, relationType);
             graph.setConstructorsOverloads();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
-                Node classNode = allNodes.get(0);
-                assertTrue(classNode.getAllProperties().containsKey("constructors"));
-                assertEquals(1L, classNode.getProperty("constructors"));
+                Node node = allNodes.get(0);
+                assertTrue(node.getAllProperties().containsKey("constructors"));
+                assertEquals(0L, node.getProperty("constructors"));
+                tx.success();
+            }
+        });
+    }
+
+    @Test
+    public void setConstructorsOverloadsOneOverload() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node classNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node constructorNode1 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node constructorNode2 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node methodNode = graph.createNode("draw", EntityType.METHOD);
+            RelationType relationType = RelationType.METHOD;
+            graph.linkTwoNodes(classNode, constructorNode1, relationType);
+            graph.linkTwoNodes(classNode, constructorNode2, relationType);
+            graph.linkTwoNodes(classNode, methodNode, relationType);
+            graph.setConstructorsOverloads();
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
+                        .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
+                        .collect(Collectors.toList());
+                assertEquals(1, allNodes.size());
+                Node node = allNodes.get(0);
+                assertTrue(node.getAllProperties().containsKey("constructors"));
+                assertEquals(1L, node.getProperty("constructors"));
+                tx.success();
+            }
+        });
+    }
+
+    @Test
+    public void setConstructorsOverloadsTwoOverloads() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node classNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node constructorNode1 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node constructorNode2 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node constructorNode3 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
+            org.neo4j.driver.v1.types.Node methodNode = graph.createNode("draw", EntityType.METHOD);
+            RelationType relationType = RelationType.METHOD;
+            graph.linkTwoNodes(classNode, constructorNode1, relationType);
+            graph.linkTwoNodes(classNode, constructorNode2, relationType);
+            graph.linkTwoNodes(classNode, constructorNode3, relationType);
+            graph.linkTwoNodes(classNode, methodNode, relationType);
+            graph.setConstructorsOverloads();
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
+                        .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
+                        .collect(Collectors.toList());
+                assertEquals(1, allNodes.size());
+                Node node = allNodes.get(0);
+                assertTrue(node.getAllProperties().containsKey("constructors"));
+                assertEquals(2L, node.getProperty("constructors"));
                 tx.success();
             }
         });
@@ -221,17 +348,60 @@ public class NeoGraphTest extends Neo4JTest {
     }
 
     @Test
-    public void getNbVariants() {
+    public void getNbVariantsClass() {
         runTest(graph -> {
-            org.neo4j.driver.v1.types.Node nodeClass = graph.createNode("class", EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeSubclass1 = graph.createNode("subclass1", EntityType.CLASS);
-            org.neo4j.driver.v1.types.Node nodeSubclass2 = graph.createNode("subclass2", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node circleNode = graph.createNode("Circle", EntityType.CLASS);
             RelationType relationType = RelationType.EXTENDS;
-            graph.linkTwoNodes(nodeClass, nodeSubclass1, relationType);
-            graph.linkTwoNodes(nodeClass, nodeSubclass2, relationType);
-            assertEquals(2, graph.getNbVariants(nodeClass));
-            assertEquals(0, graph.getNbVariants(nodeSubclass1));
-            assertEquals(0, graph.getNbVariants(nodeSubclass2));
+            graph.linkTwoNodes(shapeNode, rectangleNode, relationType);
+            graph.linkTwoNodes(shapeNode, circleNode, relationType);
+            assertEquals(2, graph.getNbVariants(shapeNode));
+            assertEquals(0, graph.getNbVariants(rectangleNode));
+            assertEquals(0, graph.getNbVariants(circleNode));
+        });
+    }
+
+    @Test
+    public void getNbVariantsInterface() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.INTERFACE);
+            org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node circleNode = graph.createNode("Circle", EntityType.CLASS);
+            RelationType relationType = RelationType.IMPLEMENTS;
+            graph.linkTwoNodes(shapeNode, rectangleNode, relationType);
+            graph.linkTwoNodes(shapeNode, circleNode, relationType);
+            assertEquals(2, graph.getNbVariants(shapeNode));
+            assertEquals(0, graph.getNbVariants(rectangleNode));
+            assertEquals(0, graph.getNbVariants(circleNode));
+        });
+    }
+
+    @Test
+    public void relatedToRelationExists() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
+            org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node circleNode = graph.createNode("Circle", EntityType.CLASS);
+            graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.EXTENDS);
+            assertTrue(graph.relatedTo(shapeNode, rectangleNode));
+            assertFalse(graph.relatedTo(rectangleNode, shapeNode));
+            assertFalse(graph.relatedTo(shapeNode, circleNode));
+            assertFalse(graph.relatedTo(rectangleNode, circleNode));
+        });
+    }
+
+    @Test
+    public void relatedToTwoLevelRelation() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
+            org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
+            org.neo4j.driver.v1.types.Node squareNode = graph.createNode("Square", EntityType.CLASS);
+            graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.EXTENDS);
+            graph.linkTwoNodes(rectangleNode, squareNode, RelationType.EXTENDS);
+            assertTrue(graph.relatedTo(shapeNode, rectangleNode));
+            assertTrue(graph.relatedTo(rectangleNode, squareNode));
+            assertFalse(graph.relatedTo(shapeNode, squareNode));
         });
     }
 

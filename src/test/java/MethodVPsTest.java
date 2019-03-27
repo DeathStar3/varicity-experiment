@@ -5,7 +5,7 @@ import org.neo4j.driver.v1.types.Node;
 
 import static org.junit.Assert.assertEquals;
 
-public class MethodsOverloadsTest extends Neo4JTest {
+public class MethodVPsTest extends Neo4JTest {
 
     @Test
     public void OneClassNoMethodOverload(){

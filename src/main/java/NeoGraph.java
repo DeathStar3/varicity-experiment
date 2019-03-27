@@ -30,32 +30,23 @@ public class NeoGraph {
         this.driver = driver;
     }
 
-    public Node createNode(String name, NodeType type, NodeType... types) {
-        return createNode(name, name, type, types);
-    }
-
     /**
      * Creates a node of corresponding name and types and returns it.
      *
      * @param name  Node name
      * @param types Node types
      */
-    public Node createNode(String name, String shortName, NodeType type, NodeType... types) {
+    public Node createNode(String name, NodeType type, NodeType... types) {
         List <NodeType> nodeTypes = new ArrayList <>(Arrays.asList(types));
         nodeTypes.add(type);
-        return submitRequest(String.format("CREATE (n:%s { name: '%s', shortname: '%s' }) RETURN (n)",
+        return submitRequest(String.format("CREATE (n:%s { name: '%s'}) RETURN (n)",
                 nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":")),
-                name,
-                shortName))
+                name))
                 .list().get(0).get(0).asNode();
     }
 
     public Node getNode(String name) {
         return submitRequest(String.format("MATCH (n {name: '%s'}) RETURN (n)", name)).list().get(0).get(0).asNode();
-    }
-
-    public Node getOrCreateNode(String name, NodeType type, NodeType... types) {
-        return getOrCreateNode(name, name, type, types);
     }
 
     /**
@@ -66,12 +57,11 @@ public class NeoGraph {
      * @param name  Node name
      * @param types Node types
      */
-    public Node getOrCreateNode(String name, String shortName, NodeType type, NodeType... types) {
+    public Node getOrCreateNode(String name, NodeType type, NodeType... types) {
         List <NodeType> nodeTypes = new ArrayList <>(Arrays.asList(types));
         nodeTypes.add(type);
-        return submitRequest(String.format("MERGE (n {name: '%s', shortname: '%s'}) ON CREATE SET n:%s RETURN (n)",
+        return submitRequest(String.format("MERGE (n {name: '%s'}) ON CREATE SET n:%s RETURN (n)",
                 name,
-                shortName,
                 nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":"))))
                 .list().get(0).get(0).asNode();
     }
@@ -136,7 +126,7 @@ public class NeoGraph {
      * <p>
      * Two methods are overloaded, therefore the value returned will be 2.
      * This is independent of the numbers of overloads for each method.
-     * If no method is overloaded, the property is not set.
+     * If no method is overloaded, the property is set to 0.
      */
     public void setMethodsOverloads() {
         submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
@@ -149,9 +139,8 @@ public class NeoGraph {
     }
 
     /**
-     * The reasoning is the same as for 'setMethodsOverloads'.
-     * However, as all constructors have the same name, an overloaded constructor results in a returned value of 1.
-     * If the constructor is not overloaded, the property is not set.
+     * Sets the number of overloads of the constructor in the class.
+     * If there is no overload (i.e. there is 0 or 1 constructor), the property is set to 0.
      */
     public void setConstructorsOverloads() {
         submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
@@ -231,7 +220,7 @@ public class NeoGraph {
      * @return Number of subclasses or implementations
      */
     public int getNbVariants(Node node) {
-        return submitRequest(String.format("MATCH (c:CLASS)-[:EXTENDS|:IMPLEMENTS]->(c2:CLASS) " +
+        return submitRequest(String.format("MATCH (c)-[:EXTENDS|:IMPLEMENTS]->(c2:CLASS) " +
                 "WHERE ID(c) = %s " +
                 "RETURN count(c2)", node.id()))
                 .list().get(0).get(0).asInt();
@@ -332,6 +321,17 @@ public class NeoGraph {
         return nbInterfaces + nbAbstractClasses + nbExtendedClasses;
     }
 
+    /**
+     * Checks whether two nodes have a direct relationship.
+     * @param parentNode source node of the relationship
+     * @param childNode destination node of the relationship
+     * @return true if a relationship exists, false otherwise
+     */
+    public boolean relatedTo(Node parentNode, Node childNode) {
+        return submitRequest(String.format("MATCH(source) WHERE ID(source) = %s MATCH(dest) WHERE ID(dest) = %s RETURN EXISTS((source)-[]->(dest))", parentNode.id(), childNode.id()))
+                .list().get(0).get(0).asBoolean();
+    }
+
     private String generateJsonGraph() {
         return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(false), getLinksAsJson(false));
     }
@@ -342,8 +342,8 @@ public class NeoGraph {
 
     private String getNodesAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH (c:VP) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors, strokeWidth:c.nbVariants})" :
-                "MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, shortname:c.shortname, nodeSize:c.methods, intensity:c.constructors})";
+                "MATCH (c:VP) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, nodeSize:c.methods, intensity:c.constructors, strokeWidth:c.nbVariants})" :
+                "MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, nodeSize:c.methods, intensity:c.constructors})";
         return submitRequest(request)
                 .list()
                 .get(0)
