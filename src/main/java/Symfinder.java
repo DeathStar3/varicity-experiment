@@ -149,18 +149,18 @@ public class Symfinder {
         @Override
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
-            if (! isTestClass(classBinding)) {
+            if (! isTestClass(classBinding) && type.isPackageMemberTypeDeclaration()) {
                 Node thisNode;
 
                 // If the class is an inner class / interface
                 // TODO: 11/28/18 test this
-                if (! type.isPackageMemberTypeDeclaration()) {
-                    EntityType nodeType = classBinding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS;
-                    EntityType parentNodeType = classBinding.getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS;
-                    thisNode = neoGraph.getOrCreateNode(classBinding.getQualifiedName(), nodeType, EntityType.INNER);
-                    Node parentNode = neoGraph.getOrCreateNode(classBinding.getDeclaringClass().getQualifiedName(), parentNodeType);
-                    neoGraph.linkTwoNodes(parentNode, thisNode, RelationType.INNER);
-                }
+//                if (! type.isPackageMemberTypeDeclaration()) {
+//                    EntityType nodeType = classBinding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS;
+//                    EntityType parentNodeType = classBinding.getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS;
+//                    thisNode = neoGraph.getOrCreateNode(classBinding.getQualifiedName(), nodeType, EntityType.INNER);
+//                    Node parentNode = neoGraph.getOrCreateNode(classBinding.getDeclaringClass().getQualifiedName(), parentNodeType);
+//                    neoGraph.linkTwoNodes(parentNode, thisNode, RelationType.INNER);
+//                }
 
 
                 NodeType nodeType;
@@ -194,6 +194,13 @@ public class Symfinder {
             }
             return true;
         }
+
+        @Override
+        public boolean visit(AnonymousClassDeclaration classDeclarationStatement) {
+            return false;
+        }
+
+
     }
 
     private class StrategyVisitor extends ASTVisitor {
@@ -209,6 +216,11 @@ public class Symfinder {
                 }
             }
             return true;
+        }
+
+        @Override
+        public boolean visit(AnonymousClassDeclaration classDeclarationStatement) {
+            return false;
         }
 
     }
@@ -227,7 +239,11 @@ public class Symfinder {
         @Override
         public boolean visit(ReturnStatement node) {
             String typeOfReturnedObject;
-            if (node.getExpression() != null && node.getExpression().resolveTypeBinding() != null && (typeOfReturnedObject = node.getExpression().resolveTypeBinding().getQualifiedName()) != null && ! typeOfReturnedObject.equals("null")) {
+            if (node.getExpression() != null &&
+                    node.getExpression().resolveTypeBinding() != null &&
+                    ! node.getExpression().resolveTypeBinding().isNested() &&
+                    (typeOfReturnedObject = node.getExpression().resolveTypeBinding().getQualifiedName()) != null &&
+                    ! typeOfReturnedObject.equals("null")) {
                 MethodDeclaration methodDeclaration = (MethodDeclaration) getParentOfNodeWithType(node, ASTNode.METHOD_DECLARATION);
                 if (methodDeclaration.getReturnType2().resolveBinding() != null) { // TODO: 3/22/19 find why this returns null in core/src/main/java/org/apache/cxf/bus/managers/BindingFactoryManagerImpl.java
                     String methodReturnType = methodDeclaration.getReturnType2().resolveBinding().getQualifiedName();
@@ -247,6 +263,12 @@ public class Symfinder {
             }
             return true;
         }
+
+        @Override
+        public boolean visit(AnonymousClassDeclaration classDeclarationStatement) {
+            return false;
+        }
+
     }
 
     private boolean isTestClass(ITypeBinding classBinding) {
