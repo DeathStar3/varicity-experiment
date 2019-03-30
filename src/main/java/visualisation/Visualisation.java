@@ -33,11 +33,6 @@ public class Visualisation {
                     jsonFile,
                     jsonStatsFile,
                     "symfinder.js");
-            createVisualisation(experience,
-                    String.format("d3/%s-vp.html", experience.getExperienceName()),
-                    jsonFile.replace(".json", "-vp.json"),
-                    jsonStatsFile,
-                    "symfinder-vp.js");
         }
     }
 
@@ -77,8 +72,6 @@ public class Visualisation {
     }
 
     private static Tag graphLink(String project) {
-        return p(project).with(ul()
-                .with(li().with(a("all").withHref(project + ".html")))
-                .with(li().with(a("only VP-s").withHref(project + "-vp.html"))));
+        return li().with(a(project).withHref(project + ".html"));
     }
 }
