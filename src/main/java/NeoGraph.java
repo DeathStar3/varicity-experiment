@@ -53,6 +53,8 @@ public class NeoGraph {
      * Returns the node if it exists, creates it and returns it otherwise.
      * As we use qualified names, each name is unique. Therefore, we can match only on node name.
      * If the node does not exist, it is created with the specified types as labels.
+     * TODO: 3/30/19 do this properly, this works for the moment as types is empty or contains ABSTRACT
+     * move ABSTRACT from EntityType to another enum
      *
      * @param name  Node name
      * @param types Node types
@@ -60,10 +62,18 @@ public class NeoGraph {
     public Node getOrCreateNode(String name, NodeType type, NodeType... types) {
         List <NodeType> nodeTypes = new ArrayList <>(Arrays.asList(types));
         nodeTypes.add(type);
-        return submitRequest(String.format("MERGE (n {name: '%s'}) ON CREATE SET n:%s RETURN (n)",
-                name,
-                nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":"))))
-                .list().get(0).get(0).asNode();
+        if(types.length == 0){
+            return submitRequest(String.format("MERGE (n {name: '%s'}) ON CREATE SET n:%s RETURN (n)",
+                    name,
+                    nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":"))))
+                    .list().get(0).get(0).asNode();
+        } else {
+            return submitRequest(String.format("MERGE (n {name: '%s'}) ON CREATE SET n:%s ON MATCH SET n:%s RETURN (n)",
+                    name,
+                    nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":")),
+                    Arrays.stream(types).map(NodeType::getString).collect(Collectors.joining(":"))))
+                    .list().get(0).get(0).asNode();
+        }
     }
 
     /**

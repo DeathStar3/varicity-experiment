@@ -98,6 +98,46 @@ public class NeoGraphTest extends Neo4JTest {
     }
 
     @Test
+    public void getOrCreateNodeOnMatch() {
+        runTest(graph -> {
+            NodeType nodeType1 = EntityType.CLASS;
+            NodeType nodeType2 = EntityType.ABSTRACT;
+            String nodeName = "n";
+            graph.getOrCreateNode(nodeName, nodeType1);
+            org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType1, nodeType2);
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                ResourceIterable <Node> allNodes = graphDatabaseService.getAllNodes();
+                assertEquals(1, allNodes.stream().count());
+                assertEquals(node.get("name").asString(), nodeName);
+                assertTrue(node.hasLabel(nodeType1.toString()));
+                assertTrue(node.hasLabel(nodeType2.toString()));
+                tx.success();
+            }
+        });
+    }
+
+    @Test
+    public void getOrCreateNodeOnMatch2() {
+        runTest(graph -> {
+            NodeType nodeType1 = EntityType.CLASS;
+            NodeType nodeType2 = EntityType.INTERFACE;
+            NodeType nodeType3 = EntityType.ABSTRACT;
+            String nodeName = "n";
+            graph.getOrCreateNode(nodeName, nodeType1);
+            org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType2, nodeType3);
+            try (Transaction tx = graphDatabaseService.beginTx()) {
+                ResourceIterable <Node> allNodes = graphDatabaseService.getAllNodes();
+                assertEquals(1, allNodes.stream().count());
+                assertEquals(node.get("name").asString(), nodeName);
+                assertTrue(node.hasLabel(nodeType1.toString()));
+                assertFalse(node.hasLabel(nodeType2.toString()));
+                assertTrue(node.hasLabel(nodeType3.toString()));
+                tx.success();
+            }
+        });
+    }
+
+    @Test
     public void linkTwoNodes() {
         runTest(graph -> {
             org.neo4j.driver.v1.types.Node node1 = graph.createNode("n1", EntityType.CLASS);
