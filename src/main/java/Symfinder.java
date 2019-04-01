@@ -181,58 +181,59 @@ public class Symfinder {
             if(! node.isStatic()){
                 imports.add(node);
             }
-            System.out.println(node.getName().getFullyQualifiedName() + " - " + node.isStatic() + " - " + node.isOnDemand());
             return true;
-        }
-
-        private Optional<String> getSuperclassFullName(String superclassName){
-            Optional <ImportDeclaration> first = imports.stream()
-                    .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(superclassName))
-                    .findFirst();
-            if(first.isPresent()){
-                return Optional.of(first.get().getName().getFullyQualifiedName());
-            }
-            Optional <Optional <Node>> first1 = imports.stream()
-                    .filter(ImportDeclaration::isOnDemand)
-                    .map(importDeclaration -> neoGraph.getNodeWithNameInPackage(superclassName, importDeclaration.getName().getFullyQualifiedName()))
-                    .filter(Optional::isPresent)
-                    .findFirst();
-            return first1.map(node -> node.get().get("name").asString()); // Optional.empty -> out of scope class
         }
 
         @Override
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
             if (! isTestClass(classBinding) && type.isPackageMemberTypeDeclaration()) {
-                System.out.println("Class : " + classBinding.getQualifiedName());
-                Optional <Node> thisNode = neoGraph.getNode(classBinding.getQualifiedName());
-
+                String thisClassName = classBinding.getQualifiedName();
+                System.out.println("Class : " + thisClassName);
+                Optional <Node> thisNode = neoGraph.getNode(thisClassName);
                 if(thisNode.isPresent()){
                     // Link to superclass if exists
                     ITypeBinding superclassType = classBinding.getSuperclass();
                     if (superclassType != null) {
-                        Optional <String> mySuperclass = getSuperclassFullName(superclassType.getName());
-                        String qualifiedName = superclassType.getQualifiedName();
-                        if(mySuperclass.isPresent() && ! mySuperclass.get().equals(qualifiedName)){
-                            System.out.println(String.format("DIFFERENT SUPERCLASS FULL NAMES FOUND FOR CLASS %s : \n" +
-                                    "JDT qualified name : %s\n" +
-                                    "manually resolved name : %s\n" +
-                                    "Getting manually resolved name.", classBinding.getQualifiedName(), qualifiedName, mySuperclass));
-                        }
-                        Node superclassNode = neoGraph.getOrCreateNode(mySuperclass.orElse(qualifiedName), EntityType.CLASS);
-                        neoGraph.linkTwoNodes(superclassNode, thisNode.get(), RelationType.EXTENDS);
+                        createImportedClassNode(thisClassName, thisNode.get(), superclassType, EntityType.CLASS, RelationType.EXTENDS, "SUPERCLASS");
                     }
 
                     // Link to implemented interfaces if exist
                     for (ITypeBinding o : classBinding.getInterfaces()) {
-                        Node interfaceNode = neoGraph.getOrCreateNode(o.getQualifiedName(), EntityType.INTERFACE);
-                        neoGraph.linkTwoNodes(interfaceNode, thisNode.get(), RelationType.IMPLEMENTS);
+                        createImportedClassNode(thisClassName, thisNode.get(), o, EntityType.INTERFACE, RelationType.IMPLEMENTS, "INTERFACE");
                     }
                 }
-
-
             }
             return true;
+        }
+
+        // TODO: 4/1/19 functional tests : imports from different packages
+        private void createImportedClassNode(String thisClassName, Node thisNode, ITypeBinding importedClassType, EntityType entityType, RelationType relationType, String name) {
+            Optional <String> myImportedClass = getClassFullName(importedClassType.getName());
+            String qualifiedName = importedClassType.getQualifiedName();
+            if(myImportedClass.isPresent() && ! myImportedClass.get().equals(qualifiedName)){
+                System.out.println(String.format("DIFFERENT %s FULL NAMES FOUND FOR CLASS %s : \n" +
+                        "JDT qualified name : %s\n" +
+                        "Manually resolved name : %s\n" +
+                        "Getting manually resolved name.", name, thisClassName, qualifiedName, myImportedClass.get()));
+            }
+            Node superclassNode = neoGraph.getOrCreateNode(myImportedClass.orElse(qualifiedName), entityType);
+            neoGraph.linkTwoNodes(superclassNode, thisNode, relationType);
+        }
+
+        private Optional<String> getClassFullName(String className){
+            Optional <ImportDeclaration> first = imports.stream()
+                    .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(className))
+                    .findFirst();
+            if(first.isPresent()){
+                return Optional.of(first.get().getName().getFullyQualifiedName());
+            }
+            Optional <Optional <Node>> first1 = imports.stream()
+                    .filter(ImportDeclaration::isOnDemand)
+                    .map(importDeclaration -> neoGraph.getNodeWithNameInPackage(className, importDeclaration.getName().getFullyQualifiedName()))
+                    .filter(Optional::isPresent)
+                    .findFirst();
+            return first1.map(node -> node.get().get("name").asString()); // Optional.empty -> out of scope class
         }
 
         @Override
