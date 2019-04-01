@@ -12,10 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NeoGraph {
@@ -45,8 +42,14 @@ public class NeoGraph {
                 .list().get(0).get(0).asNode();
     }
 
-    public Node getNode(String name) {
-        return submitRequest(String.format("MATCH (n {name: '%s'}) RETURN (n)", name)).list().get(0).get(0).asNode();
+    public Optional<Node> getNode(String name) {
+        List <Record> recordList = submitRequest(String.format("MATCH (n {name: '%s'}) RETURN (n)", name)).list();
+        return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
+    }
+
+    public Optional<Node> getNodeWithNameInPackage(String name, String packageName) {
+        List <Record> recordList = submitRequest(String.format("MATCH (n) WHERE n.name =~ '%s(\\\\..+)*\\\\.%s' RETURN (n)", packageName, name)).list();
+        return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
     /**

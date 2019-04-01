@@ -1,9 +1,6 @@
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
 import org.junit.Test;
-import org.neo4j.driver.v1.Config;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.types.Node;
 
 import static org.junit.Assert.assertEquals;

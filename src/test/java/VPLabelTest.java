@@ -13,7 +13,7 @@ public class VPLabelTest extends Neo4JTest {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
             graph.setVPLabels();
-            assertTrue(graph.getNode("Shape").hasLabel(EntityType.VP.toString()));
+            assertTrue(graph.getNode("Shape").get().hasLabel(EntityType.VP.toString()));
         });
     }
 
@@ -22,7 +22,7 @@ public class VPLabelTest extends Neo4JTest {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.INTERFACE);
             graph.setVPLabels();
-            assertTrue(graph.getNode("Shape").hasLabel(EntityType.VP.toString()));
+            assertTrue(graph.getNode("Shape").get().hasLabel(EntityType.VP.toString()));
         });
     }
 
@@ -32,7 +32,7 @@ public class VPLabelTest extends Neo4JTest {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.INTERFACE);
             graph.setVPLabels();
-            assertTrue(graph.getNode("Shape").hasLabel(EntityType.VP.toString()));
+            assertTrue(graph.getNode("Shape").get().hasLabel(EntityType.VP.toString()));
         });
     }
 
@@ -46,9 +46,9 @@ public class VPLabelTest extends Neo4JTest {
             graph.linkTwoNodes(shapeNode, circleNode, RelationType.EXTENDS);
             graph.setNbVariantsProperty();
             graph.setVPLabels();
-            assertTrue(graph.getNode("Shape").hasLabel(EntityType.VP.getString()));
-            assertFalse(graph.getNode("Rectangle").hasLabel(EntityType.VP.getString()));
-            assertFalse(graph.getNode("Circle").hasLabel(EntityType.VP.getString()));
+            assertTrue(graph.getNode("Shape").get().hasLabel(EntityType.VP.getString()));
+            assertFalse(graph.getNode("Rectangle").get().hasLabel(EntityType.VP.getString()));
+            assertFalse(graph.getNode("Circle").get().hasLabel(EntityType.VP.getString()));
         });
     }
 
@@ -63,7 +63,7 @@ public class VPLabelTest extends Neo4JTest {
             graph.setMethodsOverloads();
             graph.setNbVariantsProperty();
             graph.setVPLabels();
-            assertTrue(graph.getNode("Shape").hasLabel(EntityType.VP.getString()));
+            assertTrue(graph.getNode("Shape").get().hasLabel(EntityType.VP.getString()));
         });
     }
 
@@ -78,7 +78,7 @@ public class VPLabelTest extends Neo4JTest {
             graph.setConstructorsOverloads();
             graph.setNbVariantsProperty();
             graph.setVPLabels();
-            assertTrue(graph.getNode("Shape").hasLabel(EntityType.VP.getString()));
+            assertTrue(graph.getNode("Shape").get().hasLabel(EntityType.VP.getString()));
         });
     }
 

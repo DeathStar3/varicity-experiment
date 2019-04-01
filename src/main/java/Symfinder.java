@@ -14,9 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,6 +50,7 @@ public class Symfinder {
                 .filter(file -> file.getName().endsWith(".java"))
                 .collect(Collectors.toList());
 
+        visitPackage(javaPackagePath, classpathPath, files, new ClassesVisitor());
         visitPackage(javaPackagePath, classpathPath, files, new GraphBuilderVisitor());
         visitPackage(javaPackagePath, classpathPath, files, new StrategyVisitor());
         visitPackage(javaPackagePath, classpathPath, files, new FactoryVisitor());
@@ -125,7 +124,34 @@ public class Symfinder {
         return null;
     }
 
-    private class GraphBuilderVisitor extends ASTVisitor {
+    /**
+     * Parses all classes and the methods they contain, and adds them to the database.
+     */
+    private class ClassesVisitor extends ASTVisitor {
+
+        @Override
+        public boolean visit(TypeDeclaration type) {
+            ITypeBinding classBinding = type.resolveBinding();
+            if (! isTestClass(classBinding) && type.isPackageMemberTypeDeclaration() && ! classBinding.isEnum()) {
+                NodeType nodeType;
+                NodeType[] nodeTypes;
+                // If the class is abstract
+                if (Modifier.isAbstract(type.getModifiers())) {
+                    nodeType = EntityType.CLASS;
+                    nodeTypes = new NodeType[]{EntityType.ABSTRACT};
+                    // If the type is an interface
+                } else if (type.isInterface()) {
+                    nodeType = EntityType.INTERFACE;
+                    nodeTypes = new NodeType[]{};
+                    // The type is a class
+                } else {
+                    nodeType = EntityType.CLASS;
+                    nodeTypes = new NodeType[]{};
+                }
+                neoGraph.getOrCreateNode(classBinding.getQualifiedName(), nodeType, nodeTypes);
+            }
+            return true;
+        }
 
         @Override
         public boolean visit(MethodDeclaration method) {
@@ -144,54 +170,74 @@ public class Symfinder {
             }
             return true;
         }
+    }
+
+    private class GraphBuilderVisitor extends ASTVisitor {
+
+        List<ImportDeclaration> imports = new ArrayList <>();
+
+        @Override
+        public boolean visit(ImportDeclaration node) {
+            if(! node.isStatic()){
+                imports.add(node);
+            }
+            System.out.println(node.getName().getFullyQualifiedName() + " - " + node.isStatic() + " - " + node.isOnDemand());
+            return true;
+        }
+
+        private Optional<String> getSuperclassFullName(String superclassName){
+            Optional <ImportDeclaration> first = imports.stream()
+                    .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(superclassName))
+                    .findFirst();
+            if(first.isPresent()){
+                return Optional.of(first.get().getName().getFullyQualifiedName());
+            }
+            Optional <Optional <Node>> first1 = imports.stream()
+                    .filter(ImportDeclaration::isOnDemand)
+                    .map(importDeclaration -> neoGraph.getNodeWithNameInPackage(superclassName, importDeclaration.getName().getFullyQualifiedName()))
+                    .filter(Optional::isPresent)
+                    .findFirst();
+            return first1.map(node -> node.get().get("name").asString()); // Optional.empty -> out of scope class
+        }
 
         @Override
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
             if (! isTestClass(classBinding) && type.isPackageMemberTypeDeclaration()) {
-                Node thisNode;
+                System.out.println("Class : " + classBinding.getQualifiedName());
+                Optional <Node> thisNode = neoGraph.getNode(classBinding.getQualifiedName());
 
-                // If the class is an inner class / interface
-                // TODO: 11/28/18 test this
-//                if (! type.isPackageMemberTypeDeclaration()) {
-//                    EntityType nodeType = classBinding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS;
-//                    EntityType parentNodeType = classBinding.getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS;
-//                    thisNode = neoGraph.getOrCreateNode(classBinding.getQualifiedName(), nodeType, EntityType.INNER);
-//                    Node parentNode = neoGraph.getOrCreateNode(classBinding.getDeclaringClass().getQualifiedName(), parentNodeType);
-//                    neoGraph.linkTwoNodes(parentNode, thisNode, RelationType.INNER);
-//                }
+                if(thisNode.isPresent()){
+                    // Link to superclass if exists
+                    ITypeBinding superclassType = classBinding.getSuperclass();
+                    if (superclassType != null) {
+                        Optional <String> mySuperclass = getSuperclassFullName(superclassType.getName());
+                        String qualifiedName = superclassType.getQualifiedName();
+                        if(mySuperclass.isPresent() && ! mySuperclass.get().equals(qualifiedName)){
+                            System.out.println(String.format("DIFFERENT SUPERCLASS FULL NAMES FOUND FOR CLASS %s : \n" +
+                                    "JDT qualified name : %s\n" +
+                                    "manually resolved name : %s\n" +
+                                    "Getting manually resolved name.", classBinding.getQualifiedName(), qualifiedName, mySuperclass));
+                        }
+                        Node superclassNode = neoGraph.getOrCreateNode(mySuperclass.orElse(qualifiedName), EntityType.CLASS);
+                        neoGraph.linkTwoNodes(superclassNode, thisNode.get(), RelationType.EXTENDS);
+                    }
 
-
-                NodeType nodeType;
-                NodeType[] nodeTypes;
-                // If the class is abstract
-                if (Modifier.isAbstract(type.getModifiers())) {
-                    nodeType = EntityType.CLASS;
-                    nodeTypes = new NodeType[]{EntityType.ABSTRACT};
-                    // If the type is an interface
-                } else if (type.isInterface()) {
-                    nodeType = EntityType.INTERFACE;
-                    nodeTypes = new NodeType[]{};
-                    // The type is a class
-                } else {
-                    nodeType = EntityType.CLASS;
-                    nodeTypes = new NodeType[]{};
+                    // Link to implemented interfaces if exist
+                    for (ITypeBinding o : classBinding.getInterfaces()) {
+                        Node interfaceNode = neoGraph.getOrCreateNode(o.getQualifiedName(), EntityType.INTERFACE);
+                        neoGraph.linkTwoNodes(interfaceNode, thisNode.get(), RelationType.IMPLEMENTS);
+                    }
                 }
-                thisNode = neoGraph.getOrCreateNode(classBinding.getQualifiedName(), nodeType, nodeTypes);
 
-                // Link to implemented interfaces if exist
-                for (ITypeBinding o : classBinding.getInterfaces()) {
-                    Node interfaceNode = neoGraph.getOrCreateNode(o.getQualifiedName(), EntityType.INTERFACE);
-                    neoGraph.linkTwoNodes(interfaceNode, thisNode, RelationType.IMPLEMENTS);
-                }
-                // Link to superclass if exists
-                ITypeBinding superclassType = classBinding.getSuperclass();
-                if (superclassType != null) {
-                    Node superclassNode = neoGraph.getOrCreateNode(superclassType.getQualifiedName(), EntityType.CLASS);
-                    neoGraph.linkTwoNodes(superclassNode, thisNode, RelationType.EXTENDS);
-                }
+
             }
             return true;
+        }
+
+        @Override
+        public void endVisit(TypeDeclaration node) {
+            imports.clear();
         }
 
         @Override
