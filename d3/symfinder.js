@@ -1,15 +1,19 @@
 //	data stores
 var graph, store;
 
-function displayGraph(jsonFile, jsonStatsFile){
+//	filtered types
+var filters = [];
+var jsonFile, jsonStatsFile;
+
+function displayGraph(jsonFile, jsonStatsFile, nodefilters = []){
     d3.selectAll("svg > *").remove();
-    generateGraph(jsonFile, jsonStatsFile);
+    filters = nodefilters;
+    this.jsonFile = jsonFile;
+    this.jsonStatsFile = jsonStatsFile;
+    generateGraph();
 }
 
-function generateGraph(jsonFile, jsonStatsFile){
-    // document.getElementsByTagName("svg")[0].innerHTML = "";
-
-    var difference = [];
+function generateGraph(){
 
     var width = window.innerWidth,
         height = window.innerHeight - 10;
@@ -51,29 +55,10 @@ function generateGraph(jsonFile, jsonStatsFile){
         .force("charge", d3.forceManyBody()
             .strength(function(d) { return -50;}))
         .force("center", d3.forceCenter(width / 2, height / 2));
-    // console.log(simulation);
-
-    //	filtered types
-    var filters = [];
-
-    //	filter button event handlers
-    $(".filter-btn").on("click", function() {
-        var id = $(this).attr("value");
-        if (filters.includes(id)) {
-            filters.splice(filters.indexOf(id), 1)
-        } else {
-            filters.push(id);
-        }
-        displayData();
-    });
 
     function displayData(){
         //	data read and store
         d3.json(jsonFile, function(err, gr) {
-
-            console.log(gr);
-
-            // g.nodes = g.nodes.filter(n => n.strokeWidth > 0);
 
             d3.json(jsonStatsFile, function(err, stats){
                 var statisticsContent =
@@ -100,9 +85,6 @@ function generateGraph(jsonFile, jsonStatsFile){
             graph = gr;
             store = $.extend(true, {}, gr);
 
-            graph.nodes = gr.nodes.filter(n => !filters.some(filter => n.name.includes(filter)));
-            graph.links = gr.links.filter(l => !filters.some(filter => l.source.includes(filter)) && !filters.some(filter => l.target.includes(filter)));
-
             graph.nodes.forEach(function(n) {
                 n.radius = n.type.includes("CLASS") ? 10 + n.nodeSize : 10;
                 nodeByID[n.name] = n;
@@ -113,11 +95,17 @@ function generateGraph(jsonFile, jsonStatsFile){
                 l.targetTypes = nodeByID[l.target].type;
             });
 
-            console.log(graph);
-            // graph = g;
+            store.nodes.forEach(function(n) {
+                n.radius = n.type.includes("CLASS") ? 10 + n.nodeSize : 10;
+            });
 
+            store.links.forEach(function(l) {
+                l.sourceTypes = nodeByID[l.source].type;
+                l.targetTypes = nodeByID[l.target].type;
+            });
 
-            console.log(store);
+            graph.nodes = gr.nodes.filter(n => !filters.some(filter => n.name.includes(filter)));
+            graph.links = gr.links.filter(l => !filters.some(filter => l.source.includes(filter)) && !filters.some(filter => l.target.includes(filter)));
 
             update();
         });
@@ -127,7 +115,8 @@ function generateGraph(jsonFile, jsonStatsFile){
     //	general update pattern for updating the graph
     function update() {
         //	UPDATE
-        node = node.data(graph.nodes, function(d) { return d.name;});
+        let dataSource = graph;
+        node = node.data(dataSource.nodes, function(d) { return d.name;});
         //	EXIT
         node.exit().remove();
         //	ENTER
@@ -161,7 +150,7 @@ function generateGraph(jsonFile, jsonStatsFile){
         node = node.merge(newNode);
 
         //	UPDATE
-        link = link.data(graph.links, function(d) { return d.name;});
+        link = link.data(dataSource.links, function(d) { return d.name;});
         //	EXIT
         link.exit().remove();
         //	ENTER
@@ -197,11 +186,11 @@ function generateGraph(jsonFile, jsonStatsFile){
 
         //	update simulation nodes, links, and alpha
         simulation
-            .nodes(graph.nodes)
+            .nodes(dataSource.nodes)
             .on("tick", ticked);
 
         simulation.force("link")
-            .links(graph.links);
+            .links(dataSource.links);
 
         simulation.alpha(1).alphaTarget(0).restart();
     }
@@ -243,71 +232,6 @@ function generateGraph(jsonFile, jsonStatsFile){
             .attr("y", function(d) {return d.y;});
     }
 
-    //	filter function
-    function filter(value) {
-        if(value === "ALONE"){
-            // Nodes are filtered, need to bring them back
-            if( !!difference && difference.length > 0){
-                difference.forEach(function(n){
-                    graph.nodes.push($.extend(true, {}, n));
-                });
-                difference = [];
-                // Nodes need to be filtered
-            } else {
-                var tmp = graph;
-                var linkedNodes = new Set();
-                tmp.links.forEach(l => {
-                    linkedNodes.add(l.source);
-                    linkedNodes.add(l.target);
-                });
-
-                difference = [...tmp.nodes].filter(n => !linkedNodes.has(n));
-
-                difference.forEach(function (n) {
-                    graph.nodes.forEach(function(d, i) {
-                        if (n.name === d.name) {
-                            graph.nodes.splice(i, 1);
-                        }
-                    });
-                });
-            }
-        } else {
-            var matchingNodes = new Set([...store.nodes].map(n => n.name).filter(name => name.startsWith(value)));
-
-            store.nodes.forEach(function(n) {
-                if(matchingNodes.has(n.name)){
-                    if (n.filtered) {
-                        n.filtered = false;
-                        graph.nodes.push($.extend(true, {}, n));
-                    } else {
-                        n.filtered = true;
-                        graph.nodes.forEach(function(d, i) {
-                            if (n.name === d.name) {
-                                graph.nodes.splice(i, 1);
-                            }
-                        });
-                    }
-                }
-            });
-
-            store.links.forEach(function(l) {
-                if((matchingNodes.has(l.source) || matchingNodes.has(l.target))){
-                    if (l.filtered) {
-                        l.filtered = false;
-                        graph.links.push($.extend(true, {}, l));
-                    } else {
-                        l.filtered = true;
-                        graph.links.forEach(function(d, i) {
-                            if (l.source == d.source.name && l.target == d.target.name) {
-                                graph.links.splice(i, 1);
-                            }
-                        });
-                    }
-                }
-            });
-        }
-    }
-
     function contrastColor(color)
     {
         var d = 0;
@@ -323,5 +247,17 @@ function generateGraph(jsonFile, jsonStatsFile){
         return  d3.rgb(d, d, d);
     }
 
-    displayData()
+    displayData();
+
 }
+
+//	filter button event handlers
+$(".filter-btn").on("click", function() {
+    var id = $(this).attr("value");
+    if (filters.includes(id)) {
+        filters.splice(filters.indexOf(id), 1)
+    } else {
+        filters.push(id);
+    }
+    displayGraph(jsonFile, jsonStatsFile, filters);
+});
