@@ -31,8 +31,6 @@ function generateGraph(jsonFile, jsonStatsFile){
         .attr('fill', 'gray')
         .style('stroke','none');
 
-    var radius = 10;
-
     //	d3 color scales
     var color = d3.scaleLinear()
         .range(["#FFFFFF", '#FF0000'])
@@ -56,62 +54,75 @@ function generateGraph(jsonFile, jsonStatsFile){
     // console.log(simulation);
 
     //	filtered types
-    typeFilterList = [];
+    var filters = [];
 
     //	filter button event handlers
     $(".filter-btn").on("click", function() {
         var id = $(this).attr("value");
-        if (typeFilterList.includes(id)) {
-            typeFilterList.splice(typeFilterList.indexOf(id), 1)
+        if (filters.includes(id)) {
+            filters.splice(filters.indexOf(id), 1)
         } else {
-            typeFilterList.push(id);
+            filters.push(id);
         }
-        filter(id);
-        update();
+        displayData();
     });
 
-    //	data read and store
-    d3.json(jsonFile, function(err, g) {
+    function displayData(){
+        //	data read and store
+        d3.json(jsonFile, function(err, gr) {
 
-        // g.nodes = g.nodes.filter(n => n.strokeWidth > 0);
+            console.log(gr);
 
-        d3.json(jsonStatsFile, function(err, stats){
-            var statisticsContent =
-                "Number of methods VPs: "+ stats["methodsVPs"] + "<br>" +
-                "Number of constructors VPs: "+ stats["constructorsVPs"] + "<br>" +
-                "Number of method level VPs: "+ stats["methodLevelVPs"] + "<br>" +
-                "Number of class level VPs: "+ stats["classLevelVPs"] + "<br>" +
-                "Number of methods variants: "+ stats["methodsVariants"] + "<br>" +
-                "Number of constructors variants: "+ stats["constructorsVariants"] + "<br>" +
-                "Number of method level variants: "+ stats["methodLevelVariants"] + "<br>" +
-                "Number of class level variants: "+ stats["classLevelVariants"];
-            console.log(statisticsContent);
-            document.getElementsByTagName("p")[0].innerHTML = statisticsContent;
+            // g.nodes = g.nodes.filter(n => n.strokeWidth > 0);
 
+            d3.json(jsonStatsFile, function(err, stats){
+                var statisticsContent =
+                    "Number of methods VPs: "+ stats["methodsVPs"] + "<br>" +
+                    "Number of constructors VPs: "+ stats["constructorsVPs"] + "<br>" +
+                    "Number of method level VPs: "+ stats["methodLevelVPs"] + "<br>" +
+                    "Number of class level VPs: "+ stats["classLevelVPs"] + "<br>" +
+                    "Number of methods variants: "+ stats["methodsVariants"] + "<br>" +
+                    "Number of constructors variants: "+ stats["constructorsVariants"] + "<br>" +
+                    "Number of method level variants: "+ stats["methodLevelVariants"] + "<br>" +
+                    "Number of class level variants: "+ stats["classLevelVariants"];
+                document.getElementsByTagName("p")[0].innerHTML = statisticsContent;
+
+            });
+
+            if (err) throw err;
+
+            var sort = gr.nodes.filter(a => a.type.includes("CLASS")).map(a => parseInt(a.intensity)).sort((a, b) => a - b);
+            color.domain([sort[0]-3, sort[sort.length - 1]]); // TODO deal with magic number
+
+            var nodeByID = {};
+
+
+            graph = gr;
+            store = $.extend(true, {}, gr);
+
+            graph.nodes = gr.nodes.filter(n => !filters.some(filter => n.name.includes(filter)));
+            graph.links = gr.links.filter(l => !filters.some(filter => l.source.includes(filter)) && !filters.some(filter => l.target.includes(filter)));
+
+            graph.nodes.forEach(function(n) {
+                n.radius = n.type.includes("CLASS") ? 10 + n.nodeSize : 10;
+                nodeByID[n.name] = n;
+            });
+
+            graph.links.forEach(function(l) {
+                l.sourceTypes = nodeByID[l.source].type;
+                l.targetTypes = nodeByID[l.target].type;
+            });
+
+            console.log(graph);
+            // graph = g;
+
+
+            console.log(store);
+
+            update();
         });
+    }
 
-        if (err) throw err;
-
-        var sort = g.nodes.filter(a => a.type.includes("CLASS")).map(a => parseInt(a.intensity)).sort((a, b) => a - b);
-        color.domain([sort[0]-3, sort[sort.length - 1]]); // TODO deal with magic number
-
-        var nodeByID = {};
-
-        g.nodes.forEach(function(n) {
-            n.radius = n.type.includes("CLASS") ? 10 + n.nodeSize : 10;
-            nodeByID[n.name] = n;
-        });
-
-        g.links.forEach(function(l) {
-            l.sourceTypes = nodeByID[l.source].type;
-            l.targetTypes = nodeByID[l.target].type;
-        });
-
-        graph = g;
-        store = $.extend(true, {}, g);
-
-        update();
-    });
 
     //	general update pattern for updating the graph
     function update() {
@@ -166,7 +177,7 @@ function generateGraph(jsonFile, jsonStatsFile){
         link = link.merge(newLink);
 
         //  UPDATE
-        label = label.data(graph.nodes, function(d) { return d.name;});
+        label = label.data(store.nodes, function(d) { return d.name;});
         //	EXIT
         label.exit().remove();
         //  ENTER
@@ -311,4 +322,6 @@ function generateGraph(jsonFile, jsonStatsFile){
 
         return  d3.rgb(d, d, d);
     }
+
+    displayData()
 }
