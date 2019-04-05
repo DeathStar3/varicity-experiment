@@ -3,6 +3,7 @@
 <meta charset="UTF-8">
 <head>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <title>${title}</title>
 </head>
 <body>
@@ -12,13 +13,36 @@
 <button type="button" class="filter-btn" id="awt" value="java.awt">java.awt</button>
 <button type="button" class="filter-btn" id="bean" value="java.beans">java.beans</button>
 <button type="button" class="filter-btn" id="alone" value="ALONE">Filter isolated nodes</button>
-<p id="statistics"></p>
+
+<div class="row py-4 pl-4">
+    <div class="input-group col-4">
+        <input id="package-to-filter" type="text" class="form-control" placeholder="Package/class to filter"
+               aria-label="Package/class to filter" aria-describedby="add-filter-button">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="add-filter-button">Add new filter</button>
+        </div>
+    </div>
+</div>
+<div class="row pl-4">
+    <div class="col-2">
+        <ul class="list-group" id="list-tab" role="tablist">
+        </ul>
+    </div>
+    <div class="col-6"></div>
+    <div class="col-4">
+        <p id="statistics"></p>
+    </div>
+</div>
+
 <svg width="960" height="500"></svg>
 </body>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script
         src="https://code.jquery.com/jquery-3.2.1.min.js"
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 <script src="${jsScriptFile}"></script>
 <script type="text/javascript">

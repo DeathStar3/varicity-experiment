@@ -261,3 +261,17 @@ $(".filter-btn").on("click", function() {
     }
     displayGraph(jsonFile, jsonStatsFile, filters);
 });
+
+$(document).on('click', ".list-group-item", function (e) {
+    e.preventDefault();
+    console.log($(this).attr("id"));
+    $(e.target).remove();
+});
+
+$("#add-filter-button").on('click', function (e) {
+    e.preventDefault();
+    let inputValue = $("#package-to-filter").val();
+    console.log(inputValue);
+    $("#list-tab").append('<li class="list-group-item" id="'+inputValue+'" data-toggle="list"\n' +
+        '               role="tab" aria-controls="profile">'+inputValue+'</li>')
+});
