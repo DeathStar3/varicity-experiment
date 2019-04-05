@@ -3,13 +3,15 @@ var graph, store;
 
 //	filtered types
 var filters = [];
+var filterIsolated = false;
 var jsonFile, jsonStatsFile;
 
-function displayGraph(jsonFile, jsonStatsFile, nodefilters = []){
+function displayGraph(jsonFile, jsonStatsFile, nodefilters = [], filterIsolated = false){
     d3.selectAll("svg > *").remove();
     filters = nodefilters;
     this.jsonFile = jsonFile;
     this.jsonStatsFile = jsonStatsFile;
+    this.filterIsolated = filterIsolated;
     generateGraph();
 }
 
@@ -107,6 +109,16 @@ function generateGraph(){
             graph.nodes = gr.nodes.filter(n => !filters.some(filter => n.name.includes(filter)));
             graph.links = gr.links.filter(l => !filters.some(filter => l.source.includes(filter)) && !filters.some(filter => l.target.includes(filter)));
 
+            if(filterIsolated){
+                var nodesToKeep = new Set();
+                graph.links.forEach(l => {
+                    nodesToKeep.add(l.source);
+                    nodesToKeep.add(l.target);
+                });
+                graph.nodes = gr.nodes.filter(n => nodesToKeep.has(n.name));
+                console.log(nodesToKeep);
+                console.log(graph.nodes);
+            }
             update();
         });
     }
@@ -268,4 +280,11 @@ $("#add-filter-button").on('click', function (e) {
         filters.push(inputValue);
         displayGraph(jsonFile, jsonStatsFile, filters);
     }
+});
+
+$("#filter-isolated").on('click', function (e) {
+    e.preventDefault();
+    var pressed = $(this).attr("aria-pressed") === "false";
+    console.log(pressed);
+    displayGraph(jsonFile, jsonStatsFile, filters, pressed);
 });
