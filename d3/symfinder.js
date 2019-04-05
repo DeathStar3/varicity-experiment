@@ -251,27 +251,21 @@ function generateGraph(){
 
 }
 
-//	filter button event handlers
-$(".filter-btn").on("click", function() {
-    var id = $(this).attr("value");
-    if (filters.includes(id)) {
-        filters.splice(filters.indexOf(id), 1)
-    } else {
-        filters.push(id);
-    }
-    displayGraph(jsonFile, jsonStatsFile, filters);
-});
-
 $(document).on('click', ".list-group-item", function (e) {
     e.preventDefault();
-    console.log($(this).attr("id"));
+    let removedFilter = $(this).attr("id");
     $(e.target).remove();
+    filters.splice(filters.indexOf(removedFilter), 1);
+    displayGraph(jsonFile, jsonStatsFile, filters);
 });
 
 $("#add-filter-button").on('click', function (e) {
     e.preventDefault();
     let inputValue = $("#package-to-filter").val();
-    console.log(inputValue);
-    $("#list-tab").append('<li class="list-group-item" id="'+inputValue+'" data-toggle="list"\n' +
-        '               role="tab" aria-controls="profile">'+inputValue+'</li>')
+    if(inputValue){
+        $("#list-tab").append('<li class="list-group-item" id="'+inputValue+'" data-toggle="list"\n' +
+            '               role="tab" aria-controls="profile">'+inputValue+'</li>');
+        filters.push(inputValue);
+        displayGraph(jsonFile, jsonStatsFile, filters);
+    }
 });

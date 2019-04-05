@@ -7,12 +7,6 @@
     <title>${title}</title>
 </head>
 <body>
-<button type="button" class="filter-btn" id="lang" value="java.lang">java.lang</button>
-<button type="button" class="filter-btn" id="util" value="java.util">java.util</button>
-<button type="button" class="filter-btn" id="io" value="java.io">java.io</button>
-<button type="button" class="filter-btn" id="awt" value="java.awt">java.awt</button>
-<button type="button" class="filter-btn" id="bean" value="java.beans">java.beans</button>
-<button type="button" class="filter-btn" id="alone" value="ALONE">Filter isolated nodes</button>
 
 <div class="row py-4 pl-4">
     <div class="input-group col-4">
@@ -21,6 +15,9 @@
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" id="add-filter-button">Add new filter</button>
         </div>
+    </div>
+    <div class="col-4">
+        <button type="button" class="btn btn-outline-secondary" data-toggle="button" aria-pressed="false" id="filter-isolated" value="filter-isolated">Filter isolated nodes</button>
     </div>
 </div>
 <div class="row pl-4">
