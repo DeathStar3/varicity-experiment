@@ -6,12 +6,21 @@ var filters = [];
 var filterIsolated = false;
 var jsonFile, jsonStatsFile;
 
+var firstTime = true;
+
 function displayGraph(jsonFile, jsonStatsFile, nodefilters = [], filterIsolated = false){
     d3.selectAll("svg > *").remove();
     filters = nodefilters;
     this.jsonFile = jsonFile;
     this.jsonStatsFile = jsonStatsFile;
     this.filterIsolated = filterIsolated;
+    if(firstTime){
+        filters.forEach(filter => {
+            $("#list-tab").append('<li class="list-group-item" id="'+filter+'" data-toggle="list"\n' +
+                '               role="tab" aria-controls="profile">'+filter+'</li>');
+        });
+        firstTime = false;
+    }
     generateGraph();
 }
 
@@ -109,6 +118,8 @@ function generateGraph(){
             graph.nodes = gr.nodes.filter(n => !filters.some(filter => n.name.includes(filter)));
             graph.links = gr.links.filter(l => !filters.some(filter => l.source.includes(filter)) && !filters.some(filter => l.target.includes(filter)));
 
+            console.log(filterIsolated);
+
             if(filterIsolated){
                 var nodesToKeep = new Set();
                 graph.links.forEach(l => {
@@ -116,8 +127,6 @@ function generateGraph(){
                     nodesToKeep.add(l.target);
                 });
                 graph.nodes = gr.nodes.filter(n => nodesToKeep.has(n.name));
-                console.log(nodesToKeep);
-                console.log(graph.nodes);
             }
             update();
         });
@@ -268,7 +277,7 @@ $(document).on('click', ".list-group-item", function (e) {
     let removedFilter = $(this).attr("id");
     $(e.target).remove();
     filters.splice(filters.indexOf(removedFilter), 1);
-    displayGraph(jsonFile, jsonStatsFile, filters);
+    displayGraph(jsonFile, jsonStatsFile, filters, filterIsolated);
 });
 
 $("#add-filter-button").on('click', function (e) {
@@ -278,7 +287,7 @@ $("#add-filter-button").on('click', function (e) {
         $("#list-tab").append('<li class="list-group-item" id="'+inputValue+'" data-toggle="list"\n' +
             '               role="tab" aria-controls="profile">'+inputValue+'</li>');
         filters.push(inputValue);
-        displayGraph(jsonFile, jsonStatsFile, filters);
+        displayGraph(jsonFile, jsonStatsFile, filters, filterIsolated);
     }
 });
 
