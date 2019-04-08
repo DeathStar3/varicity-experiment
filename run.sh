@@ -1,5 +1,4 @@
 #!/bin/bash
 
-python3 download_projects.py
-mvn clean install
+docker-compose -f sources-fetcher-compose.yaml up
 ./rerun.sh

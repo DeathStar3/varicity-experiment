@@ -1,4 +1,5 @@
 #!/bin/bash
 
-docker-compose build
-docker-compose up --abort-on-container-exit
+docker-compose -f symfinder-compose.yaml up --abort-on-container-exit
+docker-compose -f visualization-compose.yaml up
+

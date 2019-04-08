@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose -f visualization_compose.yaml up
+docker-compose -f visualization-compose.yaml up
