@@ -1,0 +1,27 @@
+version: "3.6"
+
+services:
+  symfinder:
+    build:
+      context: .
+      dockerfile: docker/SymfinderDockerfile
+    image: symfinder
+    container_name: symfinder
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./resources:/resources
+      - ./d3:/d3
+    depends_on:
+      - neo4j
+
+  neo4j:
+    build:
+      context: .
+      dockerfile: docker/Neo4jDockerfile
+    image: symfinder-neo4j
+    container_name: symfinder-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+

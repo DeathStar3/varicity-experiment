@@ -1,0 +1,4 @@
+FROM openjdk:8-jre-alpine
+ADD target/symfinder-1.0-SNAPSHOT-jar-with-dependencies.jar /symfinder.jar
+ADD symfinder.yaml /symfinder.yaml
+CMD java -jar /symfinder.jar

@@ -4,6 +4,7 @@ import neo4j_types.NodeType;
 import neo4j_types.RelationType;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.*;
+import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 import org.neo4j.driver.v1.types.MapAccessor;
 import org.neo4j.driver.v1.types.Node;
 
@@ -20,7 +21,27 @@ public class NeoGraph {
     private Driver driver;
 
     public NeoGraph(String uri, String user, String password) {
-        driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
+        driver = getDriver(uri, user, password);
+    }
+
+    private Driver getDriver(String uri, String user, String password) {
+        int count = 0;
+        int maxTries = 5;
+        while (true) {
+            try {
+                return GraphDatabase.driver(uri, AuthTokens.basic(user, password));
+            } catch (ServiceUnavailableException e) { // The database is not ready, retry to connect
+                System.out.println("Waiting for Neo4j database to be ready...");
+                if(++count == maxTries){
+                    throw e;
+                }
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
     }
 
     public NeoGraph(Driver driver) {

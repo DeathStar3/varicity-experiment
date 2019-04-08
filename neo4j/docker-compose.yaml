@@ -1,6 +1,6 @@
-neo4j-parsing:
+neo4j:
     image: neo4j:3.5.0
-    container_name: symfinder-neo4j-parsing
+    container_name: symfinder-neo4j
     ports:
         - "7474:7474"
         - "7687:7687"

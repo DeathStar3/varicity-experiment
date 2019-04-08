@@ -36,12 +36,11 @@ public class Symfinder {
     }
 
     public void run() throws IOException {
-        String javaPackagePath = "src/main/java";
-        String classpathPath = null;
+        String classpathPath;
 
         classpathPath = System.getenv("JAVA_HOME");
         if (classpathPath == null) { // default to linux openJDK 8 path
-            classpathPath = "/usr/lib/jvm/java-8-openjdk";
+            classpathPath = "/usr/lib/jvm/java-1.8-openjdk/jre";
         }
 
         List <File> files = Files.walk(Paths.get(sourcePackage))
@@ -50,10 +49,10 @@ public class Symfinder {
                 .filter(file -> file.getName().endsWith(".java"))
                 .collect(Collectors.toList());
 
-        visitPackage(javaPackagePath, classpathPath, files, new ClassesVisitor());
-        visitPackage(javaPackagePath, classpathPath, files, new GraphBuilderVisitor());
-        visitPackage(javaPackagePath, classpathPath, files, new StrategyVisitor());
-        visitPackage(javaPackagePath, classpathPath, files, new FactoryVisitor());
+        visitPackage(classpathPath, files, new ClassesVisitor());
+        visitPackage(classpathPath, files, new GraphBuilderVisitor());
+        visitPackage(classpathPath, files, new StrategyVisitor());
+        visitPackage(classpathPath, files, new FactoryVisitor());
 
         neoGraph.setMethodsOverloads();
         neoGraph.setConstructorsOverloads();
@@ -74,7 +73,7 @@ public class Symfinder {
         neoGraph.closeDriver();
     }
 
-    private void visitPackage(String javaPackagePath, String classpathPath, List <File> files, ASTVisitor visitor) throws IOException {
+    private void visitPackage(String classpathPath, List <File> files, ASTVisitor visitor) throws IOException {
         for (File file : files) {
             String fileContent = getFileLines(file);
 
@@ -88,10 +87,7 @@ public class Symfinder {
 
             parser.setUnitName(file.getCanonicalPath());
 
-            String[] sources = {javaPackagePath};
-            String[] classpath = {classpathPath};
-
-            parser.setEnvironment(classpath, sources, new String[]{"UTF-8"}, true);
+            parser.setEnvironment(new String[]{classpathPath}, new String[]{""}, new String[]{"UTF-8"}, true);
             parser.setSource(fileContent.toCharArray());
 
             Map <String, String> options = JavaCore.getOptions();
