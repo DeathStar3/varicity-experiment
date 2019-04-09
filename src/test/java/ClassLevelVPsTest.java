@@ -1,3 +1,4 @@
+import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     @Test
     public void OneAbstractClass() {
         runTest(graph -> {
-            graph.createNode("Shape", EntityType.ABSTRACT, EntityType.CLASS);
+            graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -52,7 +53,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     public void OneAbstractClassOneInterface() {
         runTest(graph -> {
             graph.createNode("Serializable", EntityType.INTERFACE);
-            graph.createNode("Shape", EntityType.ABSTRACT, EntityType.CLASS);
+            graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
             assertEquals(2, graph.getNbClassLevelVPs());
         });
     }
@@ -60,7 +61,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     @Test
     public void OneExtendedAbstractClass() {
         runTest(graph -> {
-            Node shapeClass = graph.createNode("Shape", EntityType.ABSTRACT, EntityType.CLASS);
+            Node shapeClass = graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
             assertEquals(1, graph.getNbClassLevelVPs());
@@ -80,7 +81,7 @@ public class ClassLevelVPsTest extends Neo4JTest {
     @Test
     public void TwoLevelsClassVP() {
         runTest(graph -> {
-            Node shapeClass = graph.createNode("Shape", EntityType.ABSTRACT, EntityType.CLASS);
+            Node shapeClass = graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
             Node smallCircleClass = graph.createNode("SmallCircle", EntityType.CLASS);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);

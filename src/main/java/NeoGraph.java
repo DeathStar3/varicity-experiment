@@ -1,7 +1,4 @@
-import neo4j_types.DesignPatternType;
-import neo4j_types.EntityType;
-import neo4j_types.NodeType;
-import neo4j_types.RelationType;
+import neo4j_types.*;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
@@ -81,12 +78,12 @@ public class NeoGraph {
      * move ABSTRACT from EntityType to another enum
      *
      * @param name  Node name
-     * @param types Node types
+     * @param attributes Node types
      */
-    public Node getOrCreateNode(String name, NodeType type, NodeType... types) {
-        List <NodeType> nodeTypes = new ArrayList <>(Arrays.asList(types));
+    public Node getOrCreateNode(String name, EntityType type, EntityAttribute... attributes) {
+        List <NodeType> nodeTypes = new ArrayList <>(Arrays.asList(attributes));
         nodeTypes.add(type);
-        if(types.length == 0){
+        if(attributes.length == 0){
             return submitRequest(String.format("MERGE (n {name: '%s'}) ON CREATE SET n:%s RETURN (n)",
                     name,
                     nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":"))))
@@ -95,7 +92,7 @@ public class NeoGraph {
             return submitRequest(String.format("MERGE (n {name: '%s'}) ON CREATE SET n:%s ON MATCH SET n:%s RETURN (n)",
                     name,
                     nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":")),
-                    Arrays.stream(types).map(NodeType::getString).collect(Collectors.joining(":"))))
+                    Arrays.stream(attributes).map(NodeType::getString).collect(Collectors.joining(":"))))
                     .list().get(0).get(0).asNode();
         }
     }
@@ -202,7 +199,7 @@ public class NeoGraph {
      * - has a design pattern.
      */
     public void setVPLabels() {
-        submitRequest(String.format("MATCH (c) WHERE ((%s) OR c:ABSTRACT OR c:INTERFACE OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0) SET c:%s", getClauseForNodesMatchingLabels("c", DesignPatternType.values()), EntityType.VP));
+        submitRequest(String.format("MATCH (c) WHERE ((%s) OR c:ABSTRACT OR c:INTERFACE OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0) SET c:%s", getClauseForNodesMatchingLabels("c", DesignPatternType.values()), EntityAttribute.VP));
     }
 
     public void addLabelToNode(Node node, String label) {

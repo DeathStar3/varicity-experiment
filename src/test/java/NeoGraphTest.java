@@ -1,7 +1,4 @@
-import neo4j_types.DesignPatternType;
-import neo4j_types.EntityType;
-import neo4j_types.NodeType;
-import neo4j_types.RelationType;
+import neo4j_types.*;
 import org.junit.Test;
 import org.neo4j.graphdb.*;
 
@@ -16,7 +13,7 @@ public class NeoGraphTest extends Neo4JTest {
     @Test
     public void createNodeOneLabel() {
         runTest(graph -> {
-            NodeType nodeType = EntityType.CLASS;
+            EntityType nodeType = EntityType.CLASS;
             String nodeName = "n";
             graph.createNode(nodeName, nodeType);
             try (Transaction tx = graphDatabaseService.beginTx()) {
@@ -34,8 +31,8 @@ public class NeoGraphTest extends Neo4JTest {
     @Test
     public void createNodeTwoLabels() {
         runTest(graph -> {
-            NodeType nodeType1 = EntityType.CLASS;
-            NodeType nodeType2 = EntityType.ABSTRACT;
+            EntityType nodeType1 = EntityType.CLASS;
+            EntityAttribute nodeType2 = EntityAttribute.ABSTRACT;
             String nodeName = "n";
             graph.createNode(nodeName, nodeType1, nodeType2);
             try (Transaction tx = graphDatabaseService.beginTx()) {
@@ -54,7 +51,7 @@ public class NeoGraphTest extends Neo4JTest {
     @Test
     public void getNode() {
         runTest(graph -> {
-            NodeType nodeType = EntityType.CLASS;
+            EntityType nodeType = EntityType.CLASS;
             String nodeName = "n";
             graph.createNode(nodeName, nodeType);
             org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType);
@@ -65,7 +62,7 @@ public class NeoGraphTest extends Neo4JTest {
     @Test
     public void getOrCreateNodeCreation() {
         runTest(graph -> {
-            NodeType nodeType = EntityType.CLASS;
+            EntityType nodeType = EntityType.CLASS;
             String nodeName = "n";
             org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType);
             try (Transaction tx = graphDatabaseService.beginTx()) {
@@ -81,8 +78,8 @@ public class NeoGraphTest extends Neo4JTest {
     @Test
     public void getOrCreateNodeGetting() {
         runTest(graph -> {
-            NodeType nodeType1 = EntityType.CLASS;
-            NodeType nodeType2 = EntityType.INTERFACE;
+            EntityType nodeType1 = EntityType.CLASS;
+            EntityType nodeType2 = EntityType.INTERFACE;
             String nodeName = "n";
             graph.getOrCreateNode(nodeName, nodeType1);
             org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType2);
@@ -100,8 +97,8 @@ public class NeoGraphTest extends Neo4JTest {
     @Test
     public void getOrCreateNodeOnMatch() {
         runTest(graph -> {
-            NodeType nodeType1 = EntityType.CLASS;
-            NodeType nodeType2 = EntityType.ABSTRACT;
+            EntityType nodeType1 = EntityType.CLASS;
+            EntityAttribute nodeType2 = EntityAttribute.ABSTRACT;
             String nodeName = "n";
             graph.getOrCreateNode(nodeName, nodeType1);
             org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType1, nodeType2);
@@ -119,9 +116,9 @@ public class NeoGraphTest extends Neo4JTest {
     @Test
     public void getOrCreateNodeOnMatch2() {
         runTest(graph -> {
-            NodeType nodeType1 = EntityType.CLASS;
-            NodeType nodeType2 = EntityType.INTERFACE;
-            NodeType nodeType3 = EntityType.ABSTRACT;
+            EntityType nodeType1 = EntityType.CLASS;
+            EntityType nodeType2 = EntityType.INTERFACE;
+            EntityAttribute nodeType3 = EntityAttribute.ABSTRACT;
             String nodeName = "n";
             graph.getOrCreateNode(nodeName, nodeType1);
             org.neo4j.driver.v1.types.Node node = graph.getOrCreateNode(nodeName, nodeType2, nodeType3);
@@ -420,7 +417,7 @@ public class NeoGraphTest extends Neo4JTest {
     @Test
     public void relatedToRelationExists() {
         runTest(graph -> {
-            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
+            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
             org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
             org.neo4j.driver.v1.types.Node circleNode = graph.createNode("Circle", EntityType.CLASS);
             graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.EXTENDS);
@@ -434,7 +431,7 @@ public class NeoGraphTest extends Neo4JTest {
     @Test
     public void relatedToTwoLevelRelation() {
         runTest(graph -> {
-            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
+            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
             org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
             org.neo4j.driver.v1.types.Node squareNode = graph.createNode("Square", EntityType.CLASS);
             graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.EXTENDS);

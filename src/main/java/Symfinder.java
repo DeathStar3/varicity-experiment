@@ -1,8 +1,5 @@
 import configuration.Configuration;
-import neo4j_types.DesignPatternType;
-import neo4j_types.EntityType;
-import neo4j_types.NodeType;
-import neo4j_types.RelationType;
+import neo4j_types.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.neo4j.driver.v1.types.Node;
@@ -129,22 +126,22 @@ public class Symfinder {
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
             if (! isTestClass(classBinding) && type.isPackageMemberTypeDeclaration() && ! classBinding.isEnum()) {
-                NodeType nodeType;
-                NodeType[] nodeTypes;
+                EntityType nodeType;
+                EntityAttribute[] nodeAttributes;
                 // If the class is abstract
                 if (Modifier.isAbstract(type.getModifiers())) {
                     nodeType = EntityType.CLASS;
-                    nodeTypes = new NodeType[]{EntityType.ABSTRACT};
+                    nodeAttributes = new EntityAttribute[]{EntityAttribute.ABSTRACT};
                     // If the type is an interface
                 } else if (type.isInterface()) {
                     nodeType = EntityType.INTERFACE;
-                    nodeTypes = new NodeType[]{};
+                    nodeAttributes = new EntityAttribute[]{};
                     // The type is a class
                 } else {
                     nodeType = EntityType.CLASS;
-                    nodeTypes = new NodeType[]{};
+                    nodeAttributes = new EntityAttribute[]{};
                 }
-                neoGraph.getOrCreateNode(classBinding.getQualifiedName(), nodeType, nodeTypes);
+                neoGraph.getOrCreateNode(classBinding.getQualifiedName(), nodeType, nodeAttributes);
             }
             return true;
         }

@@ -1,3 +1,4 @@
+import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
 import org.junit.Test;
@@ -10,7 +11,7 @@ public class ClassLevelVariantsTest extends Neo4JTest {
     @Test
     public void NoSubclass() {
         runTest(graph -> {
-            graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
+            graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
             assertEquals(0, graph.getNbClassLevelVariants());
         });
     }
@@ -26,7 +27,7 @@ public class ClassLevelVariantsTest extends Neo4JTest {
     @Test
     public void OneSubclass() {
         runTest(graph -> {
-            Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
+            Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
             assertEquals(1, graph.getNbClassLevelVariants());
@@ -36,7 +37,7 @@ public class ClassLevelVariantsTest extends Neo4JTest {
     @Test
     public void ThreeSubclasses() {
         runTest(graph -> {
-            Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
+            Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node triangleClass = graph.createNode("Triangle", EntityType.CLASS);
@@ -51,8 +52,8 @@ public class ClassLevelVariantsTest extends Neo4JTest {
     @Test
     public void OneAbstractSubclass() {
         runTest(graph -> {
-            Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityType.ABSTRACT);
-            Node polygonClass = graph.createNode("Polygon", EntityType.CLASS, EntityType.ABSTRACT);
+            Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
+            Node polygonClass = graph.createNode("Polygon", EntityType.CLASS, EntityAttribute.ABSTRACT);
             graph.linkTwoNodes(shapeClass, polygonClass, RelationType.EXTENDS);
             assertEquals(0, graph.getNbClassLevelVariants());
         });
