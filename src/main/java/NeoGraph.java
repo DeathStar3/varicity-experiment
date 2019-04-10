@@ -74,8 +74,6 @@ public class NeoGraph {
      * Returns the node if it exists, creates it and returns it otherwise.
      * As we use qualified names, each name is unique. Therefore, we can match only on node name.
      * If the node does not exist, it is created with the specified types as labels.
-     * TODO: 3/30/19 do this properly, this works for the moment as types is empty or contains ABSTRACT
-     * move ABSTRACT from EntityType to another enum
      *
      * @param name  Node name
      * @param attributes Node types

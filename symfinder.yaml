@@ -1,7 +1,7 @@
 projectsPackage: resources
 
 neo4j:
-  boltAddress: bolt://localhost:7687
+  boltAddress: bolt://neo4j:7687
   user: neo4j
   password: root
 
