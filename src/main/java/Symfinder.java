@@ -37,7 +37,7 @@ public class Symfinder {
 
         classpathPath = System.getenv("JAVA_HOME");
         if (classpathPath == null) { // default to linux openJDK 8 path
-            classpathPath = "/usr/lib/jvm/java-1.8-openjdk/jre";
+            classpathPath = "/usr/lib/jvm/java-8-openjdk";
         }
 
         List <File> files = Files.walk(Paths.get(sourcePackage))

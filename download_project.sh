@@ -11,8 +11,10 @@ download_project(){
 checkout_commits(){
 	for i in "${@:2}"; do
         git --git-dir=$1/.git --work-tree=$1 checkout ${i}
-        mkdir -p $1-${i}/
-        cp -r $1/* $1-${i}/
+        if [ ! -d $1-${i}/ ]; then
+            mkdir -p $1-${i}/
+            cp -r $1/* $1-${i}/
+        fi
     done
 }
 
@@ -21,8 +23,10 @@ checkout_commits(){
 checkout_tags(){
 	for i in "${@:2}"; do
         git --git-dir=$1/.git --work-tree=$1 checkout tags/${i}
-        mkdir -p $1-${i}/
-        cp -r $1/* $1-${i}/
+        if [ ! -d $1-${i}/ ]; then
+            mkdir -p $1-${i}/
+            cp -r $1/* $1-${i}/
+        fi
     done
 }
 

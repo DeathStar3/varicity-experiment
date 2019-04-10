@@ -14,13 +14,16 @@ services:
       - ./d3:/d3
     depends_on:
       - neo4j
+    environment:
+      - JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/jre
+    user: ${SYMFINDER_UID}:${SYMFINDER_GID}
 
   neo4j:
     image: neo4j:3.5.0
-    environment:
-      - NEO4J_AUTH=neo4j/root
     container_name: symfinder-neo4j
     ports:
-      - "7474:7474"
-      - "7687:7687"
+      - "127.0.0.1:7474:7474"
+      - "127.0.0.1:7687:7687"
+    environment:
+      - NEO4J_AUTH=neo4j/root
 
