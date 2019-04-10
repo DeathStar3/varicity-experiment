@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#mvn clean install
-docker-compose -f sources-fetcher-compose.yaml build
+docker build -f docker/SourcesFetcherDockerfile -t symfinder-sources_fetcher .
 docker-compose -f symfinder-compose.yaml build
 docker-compose -f visualization-compose.yaml build

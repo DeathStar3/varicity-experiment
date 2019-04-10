@@ -16,10 +16,9 @@ services:
       - neo4j
 
   neo4j:
-    build:
-      context: .
-      dockerfile: docker/Neo4jDockerfile
-    image: symfinder-neo4j
+    image: neo4j:3.5.0
+    environment:
+      - NEO4J_AUTH=neo4j/root
     container_name: symfinder-neo4j
     ports:
       - "7474:7474"
