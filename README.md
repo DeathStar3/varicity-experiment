@@ -3,8 +3,6 @@
 ## Technical Requirements
 
 - Docker (with Compose)
-- Python 3 with YAML lib (`pip3 install PyYAML`)
-- Firefox for displaying output graph locally (file:/// urls)
 
 ## Setup and Running
 
@@ -69,23 +67,40 @@ junit:
 
 Each checkout of tag or commit ID `<id>` will be placed in a directory whose path is : `<projectsPackage>/<experienceName>-<id>`.
 
+### Building the project
+
+Run
+
+```bash
+./symfinder.sh build
+```
+
+This script will build the integrality of the project (sources fetching, _symfinder_ core and visualization).
+If you want to build only a part of the _symfinder_ toolchain, you may add one or more of the following parameters:
+- `sources-fetcher`: builds a Docker image containing the scripts to clone Git repositories 
+- `symfinder-core`: builds _symfinder_ and the corresponding Docker image
+- `symfinder-core_skip_tests`: builds _symfinder_ without running tests and the corresponding Docker image
+- `symfinder`: only rebuilds the _symfinder_ image, useful if you only applied changes to the `symfinder.yaml` file
+- `visualization`: builds a Docker image starting a light web server to expose the generated visualization
+
+
 ### Running the project
 
 To do this, run
 
 ```bash
-./run.sh
+./symfinder.sh run
 ```
 
-This script will first execute a Python script to download the sources of the projects, then build and start a Docker Compose environment:
+This script will first execute a Python script to download the sources of the projects, then start a Docker Compose environment:
  - one container contains the Neo4j database;
- - another container contains the symfinder Java application to analyse them.
+ - another container contains the _symfinder_ Java application to analyse them.
 During the execution, the classes and methods detected are output on the console.
 
 If you just want to rerun the analyses, run
 
 ```bash
-./rerun.sh
+./symfinder.sh rerun
 ```
 
 ### Visualizing the generated graphs
@@ -93,10 +108,8 @@ If you just want to rerun the analyses, run
 Run
 
 ```bash
-./visualization.sh
+./symfinder.sh visualization
 ```
 
 This will start a Docker container exposing the visualizations in a web server.
 You will be able to access the visualizations at `http://localhost:8181`.
-
-Currently only Firefox (and not Chrome) is correctly displaying the D3 output locally. If you have a blank screen in your Browser, you need to install a web server locally, as other browsers are prohibiting AJAX requests to file:/// urls (https://stackoverflow.com/questions/18972460/d3-bar-graph-example-not-working-locally).
