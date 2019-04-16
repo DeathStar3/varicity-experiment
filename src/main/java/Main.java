@@ -9,8 +9,7 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        Visualisation.createIndex();
-        Visualisation.createVisualisations();
+        Visualisation.setUpVisualizationFiles();
         List <Experience> experiences = Configuration.getExperiences();
         experiences.forEach(experience -> {
             try {

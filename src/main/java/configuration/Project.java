@@ -1,5 +1,7 @@
 package configuration;
 
+import visualisation.Visualisation;
+
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +23,7 @@ public class Project {
                 .collect(Collectors.toList());
     }
 
-    private String getExperienceName(String id){
+    private String getExperienceName(String id) {
         return experienceName + "-" + id;
     }
 
@@ -30,7 +32,7 @@ public class Project {
     }
 
     public String getOutputPath(String id) {
-        return "d3/data/" + getExperienceName(id) + ".json";
+        return Visualisation.BASE_DIRECTORY + "data/" + getExperienceName(id) + ".json";
     }
 
     private static <T> T[] concat(T[] first, T[] second) {
