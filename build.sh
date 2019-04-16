@@ -4,7 +4,7 @@ input_args="$@"
 
 if [ $# -eq 0 ]
 then
-    input_args=(sources_fetcher symfinder-core visualization)
+    input_args=(sources-fetcher symfinder-core visualization)
 fi
 
 for param in ${input_args[@]}

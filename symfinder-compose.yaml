@@ -11,6 +11,7 @@ services:
       - "127.0.0.1:8080:8080"
     volumes:
       - ./resources:/resources
+      - ./generated_visualizations:/generated_visualizations
       - ./d3:/d3
     depends_on:
       - neo4j
