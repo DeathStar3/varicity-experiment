@@ -97,7 +97,7 @@ function generateGraph() {
                     "Number of constructors variants: " + stats["constructorsVariants"] + "<br>" +
                     "Number of method level variants: " + stats["methodLevelVariants"] + "<br>" +
                     "Number of class level variants: " + stats["classLevelVariants"];
-                document.getElementsByTagName("p")[0].innerHTML = statisticsContent;
+                document.getElementById("statistics").innerHTML = statisticsContent;
 
             });
 
