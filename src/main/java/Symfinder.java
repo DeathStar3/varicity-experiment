@@ -118,14 +118,34 @@ public class Symfinder {
     }
 
     /**
-     * Parses all classes and the methods they contain, and adds them to the database.
+     * This class ensures is inherited by all visitors and ensures that some parts of the code are ignored:
+     *  - enums
+     *  - test classes
+     *  - nested classes
+     *  - anonymous classes
      */
-    private class ClassesVisitor extends ASTVisitor {
-
+    private class SymfinderVisitor extends ASTVisitor {
         @Override
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
-            if (! isTestClass(classBinding) && ! classBinding.isNested() && ! classBinding.isEnum()) {
+            return ! isTestClass(classBinding) && ! classBinding.isNested() && ! classBinding.isEnum() && ! classBinding.isAnonymous();
+        }
+
+        @Override
+        public boolean visit(AnonymousClassDeclaration classDeclarationStatement) {
+            return false;
+        }
+
+    }
+
+    /**
+     * Parses all classes and the methods they contain, and adds them to the database.
+     */
+    private class ClassesVisitor extends SymfinderVisitor {
+
+        @Override
+        public boolean visit(TypeDeclaration type) {
+            if (super.visit(type)) {
                 EntityType nodeType;
                 EntityAttribute[] nodeAttributes;
                 // If the class is abstract
@@ -141,7 +161,7 @@ public class Symfinder {
                     nodeType = EntityType.CLASS;
                     nodeAttributes = new EntityAttribute[]{};
                 }
-                neoGraph.getOrCreateNode(classBinding.getQualifiedName(), nodeType, nodeAttributes);
+                neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), nodeType, nodeAttributes);
                 return true;
             }
             return false;
@@ -151,16 +171,15 @@ public class Symfinder {
         public boolean visit(MethodDeclaration method) {
             // Ignoring methods in anonymous classes
             ITypeBinding declaringClass;
-            if ((! (method.resolveBinding() == null)) && ! (declaringClass = method.resolveBinding().getDeclaringClass()).isAnonymous()) {
-                if (! isTestClass(declaringClass)) {
+            if (! (method.resolveBinding() == null)) {
+                declaringClass = method.resolveBinding().getDeclaringClass();
                     String methodName = method.getName().getIdentifier();
                     String parentClassName = declaringClass.getQualifiedName();
                     System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
-                    NodeType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
+                    EntityType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
                     Node methodNode = Modifier.isAbstract(method.getModifiers()) ? neoGraph.createNode(methodName, methodType, EntityAttribute.ABSTRACT) : neoGraph.createNode(methodName, methodType);
                     Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
                     neoGraph.linkTwoNodes(parentClassNode, methodNode, RelationType.METHOD);
-                }
             }
             return false;
         }
@@ -173,7 +192,7 @@ public class Symfinder {
      * we have to do this manually by finding the corresponding nodes in the database.
      * Hence, all nodes must have been parsed at least once.
      */
-    private class GraphBuilderVisitor extends ASTVisitor {
+    private class GraphBuilderVisitor extends SymfinderVisitor {
 
         List <ImportDeclaration> imports = new ArrayList <>();
 
@@ -187,8 +206,8 @@ public class Symfinder {
 
         @Override
         public boolean visit(TypeDeclaration type) {
-            ITypeBinding classBinding = type.resolveBinding();
-            if (! isTestClass(classBinding) && ! classBinding.isNested()) {
+            if (super.visit(type)) {
+                ITypeBinding classBinding = type.resolveBinding();
                 String thisClassName = classBinding.getQualifiedName();
                 System.out.println("Class : " + thisClassName);
                 Optional <Node> thisNode = neoGraph.getNode(thisClassName);
@@ -258,17 +277,17 @@ public class Symfinder {
             imports.clear();
         }
 
-        @Override
-        public boolean visit(AnonymousClassDeclaration classDeclarationStatement) {
-            return false;
-        }
-
-
     }
 
-    private class StrategyVisitor extends ASTVisitor {
+    /**
+     * Detects strategy patterns.
+     * We detect as a strategy pattern:
+     * - a class who possesses at least two variants and is used as a field in another class
+     * - a class whose name contains "Strategy"
+    */
+    private class StrategyVisitor extends SymfinderVisitor {
 
-        @Override
+      @Override
         public boolean visit(FieldDeclaration field) {
             System.out.println(field);
             ITypeBinding binding = field.getType().resolveBinding();
@@ -281,11 +300,6 @@ public class Symfinder {
             return false;
         }
 
-        @Override
-        public boolean visit(AnonymousClassDeclaration classDeclarationStatement) {
-            return false;
-        }
-
     }
 
     /**
@@ -294,18 +308,18 @@ public class Symfinder {
      * - a class who possesses a method which returns an object whose type is a subtype of the method return type
      * - a class whose name contains "Factory"
      */
-    private class FactoryVisitor extends ASTVisitor {
+    private class FactoryVisitor extends SymfinderVisitor {
 
         @Override
         public boolean visit(TypeDeclaration type) {
-            if (type.resolveBinding().isNested()) {
-                return false;
+            if (super.visit(type)) {
+                String qualifiedName = type.resolveBinding().getQualifiedName();
+                if (qualifiedName.contains("Factory")) {
+                    neoGraph.addLabelToNode(neoGraph.getOrCreateNode(qualifiedName, type.resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS), DesignPatternType.FACTORY.toString());
+                }
+                return true;
             }
-            String qualifiedName = type.resolveBinding().getQualifiedName();
-            if (qualifiedName.contains("Factory")) {
-                neoGraph.addLabelToNode(neoGraph.getOrCreateNode(qualifiedName, type.resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS), DesignPatternType.FACTORY.toString());
-            }
-            return true;
+            return false;
         }
 
         @Override
@@ -335,11 +349,6 @@ public class Symfinder {
                     }
                 }
             }
-            return false;
-        }
-
-        @Override
-        public boolean visit(AnonymousClassDeclaration classDeclarationStatement) {
             return false;
         }
 
