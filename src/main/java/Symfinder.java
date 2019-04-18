@@ -125,7 +125,7 @@ public class Symfinder {
         @Override
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
-            if (! isTestClass(classBinding) && type.isPackageMemberTypeDeclaration() && ! classBinding.isEnum()) {
+            if (! isTestClass(classBinding) && ! classBinding.isNested() && ! classBinding.isEnum()) {
                 EntityType nodeType;
                 EntityAttribute[] nodeAttributes;
                 // If the class is abstract
@@ -142,8 +142,9 @@ public class Symfinder {
                     nodeAttributes = new EntityAttribute[]{};
                 }
                 neoGraph.getOrCreateNode(classBinding.getQualifiedName(), nodeType, nodeAttributes);
+                return true;
             }
-            return true;
+            return false;
         }
 
         @Override
@@ -156,22 +157,29 @@ public class Symfinder {
                     String parentClassName = declaringClass.getQualifiedName();
                     System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
                     NodeType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
-                    Node methodNode = neoGraph.createNode(methodName, methodType);
+                    Node methodNode = Modifier.isAbstract(method.getModifiers()) ? neoGraph.createNode(methodName, methodType, EntityAttribute.ABSTRACT) : neoGraph.createNode(methodName, methodType);
                     Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
                     neoGraph.linkTwoNodes(parentClassNode, methodNode, RelationType.METHOD);
                 }
             }
-            return true;
+            return false;
         }
+
     }
 
+    /**
+     * Parses all classes and creates the inheritance relations.
+     * This step cannot be done in the ClassesVisitor, as due to problems with name resolving in Eclipse JDT,
+     * we have to do this manually by finding the corresponding nodes in the database.
+     * Hence, all nodes must have been parsed at least once.
+     */
     private class GraphBuilderVisitor extends ASTVisitor {
 
-        List<ImportDeclaration> imports = new ArrayList <>();
+        List <ImportDeclaration> imports = new ArrayList <>();
 
         @Override
         public boolean visit(ImportDeclaration node) {
-            if(! node.isStatic()){
+            if (! node.isStatic()) {
                 imports.add(node);
             }
             return true;
@@ -180,11 +188,11 @@ public class Symfinder {
         @Override
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
-            if (! isTestClass(classBinding) && type.isPackageMemberTypeDeclaration()) {
+            if (! isTestClass(classBinding) && ! classBinding.isNested()) {
                 String thisClassName = classBinding.getQualifiedName();
                 System.out.println("Class : " + thisClassName);
                 Optional <Node> thisNode = neoGraph.getNode(thisClassName);
-                if(thisNode.isPresent()){
+                if (thisNode.isPresent()) {
                     // Link to superclass if exists
                     ITypeBinding superclassType = classBinding.getSuperclass();
                     if (superclassType != null) {
@@ -196,15 +204,16 @@ public class Symfinder {
                         createImportedClassNode(thisClassName, thisNode.get(), o, EntityType.INTERFACE, RelationType.IMPLEMENTS, "INTERFACE");
                     }
                 }
+                return true;
             }
-            return true;
+            return false; // TODO: 4/18/19 functional tests : only inner classes are ignored
         }
 
         // TODO: 4/1/19 functional tests : imports from different packages
         private void createImportedClassNode(String thisClassName, Node thisNode, ITypeBinding importedClassType, EntityType entityType, RelationType relationType, String name) {
             Optional <String> myImportedClass = getClassFullName(importedClassType.getName());
             String qualifiedName = importedClassType.getQualifiedName();
-            if(myImportedClass.isPresent() && ! myImportedClass.get().equals(qualifiedName)){
+            if (myImportedClass.isPresent() && ! myImportedClass.get().equals(qualifiedName)) {
                 System.out.println(String.format("DIFFERENT %s FULL NAMES FOUND FOR CLASS %s : \n" +
                         "JDT qualified name : %s\n" +
                         "Manually resolved name : %s\n" +
@@ -214,11 +223,26 @@ public class Symfinder {
             neoGraph.linkTwoNodes(superclassNode, thisNode, relationType);
         }
 
-        private Optional<String> getClassFullName(String className){
+        /**
+         * Iterates on imports to find the real full class name (class name with package).
+         * There are two kinds of imports:
+         * - imports of classes:   a.b.TheClass  (1)
+         * - imports of packages:  a.b.*         (2)
+         * The determination is done in two steps:
+         * - Iterate over (1). If a correspondence is found, return it.
+         * - Iterate over (2) and for each one check in the database if the package a class with this class name.
+         * WARNING: all classes must have been parsed at least once before executing this method.
+         * Otherwise, the class we are looking to may not exist in the database.
+         *
+         * @param className
+         *
+         * @return
+         */
+        private Optional <String> getClassFullName(String className) {
             Optional <ImportDeclaration> first = imports.stream()
                     .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(className))
                     .findFirst();
-            if(first.isPresent()){
+            if (first.isPresent()) {
                 return Optional.of(first.get().getName().getFullyQualifiedName());
             }
             Optional <Optional <Node>> first1 = imports.stream()
@@ -254,7 +278,7 @@ public class Symfinder {
                     neoGraph.addLabelToNode(typeNode, DesignPatternType.STRATEGY.toString());
                 }
             }
-            return true;
+            return false;
         }
 
         @Override
@@ -264,10 +288,19 @@ public class Symfinder {
 
     }
 
+    /**
+     * Detects factory patterns.
+     * We detect as a factory pattern:
+     * - a class who possesses a method which returns an object whose type is a subtype of the method return type
+     * - a class whose name contains "Factory"
+     */
     private class FactoryVisitor extends ASTVisitor {
 
         @Override
         public boolean visit(TypeDeclaration type) {
+            if (type.resolveBinding().isNested()) {
+                return false;
+            }
             String qualifiedName = type.resolveBinding().getQualifiedName();
             if (qualifiedName.contains("Factory")) {
                 neoGraph.addLabelToNode(neoGraph.getOrCreateNode(qualifiedName, type.resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS), DesignPatternType.FACTORY.toString());
@@ -284,11 +317,13 @@ public class Symfinder {
                     (typeOfReturnedObject = node.getExpression().resolveTypeBinding().getQualifiedName()) != null &&
                     ! typeOfReturnedObject.equals("null")) {
                 MethodDeclaration methodDeclaration = (MethodDeclaration) getParentOfNodeWithType(node, ASTNode.METHOD_DECLARATION);
-                if (methodDeclaration.getReturnType2().resolveBinding() != null) { // TODO: 3/22/19 find why this returns null in core/src/main/java/org/apache/cxf/bus/managers/BindingFactoryManagerImpl.java
-                    String methodReturnType = methodDeclaration.getReturnType2().resolveBinding().getQualifiedName();
+                System.out.println(methodDeclaration.getName().getIdentifier());
+                if (methodDeclaration.getReturnType2().resolveBinding() != null && methodDeclaration.resolveBinding() != null) {
+                    // TODO: 3/22/19 find why getReturnType2 returns null in core/src/main/java/org/apache/cxf/bus/managers/BindingFactoryManagerImpl.java
+                    // TODO: 4/18/19 find why resolveBinding returns null in AWT 9+181, KeyboardFocusManager.java:2439, return SNFH_FAILURE
                     String parsedClassType = methodDeclaration.resolveBinding().getDeclaringClass().getQualifiedName();
                     System.out.println(parsedClassType);
-                    System.out.println(methodDeclaration.getName().getIdentifier());
+                    String methodReturnType = methodDeclaration.getReturnType2().resolveBinding().getQualifiedName();
                     System.out.println("typeOfReturnedObject : " + typeOfReturnedObject);
                     System.out.println("methodReturnType : " + methodReturnType);
                     Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, methodDeclaration.getReturnType2().resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
@@ -300,7 +335,7 @@ public class Symfinder {
                     }
                 }
             }
-            return true;
+            return false;
         }
 
         @Override
