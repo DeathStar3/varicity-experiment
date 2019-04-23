@@ -10,10 +10,11 @@ download_project(){
 # ${@:2}: desired commits to checkout
 checkout_commits(){
 	for i in "${@:2}"; do
+	directory_path=$1-${i/\//_}/
         git --git-dir=$1/.git --work-tree=$1 checkout ${i}
-        if [ ! -d $1-${i}/ ]; then
-            mkdir -p $1-${i}/
-            cp -r $1/* $1-${i}/
+        if [ ! -d $directory_path ]; then
+            mkdir -p $directory_path
+            cp -r $1/* $directory_path
         fi
     done
 }
@@ -22,10 +23,11 @@ checkout_commits(){
 # ${@:2}: desired tags to checkout
 checkout_tags(){
 	for i in "${@:2}"; do
+	directory_path=$1-${i/\//_}/
         git --git-dir=$1/.git --work-tree=$1 checkout tags/${i}
-        if [ ! -d $1-${i}/ ]; then
-            mkdir -p $1-${i}/
-            cp -r $1/* $1-${i}/
+        if [ ! -d $directory_path ]; then
+            mkdir -p $directory_path
+            cp -r $1/* $directory_path
         fi
     done
 }

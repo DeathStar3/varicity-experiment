@@ -23,7 +23,8 @@ with open('symfinder.yaml', 'r') as config_file:
         project_directory = os.path.join(projects_package, xp_name)
         download_project()
         if "tagIds" in xp_config:
-            checkout_versions("tag", *xp_config["tagIds"])
+            # cast to string in case of numerical tag id (e.g. 1.0)
+            checkout_versions("tag", *[str(id) for id in xp_config["tagIds"]])
         if "commitIds" in xp_config:
             checkout_versions("commit", *xp_config["commitIds"])
         delete_project()
