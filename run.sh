@@ -12,5 +12,5 @@ create_directory(){
 create_directory resources
 create_directory generated_visualizations
 
-docker run -it -v $(pwd)/resources:/resources --user $(id -u):$(id -g) --rm symfinder-sources_fetcher
+docker run -it -v $(pwd)/resources:/resources -v $(pwd)/d3:/d3 -v $(pwd)/generated_visualizations:/generated_visualizations --user $(id -u):$(id -g) -e SYMFINDER_VERSION=$(git rev-parse --short=0 HEAD) --rm symfinder-sources_fetcher
 bash rerun.sh

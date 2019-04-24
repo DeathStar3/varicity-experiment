@@ -2,7 +2,10 @@ FROM python:3.7.3-alpine3.9
 RUN apk add git
 RUN apk add bash
 RUN pip install PyYAML
+RUN pip install mako
 ADD download_projects.py /download_projects.py
+ADD generate_visualization_files.py /generate_visualization_files.py
 ADD download_project.sh /download_project.sh
+ADD sources_fetcher.sh /sources_fetcher.sh
 ADD symfinder.yaml /symfinder.yaml
-CMD python3 download_projects.py
+CMD sh sources_fetcher.sh
