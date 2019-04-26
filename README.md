@@ -3,6 +3,7 @@
 ## Technical Requirements
 
 - Docker (with Compose)
+- Python 3 with PyYAML and mako libs (`pip3 install PyYAML mako`)
 
 ## Setup and Running
 
@@ -19,17 +20,8 @@ neo4j:
   user: neo4j
   password: root
 
-experiences:
-  junit:
-    repositoryUrl: https://github.com/junit-team/junit4
-    sourcePackage: src/main/java
-    tagIds:
-      - r4.12
-  javaGeom:
-    repositoryUrl: https://github.com/dlegland/javaGeom
-    sourcePackage: src
-    commitIds:
-      - 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
+experiences_file: experiences.yaml
+
 ```
 
 #### General parameters
@@ -40,11 +32,26 @@ experiences:
 
 - `boltAddress`: address where Neo4J's bolt driver is exposed
 - `user`: username
-- `password`: the password you chose
+- `password`: the password to access the database
 
 #### Experiences
 
-`experiences` corresponds to the different source codes you want to analyse.
+`experiences_file` corresponds to the path of a YAML file containing the description of the different source codes you want to analyse. Here is an example:
+
+```yaml
+junit:
+  repositoryUrl: https://github.com/junit-team/junit4
+  sourcePackage: src/main/java
+  tagIds:
+    - r4.12
+javaGeom:
+  repositoryUrl: https://github.com/dlegland/javaGeom
+  sourcePackage: src
+  commitIds:
+    - 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
+```
+
+
 You can specify as many experiences as you want.
 Each project is defined by different parameters:
 - `repositoryUrl`: URL of the project's Git repository

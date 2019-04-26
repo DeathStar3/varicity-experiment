@@ -11,7 +11,7 @@ case "$1" in
     	bash run.sh
         ;;
     "rerun")
-    	bash rerun.sh
+    	python3 run_xps.py
         ;;
     "visualization")
     	bash visualization.sh

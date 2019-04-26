@@ -11,7 +11,7 @@ LOG_FILE_NAME=${log_file_name}
 
 with open('symfinder.yaml', 'r') as config_file:
     data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
-    with open("experiences/"+data["experiencesFile"], 'r') as experiences_file:
+    with open(data["experiences_file"], 'r') as experiences_file:
         experiences = yaml.load(experiences_file.read(), Loader=yaml.FullLoader)
         for xp_name, xp_config in experiences.items():
             for id in xp_config.get("tagIds", []) + xp_config.get("commitIds", []):
@@ -21,7 +21,6 @@ with open('symfinder.yaml', 'r') as config_file:
                     graph_output_path = "generated_visualizations/data/{}.json".format(xp_codename)
                     output_file.write(Template(ENV_FILE_TEMPLATE).render(
                         sources_package=sources_package,
-                        graph_output_path=graph_output_path,
-                        log_file_name=xp_codename
+                        graph_output_path=graph_output_path
                     ))
                 os.system("bash rerun.sh %s" % xp_codename)
