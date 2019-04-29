@@ -1,0 +1,21 @@
+neo4j:
+  boltAddress: bolt://neo4j:7687
+  user: neo4j
+  password: root
+
+experiences:
+#  activemq:
+#    repositoryUrl: https://github.com/apache/activemq
+#    sourcePackage: .
+#    tagIds:
+#      - activemq-5.15.9
+#  incubator-netbeans:
+#    repositoryUrl: https://github.com/apache/incubator-netbeans
+#    sourcePackage: java
+#    tagIds:
+#      - 11.0
+  hive:
+    repositoryUrl: https://github.com/apache/hive
+    sourcePackage: .
+    tagIds:
+      - rel/release-2.3.4

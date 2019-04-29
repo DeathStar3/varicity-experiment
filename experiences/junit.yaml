@@ -1,0 +1,8 @@
+junit:
+  repositoryUrl: https://github.com/junit-team/junit4
+  sourcePackage: .
+  tagIds:
+    - r4.12
+  filters:
+    - java.lang
+    - java.io

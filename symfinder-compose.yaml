@@ -4,7 +4,7 @@ services:
   symfinder:
     build:
       context: .
-      dockerfile: docker/SymfinderDockerfile
+      dockerfile: docker/symfinder/SymfinderDockerfile
     image: symfinder
     container_name: symfinder
     ports:

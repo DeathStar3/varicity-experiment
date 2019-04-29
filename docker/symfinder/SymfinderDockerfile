@@ -1,6 +1,7 @@
 FROM openjdk:8-jre-alpine
 RUN apk add git
 ADD target/symfinder-1.0-SNAPSHOT-jar-with-dependencies.jar /symfinder.jar
+ADD experiences/* /experiences/
 ADD symfinder.yaml /symfinder.yaml
-ADD docker/exec_symfinder.sh /exec_symfinder.sh
+ADD docker/symfinder/exec_symfinder.sh /exec_symfinder.sh
 ENTRYPOINT sh exec_symfinder.sh $SOURCES_PACKAGE $GRAPH_OUTPUT_PATH

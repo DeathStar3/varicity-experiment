@@ -15,7 +15,7 @@ shutil.copyfile(os.path.join(d3_directory, "style.css"), os.path.join(base_direc
 
 with open('symfinder.yaml', 'r') as config_file:
     data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
-    with open(data["experiences_file"], 'r') as experiences_file:
+    with open("experiences/" + data["experiencesFile"], 'r') as experiences_file:
         experiences = yaml.load(experiences_file.read(), Loader=yaml.FullLoader)
         for xp_name, xp_config in experiences.items():
             for id in xp_config.get("tagIds", []) + xp_config.get("commitIds", []):

@@ -17,7 +17,7 @@ def delete_project():
 
 with open('symfinder.yaml', 'r') as config_file:
     data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
-    with open(data["experiences_file"], 'r') as experiences_file:
+    with open("experiences/" + data["experiencesFile"], 'r') as experiences_file:
         experiences = yaml.load(experiences_file.read(), Loader=yaml.FullLoader)
         for xp_name, xp_config in experiences.items():
             projects_package = "resources"
