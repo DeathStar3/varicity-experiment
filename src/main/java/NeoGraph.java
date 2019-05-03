@@ -29,7 +29,7 @@ public class NeoGraph {
                 return GraphDatabase.driver(uri, AuthTokens.basic(user, password));
             } catch (ServiceUnavailableException e) { // The database is not ready, retry to connect
                 System.out.println("Waiting for Neo4j database to be ready...");
-                if(++count == maxTries){
+                if (++ count == maxTries) {
                     throw e;
                 }
                 try {
@@ -60,12 +60,12 @@ public class NeoGraph {
                 .list().get(0).get(0).asNode();
     }
 
-    public Optional<Node> getNode(String name) {
+    public Optional <Node> getNode(String name) {
         List <Record> recordList = submitRequest(String.format("MATCH (n {name: '%s'}) RETURN (n)", name)).list();
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
-    public Optional<Node> getNodeWithNameInPackage(String name, String packageName) {
+    public Optional <Node> getNodeWithNameInPackage(String name, String packageName) {
         List <Record> recordList = submitRequest(String.format("MATCH (n) WHERE n.name =~ '%s(\\\\..+)*\\\\.%s' RETURN (n)", packageName, name)).list();
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
@@ -75,24 +75,36 @@ public class NeoGraph {
      * As we use qualified names, each name is unique. Therefore, we can match only on node name.
      * If the node does not exist, it is created with the specified types as labels.
      *
-     * @param name  Node name
-     * @param attributes Node types
+     * @param name             Node name
+     * @param type             Node type
+     * @param createAttributes Node attributes added when creating the node
+     * @param matchAttributes  Node attributes added when matching an existing node
      */
-    public Node getOrCreateNode(String name, EntityType type, EntityAttribute... attributes) {
-        List <NodeType> nodeTypes = new ArrayList <>(Arrays.asList(attributes));
-        nodeTypes.add(type);
-        if(attributes.length == 0){
-            return submitRequest(String.format("MERGE (n {name: '%s'}) ON CREATE SET n:%s RETURN (n)",
-                    name,
-                    nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":"))))
-                    .list().get(0).get(0).asNode();
-        } else {
-            return submitRequest(String.format("MERGE (n {name: '%s'}) ON CREATE SET n:%s ON MATCH SET n:%s RETURN (n)",
-                    name,
-                    nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":")),
-                    Arrays.stream(attributes).map(NodeType::getString).collect(Collectors.joining(":"))))
-                    .list().get(0).get(0).asNode();
-        }
+    public Node getOrCreateNode(String name, EntityType type, EntityAttribute[] createAttributes, EntityAttribute[] matchAttributes) {
+        String onCreateAttributes = createAttributes.length == 0 ?
+                "" :
+                "ON CREATE SET n:" + Arrays.stream(createAttributes)
+                        .map(NodeType::getString)
+                        .collect(Collectors.joining(":"));
+        String onMatchAttributes = matchAttributes.length == 0 ?
+                "" :
+                "ON MATCH SET n:" + Arrays.stream(matchAttributes)
+                        .map(NodeType::getString)
+                        .collect(Collectors.joining(":"));
+        return submitRequest(String.format("MERGE (n:%s {name: '%s'}) %s %s RETURN (n)",
+                type.toString(),
+                name,
+                onCreateAttributes,
+                onMatchAttributes))
+                .list().get(0).get(0).asNode();
+    }
+
+    public Node getOrCreateNode(String name, EntityType type) {
+        return getOrCreateNode(name, type, new EntityAttribute[]{}, new EntityAttribute[]{});
+    }
+
+    public Node getOrCreateNode(String name, EntityType type, EntityAttribute[] attributes) {
+        return getOrCreateNode(name, type, attributes, attributes);
     }
 
     /**
@@ -352,8 +364,10 @@ public class NeoGraph {
 
     /**
      * Checks whether two nodes have a direct relationship.
+     *
      * @param parentNode source node of the relationship
-     * @param childNode destination node of the relationship
+     * @param childNode  destination node of the relationship
+     *
      * @return true if a relationship exists, false otherwise
      */
     public boolean relatedTo(Node parentNode, Node childNode) {
@@ -371,8 +385,8 @@ public class NeoGraph {
 
     private String getNodesAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH (c:VP) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, nodeSize:c.methods, intensity:c.constructors, strokeWidth:c.nbVariants})" :
-                "MATCH (c) WHERE c:CLASS OR c:INTERFACE RETURN collect({type:labels(c), name:c.name, nodeSize:c.methods, intensity:c.constructors})";
+                "MATCH (c:VP) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:PARAMETERIZED RETURN collect({types:labels(c), name:c.name, methods:c.methods, constructors:c.constructors, nbVariants:c.nbVariants})" :
+                "MATCH (c) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:PARAMETERIZED RETURN collect({types:labels(c), name:c.name, methods:c.methods, constructors:c.constructors})";
         return submitRequest(request)
                 .list()
                 .get(0)
@@ -385,8 +399,8 @@ public class NeoGraph {
 
     private String getLinksAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH (c1:VP)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2:VP) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
-                "MATCH (c1)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+                "MATCH path = (c1:VP)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2:VP) WHERE NONE(n IN nodes(path) WHERE n:PARAMETERIZED) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
+                "MATCH path = (c1)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:PARAMETERIZED) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .list()
                 .get(0)
