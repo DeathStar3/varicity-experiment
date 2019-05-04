@@ -341,8 +341,8 @@ public class Symfinder {
                     (typeOfReturnedObject = node.getExpression().resolveTypeBinding().getQualifiedName()) != null &&
                     ! typeOfReturnedObject.equals("null")) {
                 MethodDeclaration methodDeclaration = (MethodDeclaration) getParentOfNodeWithType(node, ASTNode.METHOD_DECLARATION);
-                System.out.println(methodDeclaration.getName().getIdentifier());
-                if (! methodDeclaration.isConstructor() && methodDeclaration.getReturnType2().resolveBinding() != null && methodDeclaration.resolveBinding() != null) {
+                if (methodDeclaration != null && ! methodDeclaration.isConstructor() && methodDeclaration.getReturnType2().resolveBinding() != null && methodDeclaration.resolveBinding() != null) {
+                    System.out.println(methodDeclaration.getName().getIdentifier());
                     // Check for constructor because of java.sourceui/src/org/netbeans/api/java/source/ui/ElementJavadoc.java:391 in netbeans-incubator
                     // TODO: 3/22/19 find why getReturnType2 returns null in core/src/main/java/org/apache/cxf/bus/managers/BindingFactoryManagerImpl.java
                     // TODO: 4/18/19 find why resolveBinding returns null in AWT 9+181, KeyboardFocusManager.java:2439, return SNFH_FAILURE
@@ -373,7 +373,9 @@ public class Symfinder {
 
     private ASTNode getParentOfNodeWithType(ASTNode node, int astNodeType) {
         ASTNode parentNode = node.getParent();
-        while (parentNode.getNodeType() != astNodeType) {
+        // If parentNode == null, it means that we went up through all parents without finding
+        // a node of the corresponding type.
+        while (parentNode != null && parentNode.getNodeType() != astNodeType) {
             parentNode = parentNode.getParent();
         }
         return parentNode;
