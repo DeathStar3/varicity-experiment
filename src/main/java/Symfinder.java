@@ -1,5 +1,10 @@
 import configuration.Configuration;
 import neo4j_types.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.neo4j.driver.v1.types.Node;
@@ -19,6 +24,8 @@ import java.util.stream.Stream;
  * Inspired by https://www.programcreek.com/2014/01/how-to-resolve-bindings-when-using-eclipse-jdt-astparser/
  */
 public class Symfinder {
+
+    private static final Logger logger = LogManager.getLogger(Symfinder.class);
 
     private NeoGraph neoGraph;
     private String sourcePackage;
@@ -66,8 +73,7 @@ public class Symfinder {
         System.out.println("Number of method level variants: " + neoGraph.getNbMethodLevelVariants());
         System.out.println("Number of class level variants: " + neoGraph.getNbClassLevelVariants());
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
-        System.out.println(neoGraph.generateStatisticsJson());
-        neoGraph.deleteGraph();
+        logger.debug(neoGraph.generateStatisticsJson());
         neoGraph.closeDriver();
     }
 
@@ -120,7 +126,7 @@ public class Symfinder {
         try (Stream <String> lines = Files.lines(file.toPath(), charset)) {
             return lines.collect(Collectors.joining("\n"));
         } catch (UncheckedIOException e) {
-            System.out.println(charset.displayName() + ": wrong encoding");
+            logger.info(charset.displayName() + ": wrong encoding");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -185,7 +191,7 @@ public class Symfinder {
                 declaringClass = method.resolveBinding().getDeclaringClass();
                     String methodName = method.getName().getIdentifier();
                     String parentClassName = declaringClass.getQualifiedName();
-                    System.out.printf("Method: %s, parent: %s\n", methodName, parentClassName);
+                    logger.printf(Level.INFO, "Method: %s, parent: %s", methodName, parentClassName);
                     EntityType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
                     Node methodNode = Modifier.isAbstract(method.getModifiers()) ? neoGraph.createNode(methodName, methodType, EntityAttribute.ABSTRACT) : neoGraph.createNode(methodName, methodType);
                     Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
@@ -219,7 +225,7 @@ public class Symfinder {
             if (super.visit(type)) {
                 ITypeBinding classBinding = type.resolveBinding();
                 String thisClassName = classBinding.getQualifiedName();
-                System.out.println("Class : " + thisClassName);
+                logger.info("Class: " + thisClassName);
                 Optional <Node> thisNode = neoGraph.getNode(thisClassName);
                 if (thisNode.isPresent()) {
                     // Link to superclass if exists
@@ -243,9 +249,9 @@ public class Symfinder {
             Optional <String> myImportedClass = getClassFullName(importedClassType.getName());
             String qualifiedName = importedClassType.getQualifiedName();
             if (myImportedClass.isPresent() && ! myImportedClass.get().equals(qualifiedName)) {
-                System.out.println(String.format("DIFFERENT %s FULL NAMES FOUND FOR CLASS %s : \n" +
-                        "JDT qualified name : %s\n" +
-                        "Manually resolved name : %s\n" +
+                logger.info(String.format("DIFFERENT %s FULL NAMES FOUND FOR CLASS %s: \n" +
+                        "JDT qualified name: %s\n" +
+                        "Manually resolved name: %s\n" +
                         "Getting manually resolved name.", name, thisClassName, qualifiedName, myImportedClass.get()));
             }
             Node superclassNode = neoGraph.getOrCreateNode(myImportedClass.orElse(qualifiedName), entityType, new EntityAttribute[]{EntityAttribute.PARAMETERIZED}, new EntityAttribute[]{});
@@ -299,7 +305,7 @@ public class Symfinder {
 
       @Override
         public boolean visit(FieldDeclaration field) {
-            System.out.println(field);
+            logger.info(field);
             ITypeBinding binding = field.getType().resolveBinding();
             if (binding != null) { // TODO: 12/6/18 log this
                 Node typeNode = neoGraph.getOrCreateNode(binding.getQualifiedName(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.PARAMETERIZED}, new EntityAttribute[]{});
@@ -324,6 +330,7 @@ public class Symfinder {
         public boolean visit(TypeDeclaration type) {
             if (super.visit(type)) {
                 String qualifiedName = type.resolveBinding().getQualifiedName();
+                logger.info("Type: " + qualifiedName);
                 if (qualifiedName.contains("Factory")) {
                     neoGraph.addLabelToNode(neoGraph.getOrCreateNode(qualifiedName, type.resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS), DesignPatternType.FACTORY.toString());
                 }
@@ -342,15 +349,14 @@ public class Symfinder {
                     ! typeOfReturnedObject.equals("null")) {
                 MethodDeclaration methodDeclaration = (MethodDeclaration) getParentOfNodeWithType(node, ASTNode.METHOD_DECLARATION);
                 if (methodDeclaration != null && ! methodDeclaration.isConstructor() && methodDeclaration.getReturnType2().resolveBinding() != null && methodDeclaration.resolveBinding() != null) {
-                    System.out.println(methodDeclaration.getName().getIdentifier());
+                    logger.info(methodDeclaration.getName().getIdentifier());
                     // Check for constructor because of java.sourceui/src/org/netbeans/api/java/source/ui/ElementJavadoc.java:391 in netbeans-incubator
                     // TODO: 3/22/19 find why getReturnType2 returns null in core/src/main/java/org/apache/cxf/bus/managers/BindingFactoryManagerImpl.java
                     // TODO: 4/18/19 find why resolveBinding returns null in AWT 9+181, KeyboardFocusManager.java:2439, return SNFH_FAILURE
                     String parsedClassType = methodDeclaration.resolveBinding().getDeclaringClass().getQualifiedName();
-                    System.out.println(parsedClassType);
                     String methodReturnType = methodDeclaration.getReturnType2().resolveBinding().getQualifiedName();
-                    System.out.println("typeOfReturnedObject : " + typeOfReturnedObject);
-                    System.out.println("methodReturnType : " + methodReturnType);
+                    logger.debug("typeOfReturnedObject : " + typeOfReturnedObject);
+                    logger.debug("methodReturnType : " + methodReturnType);
                     // TODO: 4/30/19 if does not exist already, add label to filter on visualization
                     Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, methodDeclaration.getReturnType2().resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.PARAMETERIZED}, new EntityAttribute[]{});
                     Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, methodDeclaration.resolveBinding().getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.PARAMETERIZED}, new EntityAttribute[]{});
