@@ -1,7 +1,5 @@
 import configuration.Configuration;
 import neo4j_types.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,9 +53,13 @@ public class Symfinder {
                 .filter(file -> file.getName().endsWith(".java"))
                 .collect(Collectors.toList());
 
+        logger.log(Level.getLevel("MY_LEVEL"), "ClassesVisitor");
         visitPackage(classpathPath, files, new ClassesVisitor());
+        logger.log(Level.getLevel("MY_LEVEL"), "GraphBuilderVisitor");
         visitPackage(classpathPath, files, new GraphBuilderVisitor());
+        logger.log(Level.getLevel("MY_LEVEL"), "StrategyVisitor");
         visitPackage(classpathPath, files, new StrategyVisitor());
+        logger.log(Level.getLevel("MY_LEVEL"), "FactoryVisitor");
         visitPackage(classpathPath, files, new FactoryVisitor());
 
         neoGraph.setMethodsOverloads();
@@ -64,14 +67,14 @@ public class Symfinder {
         neoGraph.setNbVariantsProperty();
         neoGraph.setVPLabels();
         neoGraph.writeVPGraphFile(graphOutputPath);
-        System.out.println("Number of methods VPs: " + neoGraph.getTotalNbOverloadedMethods());
-        System.out.println("Number of constructors VPs: " + neoGraph.getTotalNbOverloadedConstructors());
-        System.out.println("Number of method level VPs: " + neoGraph.getNbMethodLevelVPs());
-        System.out.println("Number of class level VPs: " + neoGraph.getNbClassLevelVPs());
-        System.out.println("Number of methods variants: " + neoGraph.getNbMethodVariants());
-        System.out.println("Number of constructors variants: " + neoGraph.getNbConstructorVariants());
-        System.out.println("Number of method level variants: " + neoGraph.getNbMethodLevelVariants());
-        System.out.println("Number of class level variants: " + neoGraph.getNbClassLevelVariants());
+        logger.info("Number of methods VPs: " + neoGraph.getTotalNbOverloadedMethods());
+        logger.info("Number of constructors VPs: " + neoGraph.getTotalNbOverloadedConstructors());
+        logger.info("Number of method level VPs: " + neoGraph.getNbMethodLevelVPs());
+        logger.info("Number of class level VPs: " + neoGraph.getNbClassLevelVPs());
+        logger.info("Number of methods variants: " + neoGraph.getNbMethodVariants());
+        logger.info("Number of constructors variants: " + neoGraph.getNbConstructorVariants());
+        logger.info("Number of method level variants: " + neoGraph.getNbMethodLevelVariants());
+        logger.info("Number of class level variants: " + neoGraph.getNbClassLevelVariants());
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         logger.debug(neoGraph.generateStatisticsJson());
         neoGraph.closeDriver();
@@ -87,6 +90,7 @@ public class Symfinder {
     }
 
     private void visitPackage(String classpathPath, List <File> files, ASTVisitor visitor) throws IOException {
+        long startTime = System.currentTimeMillis();
         for (File file : files) {
             String fileContent = getFileLines(file);
 
@@ -110,6 +114,9 @@ public class Symfinder {
             CompilationUnit cu = (CompilationUnit) parser.createAST(null);
             cu.accept(visitor);
         }
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        logger.log(Level.getLevel("MY_LEVEL"),
+                String.format("%s visitor execution time: %s", visitor.toString().split("@")[0], formatExecutionTime(elapsedTime)));
     }
 
     private String getFileLines(File file) {
@@ -133,6 +140,12 @@ public class Symfinder {
         return null;
     }
 
+    private String formatExecutionTime(long execTime){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
+        Date resultdate = new Date(execTime);
+        return sdf.format(resultdate);
+    }
+
     /**
      * This class ensures is inherited by all visitors and ensures that some parts of the code are ignored:
      * - enums
@@ -141,6 +154,7 @@ public class Symfinder {
      * - anonymous classes
      */
     private class SymfinderVisitor extends ASTVisitor {
+
         @Override
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
