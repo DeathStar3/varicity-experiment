@@ -423,6 +423,14 @@ public class NeoGraph {
                 .put("classLevelVariants", getNbClassLevelVariants()).toString();
     }
 
+    public int getNbNodes() {
+        return submitRequest("MATCH(n) RETURN count(*)").list().get(0).get(0).asInt();
+    }
+
+    public int getNbRelationships() {
+        return submitRequest("MATCH (n)-[r]->() RETURN COUNT(r)").list().get(0).get(0).asInt();
+    }
+
     /**
      * Deletes all nodes and relationships in the graph.
      */

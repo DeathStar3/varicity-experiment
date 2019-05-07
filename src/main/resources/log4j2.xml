@@ -10,7 +10,7 @@
                 <ThresholdFilter level="info" onMatch="NEUTRAL" onMismatch="DENY"/>
             </Filters>
         </Console>
-        <File name="MyFile" fileName="generated_visualizations/all.log" immediateFlush="false" append="false">
+        <File name="MyFile" fileName="generated_visualizations/${sys:logfilename}.log" immediateFlush="false" append="false">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Filters>
                 <ThresholdFilter level="MY_LEVEL" onMatch="ACCEPT" onMismatch="DENY"/>

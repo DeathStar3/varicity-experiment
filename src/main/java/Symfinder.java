@@ -67,14 +67,16 @@ public class Symfinder {
         neoGraph.setNbVariantsProperty();
         neoGraph.setVPLabels();
         neoGraph.writeVPGraphFile(graphOutputPath);
-        logger.info("Number of methods VPs: " + neoGraph.getTotalNbOverloadedMethods());
-        logger.info("Number of constructors VPs: " + neoGraph.getTotalNbOverloadedConstructors());
-        logger.info("Number of method level VPs: " + neoGraph.getNbMethodLevelVPs());
-        logger.info("Number of class level VPs: " + neoGraph.getNbClassLevelVPs());
-        logger.info("Number of methods variants: " + neoGraph.getNbMethodVariants());
-        logger.info("Number of constructors variants: " + neoGraph.getNbConstructorVariants());
-        logger.info("Number of method level variants: " + neoGraph.getNbMethodLevelVariants());
-        logger.info("Number of class level variants: " + neoGraph.getNbClassLevelVariants());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of methods VPs: " + neoGraph.getTotalNbOverloadedMethods());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors VPs: " + neoGraph.getTotalNbOverloadedConstructors());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of method level VPs: " + neoGraph.getNbMethodLevelVPs());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of class level VPs: " + neoGraph.getNbClassLevelVPs());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of methods variants: " + neoGraph.getNbMethodVariants());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors variants: " + neoGraph.getNbConstructorVariants());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of method level variants: " + neoGraph.getNbMethodLevelVariants());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of class level variants: " + neoGraph.getNbClassLevelVariants());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of nodes: " + neoGraph.getNbNodes());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of relationships: " + neoGraph.getNbRelationships());
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         logger.debug(neoGraph.generateStatisticsJson());
         neoGraph.closeDriver();
@@ -116,7 +118,7 @@ public class Symfinder {
         }
         long elapsedTime = System.currentTimeMillis() - startTime;
         logger.log(Level.getLevel("MY_LEVEL"),
-                String.format("%s visitor execution time: %s", visitor.toString().split("@")[0], formatExecutionTime(elapsedTime)));
+                String.format("%s execution time: %s", visitor.toString().split("@")[0], formatExecutionTime(elapsedTime)));
     }
 
     private String getFileLines(File file) {
@@ -141,7 +143,7 @@ public class Symfinder {
     }
 
     private String formatExecutionTime(long execTime){
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
         Date resultdate = new Date(execTime);
         return sdf.format(resultdate);
     }
