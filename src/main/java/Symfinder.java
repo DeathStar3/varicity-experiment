@@ -248,7 +248,6 @@ public class Symfinder {
             if (super.visit(type)) {
                 ITypeBinding classBinding = type.resolveBinding();
                 String thisClassName = classBinding.getQualifiedName();
-                logger.debug("Class: " + thisClassName);
                 Optional <Node> thisNode = neoGraph.getNode(thisClassName);
                 if (thisNode.isPresent()) {
                     // Link to superclass if exists
@@ -327,7 +326,7 @@ public class Symfinder {
     */
     private class StrategyVisitor extends SymfinderVisitor {
 
-      @Override
+        @Override
         public boolean visit(FieldDeclaration field) {
             logger.debug(field);
             ITypeBinding binding = field.getType().resolveBinding();

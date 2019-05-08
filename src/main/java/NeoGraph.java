@@ -68,7 +68,7 @@ public class NeoGraph {
     }
 
     public Optional <Node> getNodeWithNameInPackage(String name, String packageName) {
-        List <Record> recordList = submitRequest("MATCH (n) WHERE (n:CLASS OR n:INTERFACE) AND n.name STARTS WITH $package AND n.name ENDS WITH $inheritedClassName RETURN (n)", "package", packageName+".", "inheritedClassName", "."+name).list();
+        List <Record> recordList = submitRequest("MATCH (n) WHERE n.name =~ $regex RETURN (n)", "regex", String.format("%s(\\..+)*\\.%s", packageName, name)).list();
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
