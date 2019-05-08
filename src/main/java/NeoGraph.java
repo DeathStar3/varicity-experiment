@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.neo4j.driver.v1.Values.parameters;
+
 public class NeoGraph {
 
     private Driver driver;
@@ -54,19 +56,19 @@ public class NeoGraph {
     public Node createNode(String name, NodeType type, NodeType... types) {
         List <NodeType> nodeTypes = new ArrayList <>(Arrays.asList(types));
         nodeTypes.add(type);
-        return submitRequest(String.format("CREATE (n:%s { name: '%s'}) RETURN (n)",
-                nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":")),
-                name))
+        return submitRequest(String.format("CREATE (n:%s { name: $name}) RETURN (n)",
+                nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":"))),
+                "name", name)
                 .list().get(0).get(0).asNode();
     }
 
     public Optional <Node> getNode(String name) {
-        List <Record> recordList = submitRequest(String.format("MATCH (n {name: '%s'}) RETURN (n)", name)).list();
+        List <Record> recordList = submitRequest("MATCH (n {name: $name}) RETURN (n)", "name", name).list();
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
     public Optional <Node> getNodeWithNameInPackage(String name, String packageName) {
-        List <Record> recordList = submitRequest(String.format("MATCH (n) WHERE n.name =~ '%s(\\\\..+)*\\\\.%s' RETURN (n)", packageName, name)).list();
+        List <Record> recordList = submitRequest("MATCH (n) WHERE n.name =~ $regex RETURN (n)", "regex", String.format("%s(\\..+)*\\.%s", packageName, name)).list();
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
@@ -91,11 +93,10 @@ public class NeoGraph {
                 "ON MATCH SET n:" + Arrays.stream(matchAttributes)
                         .map(NodeType::getString)
                         .collect(Collectors.joining(":"));
-        return submitRequest(String.format("MERGE (n:%s {name: '%s'}) %s %s RETURN (n)",
+        return submitRequest(String.format("MERGE (n:%s {name: $name}) %s %s RETURN (n)",
                 type.toString(),
-                name,
                 onCreateAttributes,
-                onMatchAttributes))
+                onMatchAttributes), "name", name)
                 .list().get(0).get(0).asNode();
     }
 
@@ -115,12 +116,12 @@ public class NeoGraph {
      */
     public void linkTwoNodes(Node node1, Node node2, RelationType type) {
         submitRequest(String.format("MATCH(a)\n" +
-                "WHERE ID(a)=%s\n" +
+                "WHERE ID(a)=$aId\n" +
                 "WITH a\n" +
                 "MATCH (b)\n" +
                 "WITH a,b\n" +
-                "WHERE ID(b)=%s\n" +
-                "CREATE (a)-[r:%s]->(b)", node1.id(), node2.id(), type));
+                "WHERE ID(b)=$bId\n" +
+                "CREATE (a)-[r:%s]->(b)", type), "aId", node1.id(), "bId", node2.id());
     }
 
     /**
@@ -209,11 +210,13 @@ public class NeoGraph {
      * - has a design pattern.
      */
     public void setVPLabels() {
-        submitRequest(String.format("MATCH (c) WHERE ((%s) OR c:ABSTRACT OR c:INTERFACE OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0) SET c:%s", getClauseForNodesMatchingLabels("c", DesignPatternType.values()), EntityAttribute.VP));
+        submitRequest(String.format("MATCH (c) WHERE ((%s) OR c:ABSTRACT OR c:INTERFACE OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0) SET c:%s",
+                getClauseForNodesMatchingLabels("c",DesignPatternType.values()),
+                EntityAttribute.VP));
     }
 
     public void addLabelToNode(Node node, String label) {
-        submitRequest(String.format("MATCH (n) WHERE ID(n) = %s SET n:%s RETURN (n)", node.id(), label));
+        submitRequest(String.format("MATCH (n) WHERE ID(n) = $id SET n:%s RETURN (n)", label), "id", node.id());
     }
 
     public int getNbNodesHavingDesignPatterns() {
@@ -261,9 +264,9 @@ public class NeoGraph {
      * @return Number of subclasses or implementations
      */
     public int getNbVariants(Node node) {
-        return submitRequest(String.format("MATCH (c)-[:EXTENDS|:IMPLEMENTS]->(c2:CLASS) " +
-                "WHERE ID(c) = %s " +
-                "RETURN count(c2)", node.id()))
+        return submitRequest("MATCH (c)-[:EXTENDS|:IMPLEMENTS]->(c2:CLASS) " +
+                "WHERE ID(c) = $id " +
+                "RETURN count(c2)", "id", node.id())
                 .list().get(0).get(0).asInt();
     }
 
@@ -371,7 +374,7 @@ public class NeoGraph {
      * @return true if a relationship exists, false otherwise
      */
     public boolean relatedTo(Node parentNode, Node childNode) {
-        return submitRequest(String.format("MATCH(source) WHERE ID(source) = %s MATCH(dest) WHERE ID(dest) = %s RETURN EXISTS((source)-[]->(dest))", parentNode.id(), childNode.id()))
+        return submitRequest("MATCH(source) WHERE ID(source) = $idSource MATCH(dest) WHERE ID(dest) = $idDest RETURN EXISTS((source)-[]->(dest))", "idSource", parentNode.id(), "idDest", childNode.id())
                 .list().get(0).get(0).asBoolean();
     }
 
@@ -431,6 +434,10 @@ public class NeoGraph {
         return submitRequest("MATCH (n)-[r]->() RETURN COUNT(r)").list().get(0).get(0).asInt();
     }
 
+    public int getNbInheritanceRelationships() {
+        return submitRequest("MATCH (n)-[r:EXTENDS|:IMPLEMENTS]->() RETURN COUNT(r)").list().get(0).get(0).asInt();
+    }
+
     /**
      * Deletes all nodes and relationships in the graph.
      */
@@ -438,9 +445,9 @@ public class NeoGraph {
         submitRequest("MATCH (n) DETACH DELETE (n)");
     }
 
-    private StatementResult submitRequest(String request) {
+    private StatementResult submitRequest(String request, Object... parameters) {
         try (Session session = driver.session()) {
-            return session.writeTransaction(tx -> tx.run(request));
+            return session.writeTransaction(tx -> tx.run(request, parameters(parameters)));
         }
     }
 

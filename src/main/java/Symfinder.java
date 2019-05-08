@@ -30,6 +30,8 @@ public class Symfinder {
     private String sourcePackage;
     private String graphOutputPath;
 
+    private int nbCorrectedInheritanceLinks = 0;
+
     public Symfinder(String sourcePackage, String graphOutputPath) {
         this.sourcePackage = sourcePackage;
         this.graphOutputPath = graphOutputPath;
@@ -77,6 +79,7 @@ public class Symfinder {
         logger.log(Level.getLevel("MY_LEVEL"), "Number of class level variants: " + neoGraph.getNbClassLevelVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of nodes: " + neoGraph.getNbNodes());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of relationships: " + neoGraph.getNbRelationships());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of corrected inheritance relationships: " + nbCorrectedInheritanceLinks + "/" + neoGraph.getNbInheritanceRelationships());
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         logger.debug(neoGraph.generateStatisticsJson());
         neoGraph.deleteGraph();
@@ -118,8 +121,7 @@ public class Symfinder {
             cu.accept(visitor);
         }
         long elapsedTime = System.currentTimeMillis() - startTime;
-        logger.log(Level.getLevel("MY_LEVEL"),
-                String.format("%s execution time: %s", visitor.toString().split("@")[0], formatExecutionTime(elapsedTime)));
+        logger.printf(Level.getLevel("MY_LEVEL"), "%s execution time: %s", visitor.getClass().getTypeName(), formatExecutionTime(elapsedTime));
     }
 
     private String getFileLines(File file) {
@@ -143,7 +145,7 @@ public class Symfinder {
         return null;
     }
 
-    private String formatExecutionTime(long execTime){
+    private String formatExecutionTime(long execTime) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
         Date resultdate = new Date(execTime);
         return sdf.format(resultdate);
@@ -161,6 +163,7 @@ public class Symfinder {
         @Override
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
+            logger.printf(Level.INFO, "Visitor: %s - Class: %s", this.getClass().getTypeName(), classBinding.getQualifiedName());
             return ! isTestClass(classBinding) && ! classBinding.isNested() && ! classBinding.isEnum() && ! classBinding.isAnonymous();
         }
 
@@ -242,7 +245,7 @@ public class Symfinder {
             if (super.visit(type)) {
                 ITypeBinding classBinding = type.resolveBinding();
                 String thisClassName = classBinding.getQualifiedName();
-                logger.info("Class: " + thisClassName);
+                logger.debug("Class: " + thisClassName);
                 Optional <Node> thisNode = neoGraph.getNode(thisClassName);
                 if (thisNode.isPresent()) {
                     // Link to superclass if exists
@@ -266,7 +269,8 @@ public class Symfinder {
             Optional <String> myImportedClass = getClassFullName(importedClassType.getName());
             String qualifiedName = importedClassType.getQualifiedName();
             if (myImportedClass.isPresent() && ! myImportedClass.get().equals(qualifiedName)) {
-                logger.info(String.format("DIFFERENT %s FULL NAMES FOUND FOR CLASS %s: \n" +
+                nbCorrectedInheritanceLinks++;
+                logger.debug(String.format("DIFFERENT %s FULL NAMES FOUND FOR CLASS %s: \n" +
                         "JDT qualified name: %s\n" +
                         "Manually resolved name: %s\n" +
                         "Getting manually resolved name.", name, thisClassName, qualifiedName, myImportedClass.get()));
@@ -322,7 +326,7 @@ public class Symfinder {
 
       @Override
         public boolean visit(FieldDeclaration field) {
-            logger.info(field);
+            logger.debug(field);
             ITypeBinding binding = field.getType().resolveBinding();
             if (binding != null) { // TODO: 12/6/18 log this
                 Node typeNode = neoGraph.getOrCreateNode(binding.getQualifiedName(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.PARAMETERIZED}, new EntityAttribute[]{});
@@ -347,7 +351,7 @@ public class Symfinder {
         public boolean visit(TypeDeclaration type) {
             if (super.visit(type)) {
                 String qualifiedName = type.resolveBinding().getQualifiedName();
-                logger.info("Type: " + qualifiedName);
+                logger.debug("Type: " + qualifiedName);
                 if (qualifiedName.contains("Factory")) {
                     neoGraph.addLabelToNode(neoGraph.getOrCreateNode(qualifiedName, type.resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS), DesignPatternType.FACTORY.toString());
                 }
@@ -366,7 +370,7 @@ public class Symfinder {
                     ! typeOfReturnedObject.equals("null")) {
                 MethodDeclaration methodDeclaration = (MethodDeclaration) getParentOfNodeWithType(node, ASTNode.METHOD_DECLARATION);
                 if (methodDeclaration != null && ! methodDeclaration.isConstructor() && methodDeclaration.getReturnType2().resolveBinding() != null && methodDeclaration.resolveBinding() != null) {
-                    logger.info(methodDeclaration.getName().getIdentifier());
+                    logger.debug(methodDeclaration.getName().getIdentifier());
                     // Check for constructor because of java.sourceui/src/org/netbeans/api/java/source/ui/ElementJavadoc.java:391 in netbeans-incubator
                     // TODO: 3/22/19 find why getReturnType2 returns null in core/src/main/java/org/apache/cxf/bus/managers/BindingFactoryManagerImpl.java
                     // TODO: 4/18/19 find why resolveBinding returns null in AWT 9+181, KeyboardFocusManager.java:2439, return SNFH_FAILURE
