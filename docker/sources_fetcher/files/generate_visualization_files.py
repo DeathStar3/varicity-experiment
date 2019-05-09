@@ -19,7 +19,7 @@ with open('symfinder.yaml', 'r') as config_file:
         experiences = yaml.load(experiences_file.read(), Loader=yaml.FullLoader)
         for xp_name, xp_config in experiences.items():
             for id in xp_config.get("tagIds", []) + xp_config.get("commitIds", []):
-                xp_codename = xp_name + "-" + id
+                xp_codename = xp_name + "-" + str(id)
                 with open(os.path.join(base_directory, "%s.html" % xp_codename.replace("/","_")), 'w+') as output_file:
                     output_file.write(Template(filename=os.path.join(d3_directory, "template.html")).render(
                         title=xp_codename,

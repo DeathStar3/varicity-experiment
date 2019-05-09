@@ -15,7 +15,7 @@ with open('symfinder.yaml', 'r') as config_file:
         experiences = yaml.load(experiences_file.read(), Loader=yaml.FullLoader)
         for xp_name, xp_config in experiences.items():
             for id in xp_config.get("tagIds", []) + xp_config.get("commitIds", []):
-                xp_codename = xp_name + "-" + id.replace("/", "_")
+                xp_codename = xp_name + "-" + str(id).replace("/", "_")
                 with open("symfinder-compose.env", 'w+') as output_file:
                     sources_package = os.path.join(xp_codename, xp_config["sourcePackage"])
                     graph_output_path = "generated_visualizations/data/{}.json".format(xp_codename)

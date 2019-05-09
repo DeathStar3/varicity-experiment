@@ -28,7 +28,7 @@ with open('symfinder.yaml', 'r') as config_file:
             if "tagIds" in xp_config:
                 # cast to string in case of numerical tag id (e.g. 1.0)
                 checkout_versions("tag", *[str(id) for id in xp_config["tagIds"]])
-                version_ids = xp_config["tagIds"]
+                version_ids = [str(id) for id in xp_config["tagIds"]]
                 checkout_versions("tag", *version_ids)
             if "commitIds" in xp_config:
                 version_ids = xp_config["commitIds"]

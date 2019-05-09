@@ -25,7 +25,7 @@ public class NeoGraph {
 
     private Driver getDriver(String uri, String user, String password) {
         int count = 0;
-        int maxTries = 5;
+        int maxTries = 10;
         while (true) {
             try {
                 return GraphDatabase.driver(uri, AuthTokens.basic(user, password));
@@ -68,7 +68,7 @@ public class NeoGraph {
     }
 
     public Optional <Node> getNodeWithNameInPackage(String name, String packageName) {
-        List <Record> recordList = submitRequest("MATCH (n) WHERE n.name =~ $regex RETURN (n)", "regex", String.format("%s(\\..+)*\\.%s", packageName, name)).list();
+        List <Record> recordList = submitRequest("MATCH (n:CLASS) WHERE n.name =~ $regex RETURN (n)", "regex", String.format("%s(\\..+)*\\.%s", packageName, name)).list();
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
@@ -436,6 +436,10 @@ public class NeoGraph {
 
     public int getNbInheritanceRelationships() {
         return submitRequest("MATCH (n)-[r:EXTENDS|:IMPLEMENTS]->() RETURN COUNT(r)").list().get(0).get(0).asInt();
+    }
+
+    public void createClassesIndex() {
+        submitRequest("CREATE INDEX ON :CLASS(name)");
     }
 
     /**
