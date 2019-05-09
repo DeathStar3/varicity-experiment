@@ -56,6 +56,7 @@ public class Symfinder {
                 .collect(Collectors.toList());
 
         neoGraph.createClassesIndex();
+        neoGraph.createInterfacesIndex();
 
         logger.log(Level.getLevel("MY_LEVEL"), "ClassesVisitor");
         visitPackage(classpathPath, files, new ClassesVisitor());
@@ -140,7 +141,7 @@ public class Symfinder {
         try (Stream <String> lines = Files.lines(file.toPath(), charset)) {
             return lines.collect(Collectors.joining("\n"));
         } catch (UncheckedIOException e) {
-            logger.info(charset.displayName() + ": wrong encoding");
+            logger.debug(charset.displayName() + ": wrong encoding");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -353,7 +354,6 @@ public class Symfinder {
         public boolean visit(TypeDeclaration type) {
             if (super.visit(type)) {
                 String qualifiedName = type.resolveBinding().getQualifiedName();
-                logger.debug("Type: " + qualifiedName);
                 if (qualifiedName.contains("Factory")) {
                     neoGraph.addLabelToNode(neoGraph.getOrCreateNode(qualifiedName, type.resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS), DesignPatternType.FACTORY.toString());
                 }
