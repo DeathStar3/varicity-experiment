@@ -158,7 +158,7 @@ public class Symfinder {
      * This class ensures is inherited by all visitors and ensures that some parts of the code are ignored:
      * - enums
      * - test classes
-     * - nested classes
+     * - private nested classes
      * - anonymous classes
      */
     private class SymfinderVisitor extends ASTVisitor {
@@ -167,7 +167,7 @@ public class Symfinder {
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
             logger.printf(Level.INFO, "Visitor: %s - Class: %s", this.getClass().getTypeName(), classBinding.getQualifiedName());
-            return ! isTestClass(classBinding) && ! classBinding.isNested() && ! classBinding.isEnum() && ! classBinding.isAnonymous();
+            return ! isTestClass(classBinding) && ! (classBinding.isNested() && Modifier.isPrivate(classBinding.getModifiers())) && ! classBinding.isEnum() && ! classBinding.isAnonymous();
         }
 
         @Override
@@ -254,12 +254,12 @@ public class Symfinder {
                     // Link to superclass if exists
                     ITypeBinding superclassType = classBinding.getSuperclass();
                     if (superclassType != null) {
-                        createImportedClassNode(thisClassName, thisNode.get(), superclassType, EntityType.CLASS, RelationType.EXTENDS, "SUPERCLASS");
+                        createImportedClassNode(thisClassName.split("<")[0], thisNode.get(), superclassType, EntityType.CLASS, RelationType.EXTENDS, "SUPERCLASS");
                     }
 
                     // Link to implemented interfaces if exist
                     for (ITypeBinding o : classBinding.getInterfaces()) {
-                        createImportedClassNode(thisClassName, thisNode.get(), o, EntityType.INTERFACE, RelationType.IMPLEMENTS, "INTERFACE");
+                        createImportedClassNode(thisClassName.split("<")[0], thisNode.get(), o, EntityType.INTERFACE, RelationType.IMPLEMENTS, "INTERFACE");
                     }
                 }
                 return true;
