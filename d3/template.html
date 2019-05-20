@@ -20,7 +20,7 @@
         <button type="button" class="btn btn-outline-secondary" data-toggle="button" aria-pressed="false" id="filter-isolated" value="filter-isolated">Filter isolated nodes</button>
     </div>
 </div>
-<div class="row row justify-content-between">
+<div class="row py-4 pl-4 justify-content-between">
     <div class="col-auto mr-auto">
         <ul class="list-group" id="list-tab" role="tablist">
         </ul>
@@ -44,9 +44,8 @@
 <script src="${jsScriptFile}"></script>
 <script type="text/javascript">
     function display() {
-        let filters = [$filters];
-        displayGraph("${jsonFile}", "${jsonStatsFile}");
+        let filters = [${filters}];
+        displayGraph("${jsonFile}", "${jsonStatsFile}", filters);
     }
     window.onload = display;
 </script>
-</html>
