@@ -217,7 +217,7 @@ function generateGraph() {
         link = link.merge(newLink);
 
         //  UPDATE
-        label = label.data(store.nodes, function (d) {
+        label = label.data(dataSource.nodes, function (d) {
             return d.name;
         });
         //	EXIT
