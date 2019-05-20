@@ -21,6 +21,7 @@ with open('symfinder.yaml', 'r') as config_file:
                     graph_output_path = "generated_visualizations/data/{}.json".format(xp_codename)
                     output_file.write(Template(ENV_FILE_TEMPLATE).render(
                         sources_package=sources_package,
-                        graph_output_path=graph_output_path
+                        graph_output_path=graph_output_path,
+                        log_file_name=xp_codename
                     ))
                 os.system("bash rerun.sh %s" % xp_codename)

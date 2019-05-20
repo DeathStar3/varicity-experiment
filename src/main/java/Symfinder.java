@@ -79,6 +79,7 @@ public class Symfinder {
         logger.log(Level.getLevel("MY_LEVEL"), "Number of relationships: " + neoGraph.getNbRelationships());
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         logger.debug(neoGraph.generateStatisticsJson());
+        neoGraph.deleteGraph();
         neoGraph.closeDriver();
     }
 

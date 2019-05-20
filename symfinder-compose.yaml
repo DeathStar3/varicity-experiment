@@ -9,6 +9,8 @@ services:
     container_name: symfinder
     ports:
       - "127.0.0.1:8080:8080"
+    env_file:
+      - symfinder-compose.env
     volumes:
       - ./resources:/resources
       - ./generated_visualizations:/generated_visualizations

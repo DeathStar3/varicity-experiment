@@ -15,6 +15,6 @@ export SYMFINDER_UID=$(id -u)
 export SYMFINDER_GID=$(id -g)
 create_directory resources
 create_directory generated_visualizations/data
-docker-compose -f symfinder-compose.yaml up #--abort-on-container-exit --exit-code-from webhook-server
-docker-compose -f symfinder-compose.yaml stop
+docker-compose -f symfinder-compose.yaml up --abort-on-container-exit
+docker-compose -f symfinder-compose.yaml down
 
