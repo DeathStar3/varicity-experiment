@@ -67,8 +67,30 @@ public class NeoGraph {
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
+    /**
+     * Returns the node labeled CLASS and having the name in parameter
+     * As we use a custom index :CLASS(name), this method lowers the time spent to execute the query.
+     * @param name node name
+     * @return the node if it exists, Optional.empty otherwise
+     */
+    public Optional <Node> getClassNode(String name) {
+        List <Record> recordList = submitRequest("MATCH (n:CLASS {name: $name}) RETURN (n)", "name", name).list();
+        return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
+    }
+
+    /**
+     * Returns the node labeled INTERFACE and having the name in parameter
+     * As we use a custom index :INTERFACE(name), this method lowers the time spent to execute the query.
+     * @param name node name
+     * @return the node if it exists, Optional.empty otherwise
+     */
+    public Optional <Node> getInterfaceNode(String name) {
+        List <Record> recordList = submitRequest("MATCH (n:INTERFACE {name: $name}) RETURN (n)", "name", name).list();
+        return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
+    }
+
     public Optional <Node> getNodeWithNameInPackage(String name, String packageName) {
-        List <Record> recordList = submitRequest("MATCH (n) WHERE n.name =~ $regex RETURN (n)", "regex", String.format("%s(\\..+)*\\.%s", packageName, name)).list();
+        List <Record> recordList = submitRequest("MATCH (n) WHERE (n:CLASS OR n:INTERFACE) AND n.name STARTS WITH $package AND n.name ENDS WITH $inheritedClassName RETURN (n)", "package", packageName+".", "inheritedClassName", "."+name).list();
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
@@ -388,8 +410,8 @@ public class NeoGraph {
 
     private String getNodesAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH (c:VP) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:PARAMETERIZED RETURN collect({types:labels(c), name:c.name, methods:c.methods, constructors:c.constructors, nbVariants:c.nbVariants})" :
-                "MATCH (c) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:PARAMETERIZED RETURN collect({types:labels(c), name:c.name, methods:c.methods, constructors:c.constructors})";
+                "MATCH (c:VP) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methods:c.methods, constructors:c.constructors, nbVariants:c.nbVariants})" :
+                "MATCH (c) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methods:c.methods, constructors:c.constructors})";
         return submitRequest(request)
                 .list()
                 .get(0)
@@ -402,8 +424,8 @@ public class NeoGraph {
 
     private String getLinksAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH path = (c1:VP)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2:VP) WHERE NONE(n IN nodes(path) WHERE n:PARAMETERIZED) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
-                "MATCH path = (c1)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:PARAMETERIZED) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+                "MATCH path = (c1:VP)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2:VP) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
+                "MATCH path = (c1)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .list()
                 .get(0)

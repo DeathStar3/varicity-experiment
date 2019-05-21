@@ -248,7 +248,7 @@ public class Symfinder {
             if (super.visit(type)) {
                 ITypeBinding classBinding = type.resolveBinding();
                 String thisClassName = classBinding.getQualifiedName();
-                Optional <Node> thisNode = neoGraph.getNode(thisClassName);
+                Optional <Node> thisNode = classBinding.isInterface() ? neoGraph.getInterfaceNode(thisClassName) : neoGraph.getClassNode(thisClassName);
                 if (thisNode.isPresent()) {
                     // Link to superclass if exists
                     ITypeBinding superclassType = classBinding.getSuperclass();
@@ -268,16 +268,16 @@ public class Symfinder {
 
         // TODO: 4/1/19 functional tests : imports from different packages
         private void createImportedClassNode(String thisClassName, Node thisNode, ITypeBinding importedClassType, EntityType entityType, RelationType relationType, String name) {
-            Optional <String> myImportedClass = getClassFullName(importedClassType.getName());
-            String qualifiedName = importedClassType.getQualifiedName();
+            Optional <String> myImportedClass = getClassFullName(importedClassType.getName().split("<")[0]);
+            String qualifiedName = importedClassType.getQualifiedName().split("<")[0];
             if (myImportedClass.isPresent() && ! myImportedClass.get().equals(qualifiedName)) {
                 nbCorrectedInheritanceLinks++;
                 logger.debug(String.format("DIFFERENT %s FULL NAMES FOUND FOR CLASS %s: \n" +
                         "JDT qualified name: %s\n" +
                         "Manually resolved name: %s\n" +
-                        "Getting manually resolved name.", name, thisClassName, qualifiedName, myImportedClass.get()));
+                        "Getting manually resolved name.", name, thisClassName.split("<")[0], qualifiedName, myImportedClass.get()));
             }
-            Node superclassNode = neoGraph.getOrCreateNode(myImportedClass.orElse(qualifiedName), entityType, new EntityAttribute[]{EntityAttribute.PARAMETERIZED}, new EntityAttribute[]{});
+            Node superclassNode = neoGraph.getOrCreateNode(myImportedClass.orElse(qualifiedName), entityType, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
             neoGraph.linkTwoNodes(superclassNode, thisNode, relationType);
         }
 
@@ -331,7 +331,7 @@ public class Symfinder {
             logger.debug(field);
             ITypeBinding binding = field.getType().resolveBinding();
             if (binding != null) { // TODO: 12/6/18 log this
-                Node typeNode = neoGraph.getOrCreateNode(binding.getQualifiedName(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.PARAMETERIZED}, new EntityAttribute[]{});
+                Node typeNode = neoGraph.getOrCreateNode(binding.getQualifiedName(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
                 if (binding.getName().contains("Strategy") || neoGraph.getNbVariants(typeNode) >= 2) {
                     neoGraph.addLabelToNode(typeNode, DesignPatternType.STRATEGY.toString());
                 }
@@ -380,8 +380,8 @@ public class Symfinder {
                     logger.debug("typeOfReturnedObject : " + typeOfReturnedObject);
                     logger.debug("methodReturnType : " + methodReturnType);
                     // TODO: 4/30/19 if does not exist already, add label to filter on visualization
-                    Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, methodDeclaration.getReturnType2().resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.PARAMETERIZED}, new EntityAttribute[]{});
-                    Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, methodDeclaration.resolveBinding().getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.PARAMETERIZED}, new EntityAttribute[]{});
+                    Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, methodDeclaration.getReturnType2().resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
+                    Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, methodDeclaration.resolveBinding().getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
                     Node returnedObjectTypeNode = neoGraph.getOrCreateNode(typeOfReturnedObject, EntityType.CLASS);
                     // TODO: 3/27/19 functional test case with method returning Object → not direct link
                     if (neoGraph.relatedTo(methodReturnTypeNode, returnedObjectTypeNode) && neoGraph.getNbVariants(methodReturnTypeNode) >= 2) {
