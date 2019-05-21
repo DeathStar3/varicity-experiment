@@ -3,4 +3,4 @@ neo4j:
   user: neo4j
   password: root
 
-experiencesFile: junit.yaml
+experiencesFile: experiences.yaml

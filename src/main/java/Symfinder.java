@@ -214,7 +214,7 @@ public class Symfinder {
                 declaringClass = method.resolveBinding().getDeclaringClass();
                     String methodName = method.getName().getIdentifier();
                     String parentClassName = declaringClass.getQualifiedName();
-                    logger.printf(Level.INFO, "Method: %s, parent: %s", methodName, parentClassName);
+                    logger.printf(Level.DEBUG, "Method: %s, parent: %s", methodName, parentClassName);
                     EntityType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
                     Node methodNode = Modifier.isAbstract(method.getModifiers()) ? neoGraph.createNode(methodName, methodType, EntityAttribute.ABSTRACT) : neoGraph.createNode(methodName, methodType);
                     Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
