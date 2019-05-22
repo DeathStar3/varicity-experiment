@@ -1,87 +1,42 @@
+awt:
+  repositoryUrl: https://github.com/JetBrains/jdk8u_jdk
+  sourcePackage: src/share/classes/java/awt
+  tagIds:
+    - jb8u202-b1532
 cxf:
   repositoryUrl: https://github.com/apache/cxf
   sourcePackage: .
   tagIds:
     - cxf-3.2.7
-  filters:
-    - java.lang
-    - java.util
-    - java.io
 junit:
   repositoryUrl: https://github.com/junit-team/junit4
   sourcePackage: .
   tagIds:
     - r4.12
-  filters:
-    - java.lang
-    - java.io
 maven:
   repositoryUrl: https://github.com/apache/maven
   sourcePackage: .
   tagIds:
     - maven-3.6.0
-  filters:
-    - java.lang
-    - java.io
 jhipster:
   repositoryUrl: https://github.com/jhipster/jhipster
   sourcePackage: jhipster-framework/
   tagIds:
     - 2.0.28
-  filters:
-    - java.lang
 jfreechart:
   repositoryUrl: https://github.com/jfree/jfreechart
   sourcePackage: .
   tagIds:
     - v1.5.0
   filters:
-    - java.lang
-    - java.io
-    - java.util
     - org.jfree.chart.util.PublicCloneable
 javaGeom:
   repositoryUrl: https://github.com/dlegland/javaGeom
   sourcePackage: .
   commitIds:
     - 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
-  filters:
-    - java.lang
-    - java.io
-    - java.util
 argoUML:
   repositoryUrl: https://github.com/marcusvnac/argouml-spl/
   sourcePackage: .
   commitIds:
     - bcae37308b13b7ee62da0867a77d21a0141a0f18
-  filters:
-    - java.lang
-    - java.util
-    - java.io
-    - java.awt
-    - java.beans
-htmlunit:
-  repositoryUrl: https://github.com/HtmlUnit/htmlunit
-  sourcePackage: src/main/java/com/gargoylesoftware/htmlunit
-  tagIds:
-    - 2.34.1
-tinkerpop:
-  repositoryUrl: https://github.com/apache/tinkerpop
-  sourcePackage: .
-  tagIds:
-    - 3.4.1
-activemq:
-  repositoryUrl: https://github.com/apache/activemq
-  sourcePackage: .
-  tagIds:
-    - activemq-5.15.9
-incubator-netbeans:
-  repositoryUrl: https://github.com/apache/incubator-netbeans
-  sourcePackage: java
-  tagIds:
-    - 11.0
-hive:
-  repositoryUrl: https://github.com/apache/hive
-  sourcePackage: .
-  tagIds:
-    - rel/release-2.3.4

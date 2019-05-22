@@ -2,35 +2,30 @@
 
 ## Technical Requirements
 
-- Docker (with Compose)
-- Python 3 with PyYAML and mako libs (`pip3 install PyYAML mako`)
+- Docker
+    - Instruction to install Docker are available [here](https://docs.docker.com/install/#supported-platforms)
+- Docker Compose
+    - Instruction to install Docker Compose are available [here](https://docs.docker.com/compose/install/#install-compose)
 
 ## Setup and Running
 
-### symfinder configuration
+### _symfinder_ configuration
 
 The application's settings are set up using a YAML file, called `symfinder.yaml`, that must be at the root of the project.
 Here is an example:
 
 ```yaml
-projectsPackage: resources
-
 neo4j:
   boltAddress: bolt://localhost:7687
   user: neo4j
   password: root
 
 experiences_file: experiences.yaml
-
 ```
 
-#### General parameters
+#### Neo4j parameters
 
-- `projectsPackage`: directory where the sources for all projects will be downloaded
-
-#### Neo4J parameters
-
-- `boltAddress`: address where Neo4J's bolt driver is exposed
+- `boltAddress`: address where Neo4j's bolt driver is exposed
 - `user`: username
 - `password`: the password to access the database
 
@@ -41,7 +36,7 @@ experiences_file: experiences.yaml
 ```yaml
 junit:
   repositoryUrl: https://github.com/junit-team/junit4
-  sourcePackage: src/main/java
+  sourcePackage: .
   tagIds:
     - r4.12
 javaGeom:
@@ -64,7 +59,7 @@ For an experience, you can mix different commits and different tags to checkout.
 ```yaml
 junit:
   repositoryUrl: https://github.com/junit-team/junit4
-  sourcePackage: src/main/java
+  sourcePackage: .
   tagIds:
     - r4.12
     - r4.11
@@ -72,7 +67,15 @@ junit:
     - c3715204786394f461d94953de9a66a4cec684e9
 ```
 
-Each checkout of tag or commit ID `<id>` will be placed in a directory whose path is : `<projectsPackage>/<experienceName>-<id>`.
+Each checkout of tag or commit ID `<id>` will be placed in a directory whose path is : `resources/<experienceName>-<id>`.
+For example, the previous example will create the following tree:
+
+```
+resources/
+├── junit-c3715204786394f461d94953de9a66a4cec684e9
+├── junit-r4.11
+└── junit-r4.12
+```
 
 ### Building the project
 
@@ -82,11 +85,12 @@ Run
 ./symfinder.sh build
 ```
 
-This script will build the integrality of the project (sources fetching, _symfinder_ core and visualization).
+This script will build the integrality of the project (sources fetcher, _symfinder_ runner, _symfinder_ engine and visualization viewer).
 If you want to build only a part of the _symfinder_ toolchain, you may add one or more of the following parameters:
-- `sources-fetcher`: builds a Docker image containing the scripts to clone Git repositories 
-- `symfinder-core`: builds _symfinder_ and the corresponding Docker image
-- `symfinder-core_skip_tests`: builds _symfinder_ without running tests and the corresponding Docker image
+- `sources-fetcher`: builds a Docker image running the _symfinder_ engine on each project 
+- `runner`: builds a Docker image containing the scripts to clone Git repositories 
+- `symfinder-engine`: builds the _symfinder_ engine and the corresponding Docker image
+- `symfinder-engine_skip_tests`: builds the _symfinder_ engine without running tests and the corresponding Docker image
 - `symfinder`: only rebuilds the _symfinder_ image, useful if you only applied changes to the `symfinder.yaml` file
 - `visualization`: builds a Docker image starting a light web server to expose the generated visualization
 
@@ -101,14 +105,18 @@ To do this, run
 
 This script will first execute a Python script to download the sources of the projects, then start a Docker Compose environment:
  - one container contains the Neo4j database;
- - another container contains the _symfinder_ Java application to analyse them.
-During the execution, the classes and methods detected are output on the console.
+ - another container contains the _symfinder_ engine to analyse them.
+During the execution, the names of the parsed classes are output on the console.
+
+The generated visualizations are placed in the `generated_visualizations` directory.
 
 If you just want to rerun the analyses, run
 
 ```bash
 ./symfinder.sh rerun
 ```
+
+This command will skip the download of sources and generation of HTML pages needed for visualization.
 
 ### Visualizing the generated graphs
 
@@ -119,4 +127,4 @@ Run
 ```
 
 This will start a Docker container exposing the visualizations in a web server.
-You will be able to access the visualizations at `http://localhost:8181`.
+You will be able to access the generated visualizations at `http://localhost:8181`.
