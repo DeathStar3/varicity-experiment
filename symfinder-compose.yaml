@@ -20,7 +20,8 @@ services:
     environment:
       - JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/jre
       - DIR_PATH=${DIR_PATH}
-    user: ${SYMFINDER_UID}:${SYMFINDER_GID}
+      - SYMFINDER_UID=${SYMFINDER_UID}
+      - SYMFINDER_GID=${SYMFINDER_GID}
 
   neo4j:
     image: neo4j:3.5.0
