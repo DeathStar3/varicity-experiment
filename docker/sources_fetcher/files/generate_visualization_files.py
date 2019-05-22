@@ -4,20 +4,6 @@ import yaml
 
 from mako.template import Template
 
-INDEX_TEMPLATE = r"""
-<html>
-<body>
-<h1>Symfinder</h1>
-<h2>Experiences</h2>
-<ul>
-% for name, path in xps.items():
-    <li><a href="${path}">${name}</a></li>
-% endfor
-</ul>
-</body>
-</html>
-"""
-
 d3_directory = "d3"
 base_directory = "generated_visualizations"
 
@@ -47,4 +33,4 @@ with open('symfinder.yaml', 'r') as config_file:
                     )
 
 with open(os.path.join(base_directory, "index.html"), 'w+') as index_file:
-    index_file.write(Template(INDEX_TEMPLATE).render(xps=xps))
+    index_file.write(Template(filename=os.path.join(d3_directory, "template-index.html")).render(xps=xps))

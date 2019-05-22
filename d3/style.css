@@ -51,3 +51,7 @@ button {
 .close {
     margin-left: 1em;
 }
+
+#index-body{
+    padding-top: 70px;
+}
