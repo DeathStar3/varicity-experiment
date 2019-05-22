@@ -200,7 +200,7 @@ public class Symfinder {
                     nodeType = EntityType.CLASS;
                     nodeAttributes = new EntityAttribute[]{};
                 }
-                neoGraph.getOrCreateNode(type.resolveBinding().getQualifiedName(), nodeType, nodeAttributes);
+                neoGraph.createNode(type.resolveBinding().getQualifiedName(), nodeType, nodeAttributes);
                 return true;
             }
             return false;
