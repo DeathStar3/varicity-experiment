@@ -11,13 +11,14 @@ case "$1" in
     	bash run.sh
         ;;
     "rerun")
-    	python3 run_xps.py
+        bash rerun.sh
         ;;
     "visualization")
     	bash visualization.sh
         ;;
     "down")
         docker-compose -f symfinder-compose.yaml down
+        docker-compose -f runner-compose.yaml down
         docker-compose -f visualization-compose.yaml down
         ;;
 esac

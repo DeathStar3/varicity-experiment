@@ -4,7 +4,7 @@ input_args="$@"
 
 if [ $# -eq 0 ]
 then
-    input_args=(sources-fetcher symfinder-core visualization quality-checker)
+    input_args=(sources-fetcher symfinder-core visualization runner)
 fi
 
 for param in ${input_args[@]}
@@ -24,6 +24,9 @@ do
             ;;
         "symfinder")
             docker-compose -f symfinder-compose.yaml build
+            ;;
+        "runner")
+            docker-compose -f runner-compose.yaml build
             ;;
         "visualization")
             docker-compose -f visualization-compose.yaml build
