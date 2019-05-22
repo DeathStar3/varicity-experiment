@@ -1,0 +1,8 @@
+FROM archlinux/base:latest
+RUN pacman -Sy --noconfirm docker-compose python-pip && pip install mako
+ADD docker/runner/files/* /
+ADD docker/* /docker/
+ADD experiences/* /experiences/
+ADD symfinder.yaml /symfinder.yaml
+ADD symfinder-compose.yaml /symfinder-compose.yaml
+CMD python3 run_xps.py
