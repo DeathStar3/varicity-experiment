@@ -7,7 +7,7 @@
 - Docker Compose
     - Instruction to install Docker Compose are available [here](https://docs.docker.com/compose/install/#install-compose)
 
-### Reproducing the experiments
+## Reproducing the experiments
 
 1. Build the project by running
 
@@ -50,4 +50,64 @@ Click again on the button to unfilter them.
 
 You will also find on the right of the page information about:
 - the number of _vp-s_ at method level, at class level and the total number of _vp-s_ 
-- the number of variants at method level, at class level and the total number of variants 
+- the number of variants at method level, at class level and the total number of variants
+
+## Using _symfinder_ on your project
+
+### _symfinder_ configuration
+
+The application's settings are set up using a YAML file, called `symfinder.yaml`, that must be at the root of the project.
+Here is an example:
+
+```yaml
+neo4j:
+  boltAddress: bolt://localhost:7687
+  user: neo4j
+  password: root
+
+experiences_file: experiences.yaml
+```
+
+#### Neo4j parameters
+
+- `boltAddress`: address where Neo4j's bolt driver is exposed
+- `user`: username
+- `password`: the password to access the database
+
+#### Experiences
+
+`experiences_file` corresponds to the path of a YAML file containing the description of the different source codes you want to analyse. Here is an example:
+
+```yaml
+junit:
+  repositoryUrl: https://github.com/junit-team/junit4
+  sourcePackage: .
+  tagIds:
+    - r4.12
+javaGeom:
+  repositoryUrl: https://github.com/dlegland/javaGeom
+  sourcePackage: src
+  commitIds:
+    - 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
+```
+
+
+You can specify as many experiences as you want.
+Each project is defined by different parameters:
+- `repositoryUrl`: URL of the project's Git repository
+- `sourcePackage`: relative path of the package containing the sources of the project to analyse. `.` corresponds to the root of the project to be analysed.
+- `commitIds`: IDs of the commits to analyse
+- `tagsIds`: IDs of the tags to analyse
+
+For an experience, you can mix different commits and different tags to checkout. For example, we could have :
+
+```yaml
+junit:
+  repositoryUrl: https://github.com/junit-team/junit4
+  sourcePackage: .
+  tagIds:
+    - r4.12
+    - r4.11
+  commitIds:
+    - c3715204786394f461d94953de9a66a4cec684e9
+```
