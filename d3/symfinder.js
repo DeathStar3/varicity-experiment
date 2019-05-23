@@ -13,7 +13,7 @@ function getFilterItem(filter) {
         '<li class="list-group-item d-flex justify-content-between align-items-center" id="' + filter + '" data-toggle="list"\n' +
         '               role="tab" aria-controls="profile">'
         + filter +
-        '<button type="button" class="close" aria-label="Close">\n' +
+        '<button type="button btn-dark" class="close" aria-label="Close">\n' +
         '  <span aria-hidden="true">&times;</span>\n' +
         '</button>' +
         '</li>';
@@ -349,4 +349,10 @@ $(document).on('click', ".close", function (e) {
     $(e.target.parentElement.parentElement).remove();
     filters.splice(filters.indexOf(removedFilter), 1);
     displayGraph(jsonFile, jsonStatsFile, filters, filterIsolated);
+});
+
+$('#hide-info-button').click(function(){
+    $(this).text(function(i,old){
+        return old === 'Show project information' ?  'Hide project information' : 'Show project information';
+    });
 });

@@ -7,8 +7,14 @@ from mako.template import Template
 d3_directory = "d3"
 base_directory = "generated_visualizations"
 
-shutil.copyfile(os.path.join(d3_directory, "symfinder.js"), os.path.join(base_directory, "symfinder.js"))
-shutil.copyfile(os.path.join(d3_directory, "style.css"), os.path.join(base_directory, "style.css"))
+
+def copy_file(filename):
+    shutil.copyfile(os.path.join(d3_directory, filename), os.path.join(base_directory, filename))
+
+
+copy_file("symfinder.js")
+copy_file("style.css")
+copy_file("symfinder-icon.png")
 
 xps = {}
 
