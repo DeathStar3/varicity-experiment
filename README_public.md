@@ -42,15 +42,27 @@ Then, in your web browser, go to `http://localhost:8181`.
 An index page will appear with the list of the analysed projects.
 Click on the desired project to view its visualization.
 
-On the top left of the page is a field where you can enter the name of a class or package that you want to filter on the visualization.
-When a filter is added, it is added to a list. The cross on the right allows you to remove the filter.
+Here is an example of visualization window:
 
+![visualization.png](readme_files/visualization.png)
+
+The window is pade of several parts:
+
+- ①: By clicking on the `Hide project information` button, you can hide the parts ③ and ④ in order to be able to see the graph better.
+- ②: Here you can see the name and tag/commit ID of the project corresponding to the visualization being viewed, as well as the commit corresponding to the version of _symfinder_ that generated the visualization.
+- ③: In the `Package/class to filter` field, you can enter the name of a class or package that you want to filter on the visualization.
+When a filter is added, it is added to the list below. The cross on the right of each filter allows you to remove it.
 On the right of this field is a `Filter isolated nodes` button which, when activated, removes the nodes having no relationship from the visualization.
 Click again on the button to unfilter them.
+- ④: Displays metrics on the project concerning _variation points_ and variants
 
-You will also find on the right of the page information about:
-- the number of _vp-s_ at method level, at class level and the total number of _vp-s_ 
-- the number of variants at method level, at class level and the total number of variants
+## Running additional experiments
+
+You can change the `experiments` parameter in the `symfinder.yaml` file and replace `experiences.yaml` by `additional-experiences.yaml`.
+This configuration will run analyses on three other projects:
+- [Apache Log4j2 2.11.2](https://github.com/apache/logging-log4j2/tree/log4j-2.11.2)
+- [Apache HTTPComponents Core 5.0-beta7](https://github.com/apache/httpcomponents-core/tree/5.0-beta7)
+- [Apache Fluo 1.2.0](https://github.com/apache/fluo/tree/rel/fluo-1.2.0)
 
 ## Using _symfinder_ on your project
 

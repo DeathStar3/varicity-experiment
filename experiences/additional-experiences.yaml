@@ -1,0 +1,15 @@
+log4j2:
+  repositoryUrl: https://github.com/apache/logging-log4j2
+  sourcePackage: .
+  tagIds:
+    - log4j-2.11.2
+httpcomponents:
+  repositoryUrl: https://github.com/apache/httpcomponents-core
+  sourcePackage: .
+  tagIds:
+    - 5.0-beta7
+fluo:
+  repositoryUrl: https://github.com/apache/fluo
+  sourcePackage: .
+  tagIds:
+    - rel/fluo-1.2.0
