@@ -12,6 +12,10 @@ create_directory(){
     fi
 }
 
+export SOURCES_PACKAGE="$1"
+export GRAPH_OUTPUT_PATH="$2"
+export PROJECT_NAME="$3"
+
 docker-compose -f symfinder-compose.yaml down
 docker-compose -f symfinder-compose.yaml up --abort-on-container-exit
 docker-compose -f symfinder-compose.yaml down

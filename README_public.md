@@ -14,18 +14,36 @@
 
 If your system does not match any of the requirements above, you must install a virtual machine.
 [This tutorial](https://www.wikihow.com/Install-Ubuntu-on-VirtualBox) may help you.
+
 ## Reproducing the experiments
 
 1. Build the project by running
 
+    - On GNU/Linux and macOS
+
     ```bash
-    ./symfinder.sh build
+    ./build.sh
+    ```
+
+    - On Windows
+
+    ```batch
+    build.bat
     ```
 
 2. Once the build is finished, run the analyses by running
 
+
+    - On GNU/Linux and macOS
+
     ```bash
-    ./symfinder.sh run
+    ./run.sh
+    ```
+
+    - On Windows
+
+    ```batch
+    run.bat
     ```
 
 This command will analyse the following projects:
@@ -42,8 +60,17 @@ This command will analyse the following projects:
 
 
 Once the analyses are finished, run
+
+- On GNU/Linux and macOS    
+
 ```bash
-./symfinder.sh visualization
+./visualization.sh
+```
+
+- On Windows
+
+```bash
+visualization.bat
 ```
 Then, in your web browser, go to `http://localhost:8181`.
 An index page will appear with the list of the analysed projects.

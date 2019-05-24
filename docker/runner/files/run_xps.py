@@ -26,4 +26,4 @@ with open('symfinder.yaml', 'r') as config_file:
                         project_name=xp_codename,
                         build_image=xp_codename
                     ))
-                os.system("bash rerun.sh")
+                os.system("bash rerun.sh {} {} {}".format(sources_package, graph_output_path, project_name))
