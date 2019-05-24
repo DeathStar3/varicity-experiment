@@ -10,16 +10,18 @@ services:
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
-      - ${DIR_PATH}/resources:/resources
-      - ${DIR_PATH}/generated_visualizations:/generated_visualizations
-      - ${DIR_PATH}/d3:/d3
+      - ./resources:/resources
+      - ./generated_visualizations:/generated_visualizations
+      - ./d3:/d3
     depends_on:
       - neo4j
     environment:
       - JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/jre
-      - DIR_PATH=${DIR_PATH}
       - SYMFINDER_UID=${SYMFINDER_UID}
       - SYMFINDER_GID=${SYMFINDER_GID}
+      - SOURCES_PACKAGE=${SOURCES_PACKAGE}
+      - GRAPH_OUTPUT_PATH=${GRAPH_OUTPUT_PATH}
+      - PROJECT_NAME=${PROJECT_NAME}
 
   neo4j:
     image: neo4j:3.5.0

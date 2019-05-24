@@ -8,7 +8,7 @@ services:
     image: symfinder-runner
     container_name: symfinder-runner
     environment:
-      - DIR_PATH=${PWD}
+      - pwd=${PWD}
       - SYMFINDER_UID=${SYMFINDER_UID}
       - SYMFINDER_GID=${SYMFINDER_GID}
     volumes:

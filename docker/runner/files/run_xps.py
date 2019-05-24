@@ -20,10 +20,10 @@ with open('symfinder.yaml', 'r') as config_file:
                 with open("symfinder-compose.env", 'w+') as output_file:
                     sources_package = os.path.join(xp_codename, xp_config["sourcePackage"])
                     graph_output_path = "generated_visualizations/data/{}.json".format(xp_codename)
+                    project_name=xp_codename
                     output_file.write(Template(ENV_FILE_TEMPLATE).render(
                         sources_package=sources_package,
                         graph_output_path=graph_output_path,
-                        project_name=xp_codename,
-                        build_image=xp_codename
+                        project_name=xp_codename
                     ))
                 os.system("bash rerun.sh {} {} {}".format(sources_package, graph_output_path, project_name))
