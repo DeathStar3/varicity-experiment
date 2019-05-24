@@ -7,6 +7,13 @@
 - Docker Compose
     - Instruction to install Docker Compose are available [here](https://docs.docker.com/compose/install/#install-compose)
 
+**Note:** You need to have a system running on either 
+- GNU/Linux
+- Windows 10 64bit: Pro, Enterprise or Education (Build 15063 or later)
+- macOS Sierra 10.12 or newer on a hardware from at least 2010
+
+If your system does not match any of the requirements above, you must install a virtual machine.
+[This tutorial](https://www.wikihow.com/Install-Ubuntu-on-VirtualBox) may help you.
 ## Reproducing the experiments
 
 1. Build the project by running
@@ -46,7 +53,7 @@ Here is an example of visualization window:
 
 ![visualization.png](readme_files/visualization.png)
 
-The window is pade of several parts:
+The window is made of several parts:
 
 - ①: By clicking on the `Hide project information` button, you can hide the parts ③ and ④ in order to be able to see the graph better.
 - ②: Here you can see the name and tag/commit ID of the project corresponding to the visualization being viewed, as well as the commit corresponding to the version of _symfinder_ that generated the visualization.
