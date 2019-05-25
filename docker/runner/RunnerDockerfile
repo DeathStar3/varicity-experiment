@@ -1,5 +1,5 @@
 FROM archlinux/base:latest
-RUN pacman -Sy --noconfirm docker-compose python-pip && pip install mako
+RUN pacman -Sy --noconfirm docker-compose python3
 ADD docker/runner/files/* /
 ADD docker/* /docker/
 ADD experiences/* /experiences/

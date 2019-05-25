@@ -3,9 +3,9 @@
 ## Technical Requirements
 
 - Docker
-    - Instruction to install Docker are available [here](https://docs.docker.com/install/#supported-platforms)
+    - Instructions to install Docker are available [here](https://docs.docker.com/install/#supported-platforms).
 - Docker Compose
-    - Instruction to install Docker Compose are available [here](https://docs.docker.com/compose/install/#install-compose)
+    - Instructions to install Docker Compose are available [here](https://docs.docker.com/compose/install/#install-compose).
 
 **Note:** You need to have a system running on either 
 - GNU/Linux
@@ -32,6 +32,15 @@ If your system does not match any of the requirements above, you must install a 
     ```batch
     build.bat
     ```
+
+**Note:** you can pass Maven build arguments to the build script.
+A useful use case is for skipping the execution of tests:
+
+```bash
+./build.sh -DskipTests
+```
+
+The reference for Maven CLI Options is [here](https://maven.apache.org/ref/3.1.0/maven-embedder/cli.html).
 
 2. Once the build is finished, run the analyses by running
 
@@ -92,13 +101,11 @@ On the right of this field is a `Filter isolated nodes` button which, when activ
 Click again on the button to unfilter them.
 - ④: Displays metrics on the project concerning _variation points_ and variants
 
-## Running additional experiments
+## Running additional experiment
 
-You can change the `experiments` parameter in the `symfinder.yaml` file and replace `experiences.yaml` by `additional-experiences.yaml`.
-This configuration will run analyses on three other projects:
-- [Apache Log4j2 2.11.2](https://github.com/apache/logging-log4j2/tree/log4j-2.11.2)
-- [Apache HTTPComponents Core 5.0-beta7](https://github.com/apache/httpcomponents-core/tree/5.0-beta7)
-- [Apache Fluo 1.2.0](https://github.com/apache/fluo/tree/rel/fluo-1.2.0)
+You can change the `experiences` parameter value in the `symfinder.yaml` file and replace `experiences.yaml` by `additional-experience.yaml`.
+This configuration will run analyses on another project:
+- [Charts 1.0.5](https://github.com/HanSolo/charts/tree/1.0.5)
 
 ## Using _symfinder_ on your project
 
@@ -147,7 +154,7 @@ Each project is defined by different parameters:
 - `commitIds`: IDs of the commits to analyse
 - `tagsIds`: IDs of the tags to analyse
 
-For an experience, you can mix different commits and different tags to checkout. For example, we could have :
+For each experience, you can mix different commits and different tags to checkout. For example, we could have :
 
 ```yaml
 junit:
