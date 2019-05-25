@@ -8,8 +8,9 @@ services:
     image: symfinder-runner
     container_name: symfinder-runner
     environment:
-      - pwd=${PWD}
+      - DIR_PATH=${PWD}
       - SYMFINDER_UID=${SYMFINDER_UID}
       - SYMFINDER_GID=${SYMFINDER_GID}
+      - COMPOSE_CONVERT_WINDOWS_PATHS=1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro

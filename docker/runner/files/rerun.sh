@@ -12,6 +12,7 @@ create_directory(){
     fi
 }
 
+export COMPOSE_CONVERT_WINDOWS_PATHS=1
 export SOURCES_PACKAGE="$1"
 export GRAPH_OUTPUT_PATH="$2"
 export PROJECT_NAME="$3"

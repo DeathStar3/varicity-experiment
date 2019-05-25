@@ -12,6 +12,8 @@
 - Windows 10 64bit: Pro, Enterprise or Education (Build 15063 or later)
 - macOS Sierra 10.12 or newer on a hardware from at least 2010
 
+**Note:** If you run _symfinder_ on a Windows system, _symfinder_ must be placed somewhere on your `C:\` drive.
+
 If your system does not match any of the requirements above, you must install a virtual machine.
 [This tutorial](https://www.wikihow.com/Install-Ubuntu-on-VirtualBox) may help you.
 

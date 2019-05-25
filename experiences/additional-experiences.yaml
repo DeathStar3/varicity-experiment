@@ -1,8 +1,8 @@
-log4j2:
-  repositoryUrl: https://github.com/apache/logging-log4j2
+charts:
+  repositoryUrl: https://github.com/HanSolo/charts
   sourcePackage: .
   tagIds:
-    - log4j-2.11.2
+    - 1.0.5
 httpcomponents:
   repositoryUrl: https://github.com/apache/httpcomponents-core
   sourcePackage: .
