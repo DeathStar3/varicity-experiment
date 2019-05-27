@@ -293,6 +293,17 @@ public class NeoGraph {
     }
 
     /**
+     * Get total number of variants.
+     * This corresponds to the number of variants at class and method level.
+     *
+     * @return Number of variants
+     */
+    public int getTotalNbVariants() {
+        return getNbClassLevelVariants() + getNbMethodLevelVariants();
+    }
+
+
+    /**
      * Get number of variants at class level.
      * This corresponds to the number of concrete classes without a subclass and extending a class or implementing an interface.
      *
@@ -358,6 +369,18 @@ public class NeoGraph {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methods))")
                 .list().get(0).get(0).asInt();
     }
+
+
+    /**
+     * Get total number of VPs.
+     * This corresponds to the number of VPs at class and method level.
+     *
+     * @return Number of VPs
+     */
+    public int getTotalNbVPs() {
+        return getNbClassLevelVPs() + getNbMethodLevelVPs();
+    }
+
 
     /**
      * Get total number of method level VPs.

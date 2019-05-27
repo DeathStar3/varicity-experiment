@@ -76,10 +76,12 @@ public class Symfinder {
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors VPs: " + neoGraph.getTotalNbOverloadedConstructors());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of method level VPs: " + neoGraph.getNbMethodLevelVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of class level VPs: " + neoGraph.getNbClassLevelVPs());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods variants: " + neoGraph.getNbMethodVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors variants: " + neoGraph.getNbConstructorVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of method level variants: " + neoGraph.getNbMethodLevelVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of class level variants: " + neoGraph.getNbClassLevelVariants());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of variants: " + neoGraph.getTotalNbVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of nodes: " + neoGraph.getNbNodes());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of relationships: " + neoGraph.getNbRelationships());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of corrected inheritance relationships: " + nbCorrectedInheritanceLinks + "/" + neoGraph.getNbInheritanceRelationships());

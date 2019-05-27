@@ -1,4 +1,4 @@
-# _symfinder_
+# Symfinder
 
 ## Technical Requirements
 
@@ -131,7 +131,7 @@ experiences_file: experiences.yaml
 
 #### Experiences
 
-`experiences_file` corresponds to the path of a YAML file containing the description of the different source codes you want to analyse. Here is an example:
+`experiences_file` corresponds to the path of a YAML file (relative to the `experiences` directory) containing the description of the different source codes you want to analyse. Here is an example:
 
 ```yaml
 junit:
