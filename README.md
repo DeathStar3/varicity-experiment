@@ -20,7 +20,7 @@ neo4j:
   user: neo4j
   password: root
 
-experiences_file: experiences.yaml
+experiments_file: experiments.yaml
 ```
 
 #### Neo4j parameters
@@ -29,9 +29,9 @@ experiences_file: experiences.yaml
 - `user`: username
 - `password`: the password to access the database
 
-#### Experiences
+#### Experiments
 
-`experiences_file` corresponds to the path of a YAML file containing the description of the different source codes you want to analyse. Here is an example:
+`experiments_file` corresponds to the path of a YAML file containing the description of the different source codes you want to analyse. Here is an example:
 
 ```yaml
 junit:
@@ -47,14 +47,14 @@ javaGeom:
 ```
 
 
-You can specify as many experiences as you want.
+You can specify as many experiments as you want.
 Each project is defined by different parameters:
 - `repositoryUrl`: URL of the project's Git repository
 - `sourcePackage`: relative path of the package containing the sources of the project to analyse. `.` corresponds to the root of the project to be analysed.
 - `commitIds`: IDs of the commits to checkout
 - `tagsIds`: IDs of the tags to checkout
 
-For an experience, you can mix different commits and different tags to checkout. For example, we could have :
+For an experiment, you can mix different commits and different tags to checkout. For example, we could have :
 
 ```yaml
 junit:
@@ -67,7 +67,7 @@ junit:
     - c3715204786394f461d94953de9a66a4cec684e9
 ```
 
-Each checkout of tag or commit ID `<id>` will be placed in a directory whose path is : `resources/<experienceName>-<id>`.
+Each checkout of tag or commit ID `<id>` will be placed in a directory whose path is : `resources/<experimentName>-<id>`.
 For example, the previous example will create the following tree:
 
 ```

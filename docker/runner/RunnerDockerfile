@@ -2,7 +2,7 @@ FROM archlinux/base:latest
 RUN pacman -Sy --noconfirm docker-compose python3
 ADD docker/runner/files/* /
 ADD docker/* /docker/
-ADD experiences/* /experiences/
+ADD experiments/* /experiments/
 ADD symfinder.yaml /symfinder.yaml
 ADD symfinder-compose.yaml /symfinder-compose.yaml
 CMD python3 run_xps.py

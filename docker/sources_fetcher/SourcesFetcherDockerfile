@@ -4,6 +4,6 @@ RUN apk add bash
 RUN pip install PyYAML
 RUN pip install mako
 ADD docker/sources_fetcher/files/* /
-ADD experiences/* /experiences/
+ADD experiments/* /experiments/
 ADD symfinder.yaml /symfinder.yaml
 CMD sh sources_fetcher.sh

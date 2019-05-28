@@ -20,9 +20,9 @@ xps = {}
 
 with open('symfinder.yaml', 'r') as config_file:
     data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
-    with open("experiences/" + data["experiencesFile"], 'r') as experiences_file:
-        experiences = yaml.load(experiences_file.read(), Loader=yaml.FullLoader)
-        for xp_name, xp_config in experiences.items():
+    with open("experiments/" + data["experimentsFile"], 'r') as experiments_file:
+        experiments = yaml.load(experiments_file.read(), Loader=yaml.FullLoader)
+        for xp_name, xp_config in experiments.items():
             for id in xp_config.get("tagIds", []) + xp_config.get("commitIds", []):
                 xp_codename = (xp_name + "-" + str(id)).replace("/", "_")
                 xps[xp_codename] = "./{}.html".format(xp_codename)

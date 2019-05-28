@@ -12,10 +12,25 @@
 - Windows 10 64bit: Pro, Enterprise or Education (Build 15063 or later)
 - macOS Sierra 10.12 or newer on a hardware from at least 2010
 
-**Note:** If you run _symfinder_ on a Windows system, _symfinder_ must be placed somewhere on your `C:\` drive.
+**Note:** If you run Symfinder on a Windows system, Symfinder must be placed somewhere on your `C:` drive.
 
 If your system does not match any of the requirements above, you must install a virtual machine.
 [This tutorial](https://www.wikihow.com/Install-Ubuntu-on-VirtualBox) may help you.
+
+## Getting Symfinder
+
+1. Open a terminal and clone the repository by running:
+
+    ```bash
+    git clone https://github.com/DeathStar3/symfinder
+    ```
+
+2. Move in the project directory
+
+    ```bash
+    cd symfinder
+    ```
+
 
 ## Reproducing the experiments
 
@@ -94,7 +109,7 @@ Here is an example of visualization window:
 The window is made of several parts:
 
 - ①: By clicking on the `Hide project information` button, you can hide the parts ③ and ④ in order to be able to see the graph better.
-- ②: Here you can see the name and tag/commit ID of the project corresponding to the visualization being viewed, as well as the commit corresponding to the version of _symfinder_ that generated the visualization.
+- ②: Here you can see the name and tag/commit ID of the project corresponding to the visualization being viewed, as well as the commit corresponding to the version of Symfinder that generated the visualization.
 - ③: In the `Package/class to filter` field, you can enter the name of a class or package that you want to filter on the visualization.
 When a filter is added, it is added to the list below. The cross on the right of each filter allows you to remove it.
 On the right of this field is a `Filter isolated nodes` button which, when activated, removes the nodes having no relationship from the visualization.
@@ -103,13 +118,13 @@ Click again on the button to unfilter them.
 
 ## Running additional experiment
 
-You can change the `experiences` parameter value in the `symfinder.yaml` file and replace `experiences.yaml` by `additional-experience.yaml`.
+You can change the `experiments` parameter value in the `symfinder.yaml` file and replace `experiments.yaml` by `additional-experiment.yaml`.
 This configuration will run analyses on another project:
 - [Charts 1.0.5](https://github.com/HanSolo/charts/tree/1.0.5)
 
-## Using _symfinder_ on your project
+## Using Symfinder on your project
 
-### _symfinder_ configuration
+### Symfinder configuration
 
 The application's settings are set up using a YAML file, called `symfinder.yaml`, that must be at the root of the project.
 Here is an example:
@@ -120,7 +135,7 @@ neo4j:
   user: neo4j
   password: root
 
-experiences_file: experiences.yaml
+experiments_file: experiments.yaml
 ```
 
 #### Neo4j parameters
@@ -129,9 +144,9 @@ experiences_file: experiences.yaml
 - `user`: username
 - `password`: the password to access the database
 
-#### Experiences
+#### Experiments
 
-`experiences_file` corresponds to the path of a YAML file (relative to the `experiences` directory) containing the description of the different source codes you want to analyse. Here is an example:
+`experiments_file` corresponds to the path of a YAML file (relative to the `experiments` directory) containing the description of the different source codes you want to analyse. Here is an example:
 
 ```yaml
 junit:
@@ -147,14 +162,14 @@ javaGeom:
 ```
 
 
-You can specify as many experiences as you want.
+You can specify as many experiments as you want.
 Each project is defined by different parameters:
 - `repositoryUrl`: URL of the project's Git repository
 - `sourcePackage`: relative path of the package containing the sources of the project to analyse. `.` corresponds to the root of the project to be analysed.
 - `commitIds`: IDs of the commits to analyse
 - `tagsIds`: IDs of the tags to analyse
 
-For each experience, you can mix different commits and different tags to checkout. For example, we could have :
+For each experiment, you can mix different commits and different tags to checkout. For example, we could have :
 
 ```yaml
 junit:
