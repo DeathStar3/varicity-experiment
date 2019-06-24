@@ -164,7 +164,7 @@ function generateGraph() {
             })
             .style("stroke", "black")
             .style("stroke-width", function (d) {
-                return d.types.includes("ABSTRACT") ? 1 : d.strokeWidth
+            	return d.nbVariants
             })
             .attr("r", function (d) {
                 return d.radius
