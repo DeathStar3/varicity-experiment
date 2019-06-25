@@ -30,6 +30,8 @@ jfreechart:
     - v1.5.0
   filters:
     - org.jfree.chart.util.PublicCloneable
+    - org.jfree.chart.event
+    - org.jfree.data.general
 javaGeom:
   repositoryUrl: https://github.com/dlegland/javaGeom
   sourcePackage: .
