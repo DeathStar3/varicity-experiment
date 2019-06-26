@@ -24,6 +24,9 @@ set -e
 
 export SYMFINDER_UID=$(id -u)
 export SYMFINDER_GID=$(id -g)
+export SYMFINDER_PROJECTS="$@"
+
+echo $SYMFINDER_PROJECTS
 
 docker-compose -f runner-compose.yaml up
 
