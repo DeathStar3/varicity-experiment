@@ -86,6 +86,14 @@ This command will analyse the following projects:
 - [JavaGeom](https://github.com/dlegland/javaGeom/tree/7e5ee60ea9febe2acbadb75557d9659d7fafdd28/src)
 - [ArgoUML](https://github.com/marcusvnac/argouml-spl/tree/bcae37308b13b7ee62da0867a77d21a0141a0f18/src)
 
+You can specify the projects you want to run by passing their names as parameters of the running script, for example
+
+```bash
+./run.sh junit
+```
+
+More details about the analysed projects and their definition are given in the [Using Symfinder on your project](#using-symfinder-on-your-project) section.
+
 ### Analysing the output data
 
 
