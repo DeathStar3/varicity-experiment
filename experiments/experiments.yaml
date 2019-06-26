@@ -42,3 +42,8 @@ argoUML:
   sourcePackage: .
   commitIds:
     - bcae37308b13b7ee62da0867a77d21a0141a0f18
+  filters:
+    - org.argouml.ui.targetmanager
+    - org.argouml.kernel.DelayedVChangeListener
+    - org.argouml.util
+    - org.argouml.application.events
