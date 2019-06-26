@@ -37,19 +37,15 @@ copy_file("symfinder.js")
 copy_file("style.css")
 copy_file("symfinder-icon.png")
 
-xps = {}
-
 with open('symfinder.yaml', 'r') as config_file:
     data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
     with open("experiments/" + data["experimentsFile"], 'r') as experiments_file:
         experiments = yaml.load(experiments_file.read(), Loader=yaml.FullLoader)
         projects_to_analyse = os.getenv('SYMFINDER_PROJECTS')
-        print("Projects : " + projects_to_analyse)
         for xp_name, xp_config in experiments.items():
             if not projects_to_analyse or xp_name in projects_to_analyse.split(" "):
                 for id in xp_config.get("tagIds", []) + xp_config.get("commitIds", []):
                     xp_codename = (xp_name + "-" + str(id)).replace("/", "_")
-                    xps[xp_codename] = "./{}.html".format(xp_codename)
                     xp_html_file_path = os.path.join(base_directory, "%s.html" % xp_codename)
                     with open(xp_html_file_path, 'w+') as output_file:
                         output_file.write(Template(filename=os.path.join(d3_directory, "template.html")).render(
@@ -62,5 +58,7 @@ with open('symfinder.yaml', 'r') as config_file:
                             jsonStatsFile=os.path.join("data", "%s-stats.json" % xp_codename))
                         )
 
+# TODO visualizations list from directory files
 with open(os.path.join(base_directory, "index.html"), 'w+') as index_file:
+    xps = {f.split(".html")[0]: f for f in os.listdir(base_directory) if f.endswith(".html") and f != "index.html"}
     index_file.write(Template(filename=os.path.join(d3_directory, "index.html")).render(xps=xps))

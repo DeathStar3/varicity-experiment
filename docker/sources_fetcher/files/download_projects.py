@@ -41,7 +41,6 @@ with open('symfinder.yaml', 'r') as config_file:
     with open("experiments/" + data["experimentsFile"], 'r') as experiments_file:
         experiments = yaml.load(experiments_file.read(), Loader=yaml.FullLoader)
         projects_to_analyse = os.getenv('SYMFINDER_PROJECTS')
-        print("Projects : " + projects_to_analyse)
         for xp_name, xp_config in experiments.items():
             if not projects_to_analyse or xp_name in projects_to_analyse.split(" "):
                 projects_package = "resources"
