@@ -19,11 +19,11 @@ The number of extended classes is obtained by counting the number of concrete cl
 
 ```java
 public int getNbClassLevelVPs() {
-        int nbInterfaces = submitRequest("MATCH (n:INTERFACE) RETURN COUNT (n)").list().get(0).get(0).asInt();
-        int nbAbstractClasses = submitRequest("MATCH (n:CLASS:ABSTRACT) RETURN COUNT (n)").list().get(0).get(0).asInt();
-        int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE NOT n:ABSTRACT RETURN COUNT (n)").list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
-        return nbInterfaces + nbAbstractClasses + nbExtendedClasses;
-    }
+	int nbInterfaces = submitRequest("MATCH (n:INTERFACE) RETURN COUNT (n)").list().get(0).get(0).asInt();
+    int nbAbstractClasses = submitRequest("MATCH (n:CLASS:ABSTRACT) RETURN COUNT (n)").list().get(0).get(0).asInt();
+    int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE NOT n:ABSTRACT RETURN COUNT (n)").list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
+    return nbInterfaces + nbAbstractClasses + nbExtendedClasses;
+}
 ```
 <a href="https://github.com/DeathStar3/symfinder-internal/blob/454b0aba4c50bd8c0523132568d77fe229c5d671/src/main/java/NeoGraph.java#L427">source</a>
 
@@ -38,14 +38,14 @@ The number of overriden methods for a class node is determined by first counting
 
 ```java
 public void setMethodsOverloads() {
-        submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
-                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
-                "WITH count(DISTINCT a.name) AS cnt, c\n" +
-                "SET c.methods = cnt");
-        submitRequest("MATCH (c:CLASS)\n" +
-                "WHERE NOT EXISTS(c.methods)\n" +
-                "SET c.methods = 0");
-    }
+    submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
+            "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
+            "WITH count(DISTINCT a.name) AS cnt, c\n" +
+            "SET c.methods = cnt");
+    submitRequest("MATCH (c:CLASS)\n" +
+            "WHERE NOT EXISTS(c.methods)\n" +
+            "SET c.methods = 0");
+}
 ```
 <a href="https://github.com/DeathStar3/symfinder-internal/blob/454b0aba4c50bd8c0523132568d77fe229c5d671/src/main/java/NeoGraph.java#L216">source</a>
 
@@ -55,9 +55,9 @@ Then, we get the sum of the values of this property for each node to get the tot
 
 ```java
 public int getTotalNbOverloadedMethods() {
-        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methods))")
-                .list().get(0).get(0).asInt();
-    }
+    return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methods))")
+            .list().get(0).get(0).asInt();
+}
 ```
 <a href="https://github.com/DeathStar3/symfinder-internal/blob/454b0aba4c50bd8c0523132568d77fe229c5d671/src/main/java/NeoGraph.java#L389">source</a>
 
@@ -65,13 +65,13 @@ The number of overriden constructors for a class node is determined by first cou
 
 ```java
 public void setConstructorsOverloads() {
-        submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
-                "WITH count(a.name) AS cnt, c\n" +
-                "SET c.constructors = cnt -1");
-        submitRequest("MATCH (c:CLASS)\n" +
-                "WHERE NOT EXISTS(c.constructors)\n" +
-                "SET c.constructors = 0");
-    }
+    submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
+            "WITH count(a.name) AS cnt, c\n" +
+            "SET c.constructors = cnt -1");
+    submitRequest("MATCH (c:CLASS)\n" +
+            "WHERE NOT EXISTS(c.constructors)\n" +
+            "SET c.constructors = 0");
+}
 ```
 <a href="https://github.com/DeathStar3/symfinder-internal/blob/454b0aba4c50bd8c0523132568d77fe229c5d671/src/main/java/NeoGraph.java#L230">source</a>
 
@@ -80,9 +80,9 @@ Then, we get the sum of the values of this property for each node to get the tot
 
 ```java
 public int getTotalNbOverloadedConstructors() {
-        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constructors))")
-                .list().get(0).get(0).asInt();
-    }
+    return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constructors))")
+            .list().get(0).get(0).asInt();
+}
 ```
 <a href="https://github.com/DeathStar3/symfinder-internal/blob/454b0aba4c50bd8c0523132568d77fe229c5d671/src/main/java/NeoGraph.java#L379">source</a>
 
@@ -100,9 +100,9 @@ The number of class level variants corresponds to the number of concrete classes
 
 ```java
 public int getNbClassLevelVariants() {
-        return submitRequest("MATCH (c:CLASS) WHERE (NOT c:ABSTRACT) AND ()-[:EXTENDS|:IMPLEMENTS]->(c) AND (NOT (c)-[:EXTENDS]->()) RETURN (COUNT(c))")
-                .list().get(0).get(0).asInt();
-    }
+    return submitRequest("MATCH (c:CLASS) WHERE (NOT c:ABSTRACT) AND ()-[:EXTENDS|:IMPLEMENTS]->(c) AND (NOT (c)-[:EXTENDS]->()) RETURN (COUNT(c))")
+            .list().get(0).get(0).asInt();
+}
 ```
 <a href="https://github.com/DeathStar3/symfinder-internal/blob/454b0aba4c50bd8c0523132568d77fe229c5d671/src/main/java/NeoGraph.java#L333">source</a>
 
@@ -117,11 +117,11 @@ The number of overrides of methods is determined by counting for each class node
 
 ```java
 public int getNbMethodVariants() {
-        return submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
-                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
-                "return count(DISTINCT a)")
-                .list().get(0).get(0).asInt();
-    }
+    return submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
+            "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
+            "return count(DISTINCT a)")
+            .list().get(0).get(0).asInt();
+}
 ```
 <a href="https://github.com/DeathStar3/symfinder-internal/blob/454b0aba4c50bd8c0523132568d77fe229c5d671/src/main/java/NeoGraph.java#L354">source</a>
 
@@ -129,11 +129,11 @@ The number of overrides of constructors is determined by counting for each class
 
 ```java
 public int getNbConstructorVariants() {
-        return submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR) MATCH (c:CLASS)-->(b:CONSTRUCTOR)\n" +
-                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
-                "return count(DISTINCT a)")
-                .list().get(0).get(0).asInt();
-    }
+    return submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR) MATCH (c:CLASS)-->(b:CONSTRUCTOR)\n" +
+            "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
+            "return count(DISTINCT a)")
+            .list().get(0).get(0).asInt();
+}
 ```
 <a href="https://github.com/DeathStar3/symfinder-internal/blob/454b0aba4c50bd8c0523132568d77fe229c5d671/src/main/java/NeoGraph.java#L367">source</a>
 
