@@ -1,4 +1,4 @@
-# Cypher Queries used in symfinder
+# Cypher queries used in _symfinder_
 
 This document references in th source code the Cypher queries used in _symfinder_ to detect symmetry implementations.
 
@@ -19,7 +19,7 @@ The number of extended classes is obtained by counting the number of concrete cl
 
 ```java
 public int getNbClassLevelVPs() {
-	int nbInterfaces = submitRequest("MATCH (n:INTERFACE) RETURN COUNT (n)").list().get(0).get(0).asInt();
+    int nbInterfaces = submitRequest("MATCH (n:INTERFACE) RETURN COUNT (n)").list().get(0).get(0).asInt();
     int nbAbstractClasses = submitRequest("MATCH (n:CLASS:ABSTRACT) RETURN COUNT (n)").list().get(0).get(0).asInt();
     int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE NOT n:ABSTRACT RETURN COUNT (n)").list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
     return nbInterfaces + nbAbstractClasses + nbExtendedClasses;
