@@ -1,6 +1,6 @@
 # Cypher queries used in _symfinder_
 
-This document references in th source code the Cypher queries used in _symfinder_ to detect symmetry implementations.
+This document references in the source code the Cypher queries used in _symfinder_ to detect symmetry implementations.
 
 ## Counting variation points
 
@@ -13,8 +13,8 @@ Class level _vp_-s correspond to:
 - abstract classes
 - concrete extended classes
 
-The number of interfaces is obtained by counting the number of nodes possessing the `INTERFACE` label.
-The number of abstract classes is obtained by counting the number of class nodes possessing the `ABSTRACT` label.
+The number of interfaces is obtained by counting the number of nodes possessing the `INTERFACE` label.  
+The number of abstract classes is obtained by counting the number of class nodes possessing the `ABSTRACT` label.  
 The number of extended classes is obtained by counting the number of concrete class nodes (to avoid double counting with the abstract classes) possessing at least `EXTENDS` relationship.
 
 ```java
@@ -94,7 +94,7 @@ By adding these two values, we obtain the number of method level _vp_-s.
 
 The total number of variants is obtained by summing class level variants and method level variants.
 
-### Get the number of class level variants
+### Getting the number of class level variants
 
 The number of class level variants corresponds to the number of concrete classes without a subclass and extending a class or implementing an interface.
 
