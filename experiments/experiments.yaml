@@ -11,6 +11,7 @@ cxf:
 junit:
   repositoryUrl: https://github.com/junit-team/junit4
   sourcePackage: .
+  build: yes
   tagIds:
     - r4.12
 maven:

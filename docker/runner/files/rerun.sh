@@ -22,24 +22,33 @@
 
 set -e
 
-
-create_directory(){
-    if [[ ! -d "$1" ]]; then
-        echo "Creating $1 directory"
-        mkdir -p "$1"
-    else
-        echo "$1 directory already exists"
-    fi
-}
-
 export COMPOSE_CONVERT_WINDOWS_PATHS=1
 export SOURCES_PACKAGE="$1"
 export GRAPH_OUTPUT_PATH="$2"
 export PROJECT_NAME="$3"
 
+CONTAINER_TO_WAIT=""
 
 echo "Cleaning previous execution..."
 docker-compose -f symfinder-compose.yaml down
-docker-compose -f symfinder-compose.yaml up --abort-on-container-exit
+
+if [[ "$4" = "True" ]]; then
+    docker-compose -f symfinder-compose.yaml up &
+    CONTAINER_TO_WAIT="webhook-server"
+else
+    docker-compose -f symfinder-compose.yaml up symfinder neo4j &
+    CONTAINER_TO_WAIT="symfinder"
+fi
+
+sleep 30
+
+WAIT=$(docker wait ${CONTAINER_TO_WAIT})
+
+until [[ "$WAIT" == "247" || "$WAIT" == "0" ]]; do
+    WAIT=$(docker wait ${CONTAINER_TO_WAIT})
+    echo "WAIT: $WAIT"
+    sleep 5
+done
+
 docker-compose -f symfinder-compose.yaml down
 

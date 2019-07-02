@@ -55,7 +55,8 @@ with open('symfinder.yaml', 'r') as config_file:
                             jsScriptFile=os.path.join("symfinder.js"),
                             filters=",".join(['"' + f + '"' for f in xp_config.get("filters", [])]),
                             jsonFile=os.path.join("data", "%s.json" % xp_codename),
-                            jsonStatsFile=os.path.join("data", "%s-stats.json" % xp_codename))
+                            jsonStatsFile=os.path.join("data", "%s-stats.json" % xp_codename),
+                            jsonMetricsFile=os.path.join("data", "%s-metrics.json" % xp_codename))
                         )
 
 # TODO visualizations list from directory files

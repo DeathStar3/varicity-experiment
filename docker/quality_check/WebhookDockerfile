@@ -1,0 +1,4 @@
+FROM python:3.7.3-alpine3.9
+RUN pip install Flask requests neo4j pythonping
+ADD docker/quality_check/webhook/* /
+CMD python3 run_server.py
