@@ -83,8 +83,8 @@ public class Symfinder {
         visitPackage(classpathPath, files, new ClassesVisitor());
         logger.log(Level.getLevel("MY_LEVEL"), "GraphBuilderVisitor");
         visitPackage(classpathPath, files, new GraphBuilderVisitor());
-        logger.log(Level.getLevel("MY_LEVEL"), "StrategyVisitor");
-        visitPackage(classpathPath, files, new StrategyVisitor());
+        logger.log(Level.getLevel("MY_LEVEL"), "StrategyTemplateVisitor");
+        visitPackage(classpathPath, files, new StrategyTemplateVisitor());
         logger.log(Level.getLevel("MY_LEVEL"), "FactoryVisitor");
         visitPackage(classpathPath, files, new FactoryVisitor());
 
@@ -92,23 +92,20 @@ public class Symfinder {
         neoGraph.setConstructorsOverloads();
         neoGraph.setNbVariantsProperty();
         neoGraph.setVPLabels();
-        neoGraph.writeVPGraphFile(graphOutputPath);
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods VPs: " + neoGraph.getTotalNbOverloadedMethods());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors VPs: " + neoGraph.getTotalNbOverloadedConstructors());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of method level VPs: " + neoGraph.getNbMethodLevelVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of class level VPs: " + neoGraph.getNbClassLevelVPs());
-        logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods variants: " + neoGraph.getNbMethodVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors variants: " + neoGraph.getNbConstructorVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of method level variants: " + neoGraph.getNbMethodLevelVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of class level variants: " + neoGraph.getNbClassLevelVariants());
-        logger.log(Level.getLevel("MY_LEVEL"), "Number of variants: " + neoGraph.getTotalNbVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of nodes: " + neoGraph.getNbNodes());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of relationships: " + neoGraph.getNbRelationships());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of corrected inheritance relationships: " + nbCorrectedInheritanceLinks + "/" + neoGraph.getNbInheritanceRelationships());
+        neoGraph.writeVPGraphFile(graphOutputPath);
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         logger.debug(neoGraph.generateStatisticsJson());
-        neoGraph.deleteGraph();
         neoGraph.closeDriver();
     }
 
@@ -235,17 +232,16 @@ public class Symfinder {
             ITypeBinding declaringClass;
             if (! (method.resolveBinding() == null)) {
                 declaringClass = method.resolveBinding().getDeclaringClass();
-                    String methodName = method.getName().getIdentifier();
-                    String parentClassName = declaringClass.getQualifiedName();
-                    logger.printf(Level.DEBUG, "Method: %s, parent: %s", methodName, parentClassName);
-                    EntityType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
-                    Node methodNode = Modifier.isAbstract(method.getModifiers()) ? neoGraph.createNode(methodName, methodType, EntityAttribute.ABSTRACT) : neoGraph.createNode(methodName, methodType);
-                    Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
-                    neoGraph.linkTwoNodes(parentClassNode, methodNode, RelationType.METHOD);
+                String methodName = method.getName().getIdentifier();
+                String parentClassName = declaringClass.getQualifiedName();
+                logger.printf(Level.DEBUG, "Method: %s, parent: %s", methodName, parentClassName);
+                EntityType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
+                Node methodNode = Modifier.isAbstract(method.getModifiers()) ? neoGraph.createNode(methodName, methodType, EntityAttribute.ABSTRACT) : neoGraph.createNode(methodName, methodType);
+                Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
+                neoGraph.linkTwoNodes(parentClassNode, methodNode, RelationType.METHOD);
             }
             return false;
         }
-
     }
 
     /**
@@ -271,6 +267,7 @@ public class Symfinder {
             if (super.visit(type)) {
                 ITypeBinding classBinding = type.resolveBinding();
                 String thisClassName = classBinding.getQualifiedName();
+                logger.debug("Class: " + thisClassName);
                 Optional <Node> thisNode = classBinding.isInterface() ? neoGraph.getInterfaceNode(thisClassName) : neoGraph.getClassNode(thisClassName);
                 if (thisNode.isPresent()) {
                     // Link to superclass if exists
@@ -342,12 +339,26 @@ public class Symfinder {
     }
 
     /**
-     * Detects strategy patterns.
+     * Detects strategy and template patterns.
      * We detect as a strategy pattern:
      * - a class who possesses at least two variants and is used as a field in another class
      * - a class whose name contains "Strategy"
-    */
-    private class StrategyVisitor extends SymfinderVisitor {
+     * We detect as a template pattern:
+     * - an abstract class which possesses at least one subclass and contains a concrete method calling an abstract method of this same class
+     * - a class whose name contains "Template"
+     */
+    private class StrategyTemplateVisitor extends SymfinderVisitor {
+
+        private ITypeBinding thisClassBinding = null;
+
+        @Override
+        public boolean visit(TypeDeclaration type) {
+            if (super.visit(type)) {
+                this.thisClassBinding = type.resolveBinding();
+                return true;
+            }
+            return false;
+        }
 
         @Override
         public boolean visit(FieldDeclaration field) {
@@ -360,6 +371,30 @@ public class Symfinder {
                 }
             }
             return false;
+        }
+
+        /**
+         * This method is used to detect template patterns.
+         * We do not explicitly check that the class is abstract as she must be abstract to define an abstract method.
+         * We do not explicitly check the fact that the calling method is concrete; an abstract method cannot call another method as it does not have a body.
+         */
+        @Override
+        public boolean visit(MethodInvocation node) {
+            IMethodBinding methodBinding = node.resolveMethodBinding();
+            if (methodBinding != null) { // TODO: 4/10/19 check why null in JavaGeom, math.geom3d.Box3D, p1.getX()
+                ITypeBinding declaringClass = methodBinding.getDeclaringClass();
+                Node declaringClassNode = neoGraph.getOrCreateNode(declaringClass.getQualifiedName(), declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
+                if (neoGraph.getNbVariants(declaringClassNode) > 0 && (declaringClass.getName().contains("Template") || (declaringClass.equals(this.thisClassBinding) && Modifier.isAbstract(methodBinding.getModifiers())))) {
+                    neoGraph.addLabelToNode(declaringClassNode, DesignPatternType.TEMPLATE.toString());
+                }
+            }
+            return false;
+        }
+
+
+        @Override
+        public void endVisit(TypeDeclaration node) {
+            thisClassBinding = null;
         }
 
     }
@@ -417,11 +452,6 @@ public class Symfinder {
 
     }
 
-	/**
-	 * We consider as a test class a class contained in a package containing "test".
-	 * This condition is sufficient if we consider projects built using Maven.
-	 * Adding a condition on the class' name may remove from the analysis important classes (in JUnit for example)
-	 */
     private boolean isTestClass(ITypeBinding classBinding) {
         return Arrays.asList(classBinding.getPackage().getNameComponents()).contains("test");
     }
