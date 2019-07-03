@@ -62,6 +62,7 @@ public class Symfinder {
     }
 
     public void run() throws IOException {
+        logger.log(Level.getLevel("MY_LEVEL"), "Symfinder version: " + System.getenv("SYMFINDER_VERSION"));
         String classpathPath;
 
         classpathPath = System.getenv("JAVA_HOME");

@@ -23,6 +23,7 @@
 export SYMFINDER_UID=$(id -u)
 export SYMFINDER_GID=$(id -g)
 export SYMFINDER_PROJECTS="$@"
+export SYMFINDER_VERSION=$(git rev-parse HEAD)
 
 docker-compose -f runner-compose.yaml up
 docker-compose -f runner-compose.yaml down

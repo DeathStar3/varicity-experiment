@@ -30,13 +30,11 @@ export SYMFINDER_BUILD_IMAGE="$4"
 
 CONTAINER_TO_WAIT=""
 
-echo "$1 $2 $3 $4"
-
 echo "Cleaning previous execution..."
 docker-compose -f symfinder-compose.yaml down
 
 if [[ ! -z "$4" ]]; then
-    docker-compose -f symfinder-compose.yaml build sonarqube-server symfinder-builder webhook-server
+#    docker-compose -f symfinder-compose.yaml build sonarqube-server symfinder-builder webhook-server
     docker-compose -f symfinder-compose.yaml up &
     CONTAINER_TO_WAIT="webhook-server"
 else
