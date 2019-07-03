@@ -28,4 +28,5 @@ set after_slash=%raw_path:\=/%
 SET PWD=%after_slash:C:=/c%
 
 docker-compose -f runner-compose.yaml up
+docker-compose -f runner-compose.yaml down
 

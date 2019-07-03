@@ -31,7 +31,7 @@ with open('symfinder.yaml', 'r') as config_file:
             if not projects_to_analyse or xp_name in projects_to_analyse.split(" "):
                 for id in xp_config.get("tagIds", []) + xp_config.get("commitIds", []):
                     xp_codename = xp_name + "-" + str(id).replace("/", "_")
-                    build = str(xp_config.get("build", False))
+                    build = str(xp_config.get("buildImage", ""))
                     sources_package = os.path.join(xp_codename, xp_config["sourcePackage"])
                     graph_output_path = "generated_visualizations/data/{}.json".format(xp_codename)
                     os.system("bash rerun.sh {} {} {} {}".format(sources_package, graph_output_path, xp_codename, build))

@@ -26,13 +26,17 @@ export COMPOSE_CONVERT_WINDOWS_PATHS=1
 export SOURCES_PACKAGE="$1"
 export GRAPH_OUTPUT_PATH="$2"
 export PROJECT_NAME="$3"
+export SYMFINDER_BUILD_IMAGE="$4"
 
 CONTAINER_TO_WAIT=""
+
+echo "$1 $2 $3 $4"
 
 echo "Cleaning previous execution..."
 docker-compose -f symfinder-compose.yaml down
 
-if [[ "$4" = "True" ]]; then
+if [[ ! -z "$4" ]]; then
+    docker-compose -f symfinder-compose.yaml build sonarqube-server symfinder-builder webhook-server
     docker-compose -f symfinder-compose.yaml up &
     CONTAINER_TO_WAIT="webhook-server"
 else

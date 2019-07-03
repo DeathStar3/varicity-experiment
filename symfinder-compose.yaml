@@ -64,7 +64,7 @@ services:
   symfinder-builder:
     build:
       context: .
-      dockerfile: docker/build_images/standard/Dockerfile
+      dockerfile: ${SYMFINDER_BUILD_IMAGE}
     image: symfinder-builder
     container_name: symfinder-builder
     environment:
@@ -87,11 +87,10 @@ services:
       - ${DIR_PATH}/generated_visualizations:/generated_visualizations
     ports:
       - "127.0.0.1:8000:8000"
-#    depends_on:
-#      - sonarqube-server
+    depends_on:
+      - sonarqube-server
     environment:
       - SYMFINDER_UID=${SYMFINDER_UID}
       - SYMFINDER_GID=${SYMFINDER_GID}
-#    user: ${SYMFINDER_UID}:${SYMFINDER_GID}
 
 

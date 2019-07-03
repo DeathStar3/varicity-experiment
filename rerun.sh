@@ -20,11 +20,10 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-set -e
-
 export SYMFINDER_UID=$(id -u)
 export SYMFINDER_GID=$(id -g)
 export SYMFINDER_PROJECTS="$@"
 
 docker-compose -f runner-compose.yaml up
+docker-compose -f runner-compose.yaml down
 
