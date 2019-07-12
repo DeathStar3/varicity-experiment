@@ -19,9 +19,14 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-language: java
+version: "3.6"
 
-script: ./build.sh
-
-notifications:
-  email: false
+services:
+  karma:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: symfinder-karma
+    container_name: symfinder-karma
+    ports:
+      - "9876:9876"

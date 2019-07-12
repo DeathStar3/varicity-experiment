@@ -19,9 +19,9 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-language: java
-
-script: ./build.sh
-
-notifications:
-  email: false
+FROM node:12-alpine
+RUN mkdir -p /opt/karma
+COPY . /opt/karma/
+WORKDIR /opt/karma
+RUN npm init --yes && apk update && apk upgrade && apk add --no-cache chromium && npm install -g karma jasmine-core karma-jasmine karma-chrome-launcher karma-jquery --save-dev
+CMD npm install && karma start --single-run
