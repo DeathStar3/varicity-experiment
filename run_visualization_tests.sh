@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # This file is part of symfinder.
 #
@@ -19,15 +20,6 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-language: java
-
-jobs:
-  include:
-    - stage: "Symfinder engine unit tests"
-      script: ./build.sh
-    - stage: "Visualization engine unit tests"
-      script: ./run_visualization_tests.sh
-
-
-notifications:
-  email: false
+docker-compose -f docker/visualization_test/docker-compose.yaml build
+docker-compose -f docker/visualization_test/docker-compose.yaml up
+docker-compose -f docker/visualization_test/docker-compose.yaml down

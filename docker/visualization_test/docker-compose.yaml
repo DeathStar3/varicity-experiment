@@ -28,5 +28,3 @@ services:
       dockerfile: Dockerfile
     image: symfinder-karma
     container_name: symfinder-karma
-    ports:
-      - "9876:9876"
