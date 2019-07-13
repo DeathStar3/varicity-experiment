@@ -20,6 +20,6 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-docker-compose -f docker/visualization_test/docker-compose.yaml build
-docker-compose -f docker/visualization_test/docker-compose.yaml up
-docker-compose -f docker/visualization_test/docker-compose.yaml down
+docker-compose -f visualization-tests-compose.yaml build
+docker-compose -f visualization-tests-compose.yaml up
+docker-compose -f visualization-tests-compose.yaml down

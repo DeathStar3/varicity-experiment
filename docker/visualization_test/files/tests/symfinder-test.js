@@ -19,8 +19,11 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-describe("A suite", function() {
-    it("contains spec with an expectation", function() {
-        expect(test()).toBe(true);
+describe("Generating graphs", function() {
+    it("One node", function() {
+        $.getJSON("tests/data/graph1.json", function(jsonData) {
+            displayGraph(jsonData, "", [], []);
+            expect(jsonData.nodes.length()).toBe(1);
+        });
     });
 });

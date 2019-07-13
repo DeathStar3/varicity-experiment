@@ -25,6 +25,6 @@ services:
   karma:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/visualization_test/Dockerfile
     image: symfinder-karma
     container_name: symfinder-karma

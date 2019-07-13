@@ -21,7 +21,8 @@
 
 FROM node:12-alpine
 RUN mkdir -p /opt/karma
-COPY . /opt/karma/
 WORKDIR /opt/karma
 RUN npm init --yes && apk update && apk upgrade && apk add --no-cache chromium && npm install -g karma jasmine-core karma-jasmine karma-chrome-launcher karma-jquery --save-dev
+COPY docker/visualization_test/files/ /opt/karma/
+COPY d3/symfinder.js /opt/karma/tests
 CMD npm install && karma start --single-run
