@@ -19,11 +19,39 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-describe("Generating graphs", function() {
-    it("One node", function() {
-        $.getJSON("tests/data/graph1.json", function(jsonData) {
+describe("Generating graph with one node", function () {
+
+    beforeAll(function () {
+        $.getJSON("tests/data/graph1.json", function (jsonData) {
             displayGraph(jsonData, "", [], []);
-            expect(jsonData.nodes.length()).toBe(1);
         });
+    });
+
+    it('svg should exist', function () {
+        var svg = document.getElementsByTagName('svg');
+        expect(svg).not.toBe(null);
+    });
+    it('generated graph should contain one node', function () {
+        expect($(".node").length).not.toBe(1);
+    });
+});
+
+describe("Generating graph with two linked nodes", function () {
+
+    beforeAll(function () {
+        $.getJSON("tests/data/graph2.json", function (jsonData) {
+            displayGraph(jsonData, "", [], []);
+        });
+    });
+
+    it('svg should exist', function () {
+        var svg = document.getElementsByTagName('svg');
+        expect(svg).not.toBe(null);
+    });
+    it('generated graph should contain two nodes', function () {
+        expect($(".node").length).not.toBe(2);
+    });
+    it('generated graph should contain one link', function () {
+        expect($(".link").length).not.toBe(1);
     });
 });

@@ -1,10 +1,10 @@
 {
   "methodsVPs": 0,
-  "methodLevelVPs": 0,
-  "classLevelVPs": 0,
-  "constructorsVariants": 0,
-  "classLevelVariants": 0,
-  "constructorsVPs": 0,
-  "methodLevelVariants": 0,
-  "methodsVariants": 0
+  "methodLevelVPs": 1,
+  "classLevelVPs": 2,
+  "constructorsVariants": 3,
+  "classLevelVariants": 4,
+  "constructorsVPs": 5,
+  "methodLevelVariants": 6,
+  "methodsVariants": 7
 }

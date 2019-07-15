@@ -1,0 +1,32 @@
+{
+  "nodes": [
+    {
+      "name": "org.junit.runners.model.Statement",
+      "constructors": 0,
+      "nbVariants": 8,
+      "types": [
+        "CLASS",
+        "ABSTRACT",
+        "VP"
+      ],
+      "methods": 0
+    },
+    {
+      "name": "org.junit.internal.runners.statements.FailOnTimeout",
+      "constructors": 1,
+      "nbVariants": 0,
+      "types": [
+        "CLASS",
+        "VP"
+      ],
+      "methods": 0
+    }
+  ],
+  "links": [
+    {
+      "type": "EXTENDS",
+      "source": "org.junit.runners.model.Statement",
+      "target": "org.junit.internal.runners.statements.FailOnTimeout"
+    }
+  ]
+}

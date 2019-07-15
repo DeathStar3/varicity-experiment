@@ -21,7 +21,7 @@
 
 // Karma configuration
 
-module.exports = function(config) {
+module.exports = function (config) {
     config.set({
 
         // base path, that will be used to resolve files and exclude
@@ -30,26 +30,32 @@ module.exports = function(config) {
         // frameworks to use
         frameworks: ['jasmine', 'jquery-3.2.1'],
 
-    plugins: [
-      'karma-jasmine',
-      'karma-chrome-launcher',
-      'karma-jquery'
-    ],
+        plugins: [
+            'karma-jasmine',
+            'karma-chrome-launcher',
+            'karma-jquery',
+            'karma-spec-reporter'
+        ],
 
         // list of files / patterns to load in the browser
         files: [
             'tests/*.js',
-            // 'libs/*.js',
             {pattern: 'tests/data/*.json', watched: false, served: true, included: false}
         ],
 
+        customContextFile: "pages/context.html",
+
+        proxies: {
+            '/tests/': '/base/tests/',
+            '/context.js': '/base/context.js'
+        },
+
         // list of files to exclude
-        exclude: [
-        ],
+        exclude: [],
 
         // test results reporter to use
         // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-        reporters: ['progress'],
+        reporters: ['spec'],
 
         // web server port
         port: 9876,
@@ -73,19 +79,19 @@ module.exports = function(config) {
         // - PhantomJS
         // - IE (only Windows)
         browsers: ['ChromeNoSandboxHeadless'],
-     customLaunchers: {
-      ChromeNoSandboxHeadless: {
-	base: 'Chromium',
-	flags: [
-	  '--no-sandbox',
-	  // See https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md
-	  '--headless',
-	  '--disable-gpu',
-	  // Without a remote debugging port, Google Chrome exits immediately.
-	  ' --remote-debugging-port=9222'
-	]
-      }
-    },
+        customLaunchers: {
+            ChromeNoSandboxHeadless: {
+                base: 'Chromium',
+                flags: [
+                    '--no-sandbox',
+                    // See https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md
+                    '--headless',
+                    '--disable-gpu',
+                    // Without a remote debugging port, Google Chrome exits immediately.
+                    ' --remote-debugging-port=9222'
+                ]
+            }
+        },
 
         // If browser does not capture in given timeout [ms], kill it
         captureTimeout: 60000,
