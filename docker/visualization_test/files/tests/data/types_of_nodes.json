@@ -1,0 +1,58 @@
+{
+  "nodes": [
+    {
+      "name": "standardNode",
+      "constructors": 0,
+      "nbVariants": 2,
+      "types": [
+        "CLASS",
+        "VP"
+      ],
+      "methods": 8
+    },
+    {
+      "name": "abstractClassNode",
+      "constructors": 0,
+      "nbVariants": 2,
+      "types": [
+        "CLASS",
+        "ABSTRACT",
+        "VP"
+      ],
+      "methods": 8
+    },
+    {
+      "name": "interfaceNode",
+      "constructors": 0,
+      "nbVariants": 2,
+      "types": [
+        "INTERFACE",
+        "VP"
+      ],
+      "methods": 8
+    },
+    {
+      "name": "strategyNode",
+      "constructors": 0,
+      "nbVariants": 2,
+      "types": [
+        "CLASS",
+        "STRATEGY",
+        "VP"
+      ],
+      "methods": 8
+    },
+    {
+      "name": "factoryNode",
+      "constructors": 0,
+      "nbVariants": 2,
+      "types": [
+        "INTERFACE",
+        "FACTORY",
+        "VP"
+      ],
+      "methods": 8
+    }
+  ],
+  "links": []
+}

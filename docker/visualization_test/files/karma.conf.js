@@ -33,7 +33,6 @@ module.exports = function (config) {
         plugins: [
             'karma-jasmine',
             'karma-chrome-launcher',
-            'karma-firefox-launcher',
             'karma-jquery',
             'karma-spec-reporter'
         ],
@@ -89,19 +88,9 @@ module.exports = function (config) {
                     // See https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md
                     '--headless',
                     '--disable-gpu',
-                    '--disable-web-security',
                     // Without a remote debugging port, Google Chrome exits immediately.
                     ' --remote-debugging-port=9222'
                 ]
-            },
-            FirefoxHeadless: {
-                base: 'Firefox',
-                flags: [
-                    '-headless',
-                ],
-                prefs: {
-                    'network.proxy.type': 0
-                }
             }
         },
 

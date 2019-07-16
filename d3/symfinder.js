@@ -217,6 +217,7 @@ async function generateGraph() {
         var newLabel = label.enter().append("text")
             .attr("dx", -5)
             .attr("dy", ".35em")
+            .attr("name", d => d.name)
             .attr("fill", function (d) {
                 var nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.constructors));
                 return contrastColor(nodeColor);
