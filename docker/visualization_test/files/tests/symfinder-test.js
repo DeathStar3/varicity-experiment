@@ -21,27 +21,23 @@
 
 describe("Generating graph with one node", function () {
 
-    beforeAll(function () {
-        $.getJSON("tests/data/graph1.json", function (jsonData) {
-            displayGraph(jsonData, "", [], []);
-        });
+    beforeAll(async function () {
+        await displayGraph("tests/data/graph1.json", "tests/data/graph1-stats.json", [], false);
     });
-
+    //
     it('svg should exist', function () {
         var svg = document.getElementsByTagName('svg');
         expect(svg).not.toBe(null);
     });
-    it('generated graph should contain one node', function () {
-        expect($(".node").length).not.toBe(1);
+    it('generated graph should contain one node', async function () {
+        expect(d3.selectAll('circle').size()).toBe(1);
     });
 });
 
 describe("Generating graph with two linked nodes", function () {
 
-    beforeAll(function () {
-        $.getJSON("tests/data/graph2.json", function (jsonData) {
-            displayGraph(jsonData, "", [], []);
-        });
+    beforeAll(async function () {
+        await displayGraph("tests/data/graph2.json", "tests/data/graph1-stats.json", [], false);
     });
 
     it('svg should exist', function () {
@@ -49,9 +45,9 @@ describe("Generating graph with two linked nodes", function () {
         expect(svg).not.toBe(null);
     });
     it('generated graph should contain two nodes', function () {
-        expect($(".node").length).not.toBe(2);
+        expect($(".node").length).toBe(2);
     });
     it('generated graph should contain one link', function () {
-        expect($(".link").length).not.toBe(1);
+        expect($(".link").length).toBe(1);
     });
 });

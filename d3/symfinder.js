@@ -19,7 +19,7 @@ function getFilterItem(filter) {
         '</li>';
 }
 
-function displayGraph(jsonFile, jsonStatsFile, nodefilters = [], filterIsolated = false) {
+async function displayGraph(jsonFile, jsonStatsFile, nodefilters = [], filterIsolated = false) {
 
     d3.selectAll("svg > *").remove();
     filters = nodefilters;
@@ -29,135 +29,139 @@ function displayGraph(jsonFile, jsonStatsFile, nodefilters = [], filterIsolated 
     if (firstTime) {
         filters.forEach(filter => {
             $("#list-tab").append(getFilterItem(filter));
-    });
+        });
         firstTime = false;
     }
 
-    generateGraph();
+    await generateGraph();
 }
 
-function generateGraph() {
+async function generateGraph() {
 
     var width = window.innerWidth,
         height = window.innerHeight - 10;
 
-
-    //	svg selection and sizing
-    var svg = d3.select("svg").attr("width", width).attr("height", height);
-
-    svg.append('defs').append('marker')
-        .attr('id', 'arrowhead')
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", -5)
-        .attr("refY", 0)
-        .attr("markerWidth", 4)
-        .attr("markerHeight", 4)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M0,0L10,-5L10,5")
-        .attr('fill', 'gray')
-        .style('stroke', 'none');
 
     //	d3 color scales
     var color = d3.scaleLinear()
         .range(["#FFFFFF", '#FF0000'])
         .interpolate(d3.interpolateRgb);
 
-    //add encompassing group for the zoom
-    var g = svg.append("g")
-        .attr("class", "everything");
 
-    var link = g.append("g").selectAll(".link"),
-        node = g.append("g").selectAll(".node"),
-        label = g.append("g").selectAll(".label");
+    function generateStructure() {
+        //	svg selection and sizing
+        var svg = d3.select("svg").attr("width", width).attr("height", height);
 
-    //	force simulation initialization
-    var simulation = d3.forceSimulation()
-        .force("link", d3.forceLink().distance(100)
-            .id(function (d) {
-                return d.name;
-            }))
-        .force("charge", d3.forceManyBody()
-            .strength(function (d) {
-                return -50;
-            }))
-        .force("center", d3.forceCenter(width / 2, height / 2));
-
-    function displayData() {
-        //	data read and store
-        d3.json(jsonFile, function (err, gr) {
-
-            d3.json(jsonStatsFile, function (err, stats) {
-                var statisticsContent =
-                    "Number of methods VPs: " + stats["methodsVPs"] + "<br>" +
-                    "Number of constructors VPs: " + stats["constructorsVPs"] + "<br>" +
-                    "Number of method level VPs: " + stats["methodLevelVPs"] + "<br>" +
-                    "Number of class level VPs: " + stats["classLevelVPs"] + "<br>" +
-                    "Number of methods variants: " + stats["methodsVariants"] + "<br>" +
-                    "Number of constructors variants: " + stats["constructorsVariants"] + "<br>" +
-                    "Number of method level variants: " + stats["methodLevelVariants"] + "<br>" +
-                    "Number of class level variants: " + stats["classLevelVariants"];
-                document.getElementById("statistics").innerHTML = statisticsContent;
-
-            });
-
-            if (err) throw err;
-
-            var sort = gr.nodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructors)).sort((a, b) => a - b);
-            color.domain([sort[0] - 3, sort[sort.length - 1]]); // TODO deal with magic number
-
-            var nodeByID = {};
+        svg.append('defs').append('marker')
+            .attr('id', 'arrowhead')
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", -5)
+            .attr("refY", 0)
+            .attr("markerWidth", 4)
+            .attr("markerHeight", 4)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,0L10,-5L10,5")
+            .attr('fill', 'gray')
+            .style('stroke', 'none');
 
 
-            graph = gr;
-            store = $.extend(true, {}, gr);
+        //add encompassing group for the zoom
+        var g = svg.append("g")
+            .attr("class", "everything");
 
-            graph.nodes.forEach(function (n) {
-                n.radius = n.types.includes("CLASS") ? 10 + n.methods : 10;
-                nodeByID[n.name] = n;
-            });
+        var link = g.append("g").selectAll(".link"),
+            node = g.append("g").selectAll(".node"),
+            label = g.append("g").selectAll(".label");
+        return {svg, g, link, node, label};
+    }
 
-            graph.links.forEach(function (l) {
-                l.sourceTypes = nodeByID[l.source].types;
-                l.targetTypes = nodeByID[l.target].types;
-            });
+    var {svg, g, link, node, label} = generateStructure();
 
-            store.nodes.forEach(function (n) {
-                n.radius = n.types.includes("CLASS") ? 10 + n.methods : 10;
-            });
+    await getData();
 
-            store.links.forEach(function (l) {
-                l.sourceTypes = nodeByID[l.source].types;
-                l.targetTypes = nodeByID[l.target].types;
-            });
-
-            graph.nodes = gr.nodes.filter(n => !filters.some(filter => n.name.startsWith(filter)));
-            graph.links = gr.links.filter(l => !filters.some(filter => l.source.startsWith(filter)) && !filters.some(filter => l.target.startsWith(filter)));
-
-            if (filterIsolated) {
-                var nodesToKeep = new Set();
-                graph.links.forEach(l => {
-                    nodesToKeep.add(l.source);
-                    nodesToKeep.add(l.target);
+    async function getData() {
+        return new Promise(((resolve, reject) => {
+            d3.queue()
+                .defer(d3.json, jsonFile)
+                .defer(d3.json, jsonStatsFile)
+                .await(function (err, gr, stats) {
+                    if (err) throw err;
+                    displayData(err, gr, stats);
+                    update(node, link, label);
+                    resolve();
                 });
-                graph.nodes = gr.nodes.filter(n => nodesToKeep.has(n.name));
-            }
-            update();
+        }));
+
+    }
+
+    function displayData(err, gr, stats) {
+        //	data read and store
+
+        if (err) throw err;
+
+        document.getElementById("statistics").innerHTML = "Number of methods VPs: " + stats["methodsVPs"] + "<br>" +
+            "Number of constructors VPs: " + stats["constructorsVPs"] + "<br>" +
+            "Number of method level VPs: " + stats["methodLevelVPs"] + "<br>" +
+            "Number of class level VPs: " + stats["classLevelVPs"] + "<br>" +
+            "Number of methods variants: " + stats["methodsVariants"] + "<br>" +
+            "Number of constructors variants: " + stats["constructorsVariants"] + "<br>" +
+            "Number of method level variants: " + stats["methodLevelVariants"] + "<br>" +
+            "Number of class level variants: " + stats["classLevelVariants"];
+
+        var sort = gr.nodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructors)).sort((a, b) => a - b);
+        color.domain([sort[0] - 3, sort[sort.length - 1]]); // TODO deal with magic number
+
+        var nodeByID = {};
+
+        graph = gr;
+        store = $.extend(true, {}, gr);
+
+        graph.nodes.forEach(function (n) {
+            n.radius = n.types.includes("CLASS") ? 10 + n.methods : 10;
+            nodeByID[n.name] = n;
         });
+
+        graph.links.forEach(function (l) {
+            l.sourceTypes = nodeByID[l.source].types;
+            l.targetTypes = nodeByID[l.target].types;
+        });
+
+        store.nodes.forEach(function (n) {
+            n.radius = n.types.includes("CLASS") ? 10 + n.methods : 10;
+        });
+
+        store.links.forEach(function (l) {
+            l.sourceTypes = nodeByID[l.source].types;
+            l.targetTypes = nodeByID[l.target].types;
+        });
+
+        graph.nodes = gr.nodes.filter(n => !filters.some(filter => n.name.startsWith(filter)));
+        graph.links = gr.links.filter(l => !filters.some(filter => l.source.startsWith(filter)) && !filters.some(filter => l.target.startsWith(filter)));
+
+        if (filterIsolated) {
+            var nodesToKeep = new Set();
+            graph.links.forEach(l => {
+                nodesToKeep.add(l.source);
+                nodesToKeep.add(l.target);
+            });
+            graph.nodes = gr.nodes.filter(n => nodesToKeep.has(n.name));
+        }
+
     }
 
 
     //	general update pattern for updating the graph
-    function update() {
+    function update(node, link, label) {
+
         //	UPDATE
-        let dataSource = graph;
-        node = node.data(dataSource.nodes, function (d) {
+        node = node.data(graph.nodes, function (d) {
             return d.name;
         });
         //	EXIT
         node.exit().remove();
         //	ENTER
-        var newNode = node.enter().append("g").append("circle")
+        var newNode = node.enter().append("circle")
             .attr("class", "node")
             .style("stroke-dasharray", function (d) {
                 return d.types.includes("ABSTRACT") ? "3,3" : "3,0"
@@ -174,23 +178,7 @@ function generateGraph() {
             })
             .attr("name", function (d) {
                 return d.name
-            })
-            .call(d3.drag()
-                .on("start", dragstarted)
-                .on("drag", dragged)
-                .on("end", dragended)
-            );
-
-        //Zoom functions
-        function zoom_actions() {
-            g.attr("transform", d3.event.transform)
-        }
-
-        //add zoom capabilities
-        var zoom_handler = d3.zoom()
-            .on("zoom", zoom_actions);
-
-        zoom_handler(svg);
+            });
 
         newNode.append("title").text(function (d) {
             return "types: " + d.types + "\n" + "name: " + d.name;
@@ -200,7 +188,7 @@ function generateGraph() {
         node = node.merge(newNode);
 
         //	UPDATE
-        link = link.data(dataSource.links, function (d) {
+        link = link.data(graph.links, function (d) {
             return d.name;
         });
         //	EXIT
@@ -220,13 +208,13 @@ function generateGraph() {
         link = link.merge(newLink);
 
         //  UPDATE
-        label = label.data(dataSource.nodes, function (d) {
+        label = label.data(graph.nodes, function (d) {
             return d.name;
         });
         //	EXIT
         label.exit().remove();
         //  ENTER
-        var newLabel = label.enter().append("g").append("text")
+        var newLabel = label.enter().append("text")
             .attr("dx", -5)
             .attr("dy", ".35em")
             .attr("fill", function (d) {
@@ -244,16 +232,60 @@ function generateGraph() {
             addFilter(d3.select(this).attr("name"));
         });
 
-        //	update simulation nodes, links, and alpha
-        simulation
-            .nodes(dataSource.nodes)
-            .on("tick", ticked);
-
-        simulation.force("link")
-            .links(dataSource.links);
-
-        simulation.alpha(1).alphaTarget(0).restart();
+        addAdvancedBehaviour(newNode, width, height, g, svg, node, link, label);
     }
+
+    function contrastColor(color) {
+        var d = 0;
+
+        // Counting the perceptive luminance - human eye favors green color...
+        const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
+
+        if (luminance > 0.5)
+            d = 0; // bright colors - black font
+        else
+            d = 255; // dark colors - white font
+
+        return d3.rgb(d, d, d);
+    }
+
+}
+
+function addAdvancedBehaviour(newNode, width, height, g, svg, node, link, label) {
+    newNode.call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended)
+    );
+
+    //	force simulation initialization
+    var simulation = d3.forceSimulation()
+        .force("link", d3.forceLink().distance(100)
+            .id(function (d) {
+                return d.name;
+            }))
+        .force("charge", d3.forceManyBody()
+            .strength(function (d) {
+                return -50;
+            }))
+        .force("center", d3.forceCenter(width / 2, height / 2));
+
+
+    //	update simulation nodes, links, and alpha
+    simulation
+        .nodes(graph.nodes)
+        .on("tick", ticked);
+
+    simulation.force("link")
+        .links(graph.links);
+
+    simulation.alpha(1).alphaTarget(0).restart();
+
+    //add zoom capabilities
+    var zoom_handler = d3.zoom()
+        .on("zoom", () => g.attr("transform", d3.event.transform));
+
+    zoom_handler(svg);
 
     //	drag event handlers
     function dragstarted(d) {
@@ -307,23 +339,6 @@ function generateGraph() {
                 return d.y;
             });
     }
-
-    function contrastColor(color) {
-        var d = 0;
-
-        // Counting the perceptive luminance - human eye favors green color...
-        const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
-
-        if (luminance > 0.5)
-            d = 0; // bright colors - black font
-        else
-            d = 255; // dark colors - white font
-
-        return d3.rgb(d, d, d);
-    }
-
-    displayData();
-
 }
 
 function addFilter(value) {
@@ -362,8 +377,8 @@ $(document).on('click', ".close", function (e) {
     displayGraph(jsonFile, jsonStatsFile, filters, filterIsolated);
 });
 
-$('#hide-info-button').click(function(){
-    $(this).text(function(i,old){
-        return old === 'Show project information' ?  'Hide project information' : 'Show project information';
+$('#hide-info-button').click(function () {
+    $(this).text(function (i, old) {
+        return old === 'Show project information' ? 'Hide project information' : 'Show project information';
     });
 });
