@@ -1,0 +1,88 @@
+{
+  "nodes": [
+    {
+      "name": "Shape",
+      "constructors": 0,
+      "nbVariants": 0,
+      "types": [
+        "CLASS",
+        "ABSTRACT",
+        "VP"
+      ],
+      "methods": 1
+    },
+    {
+      "name": "foo.bar.Ellipse",
+      "constructors": 0,
+      "nbVariants": 0,
+      "types": [
+        "CLASS",
+        "ABSTRACT",
+        "VP"
+      ],
+      "methods": 10
+    },
+    {
+      "name": "foo.bar.Circle",
+      "constructors": 0,
+      "nbVariants": 0,
+      "types": [
+        "CLASS",
+        "ABSTRACT",
+        "VP"
+      ],
+      "methods": 10
+    },
+    {
+      "name": "foo.bar.Square",
+      "constructors": 1,
+      "nbVariants": 0,
+      "types": [
+        "CLASS",
+        "ABSTRACT",
+        "VP"
+      ],
+      "methods": 0
+    },
+    {
+      "name": "bar.Triangle",
+      "constructors": 10,
+      "nbVariants": 0,
+      "types": [
+        "CLASS",
+        "ABSTRACT",
+        "VP"
+      ],
+      "methods": 0
+    },
+    {
+      "name": "Triangle",
+      "constructors": 10,
+      "nbVariants": 0,
+      "types": [
+        "CLASS",
+        "ABSTRACT",
+        "VP"
+      ],
+      "methods": 0
+    },
+    {
+      "name": "Shapes",
+      "constructors": 0,
+      "nbVariants": 0,
+      "types": [
+        "CLASS",
+        "ABSTRACT",
+        "VP"
+      ],
+      "methods": 0
+    }
+  ],
+  "links": [
+    {
+      "type": "EXTENDS",
+      "source": "foo.bar.Circle",
+      "target": "foo.bar.Ellipse"
+    }
+  ]
+}

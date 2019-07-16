@@ -342,11 +342,11 @@ function addAdvancedBehaviour(newNode, width, height, g, svg, node, link, label)
     }
 }
 
-function addFilter(value) {
+async function addFilter(value) {
     if (value) {
         $("#list-tab").append(getFilterItem(value));
         filters.push(value);
-        displayGraph(jsonFile, jsonStatsFile, filters, filterIsolated);
+        await displayGraph(jsonFile, jsonStatsFile, filters, filterIsolated);
     }
 }
 
@@ -355,27 +355,27 @@ $(document).on('click', ".list-group-item", function (e) {
     $('.active').removeClass('active');
 });
 
-$("#add-filter-button").on('click', function (e) {
+$("#add-filter-button").on('click', async function (e) {
     e.preventDefault();
     let input = $("#package-to-filter");
     let inputValue = input.val();
     input.val("");
-    addFilter(inputValue);
+    await addFilter(inputValue);
 });
 
-$("#filter-isolated").on('click', function (e) {
+$("#filter-isolated").on('click', async function (e) {
     e.preventDefault();
     var filtered = $(this).attr("aria-pressed") === "false";
     $(this).text(filtered ? "Unfilter isolated nodes" : "Filter isolated nodes");
-    displayGraph(jsonFile, jsonStatsFile, filters, filtered);
+    await displayGraph(jsonFile, jsonStatsFile, filters, filtered);
 });
 
-$(document).on('click', ".close", function (e) {
+$(document).on('click', ".close", async function (e) {
     e.preventDefault();
     let removedFilter = $(e.target.parentElement.parentElement).attr("id");
     $(e.target.parentElement.parentElement).remove();
     filters.splice(filters.indexOf(removedFilter), 1);
-    displayGraph(jsonFile, jsonStatsFile, filters, filterIsolated);
+    await displayGraph(jsonFile, jsonStatsFile, filters, filterIsolated);
 });
 
 $('#hide-info-button').click(function () {
