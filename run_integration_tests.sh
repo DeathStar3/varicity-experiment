@@ -21,6 +21,7 @@
 #
 
 
+./build.sh -DskipTests
 ./run.sh junit
 
 docker-compose -f integration-tests-compose.yaml build
