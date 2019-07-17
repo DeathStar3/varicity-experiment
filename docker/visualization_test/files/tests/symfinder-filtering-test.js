@@ -35,7 +35,7 @@ describe("Filtering an isolated node", () => {
     it('the node is removed from the visualization', () => {
         expect(d3.select('circle[name = "Shape"]').empty()).toBeTruthy();
     });
-    xit('only the node with the exact name is filtered', () => {
+    it('only the node with the exact name is filtered', () => {
         expect(d3.select('circle[name = "Shapes"]').empty()).toBeFalsy();
     });
 
@@ -59,9 +59,6 @@ describe("Unfiltering an isolated node", () => {
         expect(d3.select('circle[name = "Shape"]').empty()).toBeFalsy();
 
     });
-    xit('the graph is strictly identical to the one before filtering', () => {
-
-    });
 
     afterAll(() => $("#list-tab").empty())
 
@@ -82,14 +79,9 @@ describe("Filtering a linked node", () => {
     });
     it('the node is removed from the visualization', () => {
         expect(d3.select('circle[name = "foo.bar.Circle"]').empty()).toBeTruthy();
-
     });
     it('the link is removed from the visualization', () => {
         expect(d3.select('line').size()).toBe(0);
-
-    });
-    xit('only the node with the exact name is filtered', async () => {
-
     });
 
     afterAll(() => $("#list-tab").empty())
@@ -112,9 +104,6 @@ describe("Unfiltering a linked node", () => {
     });
     it('the link is brought back to the visualization', () => {
         expect(d3.select('line[source = "foo.bar.Circle"]').empty()).toBeFalsy();
-    });
-    xit('the graph is strictly identical to the one before filtering', () => {
-
     });
 
     afterAll(() => $("#list-tab").empty())
@@ -146,7 +135,7 @@ describe("Filtering a package", () => {
 
 });
 
-xdescribe("Unfiltering a package", () => {
+describe("Unfiltering a package", () => {
 
     beforeAll(async (done) => {
         firstTime = true;
@@ -161,9 +150,6 @@ xdescribe("Unfiltering a package", () => {
     it('the nodes are brought back to the visualization', () => {
         expect(d3.select('circle[name = "foo.bar.Circle"]').empty()).toBeFalsy();
         expect(d3.select('circle[name = "foo.bar.Square"]').empty()).toBeFalsy();
-    });
-    xit('the graph is strictly identical to the one before filtering', () => {
-
     });
 
     afterAll(() => $("#list-tab").empty())

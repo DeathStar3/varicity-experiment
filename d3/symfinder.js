@@ -1,3 +1,24 @@
+/*
+ * This file is part of symfinder.
+ *
+ * symfinder is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * symfinder is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with symfinder.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2018-2019 Johann Mortara <johann.mortara@etu.univ-cotedazur.fr>
+ * Copyright 2018-2019 Xhevahire Tërnava <xhevahire.ternava@lip6.fr>
+ * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
+ */
+
 //	data stores
 var graph, store;
 
@@ -136,8 +157,8 @@ async function generateGraph() {
             l.targetTypes = nodeByID[l.target].types;
         });
 
-        graph.nodes = gr.nodes.filter(n => !filters.some(filter => n.name.startsWith(filter)));
-        graph.links = gr.links.filter(l => !filters.some(filter => l.source.startsWith(filter)) && !filters.some(filter => l.target.startsWith(filter)));
+        graph.nodes = gr.nodes.filter(n => !filters.some(filter => matchesFilter(n.name, filter)));
+        graph.links = gr.links.filter(l => !filters.some(filter => matchesFilter(l.source, filter)) && !filters.some(filter => matchesFilter(l.target, filter)));
 
         if (filterIsolated) {
             var nodesToKeep = new Set();
@@ -238,19 +259,6 @@ async function generateGraph() {
         addAdvancedBehaviour(newNode, width, height, g, svg, node, link, label);
     }
 
-    function contrastColor(color) {
-        var d = 0;
-
-        // Counting the perceptive luminance - human eye favors green color...
-        const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
-
-        if (luminance > 0.5)
-            d = 0; // bright colors - black font
-        else
-            d = 255; // dark colors - white font
-
-        return d3.rgb(d, d, d);
-    }
 
 }
 
@@ -342,6 +350,30 @@ function addAdvancedBehaviour(newNode, width, height, g, svg, node, link, label)
                 return d.y;
             });
     }
+}
+
+function contrastColor(color) {
+    var d = 0;
+
+    // Counting the perceptive luminance - human eye favors green color...
+    const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
+
+    if (luminance > 0.5)
+        d = 0; // bright colors - black font
+    else
+        d = 255; // dark colors - white font
+
+    return d3.rgb(d, d, d);
+}
+
+/**
+ * If the filter is a class filter (distinguished by the fact that it contains at least an uppercase letter),
+ * we check that the class name matches the filter exactly.
+ * Otherwise, the filter is a package filter, so we check that the class name starts with the filter.
+ */
+function matchesFilter(name, filter) {
+    sp = filter.split(".");
+    return /[A-Z]/.test(sp[sp.length - 1]) ? name === filter : name.startsWith(filter);
 }
 
 async function addFilter(value) {

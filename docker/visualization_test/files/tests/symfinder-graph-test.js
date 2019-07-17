@@ -116,6 +116,41 @@ describe("Generating different types of nodes", () => {
 
 });
 
+describe("Testing utils functions : distanceToRed", () => {
+
+    it('distance from red to red is 0', () => {
+        expect(distanceToRed(255, 0, 0)).toBe(0);
+    });
+    it('distance increases as green increases', () => {
+        expect(distanceToRed(255, 10, 0)).toBeGreaterThan(0);
+        expect(distanceToRed(255, 10, 0)).toBeLessThan(distanceToRed(255, 100, 0));
+    });
+    it('distance increases as blue increases', () => {
+        expect(distanceToRed(255, 0, 10)).toBeGreaterThan(0);
+        expect(distanceToRed(255, 0, 10)).toBeLessThan(distanceToRed(255, 0, 100));
+    });
+    it('distance increases as green and blue increase', () => {
+        expect(distanceToRed(255, 10, 10)).toBeGreaterThan(0);
+        expect(distanceToRed(255, 10, 10)).toBeLessThan(distanceToRed(255, 100, 100));
+    });
+
+});
+
+describe("Testing utils functions : matchesFilter", () => {
+
+    it('package filtering', () => {
+        expect(matchesFilter("foo.bar.Clazz", "foo.bar")).toBeTruthy();
+        expect(matchesFilter("bar.Clazz", "foo.bar")).toBeFalsy();
+        expect(matchesFilter("foo.bar.Clazz", "bar")).toBeFalsy();
+    });
+    it('class filtering', () => {
+        expect(matchesFilter("foo.bar.Clazz", "foo.bar.Clazz")).toBeTruthy();
+        expect(matchesFilter("foo.bar.Clazz", "foo.bar.Clazzz")).toBeFalsy();
+        expect(matchesFilter("foo.bar.Clazzz", "foo.bar.Clazz")).toBeFalsy();
+    });
+
+});
+
 function distanceToRedFromString(color){
     return distanceToRed(...color.replace(/[^\d,]/g, '').split(','));
 }
