@@ -19,14 +19,14 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-xdescribe("Filtering an isolated node", () => {
+describe("Filtering an isolated node", () => {
 
-    beforeAll(async () => {
+    beforeAll(async (done) => {
         firstTime = true;
         await displayGraph("tests/data/graph-to-filter.json", "tests/data/stats.json", [], false);
         $("#package-to-filter").val("Shape");
-        await $("#add-filter-button").trigger("click");
-        setTimeout(() => console.log("OK"), 500);
+        $("#add-filter-button").trigger("click");
+        setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
 
     it('the filter is added to the list', async () => {
@@ -39,14 +39,17 @@ xdescribe("Filtering an isolated node", () => {
         expect(d3.select('circle[name = "Shapes"]').empty()).toBeFalsy();
     });
 
+    afterAll(() => $("#list-tab").empty())
+
 });
 
-xdescribe("Unfiltering an isolated node", () => {
+describe("Unfiltering an isolated node", () => {
 
-    beforeAll(async () => {
+    beforeAll(async (done) => {
         firstTime = true;
         await displayGraph("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"], false);
-        $(".close").first().trigger("click");
+        $(".close > span").first().trigger("click");
+        setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
 
     it('the filter is removed from the list', () => {
@@ -60,16 +63,18 @@ xdescribe("Unfiltering an isolated node", () => {
 
     });
 
+    afterAll(() => $("#list-tab").empty())
+
 });
 
 describe("Filtering a linked node", () => {
 
-    beforeAll(async () => {
+    beforeAll(async (done) => {
         firstTime = true;
         await displayGraph("tests/data/graph-to-filter.json", "tests/data/stats.json", [], false);
         $("#package-to-filter").val("foo.bar.Circle");
-        await $("#add-filter-button").trigger("click");
-        setTimeout(() => console.log("OK"), 500);
+        $("#add-filter-button").trigger("click");
+        setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
 
     it('the filter is added to the list', () => {
@@ -86,6 +91,8 @@ describe("Filtering a linked node", () => {
     xit('only the node with the exact name is filtered', async () => {
 
     });
+
+    afterAll(() => $("#list-tab").empty())
 
 });
 xdescribe("Unfiltering a linked node", () => {
