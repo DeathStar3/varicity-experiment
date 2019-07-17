@@ -197,6 +197,8 @@ async function generateGraph() {
         newLink = link.enter().append("line")
             .attr("stroke-width", 1)
             .attr("class", "link")
+            .attr("source", d => d.source)
+            .attr("target", d => d.target)
             .attr('marker-start', "url(#arrowhead)")
             .style("pointer-events", "none");
 
