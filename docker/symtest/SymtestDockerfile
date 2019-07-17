@@ -1,7 +1,0 @@
-FROM maven:3-jdk-8-alpine
-RUN apk add git
-ADD symfinder.yaml /symfinder.yaml
-ADD pom.xml sources/pom.xml
-ADD docker/symtest/exec_symtest.sh /exec_symtest.sh
-ADD src/ sources/src/
-ENTRYPOINT sh exec_symtest.sh

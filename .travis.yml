@@ -19,16 +19,18 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
+language: minimal
 
-matrix:
+jobs:
   include:
-    - name: "Symfinder engine unit tests"
-      language: minimal
+    - stage: "Unit tests"
+      name: "Symfinder engine unit tests"
       script: ./build.sh
-    - name: "Visualization unit tests"
-      language: minimal
+    - name: "Visualization engine unit tests"
       script: ./run_visualization_tests.sh
-
+    - stage: "Integration tests"
+      name: "Tests on sample projects"
+      script: ./run_integration_tests.sh
 
 notifications:
   email: false

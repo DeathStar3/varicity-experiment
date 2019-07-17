@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 # This file is part of symfinder.
 #
@@ -20,9 +19,12 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-
-./run.sh junit
-
-docker-compose -f integration-tests-compose.yaml build
-docker-compose -f integration-tests-compose.yaml up
-docker-compose -f integration-tests-compose.yaml down
+FROM node:12-alpine
+RUN mkdir -p /opt/karma
+WORKDIR /opt/karma
+RUN npm init --yes && apk update && apk upgrade && apk add --no-cache chromium && npm install -g karma jasmine-core karma-jasmine karma-chrome-launcher karma-jquery karma-spec-reporter --save-dev
+COPY docker/integration_tests/files/ /opt/karma/
+COPY d3/symfinder.js /opt/karma/tests
+COPY generated_visualizations/data /opt/karma/tests/data
+RUN ls /opt/karma/tests
+CMD npm install && karma start --single-run
