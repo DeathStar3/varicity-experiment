@@ -29,7 +29,7 @@ describe("Generating JUnit 4.12 graph", () => {
         var svg = document.getElementsByTagName('svg');
         expect(svg).not.toBe(null);
     });
-    it('generated graph should contain 83 node', async () => {
+    it('generated graph should contain 83 nodes', async () => {
         expect(d3.selectAll('circle').size()).toBe(83);
     });
 
