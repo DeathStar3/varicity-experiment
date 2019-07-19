@@ -19,8 +19,13 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-package structures;
+package inheritance;
 
-public abstract class AbstractClass {
+public class Superclass {
 
+    private int i;
+
+    public Superclass(int i) {
+        this.i = i;
+    }
 }

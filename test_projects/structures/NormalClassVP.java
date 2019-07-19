@@ -21,6 +21,15 @@
 
 package structures;
 
-public abstract class AbstractClass {
+public class NormalClassVP {
 
+    private int i;
+
+    public NormalClassVP() {
+
+    }
+
+    public NormalClassVP(int i) {
+        this.i = i;
+    }
 }

@@ -19,8 +19,18 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-package structures;
+package metrics;
 
-public abstract class AbstractClass {
+public class OneConstructorOverload {
+
+    public int width;
+
+    public OneConstructorOverload(int width) {
+        this.width = width;
+    }
+
+    public OneConstructorOverload() {
+        this.width = 42;
+    }
 
 }

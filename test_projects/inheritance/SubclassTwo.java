@@ -19,8 +19,19 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-package structures;
+package inheritance;
 
-public abstract class AbstractClass {
+public class SubclassTwo extends Superclass {
+
+    private int param;
+
+    public SubclassTwo() {
+        super(45);
+    }
+
+    public SubclassTwo(int param){
+        super(45);
+        this.param = param;
+    }
 
 }

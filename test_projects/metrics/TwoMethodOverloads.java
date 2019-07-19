@@ -19,8 +19,32 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-package structures;
+package metrics;
 
-public abstract class AbstractClass {
+public class TwoMethodOverloads {
+
+    public int width;
+    public int height;
+
+    public TwoMethodOverloads(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public void incrementWidth(int value){
+        width += value;
+    }
+
+    public void incrementWidth(){
+        width += 1;
+    }
+
+    public void incrementHeight(int value){
+        height += value;
+    }
+
+    public void incrementHeight(){
+        height += 1;
+    }
 
 }

@@ -4,11 +4,17 @@ factory:
 generics:
   localDirectory: generics
   sourcePackage: .
+inheritance:
+  localDirectory: inheritance
+  sourcePackage: .
 import_from_different_package:
   localDirectory: import_from_different_package
   sourcePackage: .
 inner_class:
   localDirectory: inner_class
+  sourcePackage: .
+metrics:
+  localDirectory: metrics
   sourcePackage: .
 strategy:
   localDirectory: strategy

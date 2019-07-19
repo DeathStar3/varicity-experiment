@@ -26,5 +26,4 @@ RUN npm init --yes && apk update && apk upgrade && apk add --no-cache chromium &
 COPY docker/integration_tests/files/ /opt/karma/
 COPY d3/symfinder.js /opt/karma/tests
 COPY generated_visualizations/data /opt/karma/tests/data
-RUN ls /opt/karma/tests
-CMD npm install && karma start --single-run
+CMD npm install && karma start
