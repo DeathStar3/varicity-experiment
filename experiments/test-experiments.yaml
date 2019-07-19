@@ -1,0 +1,21 @@
+factory:
+  localDirectory: factory
+  sourcePackage: .
+generics:
+  localDirectory: generics
+  sourcePackage: .
+import_from_different_package:
+  localDirectory: import_from_different_package
+  sourcePackage: .
+inner_class:
+  localDirectory: inner_class
+  sourcePackage: .
+strategy:
+  localDirectory: strategy
+  sourcePackage: .
+structures:
+  localDirectory: structures
+  sourcePackage: .
+template:
+  localDirectory: template
+  sourcePackage: .

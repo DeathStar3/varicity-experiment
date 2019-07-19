@@ -19,18 +19,38 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-describe("Generating JUnit 4.12 graph", () => {
+describe("factory graph", () => {
 
     beforeAll(async () => {
-        await displayGraph("tests/data/junit-r4.12.json", "tests/data/junit-r4.12-stats.json", [], false);
+        await displayGraph("tests/data/factory.json", "tests/data/factory.json", [], false);
     });
-    //
-    it('svg should exist', () => {
-        var svg = document.getElementsByTagName('svg');
-        expect(svg).not.toBe(null);
+
+    it('the graph should contain four nodes', () => {
+        expect(d3.selectAll('circle').size()).toBe(4);
     });
-    it('generated graph should contain 83 nodes', async () => {
-        expect(d3.selectAll('circle').size()).toBe(83);
+    it('ShapeFactory should be a factory', () => {
+        expect(graph.nodes.filter(n => n.name === "factory.ShapeFactory")[0].types.includes("FACTORY")).toBeTruthy();
+    });
+    it('ShapeFactory node should have an F on it', () => {
+        expect(d3.select('text[name = "factory.ShapeFactory"]').html()).toBe("F");
+    });
+
+});
+
+describe("strategy graph", () => {
+
+    beforeAll(async () => {
+        await displayGraph("tests/data/strategy.json", "tests/data/strategy.json", [], false);
+    });
+
+    it('the graph should contain one node', () => {
+        expect(d3.selectAll('circle').size()).toBe(1);
+    });
+    it('the node should be a strategy', () => {
+        expect(graph.nodes[0].types.includes("STRATEGY")).toBeTruthy();
+    });
+    it('the node should have an S on it', () => {
+        expect(d3.select('text[name = "strategy.Strategy"]').html()).toBe("S");
     });
 
 });

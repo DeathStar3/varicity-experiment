@@ -20,10 +20,24 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
+create_directory(){
+    if [[ ! -d "$1" ]]; then
+        echo "Creating $1 directory"
+        mkdir "$1"
+    else
+        echo "$1 directory already exists"
+    fi
+}
+
+sed -i -e 's/experiments.yaml/test-experiments.yaml/g' symfinder.yaml
+create_directory resources
+cp -r test_projects/* resources/
 
 ./build.sh -DskipTests
-./run.sh junit
+./run.sh
 
 docker-compose -f integration-tests-compose.yaml build
 docker-compose -f integration-tests-compose.yaml up
 docker-compose -f integration-tests-compose.yaml down
+
+sed -i -e 's/test-experiments.yaml/experiments.yaml/g' symfinder.yaml
