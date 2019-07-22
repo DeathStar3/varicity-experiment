@@ -63,7 +63,7 @@ public class ConstructorVPsTest extends Neo4JTest {
             graph.linkTwoNodes(shapeClass, shapeConstructor2, RelationType.METHOD);
             graph.linkTwoNodes(shapeClass, shapeConstructor3, RelationType.METHOD);
             graph.setConstructorsOverloads();
-            assertEquals(2, graph.getTotalNbOverloadedConstructors());
+            assertEquals(1, graph.getTotalNbOverloadedConstructors());
         });
     }
 

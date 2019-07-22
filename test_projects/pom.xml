@@ -27,14 +27,14 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>./factory</module>
-        <module>./generics</module>
-        <module>./import_from_different_package</module>
-        <module>./inheritance</module>
-        <module>./inner_class</module>
-        <module>./metrics</module>
-        <module>./strategy</module>
-        <module>./structures</module>
-        <module>./template</module>
+        <module>factory</module>
+        <module>generics</module>
+        <module>import_from_different_package</module>
+        <module>inheritance</module>
+        <module>inner_class</module>
+        <module>metrics</module>
+        <module>strategy</module>
+        <module>structures</module>
+        <module>template</module>
     </modules>
 </project>

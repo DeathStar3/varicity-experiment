@@ -64,17 +64,17 @@ describe("Comparing metrics evolution", () => {
         await displayGraph("tests/data/metrics.json", "tests/data/metrics-stats.json", [], false);
     });
 
-    it('OneConstructorOverload should have one constructor overload', () => {
+    it('OneConstructorOverload should have one overloaded constructor', () => {
         expect(graph.nodes.filter(n => n.name === "OneConstructorOverload")[0].constructors).toBe(1);
     });
-    it('TwoConstructorOverloads should have two constructor overloads', () => {
-        expect(graph.nodes.filter(n => n.name === "TwoConstructorOverloads")[0].constructors).toBe(2);
+    it('TwoConstructorOverloads should have one overloaded constructor', () => {
+        expect(graph.nodes.filter(n => n.name === "TwoConstructorOverloads")[0].constructors).toBe(1);
     });
 
-    it('OneMethodOverload should have one method overload', () => {
+    it('OneMethodOverload should have one overloaded method', () => {
         expect(graph.nodes.filter(n => n.name === "OneMethodOverload")[0].methods).toBe(1);
     });
-    it('TwoMethodOverloads should have two method overloads', () => {
+    it('TwoMethodOverloads should have two overloaded methods', () => {
         expect(graph.nodes.filter(n => n.name === "TwoMethodOverloads")[0].methods).toBe(2);
     });
 

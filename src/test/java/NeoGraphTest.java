@@ -271,7 +271,7 @@ public class NeoGraphTest extends Neo4JTest {
                 assertEquals(1, allNodes.size());
                 Node node = allNodes.get(0);
                 assertTrue(node.getAllProperties().containsKey("constructors"));
-                assertEquals(2L, node.getProperty("constructors"));
+                assertEquals(1L, node.getProperty("constructors"));
                 tx.success();
             }
         });

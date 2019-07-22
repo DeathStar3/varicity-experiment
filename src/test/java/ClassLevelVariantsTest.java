@@ -79,4 +79,14 @@ public class ClassLevelVariantsTest extends Neo4JTest {
             assertEquals(0, graph.getNbClassLevelVariants());
         });
     }
+
+    @Test
+    public void OutOfScopeSuperclass() {
+        runTest(graph -> {
+            Node objectClass = graph.createNode("Object", EntityType.CLASS, EntityAttribute.ABSTRACT, EntityAttribute.OUT_OF_SCOPE);
+            Node polygonClass = graph.createNode("Polygon", EntityType.CLASS);
+            graph.linkTwoNodes(objectClass, polygonClass, RelationType.EXTENDS);
+            assertEquals(0, graph.getNbClassLevelVariants());
+        });
+    }
 }

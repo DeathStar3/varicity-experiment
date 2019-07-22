@@ -230,7 +230,7 @@ public class NeoGraph {
     public void setConstructorsOverloads() {
         submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
                 "WITH count(a.name) AS cnt, c\n" +
-                "SET c.constructors = cnt -1");
+                "SET c.constructors = CASE WHEN cnt > 1 THEN 1 ELSE 0 END");
         submitRequest("MATCH (c:CLASS)\n" +
                 "WHERE NOT EXISTS(c.constructors)\n" +
                 "SET c.constructors = 0");
@@ -331,7 +331,7 @@ public class NeoGraph {
      * @return Number of class level variants
      */
     public int getNbClassLevelVariants() {
-        return submitRequest("MATCH (c:CLASS) WHERE (NOT c:ABSTRACT) AND ()-[:EXTENDS|:IMPLEMENTS]->(c) AND (NOT (c)-[:EXTENDS]->()) RETURN (COUNT(c))")
+        return submitRequest("MATCH (p)-[:EXTENDS|:IMPLEMENTS]->(c:CLASS) WHERE (NOT c:ABSTRACT AND NOT p:OUT_OF_SCOPE) AND (NOT (c)-[:EXTENDS]->()) RETURN (COUNT(c))")
                 .list().get(0).get(0).asInt();
     }
 
