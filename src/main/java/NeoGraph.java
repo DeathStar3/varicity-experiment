@@ -482,10 +482,12 @@ public class NeoGraph {
 
     public String generateStatisticsJson() {
         return new JSONObject()
+                .put("VPs", getTotalNbVPs())
                 .put("methodsVPs", getTotalNbOverloadedMethods())
                 .put("constructorsVPs", getTotalNbOverloadedConstructors())
                 .put("methodLevelVPs", getNbMethodLevelVPs())
                 .put("classLevelVPs", getNbClassLevelVPs())
+                .put("variants", getTotalNbVariants())
                 .put("methodsVariants", getNbMethodVariants())
                 .put("constructorsVariants", getNbConstructorVariants())
                 .put("methodLevelVariants", getNbMethodLevelVariants())

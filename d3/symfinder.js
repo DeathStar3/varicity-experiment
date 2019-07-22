@@ -122,9 +122,11 @@ async function generateGraph() {
         if (err) throw err;
 
         document.getElementById("statistics").innerHTML = "Number of methods VPs: " + stats["methodsVPs"] + "<br>" +
+            "Number of VPs: " + stats["VPs"] + "<br>" +
             "Number of constructors VPs: " + stats["constructorsVPs"] + "<br>" +
             "Number of method level VPs: " + stats["methodLevelVPs"] + "<br>" +
             "Number of class level VPs: " + stats["classLevelVPs"] + "<br>" +
+            "Number of variants: " + stats["variants"] + "<br>" +
             "Number of methods variants: " + stats["methodsVariants"] + "<br>" +
             "Number of constructors variants: " + stats["constructorsVariants"] + "<br>" +
             "Number of method level variants: " + stats["methodLevelVariants"] + "<br>" +

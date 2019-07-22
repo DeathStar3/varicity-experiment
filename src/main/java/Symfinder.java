@@ -94,10 +94,12 @@ public class Symfinder {
         neoGraph.setConstructorsOverloads();
         neoGraph.setNbVariantsProperty();
         neoGraph.setVPLabels();
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods VPs: " + neoGraph.getTotalNbOverloadedMethods());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors VPs: " + neoGraph.getTotalNbOverloadedConstructors());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of method level VPs: " + neoGraph.getNbMethodLevelVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of class level VPs: " + neoGraph.getNbClassLevelVPs());
+        logger.log(Level.getLevel("MY_LEVEL"), "Number of variants: " + neoGraph.getTotalNbVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods variants: " + neoGraph.getNbMethodVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors variants: " + neoGraph.getNbConstructorVariants());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of method level variants: " + neoGraph.getNbMethodLevelVariants());
