@@ -56,7 +56,8 @@ public class Symfinder {
     public Symfinder(String sourcePackage, String graphOutputPath) {
         this.sourcePackage = sourcePackage;
         this.graphOutputPath = graphOutputPath;
-        this.neoGraph = new NeoGraph(Configuration.getNeo4JBoltAddress(),
+        this.neoGraph = new
+                NeoGraph(Configuration.getNeo4JBoltAddress(),
                 Configuration.getNeo4JUser(),
                 Configuration.getNeo4JPassword());
     }
