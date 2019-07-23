@@ -19,12 +19,8 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-import java.util.List;
+public class Context {
 
-public class ClassUsingPairTwo {
+    private MyPair <Integer, Double> myPair;
 
-    private MyPair<Integer, List <String>> myPair;
-
-    public ClassUsingPairTwo() {
-    }
 }

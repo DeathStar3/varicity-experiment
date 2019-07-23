@@ -100,6 +100,31 @@ describe("Testing VP and variants calculus for structures", () => {
 
 });
 
+describe("Testing JSON output for generics", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async () => {
+        const [graph, stats] = await getJsonData("tests/data/generics.json", "tests/data/generics-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+    });
+
+    it('there should be a node called MyPair', () => {
+        expect(jsonData.nodes.filter(n => n.name === "MyPair").length).toBe(1);
+    });
+    xit('ObjectIntPair should be a subclass of MyPair', () => {
+        expect(jsonData.links.filter(l => l.source === "MyPair" && l.target === "ObjectIntPair").length).toBe(1);
+    });
+    xit('StringIntPair should be a subclass of MyPair', () => {
+        expect(jsonData.links.filter(l => l.source === "MyPair" && l.target === "StringIntPair").length).toBe(1);
+    });
+    it('MyPair should be a strategy', () => {
+        expect(getNodeWithName(jsonData, "MyPair").types.includes("STRATEGY")).toBeTruthy();
+    });
+
+});
+
 xdescribe("Testing VP and variants calculus for factory", () => {
 
     var jsonData, jsonStatsData;

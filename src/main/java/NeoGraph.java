@@ -427,7 +427,7 @@ public class NeoGraph {
     public int getNbClassLevelVPs() {
         int nbInterfaces = submitRequest("MATCH (n) WHERE (n:INTERFACE AND NOT n:OUT_OF_SCOPE) RETURN COUNT (n)").list().get(0).get(0).asInt();
         int nbAbstractClasses = submitRequest("MATCH (n) WHERE n:CLASS AND n:ABSTRACT AND NOT n:OUT_OF_SCOPE RETURN COUNT (n)").list().get(0).get(0).asInt();
-        int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE NOT n:ABSTRACT AND NOT n:OUT_OF_SCOPE RETURN COUNT (n)").list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
+        int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE NOT n:ABSTRACT AND NOT n:OUT_OF_SCOPE RETURN COUNT (DISTINCT n)").list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
         return nbInterfaces + nbAbstractClasses + nbExtendedClasses;
     }
 

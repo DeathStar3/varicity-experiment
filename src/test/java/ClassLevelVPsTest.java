@@ -114,11 +114,23 @@ public class ClassLevelVPsTest extends Neo4JTest {
     @Test
     public void NotCountingOutOfScopeVPs() {
         runTest(graph -> {
-            Node figureInterface = graph.createNode("Figure", EntityType.INTERFACE);
-            Node shapeAbstractClass = graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
-            Node circleClass = graph.createNode("Circle", EntityType.CLASS);
-            Node outOfScopeVP = graph.createNode("Object", EntityAttribute.ABSTRACT, EntityType.CLASS, EntityAttribute.OUT_OF_SCOPE);
+            graph.createNode("Figure", EntityType.INTERFACE);
+            graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
+            graph.createNode("Circle", EntityType.CLASS);
+            graph.createNode("Object", EntityAttribute.ABSTRACT, EntityType.CLASS, EntityAttribute.OUT_OF_SCOPE);
             assertEquals(2, graph.getNbClassLevelVPs());
+        });
+    }
+
+    @Test
+    public void ClassInheritedMustBeCountedOnce() {
+        runTest(graph -> {
+            Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
+            Node circleClass = graph.createNode("Circle", EntityType.CLASS);
+            Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityAttribute.OUT_OF_SCOPE);
+            graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
+            graph.linkTwoNodes(shapeClass, rectangleClass, RelationType.EXTENDS);
+            assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
 }

@@ -26,7 +26,7 @@ jobs:
     - stage: "Unit tests"
       name: "Symfinder engine unit tests"
       script: ./build.sh
-    - name: "Visualization engine unit tests"
+    - name: "Visualization unit tests"
       script: ./run_visualization_tests.sh
     - stage: "Integration tests"
       name: "Tests on sample projects"

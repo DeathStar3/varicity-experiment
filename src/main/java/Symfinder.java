@@ -277,12 +277,12 @@ public class Symfinder {
                     // Link to superclass if exists
                     ITypeBinding superclassType = classBinding.getSuperclass();
                     if (superclassType != null) {
-                        createImportedClassNode(thisClassName.split("<")[0], thisNode.get(), superclassType, EntityType.CLASS, RelationType.EXTENDS, "SUPERCLASS");
+                        createImportedClassNode(classBinding.getErasure().getQualifiedName(), thisNode.get(), superclassType, EntityType.CLASS, RelationType.EXTENDS, "SUPERCLASS");
                     }
 
                     // Link to implemented interfaces if exist
                     for (ITypeBinding o : classBinding.getInterfaces()) {
-                        createImportedClassNode(thisClassName.split("<")[0], thisNode.get(), o, EntityType.INTERFACE, RelationType.IMPLEMENTS, "INTERFACE");
+                        createImportedClassNode(classBinding.getErasure().getQualifiedName(), thisNode.get(), o, EntityType.INTERFACE, RelationType.IMPLEMENTS, "INTERFACE");
                     }
                 }
                 return true;
@@ -369,7 +369,7 @@ public class Symfinder {
             logger.debug(field);
             ITypeBinding binding = field.getType().resolveBinding();
             if (binding != null) { // TODO: 12/6/18 log this
-                Node typeNode = neoGraph.getOrCreateNode(binding.getQualifiedName(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
+                Node typeNode = neoGraph.getOrCreateNode(binding.getErasure().getQualifiedName(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
                 if (binding.getName().contains("Strategy") || neoGraph.getNbVariants(typeNode) >= 2) {
                     neoGraph.addLabelToNode(typeNode, DesignPatternType.STRATEGY.toString());
                 }

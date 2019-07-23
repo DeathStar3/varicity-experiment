@@ -19,10 +19,10 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-public class ClassUsingPairOne {
+public class StringIntPair extends MyPair <String, Integer> {
 
-    private MyPair <String, Integer> myPair;
-
-    public ClassUsingPairOne() {
+    public StringIntPair(String key, Integer value) {
+        super(key, value);
     }
+
 }
