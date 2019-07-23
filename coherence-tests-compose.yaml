@@ -19,20 +19,12 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-language: minimal
+version: "3.6"
 
-jobs:
-  include:
-    - stage: "Unit tests"
-      name: "Symfinder engine unit tests"
-      script: ./build.sh
-    - name: "Visualization unit tests"
-      script: ./run_visualization_tests.sh
-    - stage: "Integration tests"
-      name: "Tests on sample projects"
-      script: ./run_integration_tests.sh
-    - name: "Coherence tests on a pilot project"
-      script: ./run_coherence_tests.sh junit
-
-notifications:
-  email: false
+services:
+  coherence:
+    build:
+      context: .
+      dockerfile: docker/coherence_tests/Dockerfile
+    image: symfinder-coherence-tests
+    container_name: symfinder-coherence-tests

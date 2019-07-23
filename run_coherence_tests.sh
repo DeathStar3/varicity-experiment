@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # This file is part of symfinder.
 #
@@ -19,20 +20,11 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-language: minimal
+set -e
 
-jobs:
-  include:
-    - stage: "Unit tests"
-      name: "Symfinder engine unit tests"
-      script: ./build.sh
-    - name: "Visualization unit tests"
-      script: ./run_visualization_tests.sh
-    - stage: "Integration tests"
-      name: "Tests on sample projects"
-      script: ./run_integration_tests.sh
-    - name: "Coherence tests on a pilot project"
-      script: ./run_coherence_tests.sh junit
+./build.sh -DskipTests
+./run.sh junit
 
-notifications:
-  email: false
+docker-compose -f coherence-tests-compose.yaml build
+docker-compose -f coherence-tests-compose.yaml up
+docker-compose -f coherence-tests-compose.yaml down

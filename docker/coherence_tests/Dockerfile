@@ -19,20 +19,11 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-language: minimal
-
-jobs:
-  include:
-    - stage: "Unit tests"
-      name: "Symfinder engine unit tests"
-      script: ./build.sh
-    - name: "Visualization unit tests"
-      script: ./run_visualization_tests.sh
-    - stage: "Integration tests"
-      name: "Tests on sample projects"
-      script: ./run_integration_tests.sh
-    - name: "Coherence tests on a pilot project"
-      script: ./run_coherence_tests.sh junit
-
-notifications:
-  email: false
+FROM node:12-alpine
+RUN mkdir -p /opt/karma
+WORKDIR /opt/karma
+RUN npm init --yes && apk update && apk upgrade && apk add --no-cache chromium && npm install -g karma jasmine-core karma-jasmine karma-chrome-launcher karma-jquery karma-spec-reporter --save-dev
+COPY docker/coherence_tests/files/ /opt/karma/
+COPY d3/symfinder.js /opt/karma/tests
+COPY generated_visualizations/data /opt/karma/tests/data
+CMD npm install && karma start
