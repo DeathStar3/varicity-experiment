@@ -19,7 +19,7 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-describe("Testing coherence for JUnit", () => {
+describe("Testing coherence of the JSON output for JUnit", () => {
 
     var jsonData, jsonStatsData;
 
@@ -29,12 +29,76 @@ describe("Testing coherence for JUnit", () => {
         jsonStatsData = stats;
     });
 
+    it('All nodes in the visualization have different names', () => {
+        var set = [...new Set(jsonData.nodes)];
+        expect(set.length).toBe(jsonData.nodes.length);
+    });
+
     it('All nodes in the visualization are VPs', () => {
         expect(jsonData.nodes.every(n => n.types.includes("VP"))).toBeTruthy();
     });
 
     it('There is no inner class in the visualization', () => {
-        expect(jsonData.nodes.every(n => ! n.types.includes("INNER"))).toBeTruthy();
+        expect(jsonData.nodes.every(n => !n.types.includes("INNER"))).toBeTruthy();
+    });
+
+    it('There is no out of scope class in the visualization', () => {
+        expect(jsonData.nodes.every(n => !n.types.includes("OUT_OF_SCOPE"))).toBeTruthy();
+    });
+
+    it('No interface possesses the CLASS tag', () => {
+        expect(jsonData.nodes
+            .filter(n => n.types.includes("INTERFACE"))
+            .every(n => !n.types.includes("CLASS")))
+            .toBeTruthy();
+    });
+
+});
+
+describe("Testing coherence of the generated graph for JUnit", () => {
+
+    beforeAll(async () => {
+        await displayGraph("tests/data/junit-r4.12.json", "tests/data/junit-r4.12-stats.json", [], false);
+    });
+
+    it('All abstract classes have a dotted outline', () => {
+        expect(graph.nodes
+            .filter(n => n.types.includes("ABSTRACT"))
+            .map(n => d3.select('circle[name = "' + n.name + '"]'))
+            .every(c => c.style("stroke-dasharray") === "3, 3"))
+            .toBeTruthy();
+    });
+
+    it('All strategy classes have an S', () => {
+        expect(graph.nodes
+            .filter(n => n.types.includes("STRATEGY"))
+            .map(n => d3.select('text[name = "' + n.name + '"]'))
+            .every(t => t.html() === "S"))
+            .toBeTruthy();
+    });
+
+    it('All factory classes have an F', () => {
+        expect(graph.nodes
+            .filter(n => n.types.includes("FACTORY"))
+            .map(n => d3.select('text[name = "' + n.name + '"]'))
+            .every(t => t.html() === "F"))
+            .toBeTruthy();
+    });
+
+    it('All template classes have an T', () => {
+        expect(graph.nodes
+            .filter(n => n.types.includes("TEMPLATE"))
+            .map(n => d3.select('text[name = "' + n.name + '"]'))
+            .every(t => t.html() === "T"))
+            .toBeTruthy();
+    });
+
+    it('All interfaces have a black node', () => {
+        expect(graph.nodes
+            .filter(n => n.types.includes("INTERFACE"))
+            .map(n => d3.select('circle[name = "' + n.name + '"]'))
+            .every(c => c.attr("fill") === "rgb(0, 0, 0)"))
+            .toBeTruthy();
     });
 
 });
