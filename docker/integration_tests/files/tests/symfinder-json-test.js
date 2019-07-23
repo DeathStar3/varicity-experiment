@@ -75,7 +75,7 @@ describe("Testing JSON outputs for metrics", () => {
 
 });
 
-describe("Testing VP and variants calculus for structures", () => {
+describe("Testing JSON output for structures", () => {
 
     var jsonData, jsonStatsData;
 
@@ -100,6 +100,40 @@ describe("Testing VP and variants calculus for structures", () => {
 
 });
 
+describe("Testing JSON output for multiple_vp", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async () => {
+        const [graph, stats] = await getJsonData("tests/data/multiple_vp.json", "tests/data/multiple_vp-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+    });
+
+    it('there should be 1 class level VP', () => {
+        expect(jsonStatsData.classLevelVPs).toBe(1);
+    });
+    it('there should be 0 class level variant', () => {
+        expect(jsonStatsData.classLevelVariants).toBe(0);
+    });
+    it('there should be 2 method level VPs', () => {
+        expect(jsonStatsData.methodLevelVPs).toBe(2);
+    });
+    it('there should be 1 method VP', () => {
+        expect(jsonStatsData.methodsVPs).toBe(1);
+    });
+    it('there should be 1 constructor VP', () => {
+        expect(jsonStatsData.constructorsVPs).toBe(1);
+    });
+    it('there should be 2 method variants', () => {
+        expect(jsonStatsData.methodsVariants).toBe(2);
+    });
+    it('there should be 2 constructor variants', () => {
+        expect(jsonStatsData.constructorsVariants).toBe(2);
+    });
+
+});
+
 describe("Testing JSON output for generics", () => {
 
     var jsonData, jsonStatsData;
@@ -113,19 +147,13 @@ describe("Testing JSON output for generics", () => {
     it('there should be a node called MyPair', () => {
         expect(jsonData.nodes.filter(n => n.name === "MyPair").length).toBe(1);
     });
-    xit('ObjectIntPair should be a subclass of MyPair', () => {
-        expect(jsonData.links.filter(l => l.source === "MyPair" && l.target === "ObjectIntPair").length).toBe(1);
-    });
-    xit('StringIntPair should be a subclass of MyPair', () => {
-        expect(jsonData.links.filter(l => l.source === "MyPair" && l.target === "StringIntPair").length).toBe(1);
-    });
     it('MyPair should be a strategy', () => {
         expect(getNodeWithName(jsonData, "MyPair").types.includes("STRATEGY")).toBeTruthy();
     });
 
 });
 
-xdescribe("Testing VP and variants calculus for factory", () => {
+describe("Testing JSON output for factory", () => {
 
     var jsonData, jsonStatsData;
 
@@ -135,17 +163,20 @@ xdescribe("Testing VP and variants calculus for factory", () => {
         jsonStatsData = stats;
     });
 
-    it('there should be 2 class level VPs', () => {
-        expect(jsonStatsData.classLevelVPs).toBe(2);
+    it('there should be 3 method level VP', () => {
+        expect(jsonStatsData.methodLevelVPs).toBe(3);
     });
-    it('there should be 1 method level VP', () => {
-        expect(jsonStatsData.methodLevelVPs).toBe(1);
+    it('there should be 1 method VP', () => {
+        expect(jsonStatsData.methodsVPs).toBe(1);
     });
-    it('the method level VP should be a constructor VP', () => {
-        expect(jsonStatsData.constructorsVPs).toBe(1);
+    it('there should be 2 method variants', () => {
+        expect(jsonStatsData.methodsVariants).toBe(2);
     });
-    it('there should be two constructor variants', () => {
-        expect(jsonStatsData.constructorsVariants).toBe(2);
+    it('there should be 2 constructor VPs', () => {
+        expect(jsonStatsData.constructorsVPs).toBe(2);
+    });
+    it('there should be 4 constructor variants', () => {
+        expect(jsonStatsData.constructorsVariants).toBe(4);
     });
 
 });

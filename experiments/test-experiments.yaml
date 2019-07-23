@@ -16,6 +16,9 @@ inner_class:
 metrics:
   localDirectory: metrics
   sourcePackage: .
+multiple_vp:
+  localDirectory: multiple_vp
+  sourcePackage: .
 strategy:
   localDirectory: strategy
   sourcePackage: .

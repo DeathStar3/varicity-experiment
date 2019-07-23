@@ -20,22 +20,11 @@
   -->
 
 <project>
+    <parent>
+        <groupId>symfinder.test-projects</groupId>
+        <artifactId>all-projects</artifactId>
+        <version>1</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>symfinder.test-projects</groupId>
-    <artifactId>all-projects</artifactId>
-    <version>1</version>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>factory</module>
-        <module>generics</module>
-        <module>import_from_different_package</module>
-        <module>inheritance</module>
-        <module>inner_class</module>
-        <module>metrics</module>
-        <module>multiple_vp</module>
-        <module>strategy</module>
-        <module>structures</module>
-        <module>template</module>
-    </modules>
+    <artifactId>multiple_vp</artifactId>
 </project>
