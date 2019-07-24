@@ -20,8 +20,6 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-set -e
-
 create_directory(){
     if [[ ! -d "$1" ]]; then
         echo "Creating $1 directory"

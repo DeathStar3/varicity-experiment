@@ -95,7 +95,7 @@ describe("Testing coherence of all projects", () => {
                 expect(graph.nodes
                     .filter(n => n.types.includes("STRATEGY"))
                     .map(n => d3.select('text[name = "' + n.name + '"]'))
-                    .every(t => t.html() === "S"))
+                    .every(t => t.html().includes("S")))
                     .toBeTruthy();
             });
 
@@ -103,7 +103,7 @@ describe("Testing coherence of all projects", () => {
                 expect(graph.nodes
                     .filter(n => n.types.includes("FACTORY"))
                     .map(n => d3.select('text[name = "' + n.name + '"]'))
-                    .every(t => t.html() === "F"))
+                    .every(t => t.html().includes("F")))
                     .toBeTruthy();
             });
 
@@ -111,7 +111,7 @@ describe("Testing coherence of all projects", () => {
                 expect(graph.nodes
                     .filter(n => n.types.includes("TEMPLATE"))
                     .map(n => d3.select('text[name = "' + n.name + '"]'))
-                    .every(t => t.html() === "T"))
+                    .every(t => t.html().includes("T")))
                     .toBeTruthy();
             });
 

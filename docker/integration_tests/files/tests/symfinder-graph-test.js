@@ -81,24 +81,6 @@ describe("Comparing metrics evolution", () => {
 
 });
 
-describe("Factory pattern", () => {
-
-    beforeAll(async () => {
-        await displayGraph("tests/data/factory.json", "tests/data/factory-stats.json", [], false);
-    });
-
-    it('the graph should contain four nodes', () => {
-        expect(d3.selectAll('circle').size()).toBe(4);
-    });
-    it('ShapeFactory should be a factory', () => {
-        expect(graph.nodes.filter(n => n.name === "ShapeFactory")[0].types.includes("FACTORY")).toBeTruthy();
-    });
-    it('ShapeFactory node should have an F on it', () => {
-        expect(d3.select('text[name = "ShapeFactory"]').html()).toBe("F");
-    });
-
-});
-
 describe("Basic inheritance", () => {
 
     beforeAll(async () => {
@@ -120,6 +102,24 @@ describe("Basic inheritance", () => {
     it('Superclass and SubclassTwo should be linked', () => {
         expect(d3.select('line').attr("target")).toBe("SubclassTwo");
         expect(d3.select('line').attr("source")).toBe("Superclass");
+    });
+
+});
+
+describe("Factory pattern", () => {
+
+    beforeAll(async () => {
+        await displayGraph("tests/data/factory.json", "tests/data/factory-stats.json", [], false);
+    });
+
+    it('the graph should contain four nodes', () => {
+        expect(d3.selectAll('circle').size()).toBe(4);
+    });
+    it('ShapeFactory should be a factory', () => {
+        expect(graph.nodes.filter(n => n.name === "ShapeFactory")[0].types.includes("FACTORY")).toBeTruthy();
+    });
+    it('ShapeFactory node should have an F on it', () => {
+        expect(d3.select('text[name = "ShapeFactory"]').html()).toBe("F");
     });
 
 });
@@ -156,6 +156,23 @@ describe("Template pattern", () => {
     });
     it('the node should have a T on it', () => {
         expect(d3.select('text[name = "Algorithm"]').html()).toBe("T");
+    });
+
+});
+
+describe("Multiple patterns", () => {
+
+    beforeAll(async () => {
+        await displayGraph("tests/data/multiple_patterns.json", "tests/data/multiple_patterns-stats.json", [], false);
+    });
+
+    it('Factory should be a factory and a strategy', () => {
+        expect(graph.nodes.filter(n => n.name === "Factory")[0].types.includes("FACTORY")).toBeTruthy();
+        expect(graph.nodes.filter(n => n.name === "Factory")[0].types.includes("STRATEGY")).toBeTruthy();
+    });
+    it('Factory node should have a F and a S on it', () => {
+        expect(d3.select('text[name = "Factory"]').html().includes("F")).toBeTruthy();
+        expect(d3.select('text[name = "Factory"]').html().includes("S")).toBeTruthy();
     });
 
 });

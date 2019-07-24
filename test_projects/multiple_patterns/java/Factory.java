@@ -19,35 +19,8 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-import java.awt.Point;
+public abstract class Factory {
 
-public class Rectangle extends Shape {
+    public abstract Shape build();
 
-    private double width, length;
-
-    public Rectangle(double width, double length) {
-        this.width = width;
-        this.length = length;
-    }
-
-    public Rectangle() {
-        this.width = 1;
-        this.length = 1;
-    }
-
-    public double area() {
-        return width * length;
-    }
-
-    public double perimeter() {
-        return 2 * (width + length);
-    }
-
-    public void draw(int x, int y) {
-        // rectangle at (x, y, width, length)
-    }
-
-    public void draw(Point p) {
-        // rectangle at (p.x, p.y, width, length)
-    }
 }

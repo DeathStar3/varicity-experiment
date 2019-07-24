@@ -19,35 +19,23 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-import java.awt.Point;
+public class Circle extends Shape {
 
-public class Rectangle extends Shape {
+    private double radius;
 
-    private double width, length;
-
-    public Rectangle(double width, double length) {
-        this.width = width;
-        this.length = length;
+    public Circle(double radius) {
+        this.radius = radius;
     }
 
-    public Rectangle() {
-        this.width = 1;
-        this.length = 1;
+    public Circle() {
+        this.radius = 1;
     }
 
     public double area() {
-        return width * length;
+        return Math.PI * radius * radius;
     }
 
     public double perimeter() {
-        return 2 * (width + length);
-    }
-
-    public void draw(int x, int y) {
-        // rectangle at (x, y, width, length)
-    }
-
-    public void draw(Point p) {
-        // rectangle at (p.x, p.y, width, length)
+        return 2 * Math.PI * radius;
     }
 }

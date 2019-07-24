@@ -20,8 +20,6 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-set -e
-
 ./build.sh -DskipTests
 ./run.sh $1
 
