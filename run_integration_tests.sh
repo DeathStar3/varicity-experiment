@@ -41,7 +41,10 @@ docker run -it --rm --name test_projects_builder -v "$(pwd)/resources":/usr/src/
 ./run.sh
 
 docker-compose -f integration-tests-compose.yaml build
-docker-compose -f integration-tests-compose.yaml up
+docker-compose -f integration-tests-compose.yaml up --abort-on-container-exit --exit-code-from integration
+RETURN_CODE=$?
 docker-compose -f integration-tests-compose.yaml down
 
 sed -i -e 's/test-experiments.yaml/experiments.yaml/g' symfinder.yaml
+
+exit $RETURN_CODE

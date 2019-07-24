@@ -21,5 +21,7 @@
 #
 
 docker-compose -f visualization-tests-compose.yaml build
-docker-compose -f visualization-tests-compose.yaml up
+docker-compose -f visualization-tests-compose.yaml up --abort-on-container-exit --exit-code-from karma
+RETURN_CODE=$?
 docker-compose -f visualization-tests-compose.yaml down
+exit $RETURN_CODE

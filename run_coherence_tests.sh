@@ -23,8 +23,10 @@
 set -e
 
 ./build.sh -DskipTests
-./run.sh junit
+./run.sh $1
 
 docker-compose -f coherence-tests-compose.yaml build
-docker-compose -f coherence-tests-compose.yaml up
+docker-compose -f coherence-tests-compose.yaml up --abort-on-container-exit --exit-code-from coherence
+RETURN_CODE=$?
 docker-compose -f coherence-tests-compose.yaml down
+exit $RETURN_CODE

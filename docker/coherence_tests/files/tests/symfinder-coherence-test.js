@@ -21,11 +21,9 @@
 
 describe("Testing coherence of all projects", () => {
 
-    // projects = ["junit-r4.12", "metrics"];
     projects = __karma__.config.projects.split(",");
 
     projects.forEach(project => {
-
 
         describe("Testing coherence of the JSON output for " + project, () => {
 
@@ -148,8 +146,4 @@ function getJsonData(file, statsFile) {
                 resolve([data, statsData]);
             });
     }));
-}
-
-function getNodeWithName(jsonData, name) {
-    return jsonData.nodes.filter(n => n.name === name)[0];
 }
