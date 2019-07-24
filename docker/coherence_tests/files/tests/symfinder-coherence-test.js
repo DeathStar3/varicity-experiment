@@ -19,112 +19,125 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-describe("Testing coherence of the JSON output for JUnit", () => {
+describe("Testing coherence of all projects", () => {
 
-    var jsonData, jsonStatsData;
+    // projects = ["junit-r4.12", "metrics"];
+    projects = __karma__.config.projects.split(",");
 
-    beforeAll(async () => {
-        const [graph, stats] = await getJsonData("tests/data/junit-r4.12.json", "tests/data/junit-r4.12-stats.json");
-        jsonData = graph;
-        jsonStatsData = stats;
-    });
+    projects.forEach(project => {
 
-    it('All nodes in the visualization have different names', () => {
-        var set = [...new Set(jsonData.nodes)];
-        expect(set.length).toBe(jsonData.nodes.length);
-    });
 
-    it('All nodes in the visualization are VPs', () => {
-        expect(jsonData.nodes.every(n => n.types.includes("VP"))).toBeTruthy();
-    });
+        describe("Testing coherence of the JSON output for " + project, () => {
 
-    it('There is no inner class in the visualization', () => {
-        expect(jsonData.nodes.every(n => !n.types.includes("INNER"))).toBeTruthy();
-    });
+            var jsonData, jsonStatsData;
 
-    it('There is no out of scope class in the visualization', () => {
-        expect(jsonData.nodes.every(n => !n.types.includes("OUT_OF_SCOPE"))).toBeTruthy();
-    });
+            beforeAll(async () => {
+                const [graph, stats] = await getJsonData("tests/data/" + project + ".json", "tests/data/" + project + "-stats.json");
+                jsonData = graph;
+                jsonStatsData = stats;
+            });
 
-    it('No interface possesses the CLASS tag', () => {
-        expect(jsonData.nodes
-            .filter(n => n.types.includes("INTERFACE"))
-            .every(n => !n.types.includes("CLASS")))
-            .toBeTruthy();
-    });
+            it('All nodes in the visualization have different names', () => {
+                var set = [...new Set(jsonData.nodes)];
+                expect(set.length).toBe(jsonData.nodes.length);
+            });
 
-    it('The value of the constructors attribute should be 0 or 1 for all nodes not being an interface', () => {
-        expect(jsonData.nodes
-            .filter(n => !n.types.includes("INTERFACE"))
-            .map(n => n.constructors)
-            .every(c => [0, 1].includes(c)))
-            .toBeTruthy();
-    });
+            it('All nodes in the visualization are VPs', () => {
+                expect(jsonData.nodes.every(n => n.types.includes("VP"))).toBeTruthy();
+            });
 
-    it('All nodes in links should be in the list of nodes', () => {
-        nodesNames = jsonData.nodes.map(n => n.name);
-        linksSources = jsonData.links.map(l => l.source);
-        linksTargets = jsonData.links.map(l => l.target);
-        expect(linksSources.every(s => nodesNames.includes(s))).toBeTruthy();
-        expect(linksTargets.every(t => nodesNames.includes(t))).toBeTruthy();
+            it('There is no inner class in the visualization', () => {
+                expect(jsonData.nodes.every(n => !n.types.includes("INNER"))).toBeTruthy();
+            });
+
+            it('There is no out of scope class in the visualization', () => {
+                expect(jsonData.nodes.every(n => !n.types.includes("OUT_OF_SCOPE"))).toBeTruthy();
+            });
+
+            it('No interface possesses the CLASS tag', () => {
+                expect(jsonData.nodes
+                    .filter(n => n.types.includes("INTERFACE"))
+                    .every(n => !n.types.includes("CLASS")))
+                    .toBeTruthy();
+            });
+
+            it('The value of the constructors attribute should be 0 or 1 for all nodes not being an interface', () => {
+                expect(jsonData.nodes
+                    .filter(n => !n.types.includes("INTERFACE"))
+                    .map(n => n.constructors)
+                    .every(c => [0, 1].includes(c)))
+                    .toBeTruthy();
+            });
+
+            it('All nodes in links should be in the list of nodes', () => {
+                nodesNames = jsonData.nodes.map(n => n.name);
+                linksSources = jsonData.links.map(l => l.source);
+                linksTargets = jsonData.links.map(l => l.target);
+                expect(linksSources.every(s => nodesNames.includes(s))).toBeTruthy();
+                expect(linksTargets.every(t => nodesNames.includes(t))).toBeTruthy();
+            });
+
+        });
+
+        describe("Testing coherence of the generated graph for " + project, () => {
+
+            beforeAll(async () => {
+                await displayGraph("tests/data/" + project + ".json", "tests/data/" + project + "-stats.json", [], false);
+            });
+
+            it('All abstract classes have a dotted outline', () => {
+                expect(graph.nodes
+                    .filter(n => n.types.includes("ABSTRACT"))
+                    .map(n => d3.select('circle[name = "' + n.name + '"]'))
+                    .every(c => c.style("stroke-dasharray") === "3, 3"))
+                    .toBeTruthy();
+            });
+
+            it('All strategy classes have an S', () => {
+                expect(graph.nodes
+                    .filter(n => n.types.includes("STRATEGY"))
+                    .map(n => d3.select('text[name = "' + n.name + '"]'))
+                    .every(t => t.html() === "S"))
+                    .toBeTruthy();
+            });
+
+            it('All factory classes have an F', () => {
+                expect(graph.nodes
+                    .filter(n => n.types.includes("FACTORY"))
+                    .map(n => d3.select('text[name = "' + n.name + '"]'))
+                    .every(t => t.html() === "F"))
+                    .toBeTruthy();
+            });
+
+            it('All template classes have an T', () => {
+                expect(graph.nodes
+                    .filter(n => n.types.includes("TEMPLATE"))
+                    .map(n => d3.select('text[name = "' + n.name + '"]'))
+                    .every(t => t.html() === "T"))
+                    .toBeTruthy();
+            });
+
+            it('All interfaces have a black node', () => {
+                expect(graph.nodes
+                    .filter(n => n.types.includes("INTERFACE"))
+                    .map(n => d3.select('circle[name = "' + n.name + '"]'))
+                    .every(c => c.attr("fill") === "rgb(0, 0, 0)"))
+                    .toBeTruthy();
+            });
+
+            it('Every node is visible', () => {
+                expect(graph.nodes
+                    .map(n => d3.select('circle[name = "' + n.name + '"]'))
+                    .every(c => c.attr("r") >= 10))
+                    .toBeTruthy();
+            });
+
+        });
+
     });
 
 });
 
-describe("Testing coherence of the generated graph for JUnit", () => {
-
-    beforeAll(async () => {
-        await displayGraph("tests/data/junit-r4.12.json", "tests/data/junit-r4.12-stats.json", [], false);
-    });
-
-    it('All abstract classes have a dotted outline', () => {
-        expect(graph.nodes
-            .filter(n => n.types.includes("ABSTRACT"))
-            .map(n => d3.select('circle[name = "' + n.name + '"]'))
-            .every(c => c.style("stroke-dasharray") === "3, 3"))
-            .toBeTruthy();
-    });
-
-    it('All strategy classes have an S', () => {
-        expect(graph.nodes
-            .filter(n => n.types.includes("STRATEGY"))
-            .map(n => d3.select('text[name = "' + n.name + '"]'))
-            .every(t => t.html() === "S"))
-            .toBeTruthy();
-    });
-
-    it('All factory classes have an F', () => {
-        expect(graph.nodes
-            .filter(n => n.types.includes("FACTORY"))
-            .map(n => d3.select('text[name = "' + n.name + '"]'))
-            .every(t => t.html() === "F"))
-            .toBeTruthy();
-    });
-
-    it('All template classes have an T', () => {
-        expect(graph.nodes
-            .filter(n => n.types.includes("TEMPLATE"))
-            .map(n => d3.select('text[name = "' + n.name + '"]'))
-            .every(t => t.html() === "T"))
-            .toBeTruthy();
-    });
-
-    it('All interfaces have a black node', () => {
-        expect(graph.nodes
-            .filter(n => n.types.includes("INTERFACE"))
-            .map(n => d3.select('circle[name = "' + n.name + '"]'))
-            .every(c => c.attr("fill") === "rgb(0, 0, 0)"))
-            .toBeTruthy();
-    });
-
-    it('Every node is visible', () => {
-        expect(graph.nodes
-            .map(n => d3.select('circle[name = "' + n.name + '"]'))
-            .every(c => c.attr("r") >= 10))
-            .toBeTruthy();
-    });
-
-});
 
 function getJsonData(file, statsFile) {
     return new Promise(((resolve, reject) => {

@@ -26,4 +26,4 @@ RUN npm init --yes && apk update && apk upgrade && apk add --no-cache chromium &
 COPY docker/coherence_tests/files/ /opt/karma/
 COPY d3/symfinder.js /opt/karma/tests
 COPY generated_visualizations/data /opt/karma/tests/data
-CMD npm install && karma start
+CMD npm install && karma start --projects=$(ls /opt/karma/tests/data/*-stats.json | xargs -n 1 basename | sed 's/-stats.json//g' | sed ':a;N;$!ba;s/\n/,/g')

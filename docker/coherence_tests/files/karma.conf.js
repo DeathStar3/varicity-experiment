@@ -24,6 +24,10 @@
 module.exports = function (config) {
     config.set({
 
+        client: {
+            projects: config.projects
+        },
+
         // base path, that will be used to resolve files and exclude
         basePath: '',
 
