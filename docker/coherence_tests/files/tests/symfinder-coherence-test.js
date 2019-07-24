@@ -53,6 +53,22 @@ describe("Testing coherence of the JSON output for JUnit", () => {
             .toBeTruthy();
     });
 
+    it('The value of the constructors attribute should be 0 or 1 for all nodes not being an interface', () => {
+        expect(jsonData.nodes
+            .filter(n => !n.types.includes("INTERFACE"))
+            .map(n => n.constructors)
+            .every(c => [0, 1].includes(c)))
+            .toBeTruthy();
+    });
+
+    it('All nodes in links should be in the list of nodes', () => {
+        nodesNames = jsonData.nodes.map(n => n.name);
+        linksSources = jsonData.links.map(l => l.source);
+        linksTargets = jsonData.links.map(l => l.target);
+        expect(linksSources.every(s => nodesNames.includes(s))).toBeTruthy();
+        expect(linksTargets.every(t => nodesNames.includes(t))).toBeTruthy();
+    });
+
 });
 
 describe("Testing coherence of the generated graph for JUnit", () => {
@@ -98,6 +114,13 @@ describe("Testing coherence of the generated graph for JUnit", () => {
             .filter(n => n.types.includes("INTERFACE"))
             .map(n => d3.select('circle[name = "' + n.name + '"]'))
             .every(c => c.attr("fill") === "rgb(0, 0, 0)"))
+            .toBeTruthy();
+    });
+
+    it('Every node is visible', () => {
+        expect(graph.nodes
+            .map(n => d3.select('circle[name = "' + n.name + '"]'))
+            .every(c => c.attr("r") >= 10))
             .toBeTruthy();
     });
 
