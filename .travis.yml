@@ -24,28 +24,25 @@ language: minimal
 jobs:
   include:
     - stage: "Unit tests"
-      name: "Symfinder engine unit tests"
-      os:
-        - linux
-        - windows
-      script:
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./build.sh; fi
-        - if [ "$TRAVIS_OS_NAME" = "windows" ]; then build.bat; fi
+      name: "Symfinder engine unit tests - Linux"
+      os: linux
+      script: ./build.sh
+    - name: "Symfinder engine unit tests - Windows"
+      os: windows
+      script: build.bat
     - name: "Visualization unit tests"
       script: ./run_visualization_tests.sh
     - stage: "Integration tests"
       name: "Tests on sample projects"
       script: ./run_integration_tests.sh
-    - name: "Coherence tests on a pilot project"
-      os:
-        - linux
-        - windows
-      script:
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./run_coherence_tests.sh junit; fi
-        - if [ "$TRAVIS_OS_NAME" = "windows" ]; then run_coherence_tests.bat junit; fi
-      after_failure:
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./run_coherence_tests.sh; fi
-        - if [ "$TRAVIS_OS_NAME" = "windows" ]; then run_coherence_tests.bat; fi
+    - name: "Coherence tests on a pilot project - Linux"
+      os: linux
+      script: ./run_coherence_tests.sh junit
+      after_failure: ./run_coherence_tests.sh
+    - name: "Coherence tests on a pilot project - Windows"
+      os: windows
+      script: run_coherence_tests.bat junit
+      after_failure: run_coherence_tests.bat
 
 notifications:
   email: false
