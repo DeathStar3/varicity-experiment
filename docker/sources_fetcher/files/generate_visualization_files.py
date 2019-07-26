@@ -38,6 +38,7 @@ def generate_visualization_files_for_project(xp_name, xp_config):
     copy_file("symfinder.js")
     copy_file("style.css")
     copy_file("symfinder-icon.png")
+    copy_file("symfinder-legend.svg")
     tags_and_commits = xp_config.get("tagIds", []) + xp_config.get("commitIds", [])
     if tags_and_commits:
         for id in tags_and_commits:
