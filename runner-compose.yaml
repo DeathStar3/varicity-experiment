@@ -23,10 +23,7 @@ version: "3.6"
 
 services:
   runner:
-    build:
-      context: .
-      dockerfile: docker/runner/RunnerDockerfile
-    image: symfinder-runner
+    image: deathstar3/symfinder-runner:latest
     container_name: symfinder-runner
     environment:
       - DIR_PATH=${PWD}
@@ -36,3 +33,6 @@ services:
       - COMPOSE_CONVERT_WINDOWS_PATHS=1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./experiments:/experiments
+      - ./symfinder.yaml:/symfinder.yaml
+      - ./symfinder-compose.yaml:/symfinder-compose.yaml

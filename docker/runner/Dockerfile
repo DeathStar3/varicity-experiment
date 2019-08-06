@@ -19,11 +19,8 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-FROM archlinux/base:latest
-RUN pacman -Sy --noconfirm docker-compose python3
+FROM python:3.7.3-alpine3.9
+RUN apk add bash py-pip && apk add --virtual buildpacks python-dev libffi-dev openssl-dev gcc libc-dev make && pip install docker-compose && apk del buildpacks
 ADD docker/runner/files/* /
 ADD docker/* /docker/
-ADD experiments/* /experiments/
-ADD symfinder.yaml /symfinder.yaml
-ADD symfinder-compose.yaml /symfinder-compose.yaml
 CMD python3 run_xps.py

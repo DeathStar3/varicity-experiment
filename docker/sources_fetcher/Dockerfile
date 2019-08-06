@@ -19,18 +19,7 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-FROM maven:3-jdk-8-alpine as building
-ARG BUILD_PARAMS
-ARG SOURCES_PACKAGE
-ARG GRAPH_OUTPUT_PATH
-ADD src/ /src
-ADD pom.xml /pom.xml
-RUN mvn clean install $BUILD_PARAMS
-
-FROM openjdk:8-jre-alpine
-RUN apk add git
-COPY --from=building target/symfinder-1.0-SNAPSHOT-jar-with-dependencies.jar /symfinder.jar
-ADD experiments/* /experiments/
-ADD symfinder.yaml /symfinder.yaml
-ADD docker/symfinder/exec_symfinder.sh /exec_symfinder.sh
-ENTRYPOINT sh exec_symfinder.sh $SOURCES_PACKAGE $GRAPH_OUTPUT_PATH
+FROM python:3.7.3-alpine3.9
+RUN apk add git bash && pip install PyYAML mako
+ADD docker/sources_fetcher/files/* /
+CMD sh sources_fetcher.sh
