@@ -23,7 +23,7 @@ version: "3.6"
 
 services:
   symfinder:
-    image: deathstar3/symfinder-engine:latest
+    image: deathstar3/symfinder-engine:${TAG}
     container_name: symfinder
     ports:
       - "127.0.0.1:8080:8080"

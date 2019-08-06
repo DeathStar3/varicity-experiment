@@ -32,7 +32,18 @@ create_directory(){
 create_directory resources
 create_directory generated_visualizations
 
-SYMFINDER_PROJECTS="$@"
+#SYMFINDER_PROJECTS="$@"
 
-docker run -it -v $(pwd)/experiments:/experiments -v $(pwd)/symfinder.yaml:/symfinder.yaml -v $(pwd)/resources:/resources -v $(pwd)/d3:/d3 -v $(pwd)/generated_visualizations:/generated_visualizations --user $(id -u):$(id -g) -e SYMFINDER_VERSION=$(git rev-parse --short=0 HEAD) -e SYMFINDER_PROJECTS="${SYMFINDER_PROJECTS[@]}" --rm deathstar3/symfinder-fetcher:latest
-./rerun.sh "$@"
+if [[ "$1" == "--local" ]]; then
+    export TAG=local
+    SYMFINDER_PROJECTS="${@:2}"
+else
+    export TAG=latest
+    SYMFINDER_PROJECTS="$@"
+fi
+
+echo "Using $TAG images"
+
+docker run -it -v $(pwd)/experiments:/experiments -v $(pwd)/symfinder.yaml:/symfinder.yaml -v $(pwd)/resources:/resources -v $(pwd)/d3:/d3 -v $(pwd)/generated_visualizations:/generated_visualizations --user $(id -u):$(id -g) -e SYMFINDER_VERSION=$(git rev-parse --short=0 HEAD) -e SYMFINDER_PROJECTS="${SYMFINDER_PROJECTS[@]}" --rm deathstar3/symfinder-fetcher:${TAG}
+
+./rerun.sh "$SYMFINDER_PROJECTS"

@@ -23,10 +23,11 @@ version: "3.6"
 
 services:
   runner:
-    image: deathstar3/symfinder-runner:latest
+    image: deathstar3/symfinder-runner:${TAG}
     container_name: symfinder-runner
     environment:
       - DIR_PATH=${PWD}
+      - TAG=${TAG}
       - SYMFINDER_UID=${SYMFINDER_UID}
       - SYMFINDER_GID=${SYMFINDER_GID}
       - SYMFINDER_PROJECTS=${SYMFINDER_PROJECTS}
