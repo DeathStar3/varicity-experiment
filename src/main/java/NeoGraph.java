@@ -8,11 +8,11 @@
  *
  * symfinder is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with symfinder.  If not, see <http://www.gnu.org/licenses/>.
+ * along with symfinder. If not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2018-2019 Johann Mortara <johann.mortara@univ-cotedazur.fr>
  * Copyright 2018-2019 Xhevahire Tërnava <xhevahire.ternava@lip6.fr>
@@ -230,7 +230,7 @@ public class NeoGraph {
     public void setConstructorsOverloads() {
         submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
                 "WITH count(a.name) AS cnt, c\n" +
-                "SET c.constructors = cnt -1");
+                "SET c.constructors = CASE WHEN cnt > 1 THEN 1 ELSE 0 END");
         submitRequest("MATCH (c:CLASS)\n" +
                 "WHERE NOT EXISTS(c.constructors)\n" +
                 "SET c.constructors = 0");
@@ -331,7 +331,7 @@ public class NeoGraph {
      * @return Number of class level variants
      */
     public int getNbClassLevelVariants() {
-        return submitRequest("MATCH (c:CLASS) WHERE (NOT c:ABSTRACT) AND ()-[:EXTENDS|:IMPLEMENTS]->(c) AND (NOT (c)-[:EXTENDS]->()) RETURN (COUNT(c))")
+        return submitRequest("MATCH (p)-[:EXTENDS|:IMPLEMENTS]->(c:CLASS) WHERE (NOT c:ABSTRACT AND NOT p:OUT_OF_SCOPE) AND (NOT (c)-[:EXTENDS]->()) RETURN (COUNT(c))")
                 .list().get(0).get(0).asInt();
     }
 
@@ -425,9 +425,9 @@ public class NeoGraph {
      * @return Number of class level VPs
      */
     public int getNbClassLevelVPs() {
-        int nbInterfaces = submitRequest("MATCH (n:INTERFACE) RETURN COUNT (n)").list().get(0).get(0).asInt();
-        int nbAbstractClasses = submitRequest("MATCH (n:CLASS:ABSTRACT) RETURN COUNT (n)").list().get(0).get(0).asInt();
-        int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE NOT n:ABSTRACT RETURN COUNT (n)").list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
+        int nbInterfaces = submitRequest("MATCH (n) WHERE (n:INTERFACE AND NOT n:OUT_OF_SCOPE) RETURN COUNT (n)").list().get(0).get(0).asInt();
+        int nbAbstractClasses = submitRequest("MATCH (n) WHERE n:CLASS AND n:ABSTRACT AND NOT n:OUT_OF_SCOPE RETURN COUNT (n)").list().get(0).get(0).asInt();
+        int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE NOT n:ABSTRACT AND NOT n:OUT_OF_SCOPE RETURN COUNT (DISTINCT n)").list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
         return nbInterfaces + nbAbstractClasses + nbExtendedClasses;
     }
 
@@ -482,10 +482,12 @@ public class NeoGraph {
 
     public String generateStatisticsJson() {
         return new JSONObject()
+                .put("VPs", getTotalNbVPs())
                 .put("methodsVPs", getTotalNbOverloadedMethods())
                 .put("constructorsVPs", getTotalNbOverloadedConstructors())
                 .put("methodLevelVPs", getNbMethodLevelVPs())
                 .put("classLevelVPs", getNbClassLevelVPs())
+                .put("variants", getTotalNbVariants())
                 .put("methodsVariants", getNbMethodVariants())
                 .put("constructorsVariants", getNbConstructorVariants())
                 .put("methodLevelVariants", getNbMethodLevelVariants())

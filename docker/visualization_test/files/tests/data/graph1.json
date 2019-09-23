@@ -1,0 +1,15 @@
+{
+  "nodes": [
+    {
+      "name": "junit.framework.Assert",
+      "constructors": 0,
+      "nbVariants": 2,
+      "types": [
+        "CLASS",
+        "VP"
+      ],
+      "methods": 8
+    }
+  ],
+  "links": []
+}

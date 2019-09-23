@@ -8,11 +8,11 @@
  *
  * symfinder is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with symfinder.  If not, see <http://www.gnu.org/licenses/>.
+ * along with symfinder. If not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2018-2019 Johann Mortara <johann.mortara@univ-cotedazur.fr>
  * Copyright 2018-2019 Xhevahire Tërnava <xhevahire.ternava@lip6.fr>
@@ -108,6 +108,29 @@ public class ClassLevelVPsTest extends Neo4JTest {
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
             graph.linkTwoNodes(circleClass, smallCircleClass, RelationType.EXTENDS);
             assertEquals(2, graph.getNbClassLevelVPs());
+        });
+    }
+
+    @Test
+    public void NotCountingOutOfScopeVPs() {
+        runTest(graph -> {
+            graph.createNode("Figure", EntityType.INTERFACE);
+            graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
+            graph.createNode("Circle", EntityType.CLASS);
+            graph.createNode("Object", EntityAttribute.ABSTRACT, EntityType.CLASS, EntityAttribute.OUT_OF_SCOPE);
+            assertEquals(2, graph.getNbClassLevelVPs());
+        });
+    }
+
+    @Test
+    public void ClassInheritedMustBeCountedOnce() {
+        runTest(graph -> {
+            Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
+            Node circleClass = graph.createNode("Circle", EntityType.CLASS);
+            Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityAttribute.OUT_OF_SCOPE);
+            graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
+            graph.linkTwoNodes(shapeClass, rectangleClass, RelationType.EXTENDS);
+            assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
 }

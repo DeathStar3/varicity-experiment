@@ -8,11 +8,11 @@
 #
 # symfinder is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with symfinder.  If not, see <http://www.gnu.org/licenses/>.
+# along with symfinder. If not, see <http://www.gnu.org/licenses/>.
 #
 # Copyright 2018-2019 Johann Mortara <johann.mortara@univ-cotedazur.fr>
 # Copyright 2018-2019 Xhevahire Tërnava <xhevahire.ternava@lip6.fr>
@@ -44,6 +44,7 @@ services:
       - GRAPH_OUTPUT_PATH=${GRAPH_OUTPUT_PATH}
       - PROJECT_NAME=${PROJECT_NAME}
       - COMPOSE_CONVERT_WINDOWS_PATHS=1
+      - SYMFINDER_VERSION=${SYMFINDER_VERSION}
 
   neo4j:
     image: neo4j:3.5.0
@@ -53,3 +54,43 @@ services:
       - "127.0.0.1:7687:7687"
     environment:
       - NEO4J_AUTH=neo4j/root
+
+  sonarqube-server:
+    image: sonarqube:alpine
+    container_name: symfinder_sonarqube_server
+    ports:
+      - "127.0.0.1:9000:9000"
+
+  symfinder-builder:
+    build:
+      context: .
+      dockerfile: ${SYMFINDER_BUILD_IMAGE}
+    image: symfinder-builder
+    container_name: symfinder-builder
+    environment:
+      - PROJECT_NAME=${PROJECT_NAME}
+      - MAVEN_CONFIG=/var/maven/.m2
+    tmpfs:
+      - /resources
+    volumes:
+      - ${DIR_PATH}/resources:/resources2
+    depends_on:
+      - sonarqube-server
+
+  webhook-server:
+    build:
+      context: .
+      dockerfile: docker/quality_check/WebhookDockerfile
+    image: webhook-server
+    container_name: webhook-server
+    volumes:
+      - ${DIR_PATH}/generated_visualizations:/generated_visualizations
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - sonarqube-server
+    environment:
+      - SYMFINDER_UID=${SYMFINDER_UID}
+      - SYMFINDER_GID=${SYMFINDER_GID}
+
+
