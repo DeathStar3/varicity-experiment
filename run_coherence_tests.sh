@@ -21,7 +21,7 @@
 #
 
 ./build.sh -DskipTests
-./run.sh $1
+./run.sh --local $1
 
 docker-compose -f coherence-tests-compose.yaml build
 docker-compose -f coherence-tests-compose.yaml up --abort-on-container-exit --exit-code-from coherence

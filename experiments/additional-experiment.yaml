@@ -1,5 +1,5 @@
-charts:
-  repositoryUrl: https://github.com/HanSolo/charts
+sat4j:
+  repositoryUrl: https://gitlab.ow2.org/sat4j/sat4j/
   sourcePackage: .
-  tagIds:
-    - 1.0.5
+  commitIds:
+    - 0b3bb64b
