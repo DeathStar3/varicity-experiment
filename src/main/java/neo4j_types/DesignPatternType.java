@@ -22,7 +22,7 @@
 package neo4j_types;
 
 public enum DesignPatternType implements NodeType {
-    STRATEGY, FACTORY, TEMPLATE;
+    STRATEGY, FACTORY, TEMPLATE, DECORATOR;
 
     @Override
     public String getString() {

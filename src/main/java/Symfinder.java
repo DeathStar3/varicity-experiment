@@ -317,7 +317,6 @@ public class Symfinder {
          * Otherwise, the class we are looking to may not exist in the database.
          *
          * @param className
-         *
          * @return
          */
         private Optional <String> getClassFullName(String className) {
@@ -355,6 +354,16 @@ public class Symfinder {
 
         private ITypeBinding thisClassBinding = null;
 
+        List <ImportDeclaration> imports = new ArrayList <>();
+
+        @Override
+        public boolean visit(ImportDeclaration node) {
+            if (! node.isStatic()) {
+                imports.add(node);
+            }
+            return true;
+        }
+
         @Override
         public boolean visit(TypeDeclaration type) {
             if (super.visit(type)) {
@@ -372,6 +381,30 @@ public class Symfinder {
                 Node typeNode = neoGraph.getOrCreateNode(binding.getErasure().getQualifiedName(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
                 if (binding.getName().contains("Strategy") || neoGraph.getNbVariants(typeNode) >= 2) {
                     neoGraph.addLabelToNode(typeNode, DesignPatternType.STRATEGY.toString());
+                }
+                if (isClassDecorator(binding)) {
+                    neoGraph.addLabelToNode(typeNode, DesignPatternType.DECORATOR.toString());
+                }
+            }
+            return false;
+        }
+
+        private boolean isClassDecorator(ITypeBinding fieldBinding) {
+            String bindingQualifiedName = fieldBinding.getErasure().getQualifiedName().split("<")[0];
+            if (fieldBinding.isClass()) {
+                // if the field type is a class, we check if this class is inherited by the class
+                ITypeBinding superclassType = thisClassBinding.getSuperclass();
+                if (superclassType != null) {
+                    Optional <String> superclassFullName = getClassFullName(superclassType.getName().split("<")[0]);
+                    return superclassFullName.isPresent() && superclassFullName.get().equals(bindingQualifiedName);
+                }
+            } else if (fieldBinding.isInterface()) {
+                // if the field type is an interface, we check if this interface is implemented by the class
+                for (ITypeBinding o : thisClassBinding.getInterfaces()) {
+                    Optional <String> interfaceFullName = getClassFullName(o.getName().split("<")[0]);
+                    if (interfaceFullName.isPresent() && interfaceFullName.get().equals(bindingQualifiedName)) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -395,10 +428,39 @@ public class Symfinder {
             return false;
         }
 
+        /**
+         * Iterates on imports to find the real full class name (class name with package).
+         * There are two kinds of imports:
+         * - imports of classes:   a.b.TheClass  (1)
+         * - imports of packages:  a.b.*         (2)
+         * The determination is done in two steps:
+         * - Iterate over (1). If a correspondence is found, return it.
+         * - Iterate over (2) and for each one check in the database if the package a class with this class name.
+         * WARNING: all classes must have been parsed at least once before executing this method.
+         * Otherwise, the class we are looking to may not exist in the database.
+         *
+         * @param className
+         * @return
+         */
+        private Optional <String> getClassFullName(String className) {
+            Optional <ImportDeclaration> first = imports.stream()
+                    .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(className))
+                    .findFirst();
+            if (first.isPresent()) {
+                return Optional.of(first.get().getName().getFullyQualifiedName());
+            }
+            Optional <Optional <Node>> first1 = imports.stream()
+                    .filter(ImportDeclaration::isOnDemand)
+                    .map(importDeclaration -> neoGraph.getNodeWithNameInPackage(className, importDeclaration.getName().getFullyQualifiedName()))
+                    .filter(Optional::isPresent)
+                    .findFirst();
+            return first1.map(node -> node.get().get("name").asString()); // Optional.empty -> out of scope class
+        }
 
         @Override
         public void endVisit(TypeDeclaration node) {
             thisClassBinding = null;
+            imports.clear();
         }
 
     }
