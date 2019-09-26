@@ -165,7 +165,7 @@ describe("Testing JSON output for factory", () => {
         jsonStatsData = stats;
     });
 
-    it('there should be 3 method level VP', () => {
+    it('there should be 3 method level VPs', () => {
         expect(jsonStatsData.methodLevelVPs).toBe(3);
     });
     it('there should be 1 method VP', () => {
@@ -179,6 +179,50 @@ describe("Testing JSON output for factory", () => {
     });
     it('there should be 4 constructor variants', () => {
         expect(jsonStatsData.constructorsVariants).toBe(4);
+    });
+
+});
+
+describe("Testing JSON output for template", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async () => {
+        const [graph, stats] = await getJsonData("tests/data/template.json", "tests/data/template-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+    });
+
+    it('there should be 0 method level VP', () => {
+        expect(jsonStatsData.methodLevelVPs).toBe(0);
+    });
+    it('there should be 1 class level VP', () => {
+        expect(jsonStatsData.classLevelVPs).toBe(1);
+    });
+
+});
+
+describe("Testing JSON output for decorator", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async () => {
+        const [graph, stats] = await getJsonData("tests/data/decorator.json", "tests/data/decorator-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+    });
+
+    xit('there should be 2 class level VPs', () => {
+        expect(jsonStatsData.classLevelVPs).toBe(2);
+    });
+    it('there should be 0 method level VP', () => {
+        expect(jsonStatsData.methodLevelVPs).toBe(0);
+    });
+    it('there should be 2 variants', () => {
+        expect(jsonStatsData.variants).toBe(2);
+    });
+    it('there should be 2 class level variants', () => {
+        expect(jsonStatsData.classLevelVariants).toBe(2);
     });
 
 });

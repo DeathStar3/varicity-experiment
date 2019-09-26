@@ -160,7 +160,7 @@ describe("Template pattern", () => {
 
 });
 
-xdescribe("Decorator pattern", () => {
+describe("Decorator pattern", () => {
 
     beforeAll(async () => {
         await displayGraph("tests/data/decorator.json", "tests/data/decorator-stats.json", [], false);
@@ -170,10 +170,10 @@ xdescribe("Decorator pattern", () => {
         expect(d3.selectAll('circle').size()).toBe(2);
     });
     it('the node should be a decorator', () => {
-        expect(graph.nodes.filter(n => n.name === "ClubbedTroll")[0].types.includes("DECORATOR")).toBeTruthy();
+        expect(graph.nodes.filter(n => n.name === "com.iluwatar.decorator.ClubbedTroll")[0].types.includes("DECORATOR")).toBeTruthy();
     });
     it('the node should have a D on it', () => {
-        expect(d3.select('text[name = "ClubbedTroll"]').html()).toBe("D");
+        expect(d3.select('text[name = "com.iluwatar.decorator.ClubbedTroll"]').html()).toBe("D");
     });
 
 });

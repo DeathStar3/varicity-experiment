@@ -1,3 +1,6 @@
+decorator:
+  localDirectory: decorator
+  sourcePackage: .
 factory:
   localDirectory: factory
   sourcePackage: .

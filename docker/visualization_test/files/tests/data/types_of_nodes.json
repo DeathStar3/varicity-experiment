@@ -52,6 +52,28 @@
         "VP"
       ],
       "methods": 8
+    },
+    {
+      "name": "templateNode",
+      "constructors": 0,
+      "nbVariants": 2,
+      "types": [
+        "INTERFACE",
+        "TEMPLATE",
+        "VP"
+      ],
+      "methods": 8
+    },
+    {
+      "name": "decoratorNode",
+      "constructors": 0,
+      "nbVariants": 2,
+      "types": [
+        "INTERFACE",
+        "DECORATOR",
+        "VP"
+      ],
+      "methods": 8
     }
   ],
   "links": []

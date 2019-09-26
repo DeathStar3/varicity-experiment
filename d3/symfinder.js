@@ -249,7 +249,7 @@ async function generateGraph() {
                 return contrastColor(nodeColor);
             })
             .text(function (d) {
-                return ["STRATEGY", "FACTORY", "TEMPLATE"].filter(p => d.types.includes(p)).map(p => p[0]).join(", ");
+                return ["STRATEGY", "FACTORY", "TEMPLATE", "DECORATOR"].filter(p => d.types.includes(p)).map(p => p[0]).join(", ");
             });
 
         //	ENTER + UPDATE

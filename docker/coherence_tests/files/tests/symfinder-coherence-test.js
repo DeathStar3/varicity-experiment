@@ -115,7 +115,7 @@ describe("Testing coherence of all projects", () => {
                     .toBeTruthy();
             });
 
-            xit('All decorator classes have a D', () => {
+            it('All decorator classes have a D', () => {
                 expect(graph.nodes
                     .filter(n => n.types.includes("DECORATOR"))
                     .map(n => d3.select('text[name = "' + n.name + '"]'))

@@ -64,8 +64,8 @@ describe("Generating different types of nodes", () => {
         var svg = document.getElementsByTagName('svg');
         expect(svg).not.toBe(null);
     });
-    it('generated graph should contain five nodes', () => {
-        expect(d3.selectAll('circle').size()).toBe(5);
+    it('generated graph should contain seven nodes', () => {
+        expect(d3.selectAll('circle').size()).toBe(7);
     });
     it('standard class node should not have a dotted outline', () => {
         expect(d3.select('circle[name = "standardNode"]').style("stroke-dasharray")).toBe("3, 0");
@@ -84,6 +84,12 @@ describe("Generating different types of nodes", () => {
     });
     it('factory node should have an F on it', () => {
         expect(d3.select('text[name = "factoryNode"]').html()).toBe("F");
+    });
+    it('template node should have a T on it', () => {
+        expect(d3.select('text[name = "templateNode"]').html()).toBe("T");
+    });
+    it('decorator node should have an D on it', () => {
+        expect(d3.select('text[name = "decoratorNode"]').html()).toBe("D");
     });
 
 });

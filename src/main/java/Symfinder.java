@@ -350,6 +350,7 @@ public class Symfinder {
      * - an abstract class which possesses at least one subclass and contains a concrete method calling an abstract method of this same class
      * - a class whose name contains "Template"
      */
+    // TODO name contains template + update doc
     private class StrategyTemplateVisitor extends SymfinderVisitor {
 
         private ITypeBinding thisClassBinding = null;
@@ -383,7 +384,8 @@ public class Symfinder {
                     neoGraph.addLabelToNode(typeNode, DesignPatternType.STRATEGY.toString());
                 }
                 if (isClassDecorator(binding)) {
-                    neoGraph.addLabelToNode(typeNode, DesignPatternType.DECORATOR.toString());
+                    Node thisClassNode = neoGraph.getNode(thisClassBinding.getQualifiedName()).get();
+                    neoGraph.addLabelToNode(thisClassNode, DesignPatternType.DECORATOR.toString());
                 }
             }
             return false;
@@ -391,19 +393,22 @@ public class Symfinder {
 
         private boolean isClassDecorator(ITypeBinding fieldBinding) {
             String bindingQualifiedName = fieldBinding.getErasure().getQualifiedName().split("<")[0];
-            if (fieldBinding.isClass()) {
-                // if the field type is a class, we check if this class is inherited by the class
-                ITypeBinding superclassType = thisClassBinding.getSuperclass();
-                if (superclassType != null) {
-                    Optional <String> superclassFullName = getClassFullName(superclassType.getName().split("<")[0]);
-                    return superclassFullName.isPresent() && superclassFullName.get().equals(bindingQualifiedName);
-                }
-            } else if (fieldBinding.isInterface()) {
-                // if the field type is an interface, we check if this interface is implemented by the class
-                for (ITypeBinding o : thisClassBinding.getInterfaces()) {
-                    Optional <String> interfaceFullName = getClassFullName(o.getName().split("<")[0]);
-                    if (interfaceFullName.isPresent() && interfaceFullName.get().equals(bindingQualifiedName)) {
-                        return true;
+            Optional <Node> fieldNode = neoGraph.getNode(fieldBinding.getErasure().getQualifiedName());
+            if (fieldNode.isPresent()) {
+                if (fieldNode.get().hasLabel(EntityType.CLASS.toString())) {
+                    // if the field type is a class, we check if this class is inherited by the class
+                    ITypeBinding superclassType = thisClassBinding.getSuperclass();
+                    if (superclassType != null) {
+                        Optional <String> superclassFullName = getClassFullName(superclassType);
+                        return superclassFullName.isPresent() && superclassFullName.get().equals(bindingQualifiedName);
+                    }
+                } else if (fieldNode.get().hasLabel(EntityType.INTERFACE.toString())) {
+                    // if the field type is an interface, we check if this interface is implemented by the class
+                    for (ITypeBinding o : thisClassBinding.getInterfaces()) {
+                        Optional <String> interfaceFullName = getClassFullName(o);
+                        if (interfaceFullName.isPresent() && interfaceFullName.get().equals(bindingQualifiedName)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -439,10 +444,15 @@ public class Symfinder {
          * WARNING: all classes must have been parsed at least once before executing this method.
          * Otherwise, the class we are looking to may not exist in the database.
          *
-         * @param className
+         * @param typeBinding
          * @return
          */
-        private Optional <String> getClassFullName(String className) {
+        private Optional <String> getClassFullName(ITypeBinding typeBinding) {
+            String jdtFullName = typeBinding.getQualifiedName();
+            if(neoGraph.getNode(jdtFullName).isPresent()){
+                return Optional.of(jdtFullName);
+            }
+            String className = typeBinding.getName().split("<")[0];
             Optional <ImportDeclaration> first = imports.stream()
                     .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(className))
                     .findFirst();
