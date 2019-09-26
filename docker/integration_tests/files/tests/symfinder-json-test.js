@@ -19,6 +19,8 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
+// TODO add test case for decorator
+
 describe("Testing JSON outputs for strategy", () => {
 
     var jsonData, jsonStatsData;

@@ -115,6 +115,14 @@ describe("Testing coherence of all projects", () => {
                     .toBeTruthy();
             });
 
+            xit('All decorator classes have a D', () => {
+                expect(graph.nodes
+                    .filter(n => n.types.includes("DECORATOR"))
+                    .map(n => d3.select('text[name = "' + n.name + '"]'))
+                    .every(t => t.html().includes("D")))
+                    .toBeTruthy();
+            });
+
             it('All interfaces have a black node', () => {
                 expect(graph.nodes
                     .filter(n => n.types.includes("INTERFACE"))
