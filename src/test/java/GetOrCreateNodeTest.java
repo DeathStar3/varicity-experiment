@@ -28,7 +28,7 @@ import org.neo4j.graphdb.Transaction;
 
 import static org.junit.Assert.*;
 
-public class GetOrCreateNodeTest extends Neo4JTest {
+public class GetOrCreateNodeTest extends Neo4jTest {
 
     @Test
     public void getOrCreateNodeCreationNoProperty() {

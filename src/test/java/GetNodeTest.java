@@ -27,7 +27,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-public class GetNodeTest extends Neo4JTest {
+public class GetNodeTest extends Neo4jTest {
 
     @Test
     public void getNodeInRealPackage(){

@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class NeoGraphTest extends Neo4JTest {
+public class NeoGraphTest extends Neo4jTest {
 
     @Test
     public void createNodeOneLabel() {
@@ -394,6 +394,44 @@ public class NeoGraphTest extends Neo4JTest {
         assertEquals("cl:STRATEGY", NeoGraph.getClauseForNodesMatchingLabels("cl", DesignPatternType.STRATEGY));
         assertEquals("n:STRATEGY OR n:FACTORY", NeoGraph.getClauseForNodesMatchingLabels("n", DesignPatternType.STRATEGY, DesignPatternType.FACTORY));
         assertEquals("n:FACTORY OR n:STRATEGY", NeoGraph.getClauseForNodesMatchingLabels("n", DesignPatternType.FACTORY, DesignPatternType.STRATEGY));
+    }
+
+    @Test
+    public void getSuperclassNodeWithExistingSuperclass() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
+            org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
+            graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.EXTENDS);
+            assertTrue(graph.getSuperclassNode("Rectangle").isPresent());
+            assertEquals(shapeNode, graph.getSuperclassNode("Rectangle").get());
+        });
+    }
+
+    @Test
+    public void getSuperclassNodeWithNonExistingSuperclass() {
+        runTest(graph -> {
+            graph.createNode("Rectangle", EntityType.CLASS);
+            assertFalse(graph.getSuperclassNode("Rectangle").isPresent());
+        });
+    }
+
+    @Test
+    public void getInheritedInterfaceNodeWithExistingSuperclass() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.INTERFACE);
+            org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
+            graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.IMPLEMENTS);
+            assertTrue(graph.getInheritedInterfaceNode("Rectangle").isPresent());
+            assertEquals(shapeNode, graph.getInheritedInterfaceNode("Rectangle").get());
+        });
+    }
+
+    @Test
+    public void getInheritedInterfaceNodeWithNonExistingSuperclass() {
+        runTest(graph -> {
+            graph.createNode("Rectangle", EntityType.CLASS);
+            assertFalse(graph.getInheritedInterfaceNode("Rectangle").isPresent());
+        });
     }
 
 }

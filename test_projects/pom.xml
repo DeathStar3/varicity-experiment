@@ -26,7 +26,14 @@
     <version>1</version>
     <packaging>pom</packaging>
 
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <modules>
+        <module>decorator</module>
         <module>factory</module>
         <module>generics</module>
         <module>import_from_different_package</module>

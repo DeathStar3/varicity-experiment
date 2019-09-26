@@ -30,7 +30,7 @@ import org.neo4j.harness.junit.Neo4jRule;
 
 import java.util.function.Consumer;
 
-public class Neo4JTest {
+public class Neo4jTest {
 
     @Rule
     public Neo4jRule neo4jRule = new Neo4jRule();

@@ -27,7 +27,7 @@ import org.neo4j.driver.v1.types.Node;
 
 import static org.junit.Assert.assertEquals;
 
-public class ClassLevelVariantsTest extends Neo4JTest {
+public class ClassLevelVariantsTest extends Neo4jTest {
 
     @Test
     public void NoSubclass() {

@@ -28,7 +28,7 @@ import org.neo4j.driver.v1.types.Node;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class VPLabelTest extends Neo4JTest {
+public class VPLabelTest extends Neo4jTest {
 
     @Test
     public void setVPLabelAbstractClass() {

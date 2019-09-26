@@ -110,6 +110,27 @@ public class NeoGraph {
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
+    /**
+     * Returns the node corresponding to the superclass of the node whose name is in parameter
+     * @param name node name
+     * @return the node if it exists, Optional.empty otherwise
+     */
+    public Optional <Node> getSuperclassNode(String name) {
+        List <Record> recordList = submitRequest("MATCH (s:CLASS)-[:EXTENDS]->(n {name: $name}) RETURN (s)", "name", name).list();
+        return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
+    }
+
+    /**
+     * Returns the node corresponding to the superclass of the node whose name is in parameter
+     * @param name node name
+     * @return the node if it exists, Optional.empty otherwise
+     */
+    public Optional <Node> getInheritedInterfaceNode(String name) {
+        List <Record> recordList = submitRequest("MATCH (s:INTERFACE)-[:IMPLEMENTS]->(n {name: $name}) RETURN (s)", "name", name).list();
+        return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
+    }
+
+
     public Optional <Node> getNodeWithNameInPackage(String name, String packageName) {
         List <Record> recordList = submitRequest("MATCH (n) WHERE (n:CLASS OR n:INTERFACE) AND n.name STARTS WITH $package AND n.name ENDS WITH $inheritedClassName RETURN (n)", "package", packageName+".", "inheritedClassName", "."+name).list();
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
