@@ -19,6 +19,8 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
+package neograph;
+
 import neo4j_types.*;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.*;

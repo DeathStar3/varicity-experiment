@@ -19,6 +19,7 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
+import neograph.NeoGraph;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

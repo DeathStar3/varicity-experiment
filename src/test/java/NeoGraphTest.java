@@ -19,7 +19,11 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-import neo4j_types.*;
+import neo4j_types.DesignPatternType;
+import neo4j_types.EntityAttribute;
+import neo4j_types.EntityType;
+import neo4j_types.RelationType;
+import neograph.NeoGraph;
 import org.junit.Test;
 import org.neo4j.graphdb.*;
 
