@@ -18,7 +18,6 @@ import java.util.Arrays;
 public class SymfinderVisitor extends ASTVisitor {
 
     private static final Logger logger = LogManager.getLogger(SymfinderVisitor.class);
-
     protected NeoGraph neoGraph;
     protected boolean visitedType = false;
 
@@ -39,9 +38,11 @@ public class SymfinderVisitor extends ASTVisitor {
         return false;
     }
 
-
     protected boolean isTestClass(ITypeBinding classBinding) {
         return Arrays.asList(classBinding.getPackage().getNameComponents()).contains("test");
     }
 
+    protected static String getClassBaseName(String className){
+        return className.split("<")[0];
+    }
 }

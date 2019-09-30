@@ -13,8 +13,14 @@ inheritance:
 import_from_different_package:
   localDirectory: import_from_different_package
   sourcePackage: .
+import_from_different_package_all_package_imported:
+  localDirectory: import_from_different_package_all_package_imported
+  sourcePackage: .
 inner_class:
   localDirectory: inner_class
+  sourcePackage: .
+inner_class_before_fields:
+  localDirectory: inner_class_before_fields
   sourcePackage: .
 metrics:
   localDirectory: metrics

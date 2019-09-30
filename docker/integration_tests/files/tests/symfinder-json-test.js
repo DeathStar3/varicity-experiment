@@ -227,6 +227,76 @@ describe("Testing JSON output for decorator", () => {
 
 });
 
+describe("Importing a class from another package", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async () => {
+        const [graph, stats] = await getJsonData("tests/data/import_from_different_package.json", "tests/data/import_from_different_package-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+    });
+
+    it('there should be a node called AbstractAlgo', () => {
+        expect(jsonData.nodes.filter(n => n.name === "abs.AbstractAlgo").length).toBe(1);
+    });
+    it('there should be 1 class level variant', () => {
+        expect(jsonStatsData.classLevelVariants).toBe(1);
+    });
+
+});
+
+describe("Importing a whole package", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async () => {
+        const [graph, stats] = await getJsonData("tests/data/import_from_different_package_all_package_imported.json", "tests/data/import_from_different_package_all_package_imported-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+    });
+
+    it('there should be a node called AbstractAlgo', () => {
+        expect(jsonData.nodes.filter(n => n.name === "abs.AbstractAlgo").length).toBe(1);
+    });
+    it('there should be 1 class level variant', () => {
+        expect(jsonStatsData.classLevelVariants).toBe(1);
+    });
+
+});
+
+describe("Inner class", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async () => {
+        const [graph, stats] = await getJsonData("tests/data/inner_class.json", "tests/data/inner_class-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+    });
+
+    xit('there should be 1 class level VP', () => {
+        expect(jsonStatsData.classLevelVPs).toBe(1);
+    });
+
+});
+
+describe("Inner class defined before fields", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async () => {
+        const [graph, stats] = await getJsonData("tests/data/inner_class.json", "tests/data/inner_class-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+    });
+
+    xit('there should be 2 class level VP', () => {
+        expect(jsonStatsData.classLevelVPs).toBe(2);
+    });
+
+});
+
 function getJsonData(file, statsFile) {
     return new Promise(((resolve, reject) => {
         d3.queue()

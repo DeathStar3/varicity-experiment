@@ -28,7 +28,6 @@ public class GraphBuilderVisitor extends ImportsVisitor {
         super(neoGraph);
     }
 
-
     @Override
     public boolean visit(TypeDeclaration type) {
         if (super.visit(type)) {
@@ -56,22 +55,18 @@ public class GraphBuilderVisitor extends ImportsVisitor {
     // TODO: 4/1/19 functional tests : imports from different packages
     private void createImportedClassNode(String thisClassName, Node thisNode, ITypeBinding importedClassType, EntityType entityType, RelationType relationType, String name) {
         Optional <String> myImportedClass = getClassFullName(importedClassType);
-        String qualifiedName = importedClassType.getQualifiedName().split("<")[0];
+        String qualifiedName = getClassBaseName(importedClassType.getQualifiedName());
         if (myImportedClass.isPresent() && ! myImportedClass.get().equals(qualifiedName)) {
             nbCorrectedInheritanceLinks++;
             logger.debug(String.format("DIFFERENT %s FULL NAMES FOUND FOR CLASS %s: \n" +
                     "JDT qualified name: %s\n" +
                     "Manually resolved name: %s\n" +
-                    "Getting manually resolved name.", name, thisClassName.split("<")[0], qualifiedName, myImportedClass.get()));
+                    "Getting manually resolved name.", name, getClassBaseName(thisClassName), qualifiedName, myImportedClass.get()));
         }
         Node superclassNode = neoGraph.getOrCreateNode(myImportedClass.orElse(qualifiedName), entityType, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
         neoGraph.linkTwoNodes(superclassNode, thisNode, relationType);
     }
 
-    @Override
-    public void endVisit(TypeDeclaration node) {
-        imports.clear();
-    }
 
     public static int getNbCorrectedInheritanceLinks() {
         return nbCorrectedInheritanceLinks;

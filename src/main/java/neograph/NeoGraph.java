@@ -447,6 +447,7 @@ public class NeoGraph {
      *
      * @return Number of class level VPs
      */
+    // TODO count patterns ?
     public int getNbClassLevelVPs() {
         int nbInterfaces = submitRequest("MATCH (n) WHERE (n:INTERFACE AND NOT n:OUT_OF_SCOPE) RETURN COUNT (n)").list().get(0).get(0).asInt();
         int nbAbstractClasses = submitRequest("MATCH (n) WHERE n:CLASS AND n:ABSTRACT AND NOT n:OUT_OF_SCOPE RETURN COUNT (n)").list().get(0).get(0).asInt();

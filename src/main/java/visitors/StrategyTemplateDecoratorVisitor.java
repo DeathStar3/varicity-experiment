@@ -28,6 +28,7 @@ public class StrategyTemplateDecoratorVisitor extends ImportsVisitor {
 
     private static final Logger logger = LogManager.getLogger(StrategyTemplateDecoratorVisitor.class);
 
+    private ITypeBinding fieldDeclaringClass;
 
     public StrategyTemplateDecoratorVisitor(NeoGraph neoGraph) {
         super(neoGraph);
@@ -38,23 +39,26 @@ public class StrategyTemplateDecoratorVisitor extends ImportsVisitor {
         logger.debug(field);
         ITypeBinding binding = field.getType().resolveBinding();
         if (binding != null) { // TODO: 12/6/18 log this
+            fieldDeclaringClass = ((TypeDeclaration) field.getParent()).resolveBinding();
             Optional <String> classFullName = getClassFullName(binding);
             if (classFullName.isPresent()) {
-                Node typeNode = neoGraph.getOrCreateNode(classFullName.get(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
-                if (binding.getName().contains("Strategy") || neoGraph.getNbVariants(typeNode) >= 2) {
-                    neoGraph.addLabelToNode(typeNode, DesignPatternType.STRATEGY.toString());
-                }
-                if (isClassDecorator(binding)) {
-                    Node thisClassNode = neoGraph.getNode(thisClassBinding.getQualifiedName()).get();
-                    neoGraph.addLabelToNode(thisClassNode, DesignPatternType.DECORATOR.toString());
-                }
+                Optional <Node> typeNode = neoGraph.getNode(classFullName.get());
+                typeNode.ifPresent(node -> {
+                    if (binding.getName().contains("Strategy") || neoGraph.getNbVariants(node) >= 2) {
+                        neoGraph.addLabelToNode(node, DesignPatternType.STRATEGY.toString());
+                    }
+                    if (isClassDecorator(binding)) {
+                        Node thisClassNode = neoGraph.getNode(getClassFullName(fieldDeclaringClass).get()).get();
+                        neoGraph.addLabelToNode(thisClassNode, DesignPatternType.DECORATOR.toString());
+                    }
+                });
             }
         }
         return false;
     }
 
     private boolean isClassDecorator(ITypeBinding fieldBinding) {
-        String bindingQualifiedName = fieldBinding.getErasure().getQualifiedName().split("<")[0];
+        String bindingQualifiedName = getClassBaseName(fieldBinding.getErasure().getQualifiedName());
         if (bindingQualifiedName.contains("Decorator")) {
             return true;
         }
@@ -62,14 +66,14 @@ public class StrategyTemplateDecoratorVisitor extends ImportsVisitor {
         if (fieldNode.isPresent() && ! fieldNode.get().hasLabel(EntityAttribute.OUT_OF_SCOPE.toString())) {
             if (fieldNode.get().hasLabel(EntityType.CLASS.toString())) {
                 // if the field type is a class, we check if this class is inherited by the class
-                ITypeBinding superclassType = thisClassBinding.getSuperclass();
+                ITypeBinding superclassType = fieldDeclaringClass;
                 if (superclassType != null) {
                     Optional <String> superclassFullName = getClassFullName(superclassType);
                     return superclassFullName.isPresent() && superclassFullName.get().equals(bindingQualifiedName);
                 }
             } else if (fieldNode.get().hasLabel(EntityType.INTERFACE.toString())) {
                 // if the field type is an interface, we check if this interface is implemented by the class
-                for (ITypeBinding o : thisClassBinding.getInterfaces()) {
+                for (ITypeBinding o : fieldDeclaringClass.getInterfaces()) {
                     Optional <String> interfaceFullName = getClassFullName(o);
                     if (interfaceFullName.isPresent() && interfaceFullName.get().equals(bindingQualifiedName)) {
                         return true;

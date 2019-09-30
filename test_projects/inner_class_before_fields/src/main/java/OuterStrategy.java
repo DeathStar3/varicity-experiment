@@ -19,10 +19,14 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-public class OuterClass {
+import org.OtherStrategy;
 
-    class InnerClass {
+public class OuterStrategy {
+
+    class InnerStrategy {
 
     }
+
+    OtherStrategy otherStrategy;
 
 }

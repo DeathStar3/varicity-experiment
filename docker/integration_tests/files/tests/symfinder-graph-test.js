@@ -195,18 +195,3 @@ describe("Multiple patterns", () => {
 
 });
 
-describe("Importing a class from another package", () => {
-
-    beforeAll(async () => {
-        await displayGraph("tests/data/import_from_different_package.json", "tests/data/import_from_different_package-stats.json", [], false);
-    });
-
-});
-
-describe("Use of generic types", () => {
-
-    beforeAll(async () => {
-        await displayGraph("tests/data/generics.json", "tests/data/generics-stats.json", [], false);
-    });
-
-});

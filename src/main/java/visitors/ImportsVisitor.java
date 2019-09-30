@@ -13,8 +13,8 @@ import java.util.Optional;
 public class ImportsVisitor extends SymfinderVisitor {
 
     List <ImportDeclaration> imports = new ArrayList <>();
-
     protected ITypeBinding thisClassBinding = null;
+
 
     public ImportsVisitor(NeoGraph neoGraph) {
         super(neoGraph);
@@ -63,10 +63,11 @@ public class ImportsVisitor extends SymfinderVisitor {
      */
     protected Optional <String> getClassFullName(ITypeBinding typeBinding) {
         String jdtFullName = typeBinding.getQualifiedName();
-        if (neoGraph.getNode(jdtFullName.split("<")[0]).isPresent()) {
-            return Optional.of(jdtFullName.split("<")[0]);
+        String jdtClassName = getClassBaseName(jdtFullName);
+        if (neoGraph.getNode(jdtClassName).isPresent()) {
+            return Optional.of(jdtClassName);
         }
-        String className = typeBinding.getName().split("<")[0];
+        String className = getClassBaseName(typeBinding.getName());
         Optional <ImportDeclaration> first = imports.stream()
                 .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(className))
                 .findFirst();
