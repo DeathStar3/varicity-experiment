@@ -86,7 +86,7 @@ public class Symfinder {
         logger.log(Level.getLevel("MY_LEVEL"), "GraphBuilderVisitor");
         visitPackage(classpathPath, files, new GraphBuilderVisitor());
         logger.log(Level.getLevel("MY_LEVEL"), "StrategyTemplateVisitor");
-        visitPackage(classpathPath, files, new StrategyTemplateVisitor());
+        visitPackage(classpathPath, files, new StrategyTemplateDecoratorVisitor());
         logger.log(Level.getLevel("MY_LEVEL"), "FactoryVisitor");
         visitPackage(classpathPath, files, new FactoryVisitor());
 
@@ -187,11 +187,14 @@ public class Symfinder {
      */
     private class SymfinderVisitor extends ASTVisitor {
 
+        protected boolean visitedType = false;
+
         @Override
         public boolean visit(TypeDeclaration type) {
             ITypeBinding classBinding = type.resolveBinding();
             logger.printf(Level.INFO, "Visitor: %s - Class: %s", this.getClass().getTypeName(), classBinding.getQualifiedName());
-            return ! isTestClass(classBinding) && ! (classBinding.isNested() && Modifier.isPrivate(classBinding.getModifiers())) && ! classBinding.isEnum() && ! classBinding.isAnonymous();
+            visitedType = ! isTestClass(classBinding) && ! (classBinding.isNested() && Modifier.isPrivate(classBinding.getModifiers())) && ! classBinding.isEnum() && ! classBinding.isAnonymous();
+            return visitedType;
         }
 
         @Override
@@ -292,7 +295,7 @@ public class Symfinder {
 
         // TODO: 4/1/19 functional tests : imports from different packages
         private void createImportedClassNode(String thisClassName, Node thisNode, ITypeBinding importedClassType, EntityType entityType, RelationType relationType, String name) {
-            Optional <String> myImportedClass = getClassFullName(importedClassType.getName().split("<")[0]);
+            Optional <String> myImportedClass = getClassFullName(importedClassType);
             String qualifiedName = importedClassType.getQualifiedName().split("<")[0];
             if (myImportedClass.isPresent() && ! myImportedClass.get().equals(qualifiedName)) {
                 nbCorrectedInheritanceLinks++;
@@ -310,16 +313,22 @@ public class Symfinder {
          * There are two kinds of imports:
          * - imports of classes:   a.b.TheClass  (1)
          * - imports of packages:  a.b.*         (2)
-         * The determination is done in two steps:
-         * - Iterate over (1). If a correspondence is found, return it.
+         * The determination is done in three steps:
+         * - If the class is in the current package, JDT directly gives us the name. If a correspondence in the database is found, return it.
+         * - Iterate over (1). If a correspondence in the database is found, return it.
          * - Iterate over (2) and for each one check in the database if the package a class with this class name.
          * WARNING: all classes must have been parsed at least once before executing this method.
          * Otherwise, the class we are looking to may not exist in the database.
          *
-         * @param className
-         * @return
+         * @param typeBinding binding found by JDT for the type to check
+         * @return String containing the real full class name
          */
-        private Optional <String> getClassFullName(String className) {
+        private Optional <String> getClassFullName(ITypeBinding typeBinding) {
+            String jdtFullName = typeBinding.getQualifiedName();
+            if (neoGraph.getNode(jdtFullName.split("<")[0]).isPresent()) {
+                return Optional.of(jdtFullName.split("<")[0]);
+            }
+            String className = typeBinding.getName().split("<")[0];
             Optional <ImportDeclaration> first = imports.stream()
                     .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(className))
                     .findFirst();
@@ -342,16 +351,19 @@ public class Symfinder {
     }
 
     /**
-     * Detects strategy and template patterns.
+     * Detects strategy, template and decorator patterns.
      * We detect as a strategy pattern:
      * - a class who possesses at least two variants and is used as a field in another class
      * - a class whose name contains "Strategy"
      * We detect as a template pattern:
      * - an abstract class which possesses at least one subclass and contains a concrete method calling an abstract method of this same class
      * - a class whose name contains "Template"
+     * We detect as a decorator pattern:
+     * - an abstract class which possesses at least one subclass and contains a concrete method calling an abstract method of this same class
+     * - a class whose name contains "Decorator"
      */
     // TODO name contains template + update doc
-    private class StrategyTemplateVisitor extends SymfinderVisitor {
+    private class StrategyTemplateDecoratorVisitor extends SymfinderVisitor {
 
         private ITypeBinding thisClassBinding = null;
 
@@ -379,13 +391,16 @@ public class Symfinder {
             logger.debug(field);
             ITypeBinding binding = field.getType().resolveBinding();
             if (binding != null) { // TODO: 12/6/18 log this
-                Node typeNode = neoGraph.getOrCreateNode(binding.getErasure().getQualifiedName(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
-                if (binding.getName().contains("Strategy") || neoGraph.getNbVariants(typeNode) >= 2) {
-                    neoGraph.addLabelToNode(typeNode, DesignPatternType.STRATEGY.toString());
-                }
-                if (isClassDecorator(binding)) {
-                    Node thisClassNode = neoGraph.getNode(thisClassBinding.getQualifiedName()).get();
-                    neoGraph.addLabelToNode(thisClassNode, DesignPatternType.DECORATOR.toString());
+                Optional <String> classFullName = getClassFullName(binding);
+                if (classFullName.isPresent()) {
+                    Node typeNode = neoGraph.getOrCreateNode(classFullName.get(), binding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
+                    if (binding.getName().contains("Strategy") || neoGraph.getNbVariants(typeNode) >= 2) {
+                        neoGraph.addLabelToNode(typeNode, DesignPatternType.STRATEGY.toString());
+                    }
+                    if (isClassDecorator(binding)) {
+                        Node thisClassNode = neoGraph.getNode(thisClassBinding.getQualifiedName()).get();
+                        neoGraph.addLabelToNode(thisClassNode, DesignPatternType.DECORATOR.toString());
+                    }
                 }
             }
             return false;
@@ -393,8 +408,11 @@ public class Symfinder {
 
         private boolean isClassDecorator(ITypeBinding fieldBinding) {
             String bindingQualifiedName = fieldBinding.getErasure().getQualifiedName().split("<")[0];
-            Optional <Node> fieldNode = neoGraph.getNode(fieldBinding.getErasure().getQualifiedName());
-            if (fieldNode.isPresent()) {
+            if (bindingQualifiedName.contains("Decorator")) {
+                return true;
+            }
+            Optional <Node> fieldNode = neoGraph.getNode(getClassFullName(fieldBinding).get());
+            if (fieldNode.isPresent() && ! fieldNode.get().hasLabel(EntityAttribute.OUT_OF_SCOPE.toString())) {
                 if (fieldNode.get().hasLabel(EntityType.CLASS.toString())) {
                     // if the field type is a class, we check if this class is inherited by the class
                     ITypeBinding superclassType = thisClassBinding.getSuperclass();
@@ -438,19 +456,20 @@ public class Symfinder {
          * There are two kinds of imports:
          * - imports of classes:   a.b.TheClass  (1)
          * - imports of packages:  a.b.*         (2)
-         * The determination is done in two steps:
-         * - Iterate over (1). If a correspondence is found, return it.
+         * The determination is done in three steps:
+         * - If the class is in the current package, JDT directly gives us the name. If a correspondence in the database is found, return it.
+         * - Iterate over (1). If a correspondence in the database is found, return it.
          * - Iterate over (2) and for each one check in the database if the package a class with this class name.
          * WARNING: all classes must have been parsed at least once before executing this method.
          * Otherwise, the class we are looking to may not exist in the database.
          *
-         * @param typeBinding
-         * @return
+         * @param typeBinding binding found by JDT for the type to check
+         * @return String containing the real full class name
          */
         private Optional <String> getClassFullName(ITypeBinding typeBinding) {
             String jdtFullName = typeBinding.getQualifiedName();
-            if(neoGraph.getNode(jdtFullName).isPresent()){
-                return Optional.of(jdtFullName);
+            if (neoGraph.getNode(jdtFullName.split("<")[0]).isPresent()) {
+                return Optional.of(jdtFullName.split("<")[0]);
             }
             String className = typeBinding.getName().split("<")[0];
             Optional <ImportDeclaration> first = imports.stream()
@@ -469,8 +488,10 @@ public class Symfinder {
 
         @Override
         public void endVisit(TypeDeclaration node) {
-            thisClassBinding = null;
-            imports.clear();
+            if (visitedType) {
+                thisClassBinding = null;
+                imports.clear();
+            }
         }
 
     }
