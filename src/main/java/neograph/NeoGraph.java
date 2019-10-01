@@ -93,6 +93,7 @@ public class NeoGraph {
     /**
      * Returns the node labeled CLASS and having the name in parameter
      * As we use a custom index :CLASS(name), this method lowers the time spent to execute the query.
+     *
      * @param name node name
      * @return the node if it exists, Optional.empty otherwise
      */
@@ -104,6 +105,7 @@ public class NeoGraph {
     /**
      * Returns the node labeled INTERFACE and having the name in parameter
      * As we use a custom index :INTERFACE(name), this method lowers the time spent to execute the query.
+     *
      * @param name node name
      * @return the node if it exists, Optional.empty otherwise
      */
@@ -114,6 +116,7 @@ public class NeoGraph {
 
     /**
      * Returns the node corresponding to the superclass of the node whose name is in parameter
+     *
      * @param name node name
      * @return the node if it exists, Optional.empty otherwise
      */
@@ -123,18 +126,19 @@ public class NeoGraph {
     }
 
     /**
-     * Returns the node corresponding to the superclass of the node whose name is in parameter
+     * Returns the list of nodes corresponding to the interfaces implemented by the node whose name is in parameter
+     *
      * @param name node name
      * @return the node if it exists, Optional.empty otherwise
      */
-    public Optional <Node> getInheritedInterfaceNode(String name) {
+    public List <Node> getImplementedInterfacesNodes(String name) {
         List <Record> recordList = submitRequest("MATCH (s:INTERFACE)-[:IMPLEMENTS]->(n {name: $name}) RETURN (s)", "name", name).list();
-        return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
+        return recordList.size() == 0 ? Collections.emptyList() : recordList.stream().map(record -> record.get(0).asNode()).collect(Collectors.toList());
     }
 
 
     public Optional <Node> getNodeWithNameInPackage(String name, String packageName) {
-        List <Record> recordList = submitRequest("MATCH (n) WHERE (n:CLASS OR n:INTERFACE) AND n.name STARTS WITH $package AND n.name ENDS WITH $inheritedClassName RETURN (n)", "package", packageName+".", "inheritedClassName", "."+name).list();
+        List <Record> recordList = submitRequest("MATCH (n) WHERE (n:CLASS OR n:INTERFACE) AND n.name STARTS WITH $package AND n.name ENDS WITH $inheritedClassName RETURN (n)", "package", packageName + ".", "inheritedClassName", "." + name).list();
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
@@ -205,7 +209,6 @@ public class NeoGraph {
      * As setFrame is not overloaded, it will not appear in the map.
      *
      * @param parent
-     *
      * @return
      */
     public Map <String, Long> getNbOverloads(String parent) {
@@ -277,7 +280,7 @@ public class NeoGraph {
      */
     public void setVPLabels() {
         submitRequest(String.format("MATCH (c) WHERE ((%s) OR c:ABSTRACT OR c:INTERFACE OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0) SET c:%s",
-                getClauseForNodesMatchingLabels("c",DesignPatternType.values()),
+                getClauseForNodesMatchingLabels("c", DesignPatternType.values()),
                 EntityAttribute.VP));
     }
 
@@ -326,7 +329,6 @@ public class NeoGraph {
      * Get number of subclasses of a class or implementations of an interface
      *
      * @param node Node corresponding to the class
-     *
      * @return Number of subclasses or implementations
      */
     public int getNbVariants(Node node) {
@@ -460,7 +462,6 @@ public class NeoGraph {
      *
      * @param parentNode source node of the relationship
      * @param childNode  destination node of the relationship
-     *
      * @return true if a relationship exists, false otherwise
      */
     public boolean relatedTo(Node parentNode, Node childNode) {

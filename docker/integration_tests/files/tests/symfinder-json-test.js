@@ -19,8 +19,6 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-// TODO add test case for decorator
-
 describe("Testing JSON outputs for strategy", () => {
 
     var jsonData, jsonStatsData;
@@ -202,12 +200,12 @@ describe("Testing JSON output for template", () => {
 
 });
 
-describe("Testing JSON output for decorator", () => {
+describe("Testing JSON output for abstract decorator", () => {
 
     var jsonData, jsonStatsData;
 
     beforeAll(async () => {
-        const [graph, stats] = await getJsonData("tests/data/decorator.json", "tests/data/decorator-stats.json");
+        const [graph, stats] = await getJsonData("tests/data/abstract_decorator.json", "tests/data/abstract_decorator-stats.json");
         jsonData = graph;
         jsonStatsData = stats;
     });

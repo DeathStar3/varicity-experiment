@@ -33,6 +33,7 @@
     </properties>
 
     <modules>
+        <module>abstract_decorator</module>
         <module>decorator</module>
         <module>factory</module>
         <module>generics</module>

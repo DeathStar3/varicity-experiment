@@ -1,3 +1,6 @@
+abstract_decorator:
+  localDirectory: abstract_decorator
+  sourcePackage: .
 decorator:
   localDirectory: decorator
   sourcePackage: .

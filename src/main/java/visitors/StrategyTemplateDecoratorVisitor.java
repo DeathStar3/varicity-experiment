@@ -20,7 +20,7 @@ import java.util.Optional;
  * - an abstract class which possesses at least one subclass and contains a concrete method calling an abstract method of this same class
  * - a class whose name contains "Template"
  * We detect as a decorator pattern:
- * - an abstract class which possesses at least one subclass and contains a concrete method calling an abstract method of this same class
+ * - a class which possesses at least one subclass and a field corresponding to a class having at least two subclasses
  * - a class whose name contains "Decorator"
  */
 // TODO name contains template + update doc
@@ -28,7 +28,7 @@ public class StrategyTemplateDecoratorVisitor extends ImportsVisitor {
 
     private static final Logger logger = LogManager.getLogger(StrategyTemplateDecoratorVisitor.class);
 
-    private ITypeBinding fieldDeclaringClass;
+    private ITypeBinding fieldDeclaringClassBinding;
 
     public StrategyTemplateDecoratorVisitor(NeoGraph neoGraph) {
         super(neoGraph);
@@ -37,51 +37,34 @@ public class StrategyTemplateDecoratorVisitor extends ImportsVisitor {
     @Override
     public boolean visit(FieldDeclaration field) {
         logger.debug(field);
-        ITypeBinding binding = field.getType().resolveBinding();
-        if (field.getParent() instanceof TypeDeclaration && binding != null) { // prevents the case where the field is an enum, which does not bring variability
-            fieldDeclaringClass = ((TypeDeclaration) field.getParent()).resolveBinding();
-            Optional <String> classFullName = getClassFullName(binding);
+        ITypeBinding fieldTypeBinding = field.getType().resolveBinding();
+        if (field.getParent() instanceof TypeDeclaration && fieldTypeBinding != null) { // prevents the case where the field is an enum, which does not bring variability
+            fieldDeclaringClassBinding = ((TypeDeclaration) field.getParent()).resolveBinding();
+            Optional <String> classFullName = getClassFullName(fieldTypeBinding);
             if (classFullName.isPresent()) {
                 Optional <Node> typeNode = neoGraph.getNode(classFullName.get());
                 typeNode.ifPresent(node -> {
-                    if (binding.getName().contains("Strategy") || neoGraph.getNbVariants(node) >= 2) {
+                    if (fieldTypeBinding.getName().contains("Strategy") || neoGraph.getNbVariants(node) >= 2) {
                         neoGraph.addLabelToNode(node, DesignPatternType.STRATEGY.toString());
                     }
-                    if (isClassDecorator(binding)) {
-                        Node thisClassNode = neoGraph.getNode(getClassFullName(fieldDeclaringClass).get()).get();
-                        neoGraph.addLabelToNode(thisClassNode, DesignPatternType.DECORATOR.toString());
-                    }
+                    checkDecorator(fieldDeclaringClassBinding, fieldTypeBinding);
                 });
             }
         }
         return false;
     }
 
-    private boolean isClassDecorator(ITypeBinding fieldBinding) {
-        String bindingQualifiedName = getClassBaseName(fieldBinding.getErasure().getQualifiedName());
-        if (bindingQualifiedName.contains("Decorator")) {
-            return true;
+    private void checkDecorator(ITypeBinding currentClassBinding, ITypeBinding fieldClassBinding) {
+        Node currentClassNode = neoGraph.getNode(getClassFullName(currentClassBinding).get()).get();
+        Node fieldClassNode = neoGraph.getNode(getClassFullName(fieldClassBinding).get()).get();
+        String currentClassName = currentClassBinding.getErasure().getQualifiedName();
+        boolean isClassInheritingFieldClass = neoGraph.getSuperclassNode(currentClassName).map(node -> node.equals(fieldClassNode)).orElse(false);
+        boolean isClassImplementingFieldClass = neoGraph.getImplementedInterfacesNodes(currentClassName).stream().anyMatch(node -> node.equals(fieldClassNode));
+        if(fieldClassBinding.getErasure().getQualifiedName().contains("Decorator") ||
+                ((isClassInheritingFieldClass || isClassImplementingFieldClass) && neoGraph.getNbVariants(fieldClassNode) >= 2 && neoGraph.getNbVariants(currentClassNode) >= 1)) {
+            neoGraph.addLabelToNode(currentClassNode, DesignPatternType.DECORATOR.toString());
         }
-        Optional <Node> fieldNode = neoGraph.getNode(getClassFullName(fieldBinding).get());
-        if (fieldNode.isPresent() && ! fieldNode.get().hasLabel(EntityAttribute.OUT_OF_SCOPE.toString())) {
-            if (fieldNode.get().hasLabel(EntityType.CLASS.toString())) {
-                // if the field type is a class, we check if this class is inherited by the class
-                ITypeBinding superclassType = fieldDeclaringClass;
-                if (superclassType != null) {
-                    Optional <String> superclassFullName = getClassFullName(superclassType);
-                    return superclassFullName.isPresent() && superclassFullName.get().equals(bindingQualifiedName);
-                }
-            } else if (fieldNode.get().hasLabel(EntityType.INTERFACE.toString())) {
-                // if the field type is an interface, we check if this interface is implemented by the class
-                for (ITypeBinding o : fieldDeclaringClass.getInterfaces()) {
-                    Optional <String> interfaceFullName = getClassFullName(o);
-                    if (interfaceFullName.isPresent() && interfaceFullName.get().equals(bindingQualifiedName)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+
     }
 
     /**

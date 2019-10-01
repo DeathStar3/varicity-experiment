@@ -425,8 +425,8 @@ public class NeoGraphTest extends Neo4jTest {
             org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.INTERFACE);
             org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
             graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.IMPLEMENTS);
-            assertTrue(graph.getInheritedInterfaceNode("Rectangle").isPresent());
-            assertEquals(shapeNode, graph.getInheritedInterfaceNode("Rectangle").get());
+            assertFalse(graph.getImplementedInterfacesNodes("Rectangle").isEmpty());
+            assertTrue(graph.getImplementedInterfacesNodes("Rectangle").contains(shapeNode));
         });
     }
 
@@ -434,8 +434,21 @@ public class NeoGraphTest extends Neo4jTest {
     public void getInheritedInterfaceNodeWithNonExistingSuperclass() {
         runTest(graph -> {
             graph.createNode("Rectangle", EntityType.CLASS);
-            assertFalse(graph.getInheritedInterfaceNode("Rectangle").isPresent());
+            assertTrue(graph.getImplementedInterfacesNodes("Rectangle").isEmpty());
         });
     }
 
+    @Test
+    public void getTwoInheritedInterfaces() {
+        runTest(graph -> {
+            org.neo4j.driver.v1.types.Node shapeNode = graph.createNode("Shape", EntityType.INTERFACE);
+            org.neo4j.driver.v1.types.Node objectNode = graph.createNode("Object", EntityType.INTERFACE);
+            org.neo4j.driver.v1.types.Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
+            graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.IMPLEMENTS);
+            graph.linkTwoNodes(objectNode, rectangleNode, RelationType.IMPLEMENTS);
+            assertFalse(graph.getImplementedInterfacesNodes("Rectangle").isEmpty());
+            assertTrue(graph.getImplementedInterfacesNodes("Rectangle").contains(objectNode));
+            assertTrue(graph.getImplementedInterfacesNodes("Rectangle").contains(shapeNode));
+        });
+    }
 }
