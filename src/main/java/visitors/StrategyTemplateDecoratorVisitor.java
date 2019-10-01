@@ -38,7 +38,7 @@ public class StrategyTemplateDecoratorVisitor extends ImportsVisitor {
     public boolean visit(FieldDeclaration field) {
         logger.debug(field);
         ITypeBinding binding = field.getType().resolveBinding();
-        if (binding != null) { // TODO: 12/6/18 log this
+        if (field.getParent() instanceof TypeDeclaration && binding != null) { // prevents the case where the field is an enum, which does not bring variability
             fieldDeclaringClass = ((TypeDeclaration) field.getParent()).resolveBinding();
             Optional <String> classFullName = getClassFullName(binding);
             if (classFullName.isPresent()) {

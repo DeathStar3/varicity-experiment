@@ -19,7 +19,6 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-import java.io.IOException;
 import java.util.Optional;
 
 public class Main {
@@ -28,7 +27,7 @@ public class Main {
         System.setProperty("logfilename", Optional.ofNullable(System.getenv("PROJECT_NAME")).orElse("debug.log"));
         try {
             new Symfinder(args[0], args[1]).run();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.exit(0);
