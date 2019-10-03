@@ -24,6 +24,7 @@ import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
 import neograph.NeoGraph;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.*;
 
@@ -255,6 +256,7 @@ public class NeoGraphTest extends Neo4jTest {
     }
 
     @Test
+    @Ignore
     public void setConstructorsOverloadsTwoOverloads() {
         runTest(graph -> {
             org.neo4j.driver.v1.types.Node classNode = graph.createNode("Rectangle", EntityType.CLASS);

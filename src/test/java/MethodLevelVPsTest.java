@@ -21,6 +21,7 @@
 
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.driver.v1.types.Node;
 
@@ -61,6 +62,7 @@ public class MethodLevelVPsTest extends Neo4jTest {
     }
 
     @Test
+    @Ignore
     public void NoMethodOverloadOneConstructorOverload() {
         runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -78,6 +80,7 @@ public class MethodLevelVPsTest extends Neo4jTest {
     }
 
     @Test
+    @Ignore
     public void OneMethodOverloadOneConstructorOverload() {
         runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);

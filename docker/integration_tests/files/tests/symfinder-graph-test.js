@@ -196,6 +196,24 @@ describe("Abstract decorator pattern", () => {
 
 });
 
+describe("Generic decorator pattern", () => {
+
+    beforeAll(async () => {
+        await displayGraph("tests/data/generic_decorator.json", "tests/data/generic_decorator-stats.json", [], false);
+    });
+
+    it('the graph should contain two nodes: the decorator and the ChristmasTree interface', () => {
+        expect(d3.selectAll('circle').size()).toBe(2);
+    });
+    it('the node should be a decorator', () => {
+        expect(graph.nodes.filter(n => n.name === "TreeDecorator")[0].types.includes("DECORATOR")).toBeTruthy();
+    });
+    it('the node should have a D on it', () => {
+        expect(d3.select('text[name = "TreeDecorator"]').html()).toBe("D");
+    });
+
+});
+
 describe("Multiple patterns", () => {
 
     beforeAll(async () => {

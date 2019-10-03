@@ -256,7 +256,7 @@ public class NeoGraph {
     public void setConstructorsOverloads() {
         submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
                 "WITH count(a.name) AS cnt, c\n" +
-                "SET c.constructors = CASE WHEN cnt > 1 THEN 1 ELSE 0 END");
+                "SET c.constructors = CASE WHEN cnt > 1 THEN cnt-1 ELSE 0 END");
         submitRequest("MATCH (c:CLASS)\n" +
                 "WHERE NOT EXISTS(c.constructors)\n" +
                 "SET c.constructors = 0");
@@ -389,6 +389,7 @@ public class NeoGraph {
      *
      * @return Number of constructor overloads
      */
+    // TODO: 10/1/19 include initial constructor as variant ?
     public int getNbConstructorVariants() {
         return submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR) MATCH (c:CLASS)-->(b:CONSTRUCTOR)\n" +
                 "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
@@ -402,7 +403,7 @@ public class NeoGraph {
      * @return Number of overloaded constructors
      */
     public int getTotalNbOverloadedConstructors() {
-        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constructors))")
+        return submitRequest("MATCH (c:CLASS) WHERE c.constructors > 1 RETURN COUNT(DISTINCT c)")
                 .list().get(0).get(0).asInt();
     }
 

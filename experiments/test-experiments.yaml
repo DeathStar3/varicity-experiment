@@ -7,6 +7,9 @@ decorator:
 factory:
   localDirectory: factory
   sourcePackage: .
+generic_decorator:
+  localDirectory: generic_decorator
+  sourcePackage: .
 generics:
   localDirectory: generics
   sourcePackage: .

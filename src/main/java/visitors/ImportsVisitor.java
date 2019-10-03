@@ -62,12 +62,18 @@ public class ImportsVisitor extends SymfinderVisitor {
      * @return String containing the real full class name
      */
     protected Optional <String> getClassFullName(ITypeBinding typeBinding) {
-        String jdtFullName = typeBinding.getQualifiedName();
+        // If there is a type bound, it means that there is a capture binding, e.g. capture-of ? extends Object[]
+        // Therefore, we do not use the binding of the field type but the binding of the superclass
+        ITypeBinding binding = typeBinding;
+        if(binding.getTypeBounds().length != 0){
+            binding = binding.getTypeBounds()[0];
+        }
+        String jdtFullName = binding.getQualifiedName();
         String jdtClassName = getClassBaseName(jdtFullName);
         if (neoGraph.getNode(jdtClassName).isPresent()) {
             return Optional.of(jdtClassName);
         }
-        String className = getClassBaseName(typeBinding.getName());
+        String className = getClassBaseName(binding.getName());
         Optional <ImportDeclaration> first = imports.stream()
                 .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(className))
                 .findFirst();

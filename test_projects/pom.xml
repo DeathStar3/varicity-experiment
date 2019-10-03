@@ -37,6 +37,7 @@
         <module>decorator</module>
         <module>factory</module>
         <module>generics</module>
+        <module>generic_decorator</module>
         <module>import_from_different_package</module>
         <module>import_from_different_package_all_package_imported</module>
         <module>inheritance</module>
