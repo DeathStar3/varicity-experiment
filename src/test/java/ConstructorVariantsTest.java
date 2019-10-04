@@ -34,6 +34,7 @@ public class ConstructorVariantsTest extends Neo4jTest {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node rectangleConstructor = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
             graph.linkTwoNodes(rectangleClass, rectangleConstructor, RelationType.METHOD);
+            graph.setConstructorVariants();
             assertEquals(0, graph.getNbConstructorVariants());
         });
     }
@@ -46,6 +47,7 @@ public class ConstructorVariantsTest extends Neo4jTest {
             Node rectangleConstructor2 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
             graph.linkTwoNodes(rectangleClass, rectangleConstructor1, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, rectangleConstructor2, RelationType.METHOD);
+            graph.setConstructorVariants();
             assertEquals(2, graph.getNbConstructorVariants());
         });
     }
@@ -60,6 +62,7 @@ public class ConstructorVariantsTest extends Neo4jTest {
             graph.linkTwoNodes(rectangleClass, rectangleConstructor1, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, rectangleConstructor2, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, rectangleConstructor3, RelationType.METHOD);
+            graph.setConstructorVariants();
             assertEquals(3, graph.getNbConstructorVariants());
         });
     }
@@ -73,12 +76,13 @@ public class ConstructorVariantsTest extends Neo4jTest {
            Node circleConstructor = graph.createNode("Circle", EntityType.METHOD);
            graph.linkTwoNodes(rectangleClass, rectangleConstructor, RelationType.METHOD);
            graph.linkTwoNodes(circleClass, circleConstructor, RelationType.METHOD);
+           graph.setConstructorVariants();
            assertEquals(0, graph.getNbConstructorVariants());
        });
     }
 
     @Test
-    public void TwoClassesOneConstructorVariant() {
+    public void TwoClassesTwoConstructorVariantsOnOneClass() {
         runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node rectangleConstructor1 = graph.createNode("Rectangle", EntityType.CONSTRUCTOR);
@@ -88,12 +92,13 @@ public class ConstructorVariantsTest extends Neo4jTest {
             graph.linkTwoNodes(rectangleClass, rectangleConstructor1, RelationType.METHOD);
             graph.linkTwoNodes(rectangleClass, rectangleConstructor2, RelationType.METHOD);
             graph.linkTwoNodes(circleClass, circleConstructor, RelationType.METHOD);
+            graph.setConstructorVariants();
             assertEquals(2, graph.getNbConstructorVariants());
         });
     }
 
     @Test
-    public void TwoClassesTwoConstructorVariants() {
+    public void TwoClassesTwoConstructorVariantsOnBothClasses() {
         runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
@@ -105,6 +110,7 @@ public class ConstructorVariantsTest extends Neo4jTest {
             graph.linkTwoNodes(rectangleClass, rectangleConstructor2, RelationType.METHOD);
             graph.linkTwoNodes(circleClass, circleConstructor1, RelationType.METHOD);
             graph.linkTwoNodes(circleClass, circleConstructor2, RelationType.METHOD);
+            graph.setConstructorVariants();
             assertEquals(4, graph.getNbConstructorVariants());
         });
     }

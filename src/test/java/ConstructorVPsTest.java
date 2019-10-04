@@ -21,7 +21,6 @@
 
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.driver.v1.types.Node;
 
@@ -35,13 +34,12 @@ public class ConstructorVPsTest extends Neo4jTest {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
             Node shapeConstructor = graph.createNode("Shape", EntityType.CONSTRUCTOR);
             graph.linkTwoNodes(shapeClass, shapeConstructor, RelationType.METHOD);
-            graph.setConstructorsOverloads();
-            assertEquals(0, graph.getTotalNbOverloadedConstructors());
+            graph.setConstructorVPs();
+            assertEquals(0, graph.getNbConstructorVPs());
         });
     }
 
     @Test
-    @Ignore
     public void OneClassOneConstructorOverload() {
         runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -49,8 +47,8 @@ public class ConstructorVPsTest extends Neo4jTest {
             Node shapeConstructor2 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
             graph.linkTwoNodes(shapeClass, shapeConstructor1, RelationType.METHOD);
             graph.linkTwoNodes(shapeClass, shapeConstructor2, RelationType.METHOD);
-            graph.setConstructorsOverloads();
-            assertEquals(1, graph.getTotalNbOverloadedConstructors());
+            graph.setConstructorVPs();
+            assertEquals(1, graph.getNbConstructorVPs());
         });
     }
 
@@ -64,8 +62,8 @@ public class ConstructorVPsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeClass, shapeConstructor1, RelationType.METHOD);
             graph.linkTwoNodes(shapeClass, shapeConstructor2, RelationType.METHOD);
             graph.linkTwoNodes(shapeClass, shapeConstructor3, RelationType.METHOD);
-            graph.setConstructorsOverloads();
-            assertEquals(1, graph.getTotalNbOverloadedConstructors());
+            graph.setConstructorVPs();
+            assertEquals(1, graph.getNbConstructorVPs());
         });
     }
 
@@ -78,13 +76,12 @@ public class ConstructorVPsTest extends Neo4jTest {
             Node polygonConstructor = graph.createNode("Polygon", EntityType.CONSTRUCTOR);
             graph.linkTwoNodes(shapeClass, shapeConstructor1, RelationType.METHOD);
             graph.linkTwoNodes(polygonClass, polygonConstructor, RelationType.METHOD);
-            graph.setConstructorsOverloads();
-            assertEquals(0, graph.getTotalNbOverloadedConstructors());
+            graph.setConstructorVPs();
+            assertEquals(0, graph.getNbConstructorVPs());
         });
     }
 
     @Test
-    @Ignore
     public void TwoClassesOneConstructorOverload() {
         runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -95,13 +92,12 @@ public class ConstructorVPsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeClass, shapeConstructor1, RelationType.METHOD);
             graph.linkTwoNodes(shapeClass, shapeConstructor2, RelationType.METHOD);
             graph.linkTwoNodes(polygonClass, polygonConstructor, RelationType.METHOD);
-            graph.setConstructorsOverloads();
-            assertEquals(1, graph.getTotalNbOverloadedConstructors());
+            graph.setConstructorVPs();
+            assertEquals(1, graph.getNbConstructorVPs());
         });
     }
 
     @Test
-    @Ignore
     public void TwoClassesTwoConstructorOverloads() {
         runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -114,8 +110,8 @@ public class ConstructorVPsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeClass, shapeConstructor2, RelationType.METHOD);
             graph.linkTwoNodes(polygonClass, polygonConstructor1, RelationType.METHOD);
             graph.linkTwoNodes(polygonClass, polygonConstructor2, RelationType.METHOD);
-            graph.setConstructorsOverloads();
-            assertEquals(2, graph.getTotalNbOverloadedConstructors());
+            graph.setConstructorVPs();
+            assertEquals(2, graph.getNbConstructorVPs());
         });
     }
 

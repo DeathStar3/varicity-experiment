@@ -19,6 +19,7 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
+import neo4j_types.DesignPatternType;
 import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
@@ -130,6 +131,56 @@ public class ClassLevelVPsTest extends Neo4jTest {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityAttribute.OUT_OF_SCOPE);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
             graph.linkTwoNodes(shapeClass, rectangleClass, RelationType.EXTENDS);
+            assertEquals(1, graph.getNbClassLevelVPs());
+        });
+    }
+
+    @Test
+    public void DesignPatternShallBeCounted() {
+        runTest(graph -> {
+            graph.createNode("Shape", EntityType.CLASS, DesignPatternType.STRATEGY);
+            assertEquals(1, graph.getNbClassLevelVPs());
+        });
+    }
+
+    @Test
+    public void DesignPatternShallBeCountedOnce() {
+        runTest(graph -> {
+            graph.createNode("Shape", EntityType.INTERFACE, DesignPatternType.STRATEGY);
+            assertEquals(1, graph.getNbClassLevelVPs());
+        });
+    }
+
+    @Test
+    public void NodeWithMultipleDesignPatternsShallBeCountedOnce() {
+        runTest(graph -> {
+            graph.createNode("Shape", EntityType.CLASS, DesignPatternType.STRATEGY, DesignPatternType.FACTORY);
+            assertEquals(1, graph.getNbClassLevelVPs());
+        });
+    }
+
+    @Test
+    public void InterfaceWithDesignPatternShallBeCountedOnce() {
+        runTest(graph -> {
+            graph.createNode("Shape", EntityType.INTERFACE, DesignPatternType.DECORATOR);
+            assertEquals(1, graph.getNbClassLevelVPs());
+        });
+    }
+
+    @Test
+    public void AbstractClassWithDesignPatternShallBeCountedOnce() {
+        runTest(graph -> {
+            graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT, DesignPatternType.DECORATOR);
+            assertEquals(1, graph.getNbClassLevelVPs());
+        });
+    }
+
+    @Test
+    public void ExtendedClassWithDesignPatternShallBeCountedOnce() {
+        runTest(graph -> {
+            Node shapeNode = graph.createNode("Shape", EntityType.CLASS, DesignPatternType.DECORATOR);
+            Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
+            graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.EXTENDS);
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }

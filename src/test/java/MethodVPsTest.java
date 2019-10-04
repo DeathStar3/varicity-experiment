@@ -37,8 +37,8 @@ public class MethodVPsTest extends Neo4jTest {
             RelationType relationType = RelationType.METHOD;
             graph.linkTwoNodes(nodeClass, nodeMethod1, relationType);
             graph.linkTwoNodes(nodeClass, nodeMethod2, relationType);
-            graph.setMethodsOverloads();
-            assertEquals(0, graph.getTotalNbOverloadedMethods());
+            graph.setMethodVPs();
+            assertEquals(0, graph.getNbMethodVPs());
         });
     }
 
@@ -55,8 +55,8 @@ public class MethodVPsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeNode, shapeMethod2, RelationType.METHOD);
             graph.linkTwoNodes(polygonNode, polygonMethod1, RelationType.METHOD);
             graph.linkTwoNodes(polygonNode, polygonMethod2, RelationType.METHOD);
-            graph.setMethodsOverloads();
-            assertEquals(0, graph.getTotalNbOverloadedMethods());
+            graph.setMethodVPs();
+            assertEquals(0, graph.getNbMethodVPs());
         });
     }
 
@@ -69,8 +69,8 @@ public class MethodVPsTest extends Neo4jTest {
             RelationType relationType = RelationType.METHOD;
             graph.linkTwoNodes(nodeClass, nodeMethod1, relationType);
             graph.linkTwoNodes(nodeClass, nodeMethod2, relationType);
-            graph.setMethodsOverloads();
-            assertEquals(1, graph.getTotalNbOverloadedMethods());
+            graph.setMethodVPs();
+            assertEquals(1, graph.getNbMethodVPs());
         });
     }
 
@@ -87,8 +87,8 @@ public class MethodVPsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeNode, shapeMethod2, RelationType.METHOD);
             graph.linkTwoNodes(polygonNode, polygonMethod1, RelationType.METHOD);
             graph.linkTwoNodes(polygonNode, polygonMethod2, RelationType.METHOD);
-            graph.setMethodsOverloads();
-            assertEquals(1, graph.getTotalNbOverloadedMethods());
+            graph.setMethodVPs();
+            assertEquals(1, graph.getNbMethodVPs());
         });
     }
 
@@ -105,8 +105,8 @@ public class MethodVPsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeNode, shapeMethod2, RelationType.METHOD);
             graph.linkTwoNodes(polygonNode, polygonMethod1, RelationType.METHOD);
             graph.linkTwoNodes(polygonNode, polygonMethod2, RelationType.METHOD);
-            graph.setMethodsOverloads();
-            assertEquals(2, graph.getTotalNbOverloadedMethods());
+            graph.setMethodVPs();
+            assertEquals(2, graph.getNbMethodVPs());
         });
     }
 

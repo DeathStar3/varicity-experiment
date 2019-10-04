@@ -21,7 +21,6 @@
 
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.driver.v1.types.Node;
 
@@ -38,8 +37,10 @@ public class MethodLevelVPsTest extends Neo4jTest {
             RelationType relationType = RelationType.METHOD;
             graph.linkTwoNodes(shapeClass, shapeConstructor, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod, relationType);
-            graph.setMethodsOverloads();
-            graph.setConstructorsOverloads();
+            graph.setMethodVPs();
+            graph.setConstructorVPs();
+            assertEquals(0, graph.getNbMethodVPs());
+            assertEquals(0, graph.getNbConstructorVPs());
             assertEquals(0, graph.getNbMethodLevelVPs());
         });
     }
@@ -55,14 +56,15 @@ public class MethodLevelVPsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeClass, shapeConstructor, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod1, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod2, relationType);
-            graph.setMethodsOverloads();
-            graph.setConstructorsOverloads();
+            graph.setMethodVPs();
+            graph.setConstructorVPs();
+            assertEquals(1, graph.getNbMethodVPs());
+            assertEquals(0, graph.getNbConstructorVPs());
             assertEquals(1, graph.getNbMethodLevelVPs());
         });
     }
 
     @Test
-    @Ignore
     public void NoMethodOverloadOneConstructorOverload() {
         runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -73,14 +75,15 @@ public class MethodLevelVPsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeClass, shapeConstructor1, relationType);
             graph.linkTwoNodes(shapeClass, shapeConstructor2, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod, relationType);
-            graph.setMethodsOverloads();
-            graph.setConstructorsOverloads();
+            graph.setMethodVPs();
+            graph.setConstructorVPs();
+            assertEquals(0, graph.getNbMethodVPs());
+            assertEquals(1, graph.getNbConstructorVPs());
             assertEquals(1, graph.getNbMethodLevelVPs());
         });
     }
 
     @Test
-    @Ignore
     public void OneMethodOverloadOneConstructorOverload() {
         runTest(graph -> {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
@@ -93,8 +96,10 @@ public class MethodLevelVPsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeClass, shapeConstructor2, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod1, relationType);
             graph.linkTwoNodes(shapeClass, displayMethod2, relationType);
-            graph.setMethodsOverloads();
-            graph.setConstructorsOverloads();
+            graph.setMethodVPs();
+            graph.setConstructorVPs();
+            assertEquals(1, graph.getNbMethodVPs());
+            assertEquals(1, graph.getNbConstructorVPs());
             assertEquals(2, graph.getNbMethodLevelVPs());
         });
     }

@@ -24,7 +24,6 @@ import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
 import neograph.NeoGraph;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.*;
 
@@ -114,15 +113,15 @@ public class NeoGraphTest extends Neo4jTest {
             RelationType relationType = RelationType.METHOD;
             graph.linkTwoNodes(classNode, drawNode1, relationType);
             graph.linkTwoNodes(classNode, areaNode, relationType);
-            graph.setMethodsOverloads();
+            graph.setMethodVPs();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
                 Node node = allNodes.get(0);
-                assertTrue(node.getAllProperties().containsKey("methods"));
-                assertEquals(0L, node.getProperty("methods"));
+                assertTrue(node.getAllProperties().containsKey("methodVPs"));
+                assertEquals(0L, node.getProperty("methodVPs"));
                 tx.success();
             }
         });
@@ -139,15 +138,15 @@ public class NeoGraphTest extends Neo4jTest {
             graph.linkTwoNodes(classNode, drawNode1, relationType);
             graph.linkTwoNodes(classNode, drawNode2, relationType);
             graph.linkTwoNodes(classNode, areaNode, relationType);
-            graph.setMethodsOverloads();
+            graph.setMethodVPs();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
                 Node node = allNodes.get(0);
-                assertTrue(node.getAllProperties().containsKey("methods"));
-                assertEquals(1L, node.getProperty("methods"));
+                assertTrue(node.getAllProperties().containsKey("methodVPs"));
+                assertEquals(1L, node.getProperty("methodVPs"));
                 tx.success();
             }
         });
@@ -166,15 +165,15 @@ public class NeoGraphTest extends Neo4jTest {
             graph.linkTwoNodes(classNode, drawNode2, relationType);
             graph.linkTwoNodes(classNode, drawNode3, relationType);
             graph.linkTwoNodes(classNode, areaNode, relationType);
-            graph.setMethodsOverloads();
+            graph.setMethodVPs();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
                 Node node = allNodes.get(0);
-                assertTrue(node.getAllProperties().containsKey("methods"));
-                assertEquals(1L, node.getProperty("methods"));
+                assertTrue(node.getAllProperties().containsKey("methodVPs"));
+                assertEquals(1L, node.getProperty("methodVPs"));
                 tx.success();
             }
         });
@@ -193,15 +192,15 @@ public class NeoGraphTest extends Neo4jTest {
             graph.linkTwoNodes(classNode, drawNode2, relationType);
             graph.linkTwoNodes(classNode, areaNode1, relationType);
             graph.linkTwoNodes(classNode, areaNode2, relationType);
-            graph.setMethodsOverloads();
+            graph.setMethodVPs();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
                 Node node = allNodes.get(0);
-                assertTrue(node.getAllProperties().containsKey("methods"));
-                assertEquals(2L, node.getProperty("methods"));
+                assertTrue(node.getAllProperties().containsKey("methodVPs"));
+                assertEquals(2L, node.getProperty("methodVPs"));
                 tx.success();
             }
         });
@@ -216,15 +215,15 @@ public class NeoGraphTest extends Neo4jTest {
             RelationType relationType = RelationType.METHOD;
             graph.linkTwoNodes(classNode, constructorNode, relationType);
             graph.linkTwoNodes(classNode, methodNode, relationType);
-            graph.setConstructorsOverloads();
+            graph.setConstructorVPs();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
                 Node node = allNodes.get(0);
-                assertTrue(node.getAllProperties().containsKey("constructors"));
-                assertEquals(0L, node.getProperty("constructors"));
+                assertTrue(node.getAllProperties().containsKey("constructorVPs"));
+                assertEquals(0L, node.getProperty("constructorVPs"));
                 tx.success();
             }
         });
@@ -241,22 +240,21 @@ public class NeoGraphTest extends Neo4jTest {
             graph.linkTwoNodes(classNode, constructorNode1, relationType);
             graph.linkTwoNodes(classNode, constructorNode2, relationType);
             graph.linkTwoNodes(classNode, methodNode, relationType);
-            graph.setConstructorsOverloads();
+            graph.setConstructorVPs();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
                 Node node = allNodes.get(0);
-                assertTrue(node.getAllProperties().containsKey("constructors"));
-                assertEquals(1L, node.getProperty("constructors"));
+                assertTrue(node.getAllProperties().containsKey("constructorVPs"));
+                assertEquals(1L, node.getProperty("constructorVPs"));
                 tx.success();
             }
         });
     }
 
     @Test
-    @Ignore
     public void setConstructorsOverloadsTwoOverloads() {
         runTest(graph -> {
             org.neo4j.driver.v1.types.Node classNode = graph.createNode("Rectangle", EntityType.CLASS);
@@ -269,15 +267,15 @@ public class NeoGraphTest extends Neo4jTest {
             graph.linkTwoNodes(classNode, constructorNode2, relationType);
             graph.linkTwoNodes(classNode, constructorNode3, relationType);
             graph.linkTwoNodes(classNode, methodNode, relationType);
-            graph.setConstructorsOverloads();
+            graph.setConstructorVPs();
             try (Transaction tx = graphDatabaseService.beginTx()) {
                 List <Node> allNodes = graphDatabaseService.getAllNodes().stream()
                         .filter(node -> node.hasLabel(Label.label(EntityType.CLASS.toString())))
                         .collect(Collectors.toList());
                 assertEquals(1, allNodes.size());
                 Node node = allNodes.get(0);
-                assertTrue(node.getAllProperties().containsKey("constructors"));
-                assertEquals(1L, node.getProperty("constructors"));
+                assertTrue(node.getAllProperties().containsKey("constructorVPs"));
+                assertEquals(1L, node.getProperty("constructorVPs"));
                 tx.success();
             }
         });

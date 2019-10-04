@@ -239,35 +239,71 @@ public class NeoGraph {
      * This is independent of the numbers of overloads for each method.
      * If no method is overloaded, the property is set to 0.
      */
-    public void setMethodsOverloads() {
+    public void setMethodVPs() {
         submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
                 "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
                 "WITH count(DISTINCT a.name) AS cnt, c\n" +
-                "SET c.methods = cnt");
+                "SET c.methodVPs = cnt");
         submitRequest("MATCH (c:CLASS)\n" +
-                "WHERE NOT EXISTS(c.methods)\n" +
-                "SET c.methods = 0");
+                "WHERE NOT EXISTS(c.methodVPs)\n" +
+                "SET c.methodVPs = 0");
     }
 
+    /**
+     * Sets the number of method variants induced by method VPs.
+     * <p>
+     * Example of a class containing the following methods:
+     * - public void add(Point2D pt)
+     * - public void add(Rectangle2D r)
+     * - public void add(double newx, double newy)
+     * - public PathIterator getPathIterator(AffineTransform at)
+     * - public PathIterator getPathIterator(AffineTransform at, double flatness)
+     * <p>
+     * Two methods are overloaded with respectively 3 and 2 overloads, therefore the value returned will be 5.
+     * If no method is overloaded, the property is set to 0.
+     */
+    public void setMethodVariants() {
+        submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
+                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
+                "WITH count(DISTINCT a) AS cnt, c\n" +
+                "SET c.methodVariants = cnt");
+        submitRequest("MATCH (c:CLASS)\n" +
+                "WHERE NOT EXISTS(c.methodVariants)\n" +
+                "SET c.methodVariants = 0");
+    }
+
+    /**
+     * Sets the number of overloaded constructors in the class.
+     * If there is more than a constructor, this means that the constructor is overloaded, hence the value is 1.
+     * If there is no overload (i.e. there is 0 or 1 constructor), the property is set to 0.
+     */
+    public void setConstructorVPs() {
+        submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
+                "WITH count(a.name) AS cnt, c\n" +
+                "SET c.constructorVPs = CASE WHEN cnt > 1 THEN 1 ELSE 0 END");
+        submitRequest("MATCH (c:CLASS)\n" +
+                "WHERE NOT EXISTS(c.constructorVPs)\n" +
+                "SET c.constructorVPs = 0");
+    }
     /**
      * Sets the number of overloads of the constructor in the class.
      * If there is no overload (i.e. there is 0 or 1 constructor), the property is set to 0.
      */
-    public void setConstructorsOverloads() {
+    public void setConstructorVariants() {
         submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR)\n" +
                 "WITH count(a.name) AS cnt, c\n" +
-                "SET c.constructors = CASE WHEN cnt > 1 THEN cnt-1 ELSE 0 END");
+                "SET c.constructorVariants = CASE WHEN cnt > 1 THEN cnt ELSE 0 END");
         submitRequest("MATCH (c:CLASS)\n" +
-                "WHERE NOT EXISTS(c.constructors)\n" +
-                "SET c.constructors = 0");
+                "WHERE NOT EXISTS(c.constructorVariants)\n" +
+                "SET c.constructorVariants = 0");
     }
 
     /**
-     * Creates for all class and interfaces nodes a property nbVariants expressing the number of subclasses it contains.
+     * Creates for all class and interfaces nodes a property classVariants expressing the number of subclasses it contains.
      */
     public void setNbVariantsProperty() {
-        submitRequest("MATCH (c)-[:EXTENDS|:IMPLEMENTS]->(sc:CLASS) WITH count(sc) AS nbVar, c SET c.nbVariants = nbVar");
-        submitRequest("MATCH (c) WHERE ((c:CLASS OR c:INTERFACE) AND NOT EXISTS (c.nbVariants)) SET c.nbVariants = 0");
+        submitRequest("MATCH (c)-[:EXTENDS|:IMPLEMENTS]->(sc:CLASS) WITH count(sc) AS nbVar, c SET c.classVariants = nbVar");
+        submitRequest("MATCH (c) WHERE ((c:CLASS OR c:INTERFACE) AND NOT EXISTS (c.classVariants)) SET c.classVariants = 0");
     }
 
     /**
@@ -279,8 +315,8 @@ public class NeoGraph {
      * - has a design pattern.
      */
     public void setVPLabels() {
-        submitRequest(String.format("MATCH (c) WHERE ((%s) OR c:ABSTRACT OR c:INTERFACE OR (EXISTS(c.nbVariants) AND c.nbVariants > 0) OR c.methods > 0 OR c.constructors > 0) SET c:%s",
-                getClauseForNodesMatchingLabels("c", DesignPatternType.values()),
+        submitRequest(String.format("MATCH (c) WHERE ((%s) OR c:ABSTRACT OR c:INTERFACE OR (EXISTS(c.classVariants) AND c.classVariants > 0) OR c.methodVPs > 0 OR c.constructorVPs > 0) SET c:%s",
+                getClauseForHavingDesignPattern("c"),
                 EntityAttribute.VP));
     }
 
@@ -289,8 +325,12 @@ public class NeoGraph {
     }
 
     public int getNbNodesHavingDesignPatterns() {
-        return submitRequest(String.format("MATCH (n) WHERE %s RETURN COUNT(n)", getClauseForNodesMatchingLabels("n", DesignPatternType.values())))
+        return submitRequest(String.format("MATCH (n) WHERE %s RETURN COUNT(n)", getClauseForHavingDesignPattern("n")))
                 .list().get(0).get(0).asInt();
+    }
+
+    private String getClauseForHavingDesignPattern(String n) {
+        return getClauseForNodesMatchingLabels(n, DesignPatternType.values());
     }
 
     public static String getClauseForNodesMatchingLabels(String nodeName, NodeType... types) {
@@ -351,7 +391,7 @@ public class NeoGraph {
 
     /**
      * Get number of variants at class level.
-     * This corresponds to the number of concrete classes without a subclass and extending a class or implementing an interface.
+     * This corresponds to the number of concrete classes without a subclass and extending a class or implementing an interface defined in the project.
      *
      * @return Number of class level variants
      */
@@ -372,14 +412,12 @@ public class NeoGraph {
 
     /**
      * Get number of variants caused by method overloading.
-     * This corresponds to the total number of overloaded methods.
+     * This corresponds to the total number of method variants.
      *
      * @return Number of overloaded methods
      */
     public int getNbMethodVariants() {
-        return submitRequest("MATCH (c:CLASS)-->(a:METHOD) MATCH (c:CLASS)-->(b:METHOD)\n" +
-                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
-                "return count(DISTINCT a)")
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodVariants))")
                 .list().get(0).get(0).asInt();
     }
 
@@ -389,31 +427,28 @@ public class NeoGraph {
      *
      * @return Number of constructor overloads
      */
-    // TODO: 10/1/19 include initial constructor as variant ?
     public int getNbConstructorVariants() {
-        return submitRequest("MATCH (c:CLASS)-->(a:CONSTRUCTOR) MATCH (c:CLASS)-->(b:CONSTRUCTOR)\n" +
-                "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
-                "return count(DISTINCT a)")
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constructorVariants))")
                 .list().get(0).get(0).asInt();
     }
 
     /**
-     * Get total number of overloaded constructors
+     * Get total number of overloaded constructors.
      *
      * @return Number of overloaded constructors
      */
-    public int getTotalNbOverloadedConstructors() {
-        return submitRequest("MATCH (c:CLASS) WHERE c.constructors > 1 RETURN COUNT(DISTINCT c)")
+    public int getNbConstructorVPs() {
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constructorVPs))")
                 .list().get(0).get(0).asInt();
     }
 
     /**
-     * Get total number of overloaded methods
+     * Get total number of overloaded methods.
      *
      * @return Number of overloaded methods
      */
-    public int getTotalNbOverloadedMethods() {
-        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methods))")
+    public int getNbMethodVPs() {
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodVPs))")
                 .list().get(0).get(0).asInt();
     }
 
@@ -432,13 +467,13 @@ public class NeoGraph {
     /**
      * Get total number of method level VPs.
      * These are :
-     * - number of methods overloads
-     * - number of overloaded constructors
+     * - overloaded methods
+     * - overloaded constructors
      *
      * @return Number of method level VPs
      */
     public int getNbMethodLevelVPs() {
-        return getTotalNbOverloadedMethods() + getTotalNbOverloadedConstructors();
+        return getNbMethodVPs() + getNbConstructorVPs();
     }
 
     /**
@@ -450,12 +485,12 @@ public class NeoGraph {
      *
      * @return Number of class level VPs
      */
-    // TODO count patterns ?
     public int getNbClassLevelVPs() {
-        int nbInterfaces = submitRequest("MATCH (n) WHERE (n:INTERFACE AND NOT n:OUT_OF_SCOPE) RETURN COUNT (n)").list().get(0).get(0).asInt();
-        int nbAbstractClasses = submitRequest("MATCH (n) WHERE n:CLASS AND n:ABSTRACT AND NOT n:OUT_OF_SCOPE RETURN COUNT (n)").list().get(0).get(0).asInt();
-        int nbExtendedClasses = submitRequest("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE NOT n:ABSTRACT AND NOT n:OUT_OF_SCOPE RETURN COUNT (DISTINCT n)").list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
-        return nbInterfaces + nbAbstractClasses + nbExtendedClasses;
+        int nbInterfaces = submitRequest(String.format("MATCH (n) WHERE (n:INTERFACE AND (NOT n:OUT_OF_SCOPE) AND NOT (%s)) RETURN COUNT (n)", getClauseForHavingDesignPattern("n"))).list().get(0).get(0).asInt();
+        int nbAbstractClasses = submitRequest(String.format("MATCH (n) WHERE n:CLASS AND n:ABSTRACT AND (NOT n:OUT_OF_SCOPE) AND NOT (%s) RETURN COUNT (n)", getClauseForHavingDesignPattern("n"))).list().get(0).get(0).asInt();
+        int nbExtendedClasses = submitRequest(String.format("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE (NOT n:ABSTRACT) AND (NOT n:OUT_OF_SCOPE) AND NOT (%s) RETURN COUNT (DISTINCT n)", getClauseForHavingDesignPattern("n"))).list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
+        int nbPatterns = getNbNodesHavingDesignPatterns();
+        return nbInterfaces + nbAbstractClasses + nbExtendedClasses + nbPatterns;
     }
 
     /**
@@ -480,8 +515,8 @@ public class NeoGraph {
 
     private String getNodesAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH (c:VP) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methods:c.methods, constructors:c.constructors, nbVariants:c.nbVariants})" :
-                "MATCH (c) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methods:c.methods, constructors:c.constructors})";
+                "MATCH (c:VP) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methods:c.methodVPs, constructors:c.constructorVPs, nbVariants:c.classVariants})" :
+                "MATCH (c) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methods:c.methodVPs, constructors:c.constructorVPs})";
         return submitRequest(request)
                 .list()
                 .get(0)
@@ -509,8 +544,8 @@ public class NeoGraph {
     public String generateStatisticsJson() {
         return new JSONObject()
                 .put("VPs", getTotalNbVPs())
-                .put("methodsVPs", getTotalNbOverloadedMethods())
-                .put("constructorsVPs", getTotalNbOverloadedConstructors())
+                .put("methodsVPs", getNbMethodVPs())
+                .put("constructorsVPs", getNbConstructorVPs())
                 .put("methodLevelVPs", getNbMethodLevelVPs())
                 .put("classLevelVPs", getNbClassLevelVPs())
                 .put("variants", getTotalNbVariants())
