@@ -515,8 +515,8 @@ public class NeoGraph {
 
     private String getNodesAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH (c:VP) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methods:c.methodVPs, constructors:c.constructorVPs, nbVariants:c.classVariants})" :
-                "MATCH (c) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methods:c.methodVPs, constructors:c.constructorVPs})";
+                "MATCH (c:VP) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants, classVariants:c.classVariants})" :
+                "MATCH (c) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants})";
         return submitRequest(request)
                 .list()
                 .get(0)

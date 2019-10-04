@@ -122,18 +122,18 @@ async function generateGraph() {
         if (err) throw err;
 
         document.getElementById("statistics").innerHTML =
-            "Number of VPs: " + stats["VPs"] + "<br>" +
-            "Number of methods VPs: " + stats["methodsVPs"] + "<br>" +
-            "Number of constructors VPs: " + stats["constructorsVPs"] + "<br>" +
-            "Number of method level VPs: " + stats["methodLevelVPs"] + "<br>" +
+            // "Number of VPs: " + stats["VPs"] + "<br>" +
+            // "Number of methods VPs: " + stats["methodVPs"] + "<br>" +
+            // "Number of constructors VPs: " + stats["constructorsVPs"] + "<br>" +
             "Number of class level VPs: " + stats["classLevelVPs"] + "<br>" +
-            "Number of variants: " + stats["variants"] + "<br>" +
-            "Number of methods variants: " + stats["methodsVariants"] + "<br>" +
-            "Number of constructors variants: " + stats["constructorsVariants"] + "<br>" +
-            "Number of method level variants: " + stats["methodLevelVariants"] + "<br>" +
-            "Number of class level variants: " + stats["classLevelVariants"];
+            "Number of method level VPs: " + stats["methodLevelVPs"] + "<br>" +
+            // "Number of variants: " + stats["variants"] + "<br>" +
+            // "Number of methods variants: " + stats["methodsVariants"] + "<br>" +
+            // "Number of constructors variants: " + stats["constructorsVariants"] + "<br>" +
+            "Number of class level variants: " + stats["classLevelVariants"] + "<br>" +
+            "Number of method level variants: " + stats["methodLevelVariants"];
 
-        var sort = gr.nodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructors)).sort((a, b) => a - b);
+        var sort = gr.nodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
         color.domain([sort[0] - 3, sort[sort.length - 1]]); // TODO deal with magic number
 
         var nodeByID = {};
@@ -142,7 +142,7 @@ async function generateGraph() {
         store = $.extend(true, {}, gr);
 
         graph.nodes.forEach(function (n) {
-            n.radius = n.types.includes("CLASS") ? 10 + n.methods : 10;
+            n.radius = n.types.includes("CLASS") ? 10 + n.methodVPs : 10;
             nodeByID[n.name] = n;
         });
 
@@ -152,7 +152,7 @@ async function generateGraph() {
         });
 
         store.nodes.forEach(function (n) {
-            n.radius = n.types.includes("CLASS") ? 10 + n.methods : 10;
+            n.radius = n.types.includes("CLASS") ? 10 + n.methodVPs : 10;
         });
 
         store.links.forEach(function (l) {
@@ -192,13 +192,13 @@ async function generateGraph() {
             })
             .style("stroke", "black")
             .style("stroke-width", function (d) {
-                return d.nbVariants
+                return d.classVariants
             })
             .attr("r", function (d) {
                 return d.radius
             })
             .attr("fill", function (d) {
-                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.constructors))
+                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.constructorVariants))
             })
             .attr("name", function (d) {
                 return d.name
@@ -245,7 +245,7 @@ async function generateGraph() {
             .attr("dy", ".35em")
             .attr("name", d => d.name)
             .attr("fill", function (d) {
-                var nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.constructors));
+                var nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(color(d.constructorVariants));
                 return contrastColor(nodeColor);
             })
             .text(function (d) {
