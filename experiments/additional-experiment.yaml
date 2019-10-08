@@ -1,5 +1,0 @@
-sat4j:
-  repositoryUrl: https://gitlab.ow2.org/sat4j/sat4j/
-  sourcePackage: .
-  commitIds:
-    - 0b3bb64b

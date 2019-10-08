@@ -97,7 +97,7 @@ public class VPLabelTest extends Neo4jTest {
             Node shapeConstructorNode2 = graph.createNode("Shape", EntityType.CONSTRUCTOR);
             graph.linkTwoNodes(shapeNode, shapeConstructorNode1, RelationType.METHOD);
             graph.linkTwoNodes(shapeNode, shapeConstructorNode2, RelationType.METHOD);
-            graph.setConstructorVariants();
+            graph.setConstructorVPs();
             graph.setNbVariantsProperty();
             graph.setVPLabels();
             assertTrue(graph.getNode("Shape").get().hasLabel(EntityAttribute.VP.getString()));

@@ -299,10 +299,10 @@ public class NeoGraphTest extends Neo4jTest {
                 assertEquals(3, allClassNodes.size());
                 allClassNodes.stream().filter(node -> node.getProperty("name").equals("class"))
                         .findFirst()
-                        .ifPresent(node -> assertEquals(2L, node.getProperty("nbVariants")));
+                        .ifPresent(node -> assertEquals(2L, node.getProperty("classVariants")));
                 allClassNodes.stream().filter(node -> node.getProperty("name").equals("subclass1"))
                         .findFirst()
-                        .ifPresent(node -> assertEquals(0L, node.getProperty("nbVariants")));
+                        .ifPresent(node -> assertEquals(0L, node.getProperty("classVariants")));
                 tx.success();
             }
         });

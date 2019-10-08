@@ -64,18 +64,42 @@ describe("Comparing metrics evolution", () => {
         await displayGraph("tests/data/metrics.json", "tests/data/metrics-stats.json", [], false);
     });
 
-    it('OneConstructorOverload should have one overloaded constructor', () => {
-        expect(graph.nodes.filter(n => n.name === "OneConstructorOverload")[0].constructors).toBe(1);
+    xit('NoConstructorOverload should have 0 constructor VP', () => {
+        expect(graph.nodes.filter(n => n.name === "NoConstructorOverload")[0].constructorVPs).toBe(0);
     });
-    it('TwoConstructorOverloads should have one overloaded constructor', () => {
-        expect(graph.nodes.filter(n => n.name === "TwoConstructorOverloads")[0].constructors).toBe(1);
+    xit('NoConstructorOverload should have 0 constructor variant', () => {
+        expect(graph.nodes.filter(n => n.name === "NoConstructorOverload")[0].constructorVariants).toBe(0);
+    });
+    it('OneConstructorOverload should have 1 constructor VP', () => {
+        expect(graph.nodes.filter(n => n.name === "OneConstructorOverload")[0].constructorVPs).toBe(1);
+    });
+    it('OneConstructorOverload should have 2 constructor variants', () => {
+        expect(graph.nodes.filter(n => n.name === "OneConstructorOverload")[0].constructorVariants).toBe(2);
+    });
+    it('TwoConstructorOverloads should have 1 overloaded constructor', () => {
+        expect(graph.nodes.filter(n => n.name === "TwoConstructorOverloads")[0].constructorVPs).toBe(1);
+    });
+    it('TwoConstructorOverloads should have 3 constructor variants', () => {
+        expect(graph.nodes.filter(n => n.name === "TwoConstructorOverloads")[0].constructorVariants).toBe(3);
     });
 
-    it('OneMethodOverload should have one overloaded method', () => {
-        expect(graph.nodes.filter(n => n.name === "OneMethodOverload")[0].methods).toBe(1);
+    xit('NoMethodOverload should have 0 method VP', () => {
+        expect(graph.nodes.filter(n => n.name === "NoMethodOverload")[0].methodVPs).toBe(0);
     });
-    it('TwoMethodOverloads should have two overloaded methods', () => {
-        expect(graph.nodes.filter(n => n.name === "TwoMethodOverloads")[0].methods).toBe(2);
+    xit('NoMethodOverload should have 0 method variant', () => {
+        expect(graph.nodes.filter(n => n.name === "NoMethodOverload")[0].methodVariants).toBe(0);
+    });
+    it('OneMethodOverload should have 1 method VP', () => {
+        expect(graph.nodes.filter(n => n.name === "OneMethodOverload")[0].methodVPs).toBe(1);
+    });
+    it('OneMethodOverload should have 2 method variants', () => {
+        expect(graph.nodes.filter(n => n.name === "OneMethodOverload")[0].methodVariants).toBe(2);
+    });
+    it('TwoMethodOverloads should have 2 method VPs', () => {
+        expect(graph.nodes.filter(n => n.name === "TwoMethodOverloads")[0].methodVPs).toBe(2);
+    });
+    it('TwoMethodOverloads should have 4 method variants', () => {
+        expect(graph.nodes.filter(n => n.name === "TwoMethodOverloads")[0].methodVariants).toBe(4);
     });
 
 
