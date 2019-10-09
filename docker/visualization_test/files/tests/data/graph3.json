@@ -2,90 +2,90 @@
   "nodes": [
     {
       "name": "OneMethodOverload",
-      "constructors": 0,
-      "nbVariants": 0,
+      "constructorVariants": 0,
+      "classVariants": 0,
       "types": [
         "CLASS",
         "ABSTRACT",
         "VP"
       ],
-      "methods": 1
+      "methodVPs": 1
     },
     {
       "name": "TenMethodOverloads",
-      "constructors": 0,
-      "nbVariants": 0,
+      "constructorVariants": 0,
+      "classVariants": 0,
       "types": [
         "CLASS",
         "ABSTRACT",
         "VP"
       ],
-      "methods": 10
+      "methodVPs": 10
     },
     {
       "name": "OneConstructorOverload",
-      "constructors": 1,
-      "nbVariants": 0,
+      "constructorVariants": 1,
+      "classVariants": 0,
       "types": [
         "CLASS",
         "ABSTRACT",
         "VP"
       ],
-      "methods": 0
+      "methodVPs": 0
     },
     {
       "name": "TenConstructorOverloads",
-      "constructors": 10,
-      "nbVariants": 0,
+      "constructorVariants": 10,
+      "classVariants": 0,
       "types": [
         "CLASS",
         "ABSTRACT",
         "VP"
       ],
-      "methods": 0
+      "methodVPs": 0
     },
     {
       "name": "NoVariant",
-      "constructors": 0,
-      "nbVariants": 0,
+      "constructorVariants": 0,
+      "classVariants": 0,
       "types": [
         "CLASS",
         "ABSTRACT",
         "VP"
       ],
-      "methods": 0
+      "methodVPs": 0
     },
     {
       "name": "TenVariants",
-      "constructors": 0,
-      "nbVariants": 10,
+      "constructorVariants": 0,
+      "classVariants": 10,
       "types": [
         "CLASS",
         "ABSTRACT",
         "VP"
       ],
-      "methods": 0
+      "methodVPs": 0
     },
     {
       "name": "factoryInterfaceNode",
-      "constructors": 0,
-      "nbVariants": 2,
+      "constructorVariants": 0,
+      "classVariants": 2,
       "types": [
         "INTERFACE",
         "FACTORY",
         "VP"
       ],
-      "methods": 8
+      "methodVPs": 8
     },
     {
       "name": "factoryClassNode",
-      "constructors": 0,
-      "nbVariants": 2,
+      "constructorVariants": 0,
+      "classVariants": 2,
       "types": [
         "FACTORY",
         "VP"
       ],
-      "methods": 8
+      "methodVPs": 8
     }
   ],
   "links": [
