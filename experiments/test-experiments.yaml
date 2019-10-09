@@ -46,3 +46,6 @@ structures:
 template:
   localDirectory: template
   sourcePackage: .
+vps_in_different_packages:
+  localDirectory: vps_in_different_packages
+  sourcePackage: .

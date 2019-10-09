@@ -24,6 +24,8 @@ var graph, store;
 
 //	filtered types
 var filters = [];
+var coloredPackages = new Map();
+
 var filterIsolated = false;
 var jsonFile, jsonStatsFile;
 
@@ -192,7 +194,7 @@ async function generateGraph() {
             })
             .style("stroke", "black")
             .style("stroke-width", function (d) {
-                return d.classVariants
+                return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
             })
             .attr("r", function (d) {
                 return d.radius
@@ -256,7 +258,7 @@ async function generateGraph() {
         label = label.merge(newLabel);
 
         d3.selectAll("circle.node").on("click", function () {
-            addFilter(d3.select(this).attr("name"));
+            addFilter(d3.select(this).attr("name"), "#list-tab");
         });
 
         addAdvancedBehaviour(newNode, width, height, g, svg, node, link, label);
@@ -379,10 +381,10 @@ function matchesFilter(name, filter) {
     return /[A-Z]/.test(sp[sp.length - 1]) ? name === filter : name.startsWith(filter);
 }
 
-async function addFilter(value) {
+async function addFilter(value, tabSelector, functionForFiltering) {
     if (value) {
-        $("#list-tab").append(getFilterItem(value));
-        filters.push(value);
+        $(tabSelector).append(getFilterItem(value));
+        functionForFiltering();
         await displayGraph(jsonFile, jsonStatsFile, filters, filterIsolated);
     }
 }
@@ -397,7 +399,15 @@ $("#add-filter-button").on('click', async function (e) {
     let input = $("#package-to-filter");
     let inputValue = input.val();
     input.val("");
-    await addFilter(inputValue);
+    await addFilter(inputValue, "#list-tab", () => filters.push(inputValue));
+});
+
+$("#add-package-button").on('click', async function (e) {
+    e.preventDefault();
+    let input = $("#package-to-color");
+    let inputValue = input.val();
+    input.val("");
+    await addFilter(inputValue, "#color-tab", () => coloredPackages.set(inputValue, "blue"));
 });
 
 $("#filter-isolated").on('click', async function (e) {

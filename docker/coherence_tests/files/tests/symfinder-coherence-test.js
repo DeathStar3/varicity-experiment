@@ -59,10 +59,10 @@ describe("Testing coherence of all projects", () => {
                     .toBeTruthy();
             });
 
-            it('The value of the constructors attribute should be 0 or 1 for all nodes not being an interface', () => {
+            it('The value of the constructorVPs attribute should be 0 or 1 for all nodes not being an interface', () => {
                 expect(jsonData.nodes
                     .filter(n => !n.types.includes("INTERFACE"))
-                    .map(n => n.constructors)
+                    .map(n => n.constructorVPs)
                     .every(c => [0, 1].includes(c)))
                     .toBeTruthy();
             });

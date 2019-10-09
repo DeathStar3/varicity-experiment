@@ -46,7 +46,12 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                 </button>
             </h2>
             <h2 class="mb-0">
-                <button class="btn btn-dark btn-block" id="hide-legend-button" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                <button class="btn btn-dark btn-block" id="hide-color-button" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Color packages
+                </button>
+            </h2>
+            <h2 class="mb-0">
+                <button class="btn btn-dark btn-block" id="hide-legend-button" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                     Show legend
                 </button>
             </h2>
@@ -79,6 +84,25 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
             </div>
         </div>
         <div id="collapseTwo" class="collapse multi-collapse border-white" aria-labelledby="headingTwo">
+            <div class="card-body">
+                <div class="row py-4 pl-4">
+                    <div class="input-group col-4">
+                        <input id="package-to-color" type="text" class="form-control border-dark" placeholder="Package/class to color"
+                               aria-label="Package/class to filter" aria-describedby="add-package-button">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-dark" type="button" id="add-package-button">Add new package</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row py-4 pl-4 justify-content-between">
+                    <div class="col-auto mr-auto">
+                        <ul class="list-group" id="color-tab" role="tablist">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="collapseThree" class="collapse multi-collapse border-white" aria-labelledby="headingThree">
             <div class="card-body">
                 <div class="text-center">
                     <img width="900" src="symfinder-legend.svg">

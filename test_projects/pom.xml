@@ -49,5 +49,6 @@
         <module>strategy</module>
         <module>structures</module>
         <module>template</module>
+        <module>vps_in_different_packages</module>
     </modules>
 </project>
