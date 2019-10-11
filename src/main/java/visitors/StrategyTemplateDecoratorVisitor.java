@@ -35,14 +35,6 @@ public class StrategyTemplateDecoratorVisitor extends ImportsVisitor {
     }
 
     @Override
-    public boolean visit(TypeDeclaration type) {
-        if (super.visit(type) && type.resolveBinding().isGenericType()) {
-            System.out.println("lol");
-        }
-        return true;
-    }
-
-    @Override
     public boolean visit(FieldDeclaration field) {
         logger.debug(field);
         ITypeBinding fieldTypeBinding = field.getType().resolveBinding();

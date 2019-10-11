@@ -1,4 +1,5 @@
 import {NodesFilter} from "./nodes-filter.js";
+import {PackageColorer} from "./package-colorer.js";
 
 class Graph {
 //	data stores
@@ -15,16 +16,17 @@ class Graph {
     firstTime = true;
 
     filter;
+    packageColorer;
 
     svg; g; link; node; label;
 
+
     //	d3 color scales
-    color = d3.scaleLinear()
-        .range(["#FFFFFF", '#FF0000'])
-        .interpolate(d3.interpolateRgb);
+    color = d3.scaleLinear();
 
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, () => this.displayGraph());
+        this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], () => this.displayGraph());
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
     }
@@ -35,6 +37,7 @@ class Graph {
         if (this.firstTime) {
             sessionStorage.setItem("filtered", "false");
             this.filter.appendFiltersToTab();
+            this.packageColorer.appendFiltersToTab();
             this.firstTime = false;
         }
         this.filterIsolated = sessionStorage.getItem("filtered") === "true";
@@ -177,7 +180,7 @@ class Graph {
                 return d.radius
             })
             .attr("fill", (d) => {
-                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.color(d.constructorVariants))
+                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
             })
             .attr("name", function (d) {
                 return d.name
@@ -224,7 +227,7 @@ class Graph {
             .attr("dy", ".35em")
             .attr("name", d => d.name)
             .attr("fill", (d) => {
-                var nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.color(d.constructorVariants));
+                var nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants));
                 return contrastColor(nodeColor);
             })
             .text(function (d) {
@@ -330,7 +333,16 @@ class Graph {
                 });
         }
     }
+
+    getNodeColor(nodeName, valueOnScale){
+        var upperRangeColor = this.packageColorer.getColorForName(nodeName);
+        return this.color
+            .range(["#FFFFFF", upperRangeColor])
+            .interpolate(d3.interpolateRgb)(valueOnScale);
+    }
+
 }
+
 
 function contrastColor(color) {
     var d = 0;
@@ -349,14 +361,6 @@ function contrastColor(color) {
 $(document).on('click', ".list-group-item", function (e) {
     e.preventDefault();
     $('.active').removeClass('active');
-});
-
-$("#add-package-button").on('click', async function (e) {
-    e.preventDefault();
-    let input = $("#package-to-color");
-    let inputValue = input.val();
-    input.val("");
-    await addFilter(inputValue, "#color-tab", () => coloredPackages.set(inputValue, "blue"));
 });
 
 $("#filter-isolated").on('click', async function (e) {

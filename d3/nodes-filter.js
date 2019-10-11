@@ -17,7 +17,7 @@ class NodesFilter {
         this.addFilteringToButton();
         this.addCapacityToRemoveFilter();
         this.filtersList = [];
-        nodeFilters.forEach(n => this.addFilter(n, () => this.filtersList.push(n)))
+        nodeFilters.forEach(n => this.addFilter(n))
     }
 
     addFilteringToButton() {
@@ -26,7 +26,7 @@ class NodesFilter {
             let input = $(this.filterInputSelector);
             let inputValue = input.val();
             input.val("");
-            await this.addFilter(inputValue, () => this.filtersList.push(inputValue));
+            await this.addFilter(inputValue);
         });
     }
 
@@ -35,17 +35,24 @@ class NodesFilter {
             e.preventDefault();
             let removedFilter = $(e.target.parentElement.parentElement).attr("id");
             $(e.target.parentElement.parentElement).remove();
-            this.filtersList.splice(this.filtersList.indexOf(removedFilter), 1);
+            this.removeValue(removedFilter);
             await this.displayGraphFunction();
         });
     }
-
-    async addFilter(value, functionForFiltering) {
+    async addFilter(value) {
         if (value) {
             $(this.filtersListSelector).append(this.getFilterItem(value));
-            functionForFiltering();
+            this.addValue(value);
             await this.displayGraphFunction();
         }
+    }
+
+    addValue(value) {
+        this.filtersList.push(value);
+    }
+
+    removeValue(value) {
+        this.filtersList.splice(this.filtersList.indexOf(value), 1);
     }
 
     getFilterItem(filter) {

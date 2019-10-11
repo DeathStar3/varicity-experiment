@@ -21,7 +21,6 @@
 
 import os
 import shutil
-import yaml
 
 from mako.template import Template
 
@@ -35,7 +34,9 @@ def copy_file(filename):
 
 
 def generate_visualization_files_for_project(xp_name, xp_config):
-    copy_file("symfinder.js")
+    copy_file("graph.js")
+    copy_file("nodes-filter.js")
+    copy_file("package-colorer.js")
     copy_file("style.css")
     copy_file("symfinder-icon.png")
     copy_file("symfinder-legend.svg")
