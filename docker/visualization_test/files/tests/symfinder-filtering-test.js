@@ -19,6 +19,8 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
+import {Graph} from "graph.js"
+
 describe("Filtering an isolated node", () => {
 
     beforeAll(async (done) => {
@@ -47,7 +49,7 @@ describe("Unfiltering an isolated node", () => {
 
     beforeAll(async (done) => {
         firstTime = true;
-        await displayGraph("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"], false);
+        await new Graph("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]).displayGraph();
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 300); // wait for onclick event to execute totally
     });
@@ -114,7 +116,7 @@ describe("Filtering a package", () => {
 
     beforeAll(async (done) => {
         firstTime = true;
-        await displayGraph("tests/data/graph-to-filter.json", "tests/data/stats.json", [], false);
+        await new Graph("tests/data/graph-to-filter.json", "tests/data/stats.json", []).displayGraph();
         $("#package-to-filter").val("foo.bar");
         $("#add-filter-button").trigger("click");
         setTimeout(() => done(), 300); // wait for onclick event to execute totally

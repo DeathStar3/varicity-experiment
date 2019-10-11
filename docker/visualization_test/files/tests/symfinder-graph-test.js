@@ -19,10 +19,12 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
+import {Graph} from "graph.js"
+
 describe("Generating graph with one node", () => {
 
     beforeAll(async () => {
-        await displayGraph("tests/data/graph1.json", "tests/data/stats.json", [], false);
+        await new Graph("tests/data/graph1.json", "tests/data/stats.json", []).displayGraph();
     });
     //
     it('svg should exist', () => {
@@ -97,7 +99,7 @@ describe("Generating different types of nodes", () => {
 describe("Generating different types of nodes", () => {
 
     beforeAll(async () => {
-        await displayGraph("tests/data/graph3.json", "tests/data/stats.json", [], false);
+        await new Graph("tests/data/graph3.json", "tests/data/stats.json", []).displayGraph();
     });
 
     it('svg should exist', () => {
