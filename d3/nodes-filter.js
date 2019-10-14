@@ -41,8 +41,8 @@ class NodesFilter {
     }
     async addFilter(value) {
         if (value) {
-            $(this.filtersListSelector).append(this.getFilterItem(value));
             this.addValue(value);
+            $(this.filtersListSelector).append(this.getFilterItem(value));
             await this.displayGraphFunction();
         }
     }

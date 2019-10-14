@@ -14,7 +14,19 @@ class PackageColorer extends NodesFilter {
 
         this.removeValue = (n) => {
             this.packagesMap.delete(n);
-        }
+        };
+
+        this.getFilterItem = (filter) => {
+            return '' +
+                '<li class="list-group-item d-flex justify-content-between align-items-center" id="' + filter + '" data-toggle="list"\n' +
+                '               role="tab" aria-controls="profile" style="background-color: ' + this.packagesMap.get(filter) + '">'
+                + filter +
+                '<button type="button btn-dark" class="close" aria-label="Close">\n' +
+                '  <span aria-hidden="true">&times;</span>\n' +
+                '</button>' +
+                '</li>';
+
+        };
     }
 
     /**
@@ -25,16 +37,16 @@ class PackageColorer extends NodesFilter {
         return "hsl(" + 360 * Math.random() + ',' + 100 + '%,' + 50 + '%)'
     }
 
-    getColorForName(name){
+    getColorForName(name) {
         var colorFromMap = "";
         var colorFilter = "";
-        this.packagesMap.forEach((value, key) =>{
-            if(name.startsWith(key) && key.length >= colorFilter.length){
+        this.packagesMap.forEach((value, key) => {
+            if (name.startsWith(key) && key.length >= colorFilter.length) {
                 colorFilter = key;
                 colorFromMap = value;
             }
         });
-        if(colorFromMap === ""){
+        if (colorFromMap === "") {
             return "#FF0000";
         } else {
             return colorFromMap.toString();
