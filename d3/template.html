@@ -127,10 +127,14 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 <script type="module">
     import {Graph} from "./graph.js";
 
+    var visualization;
+
     function display() {
         let filters = [];
-        new Graph("${jsonFile}", "${jsonStatsFile}", filters).displayGraph();
+        this.visualization = new Graph("${jsonFile}", "${jsonStatsFile}", filters);
+        this.visualization.displayGraph();
     }
     window.onload = display;
+    window.visualization = visualization;
 </script>
 </body>

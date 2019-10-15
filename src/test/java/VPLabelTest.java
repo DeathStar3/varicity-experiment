@@ -48,13 +48,30 @@ public class VPLabelTest extends Neo4jTest {
         });
     }
 
-
     @Test
     public void setVPLabelInterfaceWithVariants() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.INTERFACE);
             graph.setVPLabels();
             assertTrue(graph.getNode("Shape").get().hasLabel(EntityAttribute.VP.toString()));
+        });
+    }
+
+    @Test
+    public void setVPLabelOutOfScope() {
+        runTest(graph -> {
+            graph.createNode("Shape", EntityType.INTERFACE, EntityAttribute.OUT_OF_SCOPE);
+            graph.setVPLabels();
+            assertFalse(graph.getNode("Shape").get().hasLabel(EntityAttribute.VP.toString()));
+        });
+    }
+
+    @Test
+    public void setVPLabelMethod() {
+        runTest(graph -> {
+            graph.createNode("draw", EntityType.METHOD);
+            graph.setVPLabels();
+            assertFalse(graph.getNode("draw").get().hasLabel(EntityAttribute.VP.toString()));
         });
     }
 
@@ -83,9 +100,8 @@ public class VPLabelTest extends Neo4jTest {
             graph.linkTwoNodes(shapeNode, drawNode1, RelationType.METHOD);
             graph.linkTwoNodes(shapeNode, drawNode2, RelationType.METHOD);
             graph.setMethodVPs();
-            graph.setNbVariantsProperty();
-            graph.setVPLabels();
-            assertTrue(graph.getNode("Shape").get().hasLabel(EntityAttribute.VP.getString()));
+            graph.setMethodLevelVPLabels();
+            assertTrue(graph.getNode("Shape").get().hasLabel(EntityAttribute.METHOD_LEVEL_VP.getString()));
         });
     }
 
@@ -98,9 +114,8 @@ public class VPLabelTest extends Neo4jTest {
             graph.linkTwoNodes(shapeNode, shapeConstructorNode1, RelationType.METHOD);
             graph.linkTwoNodes(shapeNode, shapeConstructorNode2, RelationType.METHOD);
             graph.setConstructorVPs();
-            graph.setNbVariantsProperty();
-            graph.setVPLabels();
-            assertTrue(graph.getNode("Shape").get().hasLabel(EntityAttribute.VP.getString()));
+            graph.setMethodLevelVPLabels();
+            assertTrue(graph.getNode("Shape").get().hasLabel(EntityAttribute.METHOD_LEVEL_VP.getString()));
         });
     }
 

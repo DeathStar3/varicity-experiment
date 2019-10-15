@@ -225,6 +225,17 @@ public class NeoGraph {
 
     }
 
+    public void detectVPsAndVariants(){
+        setMethodVPs();
+        setMethodVariants();
+        setConstructorVPs();
+        setConstructorVariants();
+        setNbVariantsProperty();
+        setVPLabels();
+        setMethodLevelVPLabels();
+        setVariantsLabels();
+    }
+
     /**
      * Sets the number of methods with different names defined more than once in the class.
      * <p>
@@ -315,9 +326,19 @@ public class NeoGraph {
      * - has a design pattern.
      */
     public void setVPLabels() {
-        submitRequest(String.format("MATCH (c) WHERE ((%s) OR c:ABSTRACT OR c:INTERFACE OR (EXISTS(c.classVariants) AND c.classVariants > 0) OR c.methodVPs > 0 OR c.constructorVPs > 0) SET c:%s",
+        submitRequest(String.format("MATCH (c) WHERE (NOT c:OUT_OF_SCOPE) AND (c:INTERFACE OR (c:CLASS AND c:ABSTRACT) OR (%s) OR (EXISTS(c.classVariants) AND c.classVariants > 0)) SET c:%s",
                 getClauseForHavingDesignPattern("c"),
                 EntityAttribute.VP));
+    }
+
+    public void setMethodLevelVPLabels() {
+        submitRequest(String.format("MATCH (c) WHERE (NOT c:OUT_OF_SCOPE) AND (c.methodVPs > 0 OR c.constructorVPs > 0) SET c:%s",
+                EntityAttribute.METHOD_LEVEL_VP));
+    }
+
+    public void setVariantsLabels() {
+        submitRequest(String.format("MATCH (sc:VP)-[:EXTENDS|:IMPLEMENTS]->(c) WHERE c:CLASS OR c:INTERFACE SET c:%s",
+                EntityAttribute.VARIANT));
     }
 
     public void addLabelToNode(Node node, String label) {
@@ -396,7 +417,7 @@ public class NeoGraph {
      * @return Number of class level variants
      */
     public int getNbClassLevelVariants() {
-        return submitRequest("MATCH (p)-[:EXTENDS|:IMPLEMENTS]->(c:CLASS) WHERE (NOT c:ABSTRACT AND NOT p:OUT_OF_SCOPE) AND (NOT (c)-[:EXTENDS]->()) RETURN (COUNT(c))")
+        return submitRequest("MATCH (c:VARIANT) RETURN (COUNT(DISTINCT c))")
                 .list().get(0).get(0).asInt();
     }
 
@@ -486,11 +507,8 @@ public class NeoGraph {
      * @return Number of class level VPs
      */
     public int getNbClassLevelVPs() {
-        int nbInterfaces = submitRequest(String.format("MATCH (n) WHERE (n:INTERFACE AND (NOT n:OUT_OF_SCOPE) AND NOT (%s)) RETURN COUNT (n)", getClauseForHavingDesignPattern("n"))).list().get(0).get(0).asInt();
-        int nbAbstractClasses = submitRequest(String.format("MATCH (n) WHERE n:CLASS AND n:ABSTRACT AND (NOT n:OUT_OF_SCOPE) AND NOT (%s) RETURN COUNT (n)", getClauseForHavingDesignPattern("n"))).list().get(0).get(0).asInt();
-        int nbExtendedClasses = submitRequest(String.format("MATCH (n:CLASS)-[r:EXTENDS]->() WHERE (NOT n:ABSTRACT) AND (NOT n:OUT_OF_SCOPE) AND NOT (%s) RETURN COUNT (DISTINCT n)", getClauseForHavingDesignPattern("n"))).list().get(0).get(0).asInt(); // we exclude abstracts as they are already counted
-        int nbPatterns = getNbNodesHavingDesignPatterns();
-        return nbInterfaces + nbAbstractClasses + nbExtendedClasses + nbPatterns;
+        return submitRequest("MATCH (c:VP) RETURN COUNT (DISTINCT c)")
+                .list().get(0).get(0).asInt();
     }
 
     /**
@@ -515,8 +533,8 @@ public class NeoGraph {
 
     private String getNodesAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH (c:VP) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants, classVariants:c.classVariants})" :
-                "MATCH (c) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants})";
+                "MATCH (c) WHERE c:VP OR c:VARIANT RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants, classVariants:c.classVariants})" :
+                "MATCH (c) RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants})";
         return submitRequest(request)
                 .list()
                 .get(0)
@@ -529,8 +547,8 @@ public class NeoGraph {
 
     private String getLinksAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH path = (c1:VP)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2:VP) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
-                "MATCH path = (c1)-[r:INNER|:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+                "MATCH path = (c1:VP)-[r:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
+                "MATCH path = (c1)-[r:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .list()
                 .get(0)

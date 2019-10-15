@@ -34,6 +34,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
     public void OneInterface() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.INTERFACE);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -42,6 +43,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
     public void OneAbstractClass() {
         runTest(graph -> {
             graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -52,6 +54,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -60,6 +63,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
     public void OneClass() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.CLASS);
+            graph.detectVPsAndVariants();
             assertEquals(0, graph.getNbClassLevelVPs());
         });
     }
@@ -76,6 +80,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
         runTest(graph -> {
             graph.createNode("Serializable", EntityType.INTERFACE);
             graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
+            graph.detectVPsAndVariants();
             assertEquals(2, graph.getNbClassLevelVPs());
         });
     }
@@ -86,6 +91,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
             Node shapeClass = graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -96,6 +102,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
             Node shapeClass = graph.createNode("Shape", EntityType.INTERFACE);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.IMPLEMENTS);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -108,6 +115,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
             Node smallCircleClass = graph.createNode("SmallCircle", EntityType.CLASS);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
             graph.linkTwoNodes(circleClass, smallCircleClass, RelationType.EXTENDS);
+            graph.detectVPsAndVariants();
             assertEquals(2, graph.getNbClassLevelVPs());
         });
     }
@@ -119,6 +127,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
             graph.createNode("Shape", EntityAttribute.ABSTRACT, EntityType.CLASS);
             graph.createNode("Circle", EntityType.CLASS);
             graph.createNode("Object", EntityAttribute.ABSTRACT, EntityType.CLASS, EntityAttribute.OUT_OF_SCOPE);
+            graph.detectVPsAndVariants();
             assertEquals(2, graph.getNbClassLevelVPs());
         });
     }
@@ -131,6 +140,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityAttribute.OUT_OF_SCOPE);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
             graph.linkTwoNodes(shapeClass, rectangleClass, RelationType.EXTENDS);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -139,6 +149,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
     public void DesignPatternShallBeCounted() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.CLASS, DesignPatternType.STRATEGY);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -147,6 +158,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
     public void DesignPatternShallBeCountedOnce() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.INTERFACE, DesignPatternType.STRATEGY);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -155,6 +167,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
     public void NodeWithMultipleDesignPatternsShallBeCountedOnce() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.CLASS, DesignPatternType.STRATEGY, DesignPatternType.FACTORY);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -163,6 +176,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
     public void InterfaceWithDesignPatternShallBeCountedOnce() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.INTERFACE, DesignPatternType.DECORATOR);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -171,6 +185,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
     public void AbstractClassWithDesignPatternShallBeCountedOnce() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT, DesignPatternType.DECORATOR);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }
@@ -181,6 +196,7 @@ public class ClassLevelVPsTest extends Neo4jTest {
             Node shapeNode = graph.createNode("Shape", EntityType.CLASS, DesignPatternType.DECORATOR);
             Node rectangleNode = graph.createNode("Rectangle", EntityType.CLASS);
             graph.linkTwoNodes(shapeNode, rectangleNode, RelationType.EXTENDS);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVPs());
         });
     }

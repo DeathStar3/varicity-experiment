@@ -33,6 +33,8 @@ public class ClassLevelVariantsTest extends Neo4jTest {
     public void NoSubclass() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
+            graph.setVPLabels();
+            graph.setVariantsLabels();
             assertEquals(0, graph.getNbClassLevelVariants());
         });
     }
@@ -41,6 +43,7 @@ public class ClassLevelVariantsTest extends Neo4jTest {
     public void OneConcreteClass() {
         runTest(graph -> {
             graph.createNode("Shape", EntityType.CLASS);
+            graph.detectVPsAndVariants();
             assertEquals(0, graph.getNbClassLevelVariants());
         });
     }
@@ -51,6 +54,7 @@ public class ClassLevelVariantsTest extends Neo4jTest {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
             Node circleClass = graph.createNode("Circle", EntityType.CLASS);
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
+            graph.detectVPsAndVariants();
             assertEquals(1, graph.getNbClassLevelVariants());
         });
     }
@@ -65,6 +69,7 @@ public class ClassLevelVariantsTest extends Neo4jTest {
             graph.linkTwoNodes(shapeClass, circleClass, RelationType.EXTENDS);
             graph.linkTwoNodes(shapeClass, rectangleClass, RelationType.EXTENDS);
             graph.linkTwoNodes(shapeClass, triangleClass, RelationType.EXTENDS);
+            graph.detectVPsAndVariants();
             assertEquals(3, graph.getNbClassLevelVariants());
         });
     }
@@ -76,7 +81,8 @@ public class ClassLevelVariantsTest extends Neo4jTest {
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityAttribute.ABSTRACT);
             Node polygonClass = graph.createNode("Polygon", EntityType.CLASS, EntityAttribute.ABSTRACT);
             graph.linkTwoNodes(shapeClass, polygonClass, RelationType.EXTENDS);
-            assertEquals(0, graph.getNbClassLevelVariants());
+            graph.detectVPsAndVariants();
+            assertEquals(1, graph.getNbClassLevelVariants());
         });
     }
 
@@ -86,6 +92,7 @@ public class ClassLevelVariantsTest extends Neo4jTest {
             Node objectClass = graph.createNode("Object", EntityType.CLASS, EntityAttribute.ABSTRACT, EntityAttribute.OUT_OF_SCOPE);
             Node polygonClass = graph.createNode("Polygon", EntityType.CLASS);
             graph.linkTwoNodes(objectClass, polygonClass, RelationType.EXTENDS);
+            graph.detectVPsAndVariants();
             assertEquals(0, graph.getNbClassLevelVariants());
         });
     }
