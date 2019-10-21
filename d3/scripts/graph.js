@@ -9,11 +9,11 @@ class Graph {
     width;
     height;
 
-    filterIsolated = false;
+    filterIsolated;
     jsonFile;
     jsonStatsFile;
 
-    firstTime = true;
+    firstTime;
 
     filter;
     packageColorer;
@@ -22,13 +22,16 @@ class Graph {
 
 
     //	d3 color scales
-    color = d3.scaleLinear();
+    color;
 
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, () => this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], () => this.displayGraph());
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
+        this.filterIsolated = false;
+        this.firstTime = true;
+        this.color = d3.scaleLinear();
     }
 
 
@@ -53,7 +56,7 @@ class Graph {
 
         await this.getData(this);
 
-     }
+    }
 
     generateStructure(width, height) {
         //	svg selection and sizing

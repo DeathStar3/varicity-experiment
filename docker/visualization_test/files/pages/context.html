@@ -89,12 +89,20 @@ Reloaded before every execution run.
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-<script>
-    function display() {
-        let filters = [${filters}];
-        displayGraph("${jsonFile}", "${jsonStatsFile}", "${jsonMetricsFile}", filters);
+<script type="module">
+    import {Graph} from "/graph.js";
+
+    window.display = display;
+
+    async function display(jsonFile, jsonStatsFile) {
+        let filters = [];
+        console.log("1");
+        var visualization = new Graph(jsonFile, jsonStatsFile, filters);
+        console.log(visualization);
+        await visualization.displayGraph();
+        return visualization;
     }
-    window.onload = display;
+
 </script>
 <script src="context.js"></script>
 <script src="graph.js" type="module"></script>

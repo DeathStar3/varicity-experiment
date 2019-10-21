@@ -533,7 +533,7 @@ public class NeoGraph {
 
     private String getNodesAsJson(boolean onlyVPs) {
         String request = onlyVPs ?
-                "MATCH (c) WHERE c:VP OR c:VARIANT RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants, classVariants:c.classVariants})" :
+                "MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants, classVariants:c.classVariants})" :
                 "MATCH (c) RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants})";
         return submitRequest(request)
                 .list()

@@ -123,18 +123,21 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-<script src="nodes-filter.js" type="module"></script>
+<script src="scripts/nodes-filter.js" type="module"></script>
 <script type="module">
-    import {Graph} from "./graph.js";
+    import {Graph} from "./scripts/graph.js";
 
     var visualization;
 
-    function display() {
+    async function display(jsonFile, jsonStatsFile) {
         let filters = [];
-        this.visualization = new Graph("${jsonFile}", "${jsonStatsFile}", filters);
-        this.visualization.displayGraph();
+        console.log("1");
+        visualization = new Graph(jsonFile, jsonStatsFile, filters);
+        console.log(visualization);
+        await visualization.displayGraph();
     }
-    window.onload = display;
+
+    window.onload = async () => await display("${jsonFile}", "${jsonStatsFile}");
     window.visualization = visualization;
 </script>
 </body>

@@ -33,10 +33,15 @@ def copy_file(filename):
     shutil.copyfile(os.path.join(d3_directory, filename), os.path.join(base_directory, filename))
 
 
+def copy_dir(filename):
+    destination_dir = os.path.join(base_directory, filename)
+    if os.path.exists(destination_dir):
+        shutil.rmtree(destination_dir)
+    shutil.copytree(os.path.join(d3_directory, filename), destination_dir)
+
+
 def generate_visualization_files_for_project(xp_name, xp_config):
-    copy_file("graph.js")
-    copy_file("nodes-filter.js")
-    copy_file("package-colorer.js")
+    copy_dir("scripts")
     copy_file("style.css")
     copy_file("symfinder-icon.png")
     copy_file("symfinder-legend.svg")
