@@ -34,10 +34,11 @@ Reloaded before every execution run.
 </head>
 <body id="index-body">
 
-<div class="accordion" id="accordionExample">
+<div class="accordion">
     <div class="card">
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" id="headingOne">
             <a class="navbar-brand" href="#">
+                <img src="symfinder-icon.png" width="35" height="35" class="d-inline-block" alt="">
                 Symfinder
             </a>
             <h2 class="mb-0">
@@ -45,11 +46,21 @@ Reloaded before every execution run.
                     Hide project information
                 </button>
             </h2>
-            <p class="badge-dark ml-auto mr-1 my-lg-0" style="font-size: 1em" id="xp-identifier">${identifier}</p>
+            <h2 class="mb-0">
+                <button class="btn btn-dark btn-block" id="hide-color-button" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Color packages
+                </button>
+            </h2>
+            <h2 class="mb-0">
+                <button class="btn btn-dark btn-block" id="hide-legend-button" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Show legend
+                </button>
+            </h2>
+            <p class="badge-dark ml-auto mr-1 my-lg-0" style="font-size: 1em" id="xp-identifier">identifier</p>
         </nav>
 
-        <div id="collapseOne" class="collapse show border-white" aria-labelledby="headingOne" data-parent="#accordionExample">
-            <div class="card-body ">
+        <div id="collapseOne" class="collapse multi-collapse show border-white" aria-labelledby="headingOne">
+            <div class="card-body">
                 <div class="row py-4 pl-4">
                     <div class="input-group col-4">
                         <input id="package-to-filter" type="text" class="form-control border-dark" placeholder="Package/class to filter"
@@ -70,6 +81,32 @@ Reloaded before every execution run.
                     <div class="col-4">
                         <p id="statistics"></p>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div id="collapseTwo" class="collapse multi-collapse border-white" aria-labelledby="headingTwo">
+            <div class="card-body">
+                <div class="row py-4 pl-4">
+                    <div class="input-group col-4">
+                        <input id="package-to-color" type="text" class="form-control border-dark" placeholder="Package/class to color"
+                               aria-label="Package/class to filter" aria-describedby="add-package-button">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-dark" type="button" id="add-package-button">Add new package</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row py-4 pl-4 justify-content-between">
+                    <div class="col-auto mr-auto">
+                        <ul class="list-group" id="color-tab" role="tablist">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="collapseThree" class="collapse multi-collapse border-white" aria-labelledby="headingThree">
+            <div class="card-body">
+                <div class="text-center">
+                    <img width="900" src="symfinder-legend.svg">
                 </div>
             </div>
         </div>
@@ -94,11 +131,8 @@ Reloaded before every execution run.
 
     window.display = display;
 
-    async function display(jsonFile, jsonStatsFile) {
-        let filters = [];
-        console.log("1");
+    async function display(jsonFile, jsonStatsFile, filters) {
         var visualization = new Graph(jsonFile, jsonStatsFile, filters);
-        console.log(visualization);
         await visualization.displayGraph();
         return visualization;
     }

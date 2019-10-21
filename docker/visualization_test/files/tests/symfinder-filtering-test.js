@@ -20,11 +20,10 @@
  */
 
 
-xdescribe("Filtering an isolated node", () => {
+describe("Filtering an isolated node", () => {
 
     beforeAll(async (done) => {
-        firstTime = true;
-        display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
+        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
         $("#package-to-filter").val("Shape");
         $("#add-filter-button").trigger("click");
         setTimeout(() => done(), 300); // wait for onclick event to execute totally
@@ -47,8 +46,7 @@ xdescribe("Filtering an isolated node", () => {
 xdescribe("Unfiltering an isolated node", () => {
 
     beforeAll(async (done) => {
-        firstTime = true;
-        await new Graph("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]).displayGraph();
+        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 300); // wait for onclick event to execute totally
     });
@@ -65,11 +63,10 @@ xdescribe("Unfiltering an isolated node", () => {
 
 });
 
-xdescribe("Filtering a linked node", () => {
+describe("Filtering a linked node", () => {
 
     beforeAll(async (done) => {
-        firstTime = true;
-        await displayGraph("tests/data/graph-to-filter.json", "tests/data/stats.json", [], false);
+        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
         $("#package-to-filter").val("foo.bar.Circle");
         $("#add-filter-button").trigger("click");
         setTimeout(() => done(), 300); // wait for onclick event to execute totally
@@ -91,8 +88,7 @@ xdescribe("Filtering a linked node", () => {
 xdescribe("Unfiltering a linked node", () => {
 
     beforeAll(async (done) => {
-        firstTime = true;
-        await displayGraph("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"], false);
+        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 300); // wait for onclick event to execute totally
     });
@@ -111,11 +107,10 @@ xdescribe("Unfiltering a linked node", () => {
 
 });
 
-xdescribe("Filtering a package", () => {
+describe("Filtering a package", () => {
 
     beforeAll(async (done) => {
-        firstTime = true;
-        await new Graph("tests/data/graph-to-filter.json", "tests/data/stats.json", []).displayGraph();
+        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
         $("#package-to-filter").val("foo.bar");
         $("#add-filter-button").trigger("click");
         setTimeout(() => done(), 300); // wait for onclick event to execute totally
@@ -139,8 +134,7 @@ xdescribe("Filtering a package", () => {
 xdescribe("Unfiltering a package", () => {
 
     beforeAll(async (done) => {
-        firstTime = true;
-        await displayGraph("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"], false);
+        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 300); // wait for onclick event to execute totally
     });

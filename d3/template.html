@@ -131,9 +131,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 
     async function display(jsonFile, jsonStatsFile) {
         let filters = [];
-        console.log("1");
         visualization = new Graph(jsonFile, jsonStatsFile, filters);
-        console.log(visualization);
         await visualization.displayGraph();
     }
 

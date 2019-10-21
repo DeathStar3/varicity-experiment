@@ -22,8 +22,7 @@
 describe("Generating graph with one node", () => {
 
     beforeAll(async () => {
-        console.log(window.display);
-        await display("tests/data/graph1.json", "tests/data/stats.json");
+        await display("tests/data/graph1.json", "tests/data/stats.json", []);
     });
 
     it('svg should exist', () => {
@@ -39,7 +38,7 @@ describe("Generating graph with one node", () => {
 describe("Generating graph with two linked nodes", () => {
 
     beforeAll(async () => {
-        await display("tests/data/graph2.json", "tests/data/stats.json");
+        await display("tests/data/graph2.json", "tests/data/stats.json", []);
     });
 
     it('svg should exist', () => {
@@ -55,10 +54,10 @@ describe("Generating graph with two linked nodes", () => {
 
 });
 
-xdescribe("Generating different types of nodes", () => {
+describe("Generating different types of nodes", () => {
 
     beforeAll(async () => {
-        await display("tests/data/types_of_nodes.json", "tests/data/stats.json");
+        await display("tests/data/types_of_nodes.json", "tests/data/stats.json", []);
     });
 
     it('svg should exist', () => {
@@ -95,10 +94,10 @@ xdescribe("Generating different types of nodes", () => {
 
 });
 
-xdescribe("Generating different types of nodes", () => {
+describe("Generating different types of nodes", () => {
 
     beforeAll(async () => {
-        await new Graph("tests/data/graph3.json", "tests/data/stats.json", []).displayGraph();
+        await display("tests/data/graph3.json", "tests/data/stats.json", []);
     });
 
     it('svg should exist', () => {
@@ -123,7 +122,7 @@ xdescribe("Generating different types of nodes", () => {
 
 });
 
-xdescribe("Testing utils functions : distanceToRed", () => {
+describe("Testing utils functions : distanceToRed", () => {
 
     it('distance from red to red is 0', () => {
         expect(distanceToRed(255, 0, 0)).toBe(0);
