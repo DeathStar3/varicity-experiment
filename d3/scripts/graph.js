@@ -45,6 +45,7 @@ class Graph {
         }
         this.filterIsolated = sessionStorage.getItem("filtered") === "true";
         await this.generateGraph();
+        return this.graph;
     }
 
     async generateGraph() {
@@ -370,7 +371,7 @@ $("#filter-isolated").on('click', async function (e) {
     e.preventDefault();
     var previouslyFiltered = sessionStorage.getItem("filtered") === "true";
     sessionStorage.setItem("filtered", previouslyFiltered ? "false" : "true");
-    $(this).text(previouslyFiltered ? "Unfilter isolated nodes" : "NodesFilter isolated nodes");
+    $(this).text(previouslyFiltered ? "Unfilter isolated nodes" : "Filter isolated nodes");
     await displayGraph(this.jsonFile, this.jsonStatsFile, this.filter.filtersList);
 });
 

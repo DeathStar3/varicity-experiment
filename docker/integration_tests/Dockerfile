@@ -22,8 +22,9 @@
 FROM node:12-alpine
 RUN mkdir -p /opt/karma
 WORKDIR /opt/karma
-RUN npm init --yes && apk update && apk upgrade && apk add --no-cache chromium && npm install -g karma jasmine-core karma-jasmine karma-chrome-launcher karma-jquery karma-spec-reporter --save-dev
+RUN apk update && apk upgrade && apk add --no-cache chromium
+# RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && apk update && apk upgrade && apk add --no-cache chromium firefox-esr
 COPY docker/integration_tests/files/ /opt/karma/
-COPY d3/symfinder.js /opt/karma/tests
+COPY d3/scripts/ /opt/karma/scripts
 COPY generated_visualizations/data /opt/karma/tests/data
-CMD npm install && karma start
+CMD npm install && npm test
