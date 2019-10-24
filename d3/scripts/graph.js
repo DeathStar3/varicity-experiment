@@ -1,5 +1,27 @@
+/*
+ * This file is part of symfinder.
+ *
+ * symfinder is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * symfinder is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with symfinder. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2018-2019 Johann Mortara <johann.mortara@univ-cotedazur.fr>
+ * Copyright 2018-2019 Xhevahire Tërnava <xhevahire.ternava@lip6.fr>
+ * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
+ */
+
 import {NodesFilter} from "./nodes-filter.js";
 import {PackageColorer} from "./package-colorer.js";
+import {VariantsFilter} from "./variants-filter.js";
 
 class Graph {
 //	data stores
@@ -10,6 +32,8 @@ class Graph {
     height;
 
     filterIsolated;
+    filterVariants;
+
     jsonFile;
     jsonStatsFile;
 
@@ -28,7 +52,6 @@ class Graph {
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
         sessionStorage.setItem("firstTime", "true");
-        this.filterIsolated = false;
         this.color = d3.scaleLinear();
         this.setButtonsClickActions();
     }
@@ -37,10 +60,12 @@ class Graph {
     async displayGraph() {
         if (sessionStorage.getItem("firstTime") === "true") {
             sessionStorage.setItem("filteredIsolated", "false");
+            sessionStorage.setItem("filteredVariants", "false");
             sessionStorage.setItem("firstTime", "false");
         }
         d3.selectAll("svg > *").remove();
         this.filterIsolated = sessionStorage.getItem("filteredIsolated") === "true";
+        this.filterVariants = sessionStorage.getItem("filteredVariants") === "true";
         await this.generateGraph();
         return this.graph;
     }
@@ -144,6 +169,12 @@ class Graph {
         this.graph.nodes = this.filter.getNodesListWithoutMatchingFilter(gr.nodes);
         this.graph.links = this.filter.getLinksListWithoutMatchingFilter(gr.links);
 
+        if (this.filterVariants) {
+            var variantsFilter = new VariantsFilter(this.graph.nodes, this.graph.links);
+            this.graph.nodes = variantsFilter.getNodesListWithoutMatchingFilter(this.graph.nodes);
+            this.graph.links = variantsFilter.getLinksListWithoutMatchingFilter(this.graph.links);
+        }
+
         if (this.filterIsolated) {
             var nodesToKeep = new Set();
             this.graph.links.forEach(l => {
@@ -152,6 +183,9 @@ class Graph {
             });
             this.graph.nodes = gr.nodes.filter(n => nodesToKeep.has(n.name));
         }
+
+        // console.log("Nodes : " + this.graph.nodes.length);
+        // console.log("Links : " + this.graph.links.length);
 
     }
 
@@ -349,6 +383,14 @@ class Graph {
             var previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
             sessionStorage.setItem("filteredIsolated", previouslyFiltered ? "false" : "true");
             $(this).text(previouslyFiltered ? "Unfilter isolated nodes" : "Filter isolated nodes");
+            await this.displayGraph();
+        });
+
+        $("#filter-variants-button").on('click', async e => {
+            e.preventDefault();
+            var previouslyFiltered = sessionStorage.getItem("filteredVariants") === "true";
+            sessionStorage.setItem("filteredVariants", previouslyFiltered ? "false" : "true");
+            $(this).text(previouslyFiltered ? "Unfilter variants" : "Filter variants");
             await this.displayGraph();
         });
 

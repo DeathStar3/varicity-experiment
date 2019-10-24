@@ -55,7 +55,8 @@ module.exports = function (config) {
             '/context.js': '/base/context.js',
             '/graph.js': '/base/scripts/graph.js',
             '/nodes-filter.js': '/base/scripts/nodes-filter.js',
-            '/package-colorer.js': '/base/scripts/package-colorer.js'
+            '/package-colorer.js': '/base/scripts/package-colorer.js',
+            '/variants-filter.js': '/base/scripts/variants-filter.js'
         },
 
         // list of files to exclude
