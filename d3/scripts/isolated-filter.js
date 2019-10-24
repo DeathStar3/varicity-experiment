@@ -19,7 +19,7 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-class VariantsFilter {
+class IsolatedFilter {
 
     nodesList;
     linksList;
@@ -30,13 +30,17 @@ class VariantsFilter {
     }
 
     getNodesListWithoutMatchingFilter(){
-        return this.nodesList.filter(node => node.types.includes("VP") || node.types.includes("METHOD_LEVEL_VP"));
+        var nodesToKeep = new Set();
+        this.linksList.forEach(l => {
+            nodesToKeep.add(l.source);
+            nodesToKeep.add(l.target);
+        });
+        return this.nodesList.filter(n => nodesToKeep.has(n.name));
     }
     getLinksListWithoutMatchingFilter(){
-        var filteredNodesNames = this.getNodesListWithoutMatchingFilter().map(node => node.name);
-        return this.linksList.filter(l => filteredNodesNames.includes(l.source) && filteredNodesNames.includes(l.target));
+        return this.linksList;
     }
 
 }
 
-export {VariantsFilter};
+export {IsolatedFilter};

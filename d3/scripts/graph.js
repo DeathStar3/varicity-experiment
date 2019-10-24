@@ -22,6 +22,7 @@
 import {NodesFilter} from "./nodes-filter.js";
 import {PackageColorer} from "./package-colorer.js";
 import {VariantsFilter} from "./variants-filter.js";
+import {IsolatedFilter} from "./isolated-filter";
 
 class Graph {
 //	data stores
@@ -176,16 +177,12 @@ class Graph {
         }
 
         if (this.filterIsolated) {
-            var nodesToKeep = new Set();
-            this.graph.links.forEach(l => {
-                nodesToKeep.add(l.source);
-                nodesToKeep.add(l.target);
-            });
-            this.graph.nodes = gr.nodes.filter(n => nodesToKeep.has(n.name));
+            var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
+            this.graph.nodes = isolatedFilter.getNodesListWithoutMatchingFilter(this.graph.nodes);
         }
 
-        // console.log("Nodes : " + this.graph.nodes.length);
-        // console.log("Links : " + this.graph.links.length);
+        console.log("Nodes : " + this.graph.nodes.length);
+        console.log("Links : " + this.graph.links.length);
 
     }
 
