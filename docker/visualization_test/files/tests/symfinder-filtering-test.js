@@ -43,11 +43,29 @@ xdescribe("Filtering an isolated node", () => {
 
 });
 
-xdescribe("Unfiltering an isolated node", () => {
+describe("Using a default filter", () => {
 
     beforeAll(async (done) => {
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
-        console.log($(".close > span").first());
+        setTimeout(() => done(), 500); // wait for onclick event to execute totally
+    });
+
+    it('There is a filter in the filters list', () => {
+        expect($('#list-tab > .list-group-item').length).toBe(1);
+    });
+
+    it('The filter has the correct name', () => {
+        expect($('#list-tab > .list-group-item')[0].id).toBe("Shape");
+    });
+
+    afterAll(() => $("#list-tab").empty())
+
+});
+
+describe("Unfiltering an isolated node", () => {
+
+    beforeAll(async (done) => {
+        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
@@ -86,7 +104,7 @@ xdescribe("Filtering a linked node", () => {
     afterAll(() => $("#list-tab").empty())
 
 });
-xdescribe("Unfiltering a linked node", () => {
+describe("Unfiltering a linked node", () => {
 
     beforeAll(async (done) => {
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"]);
@@ -132,7 +150,7 @@ xdescribe("Filtering a package", () => {
 
 });
 
-xdescribe("Unfiltering a package", () => {
+describe("Unfiltering a package", () => {
 
     beforeAll(async (done) => {
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);

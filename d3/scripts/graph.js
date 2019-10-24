@@ -25,10 +25,10 @@ class Graph {
     color;
 
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
-        this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, () => this.displayGraph());
-        this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], () => this.displayGraph());
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
+        this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, () => this.displayGraph());
+        this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], () => this.displayGraph());
         this.filterIsolated = false;
         this.firstTime = true;
         this.color = d3.scaleLinear();
@@ -39,8 +39,6 @@ class Graph {
         d3.selectAll("svg > *").remove();
         if (this.firstTime) {
             sessionStorage.setItem("filtered", "false");
-            this.filter.appendFiltersToTab();
-            this.packageColorer.appendFiltersToTab();
             this.firstTime = false;
         }
         this.filterIsolated = sessionStorage.getItem("filtered") === "true";
@@ -93,18 +91,16 @@ class Graph {
                 .defer(d3.json, graph.jsonStatsFile)
                 .await((err, gr, stats) => {
                     if (err) throw err;
-                    graph.displayData(err, gr, stats);
-                    graph.update(this.node, this.link, this.label);
+                    graph.displayData(gr, stats);
+                    graph.update();
                     resolve();
                 });
         });
 
     }
 
-    displayData(err, gr, stats) {
+    displayData(gr, stats) {
         //	data read and store
-
-        if (err) throw err;
 
         document.getElementById("statistics").innerHTML =
             // "Number of VPs: " + stats["VPs"] + "<br>" +
@@ -162,16 +158,16 @@ class Graph {
 
 
     //	general update pattern for updating the graph
-    update(node, link, label) {
+    update() {
 
         //	UPDATE
-        node = node.data(this.graph.nodes, function (d) {
+        this.node = this.node.data(this.graph.nodes, function (d) {
             return d.name;
         });
         //	EXIT
-        node.exit().remove();
+        this.node.exit().remove();
         //	ENTER
-        var newNode = node.enter().append("circle")
+        var newNode = this.node.enter().append("circle")
             .attr("class", "node")
             .style("stroke-dasharray", function (d) {
                 return d.types.includes("ABSTRACT") ? "3,3" : "3,0"
@@ -195,16 +191,16 @@ class Graph {
         });
 
         //	ENTER + UPDATE
-        node = node.merge(newNode);
+        this.node = this.node.merge(newNode);
 
         //	UPDATE
-        link = link.data(this.graph.links, function (d) {
+        this.link = this.link.data(this.graph.links, function (d) {
             return d.name;
         });
         //	EXIT
-        link.exit().remove();
+        this.link.exit().remove();
         //	ENTER
-        var newLink = link.enter().append("line")
+        var newLink = this.link.enter().append("line")
             .attr("stroke-width", 1)
             .attr("class", "link")
             .attr("source", d => d.source)
@@ -217,16 +213,16 @@ class Graph {
                 return "source: " + d.source + "\n" + "target: " + d.target;
             });
         //	ENTER + UPDATE
-        link = link.merge(newLink);
+        this.link = this.link.merge(newLink);
 
         //  UPDATE
-        label = label.data(this.graph.nodes, function (d) {
+        this.label = this.label.data(this.graph.nodes, function (d) {
             return d.name;
         });
         //	EXIT
-        label.exit().remove();
+        this.label.exit().remove();
         //  ENTER
-        var newLabel = label.enter().append("text")
+        var newLabel = this.label.enter().append("text")
             .attr("dx", -5)
             .attr("dy", ".35em")
             .attr("name", d => d.name)
@@ -239,16 +235,16 @@ class Graph {
             });
 
         //	ENTER + UPDATE
-        label = label.merge(newLabel);
+        this.label = this.label.merge(newLabel);
 
         // d3.selectAll("circle.node").on("click", () => {
         //     this.filter.addFilter(d3.select(this).attr("name"), );
         // });
 
-        this.addAdvancedBehaviour(newNode, this.width, this.height, this.g, this.svg, node, link, label);
+        this.addAdvancedBehaviour(newNode, this.width, this.height);
     }
 
-    addAdvancedBehaviour(newNode, width, height, g, svg, node, link, label) {
+    addAdvancedBehaviour(newNode, width, height) {
         newNode.call(d3.drag()
             .on("start", dragstarted)
             .on("drag", dragged)
@@ -271,7 +267,40 @@ class Graph {
         //	update simulation nodes, links, and alpha
         simulation
             .nodes(this.graph.nodes)
-            .on("tick", ticked);
+            //	tick event handler with bounded box
+            .on("tick", () => {
+                this.node
+                // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+                // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+                    .attr("cx", function (d) {
+                        return d.x;
+                    })
+                    .attr("cy", function (d) {
+                        return d.y;
+                    });
+
+                this.link
+                    .attr("x1", function (d) {
+                        return d.source.x;
+                    })
+                    .attr("y1", function (d) {
+                        return d.source.y;
+                    })
+                    .attr("x2", function (d) {
+                        return d.target.x;
+                    })
+                    .attr("y2", function (d) {
+                        return d.target.y;
+                    });
+
+                this.label
+                    .attr("x", function (d) {
+                        return d.x;
+                    })
+                    .attr("y", function (d) {
+                        return d.y;
+                    });
+            });
 
         simulation.force("link")
             .links(this.graph.links);
@@ -280,9 +309,9 @@ class Graph {
 
         //add zoom capabilities
         var zoom_handler = d3.zoom()
-            .on("zoom", () => g.attr("transform", d3.event.transform));
+            .on("zoom", () => this.g.attr("transform", d3.event.transform));
 
-        zoom_handler(svg);
+        zoom_handler(this.svg);
 
         //	drag event handlers
         function dragstarted(d) {
@@ -300,41 +329,6 @@ class Graph {
             if (!d3.event.active) simulation.alphaTarget(0);
             d.fx = null;
             d.fy = null;
-        }
-
-        //	tick event handler with bounded box
-        function ticked() {
-            node
-            // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-            // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
-                .attr("cx", function (d) {
-                    return d.x;
-                })
-                .attr("cy", function (d) {
-                    return d.y;
-                });
-
-            link
-                .attr("x1", function (d) {
-                    return d.source.x;
-                })
-                .attr("y1", function (d) {
-                    return d.source.y;
-                })
-                .attr("x2", function (d) {
-                    return d.target.x;
-                })
-                .attr("y2", function (d) {
-                    return d.target.y;
-                });
-
-            label
-                .attr("x", function (d) {
-                    return d.x;
-                })
-                .attr("y", function (d) {
-                    return d.y;
-                });
         }
     }
 

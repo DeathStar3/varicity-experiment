@@ -26,7 +26,8 @@ class NodesFilter {
             let input = $(this.filterInputSelector);
             let inputValue = input.val();
             input.val("");
-            await this.addFilter(inputValue);
+            this.addFilter(inputValue);
+            await this.displayGraphFunction();
         });
     }
 
@@ -39,11 +40,11 @@ class NodesFilter {
             await this.displayGraphFunction();
         });
     }
-    async addFilter(value) {
+
+    addFilter(value) {
         if (value) {
             this.addValue(value);
             $(this.filtersListSelector).append(this.getFilterItem(value));
-            await this.displayGraphFunction();
         }
     }
 
