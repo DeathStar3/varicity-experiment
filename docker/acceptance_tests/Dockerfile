@@ -19,13 +19,12 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-
-version: "3.6"
-
-services:
-  coherence:
-    build:
-      context: .
-      dockerfile: docker/coherence_tests/Dockerfile
-    image: symfinder-coherence-tests
-    container_name: symfinder-coherence-tests
+FROM node:12-alpine
+RUN mkdir -p /opt/karma
+WORKDIR /opt/karma
+RUN apk update && apk upgrade && apk add --no-cache chromium
+# RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && apk update && apk upgrade && apk add --no-cache chromium firefox-esr
+COPY docker/acceptance_tests/files/ /opt/karma/
+COPY d3/scripts/ /opt/karma/scripts
+COPY generated_visualizations/data /opt/karma/tests/data
+CMD npm install && npm run test -- --projects=$(ls /opt/karma/tests/data/*-stats.json | xargs -n 1 basename | sed 's/-stats.json//g' | sed ':a;N;$!ba;s/\n/,/g')

@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 # This file is part of symfinder.
 #
@@ -20,11 +19,13 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-./build.sh -DskipTests
-./run.sh --local $1
 
-docker-compose -f coherence-tests-compose.yaml build
-docker-compose -f coherence-tests-compose.yaml up --abort-on-container-exit --exit-code-from coherence
-RETURN_CODE=$?
-docker-compose -f coherence-tests-compose.yaml down
-exit $RETURN_CODE
+version: "3.6"
+
+services:
+  acceptance:
+    build:
+      context: .
+      dockerfile: docker/acceptance_tests/Dockerfile
+    image: symfinder-acceptance-tests
+    container_name: symfinder-acceptance-tests

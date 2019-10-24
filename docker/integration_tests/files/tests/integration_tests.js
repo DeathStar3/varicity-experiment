@@ -26,17 +26,58 @@ function beforeAllVisualization(json, jsonStats) {
     };
 }
 
-describe("Strategy pattern", () => {
+describe("Basic inheritance", () => {
+
+    beforeAll(beforeAllVisualization("tests/data/inheritance.json", "tests/data/inheritance-stats.json"));
+
+    beforeAll(async () => {
+        await display("tests/data/inheritance.json", "tests/data/inheritance-stats.json", []);
+        setTimeout(() => done(), 500); // wait
+    });
+
+    it('the graph should contain Superclass as it has two variants', () => {
+        expect(d3.select('circle[name = "Superclass"]').empty()).toBeFalsy();
+    });
+    it('the graph should contain the SubclassTwo as it is a VP', () => {
+        expect(d3.select('circle[name = "SubclassTwo"]').empty()).toBeFalsy();
+    });
+    xit('the graph should not contain the SubclassOne as it is not a VP', () => {
+        expect(d3.select('circle[name = "SubclassOne"]').empty()).toBeTruthy();
+    });
+    xit('there should be one link', () => {
+        expect(d3.selectAll('line').size()).toBe(1);
+    });
+    xit('Superclass and SubclassTwo should be linked', () => {
+        expect(d3.select('line').attr("target")).toBe("SubclassTwo");
+        expect(d3.select('line').attr("source")).toBe("Superclass");
+    });
+
+});
+
+
+describe("Language structures", () => {
 
     describe("Checking visualization", () => {
 
-        beforeAll(beforeAllVisualization("tests/data/strategy.json", "tests/data/strategy-stats.json"));
+        beforeAll(beforeAllVisualization("tests/data/structures.json", "tests/data/structures-stats.json"));
 
-        it('the graph should contain three nodes', () => {
-            expect(d3.selectAll('circle').size()).toBe(3);
+        it('the abstract class should appear', () => {
+            expect(d3.select('circle[name = "AbstractClass"]').empty()).toBeFalsy();
         });
-        it('the node should have an S on it', () => {
-            expect(d3.select('text[name = "Strategy"]').html()).toBe("S");
+        it('the abstract class should have a dotted outline', () => {
+            expect(d3.select('circle[name = "AbstractClass"]').style("stroke-dasharray")).toBe("3, 3");
+        });
+        it('the interface should appear', () => {
+            expect(d3.select('circle[name = "Interface"]').empty()).toBeFalsy();
+        });
+        it('the interface should be black', () => {
+            expect(d3.select('circle[name = "Interface"]').attr("fill")).toBe("rgb(0, 0, 0)");
+        });
+        it('the normal class should not appear', () => {
+            expect(d3.select('circle[name = "NormalClass"]').empty()).toBeTruthy();
+        });
+        it('the normal class being a VP should appear', () => {
+            expect(d3.select('circle[name = "NormalClassVP"]').empty()).toBeFalsy();
         });
 
     });
@@ -46,153 +87,114 @@ describe("Strategy pattern", () => {
         var jsonData, jsonStatsData;
 
         beforeAll(async () => {
-            const [graph, stats] = await getJsonData("tests/data/strategy.json", "tests/data/strategy-stats.json");
+            const [graph, stats] = await getJsonData("tests/data/structures.json", "tests/data/structures-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
         });
 
-        it('Strategy is a strategy', () => {
-            expect(getNodeWithName(jsonData, "Strategy").types.includes("STRATEGY")).toBeTruthy();
+        xit('AbstractClass should be an abstract class', () => {
+            expect(getNodeWithName(jsonData, "AbstractClass").types.includes("ABSTRACT")).toBeTruthy();
+            expect(getNodeWithName(jsonData, "AbstractClass").types.includes("CLASS")).toBeTruthy();
         });
-        it('Strategy is a VP', () => {
-            expect(getNodeWithName(jsonData, "Strategy").types.includes("VP")).toBeTruthy();
+        xit('Interface should be an interface and not a class', () => {
+            expect(getNodeWithName(jsonData, "Interface").types.includes("INTERFACE")).toBeTruthy();
+            expect(getNodeWithName(jsonData, "Interface").types.includes("CLASS")).toBeFalsy();
         });
-        it('Strategy is the only VP', () => {
-            expect(jsonStatsData.classLevelVPs).toBe(1);
+        it('there should be 2 class level VPs', () => {
+            expect(jsonStatsData.classLevelVPs).toBe(2);
+        });
+        it('there should be 1 method level VP', () => {
+            expect(jsonStatsData.methodLevelVPs).toBe(1);
+        });
+        it('the method level VP should be a constructor VP', () => {
+            expect(jsonStatsData.constructorsVPs).toBe(1);
+        });
+        it('there should be two constructor variants', () => {
+            expect(jsonStatsData.constructorsVariants).toBe(2);
         });
 
     });
 
 });
 
-describe("Factory pattern", () => {
 
-    describe("Checking visualization", () => {
-
-        beforeAll(beforeAllVisualization("tests/data/factory.json", "tests/data/factory-stats.json"));
-
-        it('the graph should contain four nodes', () => {
-            expect(d3.selectAll('circle').size()).toBe(4);
-        });
-        it('ShapeFactory node should have an F on it', () => {
-            expect(d3.select('text[name = "ShapeFactory"]').html()).toBe("F");
-        });
-
-    });
+describe("Comparing metrics evolution", () => {
 
     describe("Checking JSON output", () => {
 
         var jsonData, jsonStatsData;
 
         beforeAll(async () => {
-            const [graph, stats] = await getJsonData("tests/data/factory.json", "tests/data/factory-stats.json");
+            const [graph, stats] = await getJsonData("tests/data/metrics.json", "tests/data/metrics-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
         });
 
-        it('ShapeFactory should be a factory', () => {
-            expect(getNodeWithName(jsonData, "ShapeFactory").types.includes("FACTORY")).toBeTruthy();
+        xit('NoConstructorOverload should have 0 constructor VP', () => {
+            expect(getNodeWithName(jsonData, "NoConstructorOverload").constructorVPs).toBe(0);
         });
-        it('there should be 3 method level VPs', () => {
-            expect(jsonStatsData.methodLevelVPs).toBe(3);
+        xit('NoConstructorOverload should have 0 constructor variant', () => {
+            expect(getNodeWithName(jsonData, "NoConstructorOverload").constructorVariants).toBe(0);
         });
-        it('there should be 1 method VP', () => {
-            expect(jsonStatsData.methodsVPs).toBe(1);
+        it('OneConstructorOverload should have 1 constructor VP', () => {
+            expect(getNodeWithName(jsonData, "OneConstructorOverload").constructorVPs).toBe(1);
         });
-        it('there should be 2 method variants', () => {
-            expect(jsonStatsData.methodsVariants).toBe(2);
+        it('OneConstructorOverload should have 2 constructor variants', () => {
+            expect(getNodeWithName(jsonData, "OneConstructorOverload").constructorVariants).toBe(2);
+        });
+        it('TwoConstructorOverloads should have 1 overloaded constructor', () => {
+            expect(getNodeWithName(jsonData, "TwoConstructorOverloads").constructorVPs).toBe(1);
+        });
+        it('TwoConstructorOverloads should have 3 constructor variants', () => {
+            expect(getNodeWithName(jsonData, "TwoConstructorOverloads").constructorVariants).toBe(3);
+        });
+        xit('NoMethodOverload should have 0 method VP', () => {
+            expect(getNodeWithName(jsonData, "NoMethodOverload").methodVPs).toBe(0);
+        });
+        xit('NoMethodOverload should have 0 method variant', () => {
+            expect(getNodeWithName(jsonData, "NoMethodOverload").methodVariants).toBe(0);
+        });
+        xit('OneMethodOverload should have 1 method VP', () => {
+            expect(getNodeWithName(jsonData, "OneMethodOverload").methodVPs).toBe(1);
+        });
+        xit('OneMethodOverload should have 2 method variants', () => {
+            expect(getNodeWithName(jsonData, "OneMethodOverload").methodVariants).toBe(2);
+        });
+        xit('TwoMethodOverloads should have 2 method VPs', () => {
+            expect(getNodeWithName(jsonData, "TwoMethodOverloads").methodVPs).toBe(2);
+        });
+        xit('TwoMethodOverloads should have 4 method variants', () => {
+            expect(getNodeWithName(jsonData, "TwoMethodOverloads").methodVariants).toBe(4);
+        });
+        it('there should be 5 method level VPs', () => {
+            expect(jsonStatsData.methodLevelVPs).toBe(5);
         });
         it('there should be 2 constructor VPs', () => {
             expect(jsonStatsData.constructorsVPs).toBe(2);
         });
-        it('there should be 4 constructor variants', () => {
-            expect(jsonStatsData.constructorsVariants).toBe(4);
+        it('there should be 3 method VPs', () => {
+            expect(jsonStatsData.methodsVPs).toBe(3);
+        });
+        it('there should be 11 method level variants', () => {
+            expect(jsonStatsData.methodLevelVariants).toBe(11);
+        });
+        it('there should be 5 constructor variants', () => {
+            expect(jsonStatsData.constructorsVariants).toBe(5);
+        });
+        it('there should be 6 method variants', () => {
+            expect(jsonStatsData.methodsVariants).toBe(6);
+        });
+        it('there should be 0 class level VP', () => {
+            expect(jsonStatsData.classLevelVPs).toBe(0);
+        });
+        it('there should be 0 class level variants', () => {
+            expect(jsonStatsData.classLevelVariants).toBe(0);
         });
 
     });
 
 });
 
-describe("Template pattern", () => {
-
-    describe("Checking visualization", () => {
-
-        beforeAll(beforeAllVisualization("tests/data/template.json", "tests/data/template-stats.json"));
-
-        xit('the graph should contain one node', () => {
-            expect(d3.selectAll('circle').size()).toBe(1);
-        });
-        it('the node should have a T on it', () => {
-            expect(d3.select('text[name = "Algorithm"]').html()).toBe("T");
-        });
-
-    });
-
-    describe("Checking JSON output", () => {
-
-        var jsonData, jsonStatsData;
-
-        beforeAll(async () => {
-            const [graph, stats] = await getJsonData("tests/data/template.json", "tests/data/template-stats.json");
-            jsonData = graph;
-            jsonStatsData = stats;
-        });
-
-        it('Algorithm should be a template', () => {
-            expect(getNodeWithName(jsonData, "Algorithm").types.includes("TEMPLATE")).toBeTruthy();
-        });
-        it('there should be 0 method level VP', () => {
-            expect(jsonStatsData.methodLevelVPs).toBe(0);
-        });
-        it('there should be 1 class level VP', () => {
-            expect(jsonStatsData.classLevelVPs).toBe(1);
-        });
-
-    });
-
-});
-
-xdescribe("Decorator pattern", () => {
-
-    describe("Checking visualization", () => {
-
-        beforeAll(beforeAllVisualization("tests/data/decorator.json", "tests/data/decorator-stats.json"));
-
-        it('the graph should contain two nodes: the decorator and the Troll interface', () => {
-            expect(d3.selectAll('circle').size()).toBe(2);
-        });
-        xit('the node should be a decorator', () => {
-            expect(graph.nodes.filter(n => n.name === "com.iluwatar.decorator.ClubbedTroll")[0].types.includes("DECORATOR")).toBeTruthy();
-        });
-        it('the node should have a D on it', () => {
-            expect(d3.select('text[name = "com.iluwatar.decorator.ClubbedTroll"]').html()).toBe("D");
-        });
-
-    });
-
-    describe("Checking JSON output", () => {
-
-        var jsonData, jsonStatsData;
-
-        beforeAll(async () => {
-            const [graph, stats] = await getJsonData("tests/data/template.json", "tests/data/template-stats.json");
-            jsonData = graph;
-            jsonStatsData = stats;
-        });
-
-        it('Algorithm should be a template', () => {
-            expect(getNodeWithName(jsonData, "Algorithm").types.includes("TEMPLATE")).toBeTruthy();
-        });
-        it('there should be 0 method level VP', () => {
-            expect(jsonStatsData.methodLevelVPs).toBe(0);
-        });
-        it('there should be 1 class level VP', () => {
-            expect(jsonStatsData.classLevelVPs).toBe(1);
-        });
-
-    });
-
-});
 
 function getJsonData(file, statsFile) {
     return new Promise(((resolve, reject) => {

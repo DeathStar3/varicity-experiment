@@ -30,6 +30,7 @@ describe("Testing coherence of all projects", () => {
             var jsonData, jsonStatsData;
 
             beforeAll(async () => {
+                await display("tests/data/" + project + ".json", "tests/data/" + project + "-stats.json", []);
                 const [graph, stats] = await getJsonData("tests/data/" + project + ".json", "tests/data/" + project + "-stats.json");
                 jsonData = graph;
                 jsonStatsData = stats;
@@ -40,8 +41,8 @@ describe("Testing coherence of all projects", () => {
                 expect(set.length).toBe(jsonData.nodes.length);
             });
 
-            it('All nodes in the visualization are VPs', () => {
-                expect(jsonData.nodes.every(n => n.types.includes("VP"))).toBeTruthy();
+            xit('All nodes in the visualization are VPs or variants', () => {
+                expect(jsonData.nodes.every(n => n.types.includes("VP") || n.types.includes("VARIANT"))).toBeTruthy();
             });
 
             it('There is no inner class in the visualization', () => {
@@ -75,16 +76,8 @@ describe("Testing coherence of all projects", () => {
                 expect(linksTargets.every(t => nodesNames.includes(t))).toBeTruthy();
             });
 
-        });
-
-        describe("Testing coherence of the generated graph for " + project, () => {
-
-            beforeAll(async () => {
-                await displayGraph("tests/data/" + project + ".json", "tests/data/" + project + "-stats.json", [], false);
-            });
-
             it('All abstract classes have a dotted outline', () => {
-                expect(graph.nodes
+                expect(jsonData.nodes
                     .filter(n => n.types.includes("ABSTRACT"))
                     .map(n => d3.select('circle[name = "' + n.name + '"]'))
                     .every(c => c.style("stroke-dasharray") === "3, 3"))
@@ -92,7 +85,7 @@ describe("Testing coherence of all projects", () => {
             });
 
             it('All strategy classes have an S', () => {
-                expect(graph.nodes
+                expect(jsonData.nodes
                     .filter(n => n.types.includes("STRATEGY"))
                     .map(n => d3.select('text[name = "' + n.name + '"]'))
                     .every(t => t.html().includes("S")))
@@ -100,7 +93,7 @@ describe("Testing coherence of all projects", () => {
             });
 
             it('All factory classes have an F', () => {
-                expect(graph.nodes
+                expect(jsonData.nodes
                     .filter(n => n.types.includes("FACTORY"))
                     .map(n => d3.select('text[name = "' + n.name + '"]'))
                     .every(t => t.html().includes("F")))
@@ -108,7 +101,7 @@ describe("Testing coherence of all projects", () => {
             });
 
             it('All template classes have an T', () => {
-                expect(graph.nodes
+                expect(jsonData.nodes
                     .filter(n => n.types.includes("TEMPLATE"))
                     .map(n => d3.select('text[name = "' + n.name + '"]'))
                     .every(t => t.html().includes("T")))
@@ -116,7 +109,7 @@ describe("Testing coherence of all projects", () => {
             });
 
             it('All decorator classes have a D', () => {
-                expect(graph.nodes
+                expect(jsonData.nodes
                     .filter(n => n.types.includes("DECORATOR"))
                     .map(n => d3.select('text[name = "' + n.name + '"]'))
                     .every(t => t.html().includes("D")))
@@ -124,7 +117,7 @@ describe("Testing coherence of all projects", () => {
             });
 
             it('All interfaces have a black node', () => {
-                expect(graph.nodes
+                expect(jsonData.nodes
                     .filter(n => n.types.includes("INTERFACE"))
                     .map(n => d3.select('circle[name = "' + n.name + '"]'))
                     .every(c => c.attr("fill") === "rgb(0, 0, 0)"))
@@ -132,7 +125,7 @@ describe("Testing coherence of all projects", () => {
             });
 
             it('Every node is visible', () => {
-                expect(graph.nodes
+                expect(jsonData.nodes
                     .map(n => d3.select('circle[name = "' + n.name + '"]'))
                     .every(c => c.attr("r") >= 10))
                     .toBeTruthy();

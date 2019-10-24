@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # This file is part of symfinder.
 #
@@ -19,11 +20,11 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-FROM node:12-alpine
-RUN mkdir -p /opt/karma
-WORKDIR /opt/karma
-RUN npm init --yes && apk update && apk upgrade && apk add --no-cache chromium && npm install -g karma jasmine-core karma-jasmine karma-chrome-launcher karma-jquery karma-spec-reporter --save-dev
-COPY docker/coherence_tests/files/ /opt/karma/
-COPY d3/symfinder.js /opt/karma/tests
-COPY generated_visualizations/data /opt/karma/tests/data
-CMD npm install && karma start --projects=$(ls /opt/karma/tests/data/*-stats.json | xargs -n 1 basename | sed 's/-stats.json//g' | sed ':a;N;$!ba;s/\n/,/g')
+./build.sh -DskipTests
+./run.sh --local $1
+
+docker-compose -f acceptance-tests-compose.yaml build
+docker-compose -f acceptance-tests-compose.yaml up --abort-on-container-exit --exit-code-from acceptance
+RETURN_CODE=$?
+docker-compose -f acceptance-tests-compose.yaml down
+exit $RETURN_CODE

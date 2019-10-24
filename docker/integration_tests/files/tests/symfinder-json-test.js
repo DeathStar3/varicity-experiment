@@ -19,68 +19,6 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-describe("Testing JSON outputs for metrics", () => {
-
-    var jsonData, jsonStatsData;
-
-    beforeAll(async () => {
-        const [graph, stats] = await getJsonData("tests/data/metrics.json", "tests/data/metrics-stats.json");
-        jsonData = graph;
-        jsonStatsData = stats;
-    });
-
-    it('there should be 5 method level VPs', () => {
-        expect(jsonStatsData.methodLevelVPs).toBe(5);
-    });
-    it('there should be 2 constructor VPs', () => {
-        expect(jsonStatsData.constructorsVPs).toBe(2);
-    });
-    it('there should be 3 method VPs', () => {
-        expect(jsonStatsData.methodsVPs).toBe(3);
-    });
-    it('there should be 11 method level variants', () => {
-        expect(jsonStatsData.methodLevelVariants).toBe(11);
-    });
-    it('there should be 5 constructor variants', () => {
-        expect(jsonStatsData.constructorsVariants).toBe(5);
-    });
-    it('there should be 6 method variants', () => {
-        expect(jsonStatsData.methodsVariants).toBe(6);
-    });
-    it('there should be 0 class level VP', () => {
-        expect(jsonStatsData.classLevelVPs).toBe(0);
-    });
-    it('there should be 0 class level variants', () => {
-        expect(jsonStatsData.classLevelVariants).toBe(0);
-    });
-
-});
-
-describe("Testing JSON output for structures", () => {
-
-    var jsonData, jsonStatsData;
-
-    beforeAll(async () => {
-        const [graph, stats] = await getJsonData("tests/data/structures.json", "tests/data/structures-stats.json");
-        jsonData = graph;
-        jsonStatsData = stats;
-    });
-
-    it('there should be 2 class level VPs', () => {
-        expect(jsonStatsData.classLevelVPs).toBe(2);
-    });
-    it('there should be 1 method level VP', () => {
-        expect(jsonStatsData.methodLevelVPs).toBe(1);
-    });
-    it('the method level VP should be a constructor VP', () => {
-        expect(jsonStatsData.constructorsVPs).toBe(1);
-    });
-    it('there should be two constructor variants', () => {
-        expect(jsonStatsData.constructorsVariants).toBe(2);
-    });
-
-});
-
 describe("Testing JSON output for multiple_vp", () => {
 
     var jsonData, jsonStatsData;
@@ -130,33 +68,6 @@ describe("Testing JSON output for generics", () => {
     });
     it('MyPair should be a strategy', () => {
         expect(getNodeWithName(jsonData, "MyPair").types.includes("STRATEGY")).toBeTruthy();
-    });
-
-});
-
-
-
-describe("Testing JSON output for abstract decorator", () => {
-
-    var jsonData, jsonStatsData;
-
-    beforeAll(async () => {
-        const [graph, stats] = await getJsonData("tests/data/abstract_decorator.json", "tests/data/abstract_decorator-stats.json");
-        jsonData = graph;
-        jsonStatsData = stats;
-    });
-
-    xit('there should be 2 class level VPs', () => {
-        expect(jsonStatsData.classLevelVPs).toBe(2);
-    });
-    it('there should be 0 method level VP', () => {
-        expect(jsonStatsData.methodLevelVPs).toBe(0);
-    });
-    it('there should be 2 variants', () => {
-        expect(jsonStatsData.variants).toBe(2);
-    });
-    it('there should be 2 class level variants', () => {
-        expect(jsonStatsData.classLevelVariants).toBe(2);
     });
 
 });

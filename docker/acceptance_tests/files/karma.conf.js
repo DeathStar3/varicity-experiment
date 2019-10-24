@@ -44,7 +44,8 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             'tests/*.js',
-            {pattern: 'tests/data/*.json', watched: false, served: true, included: false}
+            {pattern: 'tests/data/*.json', watched: false, served: true, included: false},
+            {pattern: 'scripts/*.js', type: "module", watched: false, served: true, included: false}
         ],
 
         customContextFile: "pages/context.html",
@@ -52,7 +53,9 @@ module.exports = function (config) {
         proxies: {
             '/tests/': '/base/tests/',
             '/context.js': '/base/context.js',
-            '/symfinder.js': '/base/tests/symfinder.js'
+            '/graph.js': '/base/scripts/graph.js',
+            '/nodes-filter.js': '/base/scripts/nodes-filter.js',
+            '/package-colorer.js': '/base/scripts/package-colorer.js'
         },
 
         // list of files to exclude
@@ -73,7 +76,7 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
 
         // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: true,
+        autoWatch: false,
 
         // Start these browsers, currently available:
         // - Chrome
