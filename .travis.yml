@@ -33,7 +33,6 @@ jobs:
       script: ./run_integration_tests.sh
     - name: "Coherence tests on a pilot project"
       script: ./run_coherence_tests.sh junit
-      after_failure: ./run_coherence_tests.sh
 
 notifications:
   email: false

@@ -13,13 +13,11 @@ class Graph {
     jsonFile;
     jsonStatsFile;
 
-    firstTime;
 
     filter;
     packageColorer;
 
     svg; g; link; node; label;
-
 
     //	d3 color scales
     color;
@@ -27,21 +25,22 @@ class Graph {
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
-        this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, () => this.displayGraph());
-        this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], () => this.displayGraph());
+        this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
+        this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
+        sessionStorage.setItem("firstTime", "true");
         this.filterIsolated = false;
-        this.firstTime = true;
         this.color = d3.scaleLinear();
+        this.setButtonsClickActions();
     }
 
 
     async displayGraph() {
-        d3.selectAll("svg > *").remove();
-        if (this.firstTime) {
-            sessionStorage.setItem("filtered", "false");
-            this.firstTime = false;
+        if (sessionStorage.getItem("firstTime") === "true") {
+            sessionStorage.setItem("filteredIsolated", "false");
+            sessionStorage.setItem("firstTime", "false");
         }
-        this.filterIsolated = sessionStorage.getItem("filtered") === "true";
+        d3.selectAll("svg > *").remove();
+        this.filterIsolated = sessionStorage.getItem("filteredIsolated") === "true";
         await this.generateGraph();
         return this.graph;
     }
@@ -339,8 +338,34 @@ class Graph {
             .interpolate(d3.interpolateRgb)(valueOnScale);
     }
 
-}
+    setButtonsClickActions(){
+        $(document).on('click', ".list-group-item", e => {
+            e.preventDefault();
+            $('.active').removeClass('active');
+        });
 
+        $("#filter-isolated").on('click', async e => {
+            e.preventDefault();
+            var previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
+            sessionStorage.setItem("filteredIsolated", previouslyFiltered ? "false" : "true");
+            $(this).text(previouslyFiltered ? "Unfilter isolated nodes" : "Filter isolated nodes");
+            await this.displayGraph();
+        });
+
+        $('#hide-info-button').click(() => {
+            $(this).text(function (i, old) {
+                return old === 'Show project information' ? 'Hide project information' : 'Show project information';
+            });
+        });
+
+        $('#hide-legend-button').click(() => {
+            $(this).text(function (i, old) {
+                return old === 'Hide legend' ? 'Show legend' : 'Hide legend';
+            });
+        });
+    }
+
+}
 
 function contrastColor(color) {
     var d = 0;
@@ -355,31 +380,5 @@ function contrastColor(color) {
 
     return d3.rgb(d, d, d);
 }
-
-$(document).on('click', ".list-group-item", function (e) {
-    e.preventDefault();
-    $('.active').removeClass('active');
-});
-
-$("#filter-isolated").on('click', async function (e) {
-    e.preventDefault();
-    var previouslyFiltered = sessionStorage.getItem("filtered") === "true";
-    sessionStorage.setItem("filtered", previouslyFiltered ? "false" : "true");
-    $(this).text(previouslyFiltered ? "Unfilter isolated nodes" : "Filter isolated nodes");
-    await displayGraph(this.jsonFile, this.jsonStatsFile, this.filter.filtersList);
-});
-
-$('#hide-info-button').click(function () {
-    $(this).text(function (i, old) {
-        return old === 'Show project information' ? 'Hide project information' : 'Show project information';
-    });
-});
-
-$('#hide-legend-button').click(function () {
-    $(this).text(function (i, old) {
-        return old === 'Hide legend' ? 'Show legend' : 'Hide legend';
-    });
-});
-
 
 export { Graph };
