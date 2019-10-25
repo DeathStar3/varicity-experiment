@@ -19,26 +19,25 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-class IsolatedFilter {
+import {Filter} from "./filter.js";
 
-    nodesList;
-    linksList;
+/**
+ * This filter removes nodes being isolated, meaning that they are not linked to any other node.
+ */
+class IsolatedFilter extends Filter {
 
     constructor(nodesList, linksList) {
-        this.nodesList = nodesList;
-        this.linksList = linksList;
-    }
+        super(nodesList, linksList);
 
-    getNodesListWithoutMatchingFilter(){
-        var nodesToKeep = new Set();
-        this.linksList.forEach(l => {
-            nodesToKeep.add(l.source);
-            nodesToKeep.add(l.target);
-        });
-        return this.nodesList.filter(n => nodesToKeep.has(n.name));
-    }
-    getLinksListWithoutMatchingFilter(){
-        return this.linksList;
+        this.getFilteredNodesList = () => {
+            var nodesToKeep = new Set();
+            this.linksList.forEach(l => {
+                nodesToKeep.add(l.source);
+                nodesToKeep.add(l.target);
+            });
+            return this.nodesList.filter(n => nodesToKeep.has(n.name));
+        };
+
     }
 
 }

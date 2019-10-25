@@ -22,7 +22,7 @@
 import {NodesFilter} from "./nodes-filter.js";
 import {PackageColorer} from "./package-colorer.js";
 import {VariantsFilter} from "./variants-filter.js";
-import {IsolatedFilter} from "./isolated-filter";
+import {IsolatedFilter} from "./isolated-filter.js";
 
 class Graph {
 //	data stores
@@ -61,7 +61,7 @@ class Graph {
     async displayGraph() {
         if (sessionStorage.getItem("firstTime") === "true") {
             sessionStorage.setItem("filteredIsolated", "false");
-            sessionStorage.setItem("filteredVariants", "false");
+            sessionStorage.setItem("filteredVariants", "true");
             sessionStorage.setItem("firstTime", "false");
         }
         d3.selectAll("svg > *").remove();
@@ -172,13 +172,13 @@ class Graph {
 
         if (this.filterVariants) {
             var variantsFilter = new VariantsFilter(this.graph.nodes, this.graph.links);
-            this.graph.nodes = variantsFilter.getNodesListWithoutMatchingFilter(this.graph.nodes);
-            this.graph.links = variantsFilter.getLinksListWithoutMatchingFilter(this.graph.links);
+            this.graph.nodes = variantsFilter.getFilteredNodesList();
+            this.graph.links = variantsFilter.getFilteredLinksList();
         }
 
         if (this.filterIsolated) {
             var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
-            this.graph.nodes = isolatedFilter.getNodesListWithoutMatchingFilter(this.graph.nodes);
+            this.graph.nodes = isolatedFilter.getFilteredNodesList();
         }
 
         console.log("Nodes : " + this.graph.nodes.length);
@@ -379,25 +379,26 @@ class Graph {
             e.preventDefault();
             var previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
             sessionStorage.setItem("filteredIsolated", previouslyFiltered ? "false" : "true");
-            $(this).text(previouslyFiltered ? "Unfilter isolated nodes" : "Filter isolated nodes");
+            $("#filter-isolated").text(previouslyFiltered ? "Unfilter isolated nodes" : "Filter isolated nodes");
             await this.displayGraph();
         });
 
         $("#filter-variants-button").on('click', async e => {
             e.preventDefault();
+            console.log(sessionStorage.getItem("filteredVariants"));
             var previouslyFiltered = sessionStorage.getItem("filteredVariants") === "true";
             sessionStorage.setItem("filteredVariants", previouslyFiltered ? "false" : "true");
-            $(this).text(previouslyFiltered ? "Unfilter variants" : "Filter variants");
+            $("#filter-variants-button").text(previouslyFiltered ? "Hide variants" : "Show variants");
             await this.displayGraph();
         });
 
-        $('#hide-info-button').click(() => {
+        $('#hide-info-button').click(function () {
             $(this).text(function (i, old) {
                 return old === 'Show project information' ? 'Hide project information' : 'Show project information';
             });
         });
 
-        $('#hide-legend-button').click(() => {
+        $('#hide-legend-button').click(function () {
             $(this).text(function (i, old) {
                 return old === 'Hide legend' ? 'Show legend' : 'Hide legend';
             });

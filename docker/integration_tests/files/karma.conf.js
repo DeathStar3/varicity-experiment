@@ -48,11 +48,8 @@ module.exports = function (config) {
 
         proxies: {
             '/tests/': '/base/tests/',
-            '/context.js': '/base/context.js',
-            '/graph.js': '/base/scripts/graph.js',
-            '/nodes-filter.js': '/base/scripts/nodes-filter.js',
-            '/package-colorer.js': '/base/scripts/package-colorer.js',
-            '/variants-filter.js': '/base/scripts/variants-filter.js'
+            '/scripts/': '/base/scripts/',
+            '/context.js': '/base/context.js'
         },
 
         // list of files to exclude

@@ -56,6 +56,9 @@ Reloaded before every execution run.
                     Show legend
                 </button>
             </h2>
+            <h2 class="mb-0">
+                <button type="button" class="btn btn-dark btn-block" data-toggle="button" aria-pressed="false" id="filter-variants-button" value="filter-variants-button">Show variants</button>
+            </h2>
             <p class="badge-dark ml-auto mr-1 my-lg-0" style="font-size: 1em" id="xp-identifier">identifier</p>
         </nav>
 
@@ -127,7 +130,7 @@ Reloaded before every execution run.
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 <script type="module">
-    import {Graph} from "./graph.js";
+    import {Graph} from "./scripts/graph.js";
 
     window.display = display;
 
@@ -139,8 +142,6 @@ Reloaded before every execution run.
 
 </script>
 <script src="./context.js"></script>
-<script src="./graph.js" type="module"></script>
-<script src="./nodes-filter.js" type="module"></script>
 <script type="text/javascript">
     // Configure our Karma and set up bindings
     %CLIENT_CONFIG%

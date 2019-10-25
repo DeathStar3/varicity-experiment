@@ -19,27 +19,26 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-import {Filter} from "./filter.js";
-
 /**
- * This filter removes nodes being neither class level VPs nor method level VPs.
+ * Simple filter which does not filter and has for purpose to define standard method to be overriden by subclasses.
  */
-class VariantsFilter extends Filter {
+class Filter {
+
+    nodesList;
+    linksList;
 
     constructor(nodesList, linksList) {
-        super(nodesList, linksList);
+        this.nodesList = nodesList;
+        this.linksList = linksList;
+    }
 
-        this.getFilteredNodesList = () => {
-            return this.nodesList.filter(node => node.types.includes("VP") || node.types.includes("METHOD_LEVEL_VP"));
-        };
-
-        this.getFilteredLinksList = () => {
-            var filteredNodesNames = this.getFilteredNodesList().map(node => node.name);
-            return this.linksList.filter(l => filteredNodesNames.includes(l.source) && filteredNodesNames.includes(l.target));
-        }
-
+    getFilteredNodesList(){
+        return this.nodesList;
+    }
+    getFilteredLinksList(){
+        return this.linksList;
     }
 
 }
 
-export {VariantsFilter};
+export {Filter};
