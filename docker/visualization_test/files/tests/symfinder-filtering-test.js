@@ -20,10 +20,15 @@
  */
 
 
+function resetPage() {
+    $("#list-tab").empty();
+    $("#package-to-filter").val("");
+    sessionStorage.clear();
+}
+
 describe("Filtering an isolated node", () => {
 
     beforeAll(async (done) => {
-        sessionStorage.setItem("firstTime", "true");
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
         setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
@@ -38,17 +43,13 @@ describe("Filtering an isolated node", () => {
         expect(d3.select('circle[name = "Shapes"]').empty()).toBeFalsy();
     });
 
-    afterAll(() => {
-        $("#list-tab").empty();
-        $("#package-to-filter").val("");
-    });
+    afterAll(resetPage);
 
 });
 
 describe("Using a default filter", () => {
 
     beforeAll(async (done) => {
-        sessionStorage.setItem("firstTime", "true");
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
         setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
@@ -61,17 +62,13 @@ describe("Using a default filter", () => {
         expect($('#list-tab > .list-group-item')[0].id).toBe("Shape");
     });
 
-    afterAll(() => {
-        $("#list-tab").empty();
-        $("#package-to-filter").val("");
-    });
+    afterAll(resetPage);
 
 });
 
 describe("Unfiltering an isolated node", () => {
 
     beforeAll(async (done) => {
-        sessionStorage.setItem("firstTime", "true");
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
@@ -85,17 +82,12 @@ describe("Unfiltering an isolated node", () => {
 
     });
 
-    afterAll(() => {
-        $("#list-tab").empty();
-        $("#package-to-filter").val("");
-    });
+    afterAll(resetPage);
 
 });
-
 describe("Filtering a linked node", () => {
 
     beforeAll(async (done) => {
-        sessionStorage.setItem("firstTime", "true");
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"]);
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
@@ -110,16 +102,13 @@ describe("Filtering a linked node", () => {
         expect(d3.select('line').size()).toBe(0);
     });
 
-    afterAll(() => {
-        $("#list-tab").empty();
-        $("#package-to-filter").val("");
-    });
+    afterAll(resetPage);
 
 });
+
 describe("Unfiltering a linked node", () => {
 
     beforeAll(async (done) => {
-        sessionStorage.setItem("firstTime", "true");
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
@@ -135,17 +124,13 @@ describe("Unfiltering a linked node", () => {
         expect(d3.select('line[source = "foo.bar.Circle"]').empty()).toBeFalsy();
     });
 
-    afterAll(() => {
-        $("#list-tab").empty();
-        $("#package-to-filter").val("");
-    });
+    afterAll(resetPage);
 
 });
 
 describe("Filtering a package", () => {
 
     beforeAll(async (done) => {
-        sessionStorage.setItem("firstTime", "true");
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);
         // $("#package-to-filter").val("foo.bar");
         // $("#add-filter-button").trigger("click");
@@ -163,17 +148,13 @@ describe("Filtering a package", () => {
         expect(d3.selectAll('circle').size()).toBe(4);
     });
 
-    afterAll(() => {
-        $("#list-tab").empty();
-        $("#package-to-filter").val("");
-    });
+    afterAll(resetPage);
 
 });
 
 describe("Unfiltering a package", () => {
 
     beforeAll(async (done) => {
-        sessionStorage.setItem("firstTime", "true");
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
@@ -188,9 +169,30 @@ describe("Unfiltering a package", () => {
         expect(d3.select('circle[name = "foo.bar.Square"]').empty()).toBeFalsy();
     });
 
-    afterAll(() => {
-        $("#list-tab").empty();
-        $("#package-to-filter").val("");
+    afterAll(resetPage);
+
+});
+
+xdescribe("Filtering isolated nodes", () => {
+
+    beforeAll(async (done) => {
+        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
+        $("#filter-isolated").trigger("click");
+        setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
+
+    it('two nodes remain', async () => {
+        expect(d3.selectAll('circle').size()).toBe(2);
+    });
+    it('the two nodes are linked', async () => {
+        var linkedNodes = new Set();
+        d3.selectAll('line').nodes().forEach(n => {
+            linkedNodes.add(n.getAttribute("source"));
+            linkedNodes.add(n.getAttribute("target"));
+        });
+        expect(d3.selectAll('circle').nodes().every(n => linkedNodes.has(n.getAttribute("name")))).toBe(true);
+    });
+
+    afterAll(resetPage);
 
 });

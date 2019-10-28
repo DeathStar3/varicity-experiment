@@ -52,7 +52,9 @@ class Graph {
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        sessionStorage.setItem("firstTime", "true");
+        if(sessionStorage.getItem("firstTime") === null){
+            sessionStorage.setItem("firstTime", "true");
+        }
         this.color = d3.scaleLinear();
         this.setButtonsClickActions();
     }
@@ -180,9 +182,6 @@ class Graph {
             var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
             this.graph.nodes = isolatedFilter.getFilteredNodesList();
         }
-
-        console.log("Nodes : " + this.graph.nodes.length);
-        console.log("Links : " + this.graph.links.length);
 
     }
 
