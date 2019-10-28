@@ -23,10 +23,11 @@ describe("Testing JSON output for multiple_vp", () => {
 
     var jsonData, jsonStatsData;
 
-    beforeAll(async () => {
+    beforeAll(async (done) => {
         const [graph, stats] = await getJsonData("tests/data/multiple_vp.json", "tests/data/multiple_vp-stats.json");
         jsonData = graph;
         jsonStatsData = stats;
+        done();
     });
 
     it('there should be 1 class level VP', () => {
@@ -57,10 +58,11 @@ describe("Testing JSON output for generics", () => {
 
     var jsonData, jsonStatsData;
 
-    beforeAll(async () => {
+    beforeAll(async (done) => {
         const [graph, stats] = await getJsonData("tests/data/generics.json", "tests/data/generics-stats.json");
         jsonData = graph;
         jsonStatsData = stats;
+        done();
     });
 
     it('there should be a node called MyPair', () => {
@@ -76,10 +78,11 @@ describe("Importing a class from another package", () => {
 
     var jsonData, jsonStatsData;
 
-    beforeAll(async () => {
+    beforeAll(async (done) => {
         const [graph, stats] = await getJsonData("tests/data/import_from_different_package.json", "tests/data/import_from_different_package-stats.json");
         jsonData = graph;
         jsonStatsData = stats;
+        done();
     });
 
     it('there should be a node called AbstractAlgo', () => {
@@ -95,10 +98,11 @@ describe("Importing a whole package", () => {
 
     var jsonData, jsonStatsData;
 
-    beforeAll(async () => {
+    beforeAll(async (done) => {
         const [graph, stats] = await getJsonData("tests/data/import_from_different_package_all_package_imported.json", "tests/data/import_from_different_package_all_package_imported-stats.json");
         jsonData = graph;
         jsonStatsData = stats;
+        done();
     });
 
     it('there should be a node called AbstractAlgo', () => {
@@ -114,14 +118,15 @@ describe("Inner class", () => {
 
     var jsonData, jsonStatsData;
 
-    beforeAll(async () => {
+    beforeAll(async (done) => {
         const [graph, stats] = await getJsonData("tests/data/inner_class.json", "tests/data/inner_class-stats.json");
         jsonData = graph;
         jsonStatsData = stats;
+        done();
     });
 
-    xit('there should be 1 class level VP', () => {
-        expect(jsonStatsData.classLevelVPs).toBe(1);
+    it('there should be no variant', () => {
+        expect(jsonStatsData.classLevelVariants).toBe(0);
     });
 
 });
@@ -130,14 +135,15 @@ describe("Inner class defined before fields", () => {
 
     var jsonData, jsonStatsData;
 
-    beforeAll(async () => {
-        const [graph, stats] = await getJsonData("tests/data/inner_class.json", "tests/data/inner_class-stats.json");
+    beforeAll(async (done) => {
+        const [graph, stats] = await getJsonData("tests/data/inner_class_before_fields.json", "tests/data/inner_class_before_fields-stats.json");
         jsonData = graph;
         jsonStatsData = stats;
+        done();
     });
 
-    xit('there should be 2 class level VP', () => {
-        expect(jsonStatsData.classLevelVPs).toBe(2);
+    it('there should be no variant', () => {
+        expect(jsonStatsData.classLevelVariants).toBe(0);
     });
 
 });

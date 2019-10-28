@@ -19,37 +19,59 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-function beforeAllVisualization(json, jsonStats) {
-    return async () => {
-        await display(json, jsonStats, []);
-        setTimeout(() => done(), 500); // wait
-    };
-}
-
 describe("Basic inheritance", () => {
 
-    beforeAll(beforeAllVisualization("tests/data/inheritance.json", "tests/data/inheritance-stats.json"));
+    describe("Checking visualization without variants", () => {
 
-    beforeAll(async () => {
-        await display("tests/data/inheritance.json", "tests/data/inheritance-stats.json", []);
-        setTimeout(() => done(), 500); // wait
+        beforeAll(async (done) => {
+            await display("tests/data/inheritance.json", "tests/data/inheritance-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the graph should contain Superclass as it has two variants', () => {
+            expect(d3.select('circle[name = "Superclass"]').empty()).toBeFalsy();
+        });
+        it('the graph should contain the SubclassTwo as it is a VP', () => {
+            expect(d3.select('circle[name = "SubclassTwo"]').empty()).toBeFalsy();
+        });
+        it('the graph should not contain the SubclassOne as it is not a VP', () => {
+            expect(d3.select('circle[name = "SubclassOne"]').empty()).toBeTruthy();
+        });
+        it('there should be one link', () => {
+            expect(d3.selectAll('line').size()).toBe(1);
+        });
+        it('Superclass and SubclassTwo should be linked', () => {
+            expect(d3.select('line').attr("target")).toBe("SubclassTwo");
+            expect(d3.select('line').attr("source")).toBe("Superclass");
+        });
+
+        afterAll(() => sessionStorage.clear())
+
     });
 
-    it('the graph should contain Superclass as it has two variants', () => {
-        expect(d3.select('circle[name = "Superclass"]').empty()).toBeFalsy();
-    });
-    it('the graph should contain the SubclassTwo as it is a VP', () => {
-        expect(d3.select('circle[name = "SubclassTwo"]').empty()).toBeFalsy();
-    });
-    xit('the graph should not contain the SubclassOne as it is not a VP', () => {
-        expect(d3.select('circle[name = "SubclassOne"]').empty()).toBeTruthy();
-    });
-    xit('there should be one link', () => {
-        expect(d3.selectAll('line').size()).toBe(1);
-    });
-    xit('Superclass and SubclassTwo should be linked', () => {
-        expect(d3.select('line').attr("target")).toBe("SubclassTwo");
-        expect(d3.select('line').attr("source")).toBe("Superclass");
+    describe("Checking visualization with variants", () => {
+
+        beforeAll(async (done) => {
+            setStorageValuestoMockVariantsDisplaying();
+            await display("tests/data/inheritance.json", "tests/data/inheritance-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the graph should contain Superclass as it has two variants', () => {
+            expect(d3.select('circle[name = "Superclass"]').empty()).toBeFalsy();
+        });
+        it('the graph should contain the SubclassTwo as it is a VP', () => {
+            expect(d3.select('circle[name = "SubclassTwo"]').empty()).toBeFalsy();
+        });
+        it('the graph should contain SubclassOne as it is a variant', () => {
+            expect(d3.select('circle[name = "SubclassOne"]').empty()).toBeFalsy();
+        });
+        it('there should be two links', () => {
+            expect(d3.selectAll('line').size()).toBe(2);
+        });
+
+        afterAll(() => sessionStorage.clear())
+
     });
 
 });
@@ -57,9 +79,12 @@ describe("Basic inheritance", () => {
 
 describe("Language structures", () => {
 
-    describe("Checking visualization", () => {
+    describe("Checking visualization without variants", () => {
 
-        beforeAll(beforeAllVisualization("tests/data/structures.json", "tests/data/structures-stats.json"));
+        beforeAll(async (done) => {
+            await display("tests/data/structures.json", "tests/data/structures-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
 
         it('the abstract class should appear', () => {
             expect(d3.select('circle[name = "AbstractClass"]').empty()).toBeFalsy();
@@ -82,21 +107,36 @@ describe("Language structures", () => {
 
     });
 
+    describe("Checking visualization with variants", () => {
+
+        beforeAll(async (done) => {
+            setStorageValuestoMockVariantsDisplaying();
+            await display("tests/data/structures.json", "tests/data/structures-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the normal class should not appear as it is not a variant', () => {
+            expect(d3.select('circle[name = "NormalClass"]').empty()).toBeTruthy();
+        });
+
+    });
+
     describe("Checking JSON output", () => {
 
         var jsonData, jsonStatsData;
 
-        beforeAll(async () => {
+        beforeAll(async (done) => {
             const [graph, stats] = await getJsonData("tests/data/structures.json", "tests/data/structures-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
+            done();
         });
 
-        xit('AbstractClass should be an abstract class', () => {
+        it('AbstractClass should be an abstract class', () => {
             expect(getNodeWithName(jsonData, "AbstractClass").types.includes("ABSTRACT")).toBeTruthy();
             expect(getNodeWithName(jsonData, "AbstractClass").types.includes("CLASS")).toBeTruthy();
         });
-        xit('Interface should be an interface and not a class', () => {
+        it('Interface should be an interface and not a class', () => {
             expect(getNodeWithName(jsonData, "Interface").types.includes("INTERFACE")).toBeTruthy();
             expect(getNodeWithName(jsonData, "Interface").types.includes("CLASS")).toBeFalsy();
         });
@@ -124,10 +164,11 @@ describe("Comparing metrics evolution", () => {
 
         var jsonData, jsonStatsData;
 
-        beforeAll(async () => {
+        beforeAll(async (done) => {
             const [graph, stats] = await getJsonData("tests/data/metrics.json", "tests/data/metrics-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
+            done();
         });
 
         xit('NoConstructorOverload should have 0 constructor VP', () => {
@@ -142,11 +183,17 @@ describe("Comparing metrics evolution", () => {
         it('OneConstructorOverload should have 2 constructor variants', () => {
             expect(getNodeWithName(jsonData, "OneConstructorOverload").constructorVariants).toBe(2);
         });
+        it('OneConstructorOverload should have the METHOD_LEVEL_VP label', () => {
+            expect(getNodeWithName(jsonData, "OneConstructorOverload").types.includes("METHOD_LEVEL_VP")).toBeTruthy();
+        });
         it('TwoConstructorOverloads should have 1 overloaded constructor', () => {
             expect(getNodeWithName(jsonData, "TwoConstructorOverloads").constructorVPs).toBe(1);
         });
         it('TwoConstructorOverloads should have 3 constructor variants', () => {
             expect(getNodeWithName(jsonData, "TwoConstructorOverloads").constructorVariants).toBe(3);
+        });
+        it('TwoConstructorOverloads should have the METHOD_LEVEL_VP label', () => {
+            expect(getNodeWithName(jsonData, "TwoConstructorOverloads").types.includes("METHOD_LEVEL_VP")).toBeTruthy();
         });
         xit('NoMethodOverload should have 0 method VP', () => {
             expect(getNodeWithName(jsonData, "NoMethodOverload").methodVPs).toBe(0);
@@ -154,17 +201,23 @@ describe("Comparing metrics evolution", () => {
         xit('NoMethodOverload should have 0 method variant', () => {
             expect(getNodeWithName(jsonData, "NoMethodOverload").methodVariants).toBe(0);
         });
-        xit('OneMethodOverload should have 1 method VP', () => {
+        it('OneMethodOverload should have 1 method VP', () => {
             expect(getNodeWithName(jsonData, "OneMethodOverload").methodVPs).toBe(1);
         });
-        xit('OneMethodOverload should have 2 method variants', () => {
+        it('OneMethodOverload should have 2 method variants', () => {
             expect(getNodeWithName(jsonData, "OneMethodOverload").methodVariants).toBe(2);
         });
-        xit('TwoMethodOverloads should have 2 method VPs', () => {
+        it('OneMethodOverload should have the METHOD_LEVEL_VP label', () => {
+            expect(getNodeWithName(jsonData, "OneMethodOverload").types.includes("METHOD_LEVEL_VP")).toBeTruthy();
+        });
+        it('TwoMethodOverloads should have 2 method VPs', () => {
             expect(getNodeWithName(jsonData, "TwoMethodOverloads").methodVPs).toBe(2);
         });
-        xit('TwoMethodOverloads should have 4 method variants', () => {
+        it('TwoMethodOverloads should have 4 method variants', () => {
             expect(getNodeWithName(jsonData, "TwoMethodOverloads").methodVariants).toBe(4);
+        });
+        it('TwoMethodOverloads should have the METHOD_LEVEL_VP label', () => {
+            expect(getNodeWithName(jsonData, "TwoMethodOverloads").types.includes("METHOD_LEVEL_VP")).toBeTruthy();
         });
         it('there should be 5 method level VPs', () => {
             expect(jsonStatsData.methodLevelVPs).toBe(5);

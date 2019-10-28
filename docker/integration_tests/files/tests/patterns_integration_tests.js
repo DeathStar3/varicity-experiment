@@ -19,18 +19,22 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-function beforeAllVisualization(json, jsonStats) {
-    return async (done) => {
-        await display(json, jsonStats, []);
-        setTimeout(() => done(), 500); // wait
-    };
+let timeout = 500;
+
+function setStorageValuestoMockVariantsDisplaying() {
+    sessionStorage.setItem("firstTime", "false");
+    sessionStorage.setItem("filteredIsolated", "false");
+    sessionStorage.setItem("filteredVariants", "false");
 }
 
 describe("Strategy pattern", () => {
 
-    xdescribe("Checking visualization without variants", () => {
+    describe("Checking visualization without variants", () => {
 
-        beforeAll(beforeAllVisualization("tests/data/strategy.json", "tests/data/strategy-stats.json"));
+        beforeAll(async (done) => {
+            await display("tests/data/strategy.json", "tests/data/strategy-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
 
         it('the graph should contain one node without variants', () => {
             expect(d3.selectAll('circle').size()).toBe(1);
@@ -45,11 +49,10 @@ describe("Strategy pattern", () => {
 
     describe("Checking visualization with variants", () => {
 
-        beforeAll(async () => {
-            sessionStorage.setItem("firstTime", "false");
-            sessionStorage.setItem("filteredIsolated", "false");
-            sessionStorage.setItem("filteredVariants", "false");
-            await beforeAllVisualization("tests/data/strategy.json", "tests/data/strategy-stats.json")();
+        beforeAll(async (done) => {
+            setStorageValuestoMockVariantsDisplaying();
+            await display("tests/data/strategy.json", "tests/data/strategy-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
         });
 
         it('the graph should contain three nodes with variants', () => {
@@ -58,21 +61,21 @@ describe("Strategy pattern", () => {
 
         afterAll(() => sessionStorage.clear())
 
-
     });
 
-    xdescribe("Checking JSON output", () => {
+    describe("Checking JSON output", () => {
 
         var jsonData, jsonStatsData;
 
-        beforeAll(async () => {
+        beforeAll(async (done) => {
             const [graph, stats] = await getJsonData("tests/data/strategy.json", "tests/data/strategy-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
+            done();
         });
 
         it('The JSON should contain three nodes', () => {
-            expect(d3.selectAll('circle').size()).toBe(3);
+            expect(jsonData.nodes.length).toBe(3);
         });
         it('Strategy is a strategy', () => {
             expect(getNodeWithName(jsonData, "Strategy").types.includes("STRATEGY")).toBeTruthy();
@@ -90,11 +93,14 @@ describe("Strategy pattern", () => {
 
 });
 
-xdescribe("Factory pattern", () => {
+describe("Factory pattern", () => {
 
-    describe("Checking visualization", () => {
+    describe("Checking visualization without variants", () => {
 
-        beforeAll(beforeAllVisualization("tests/data/factory.json", "tests/data/factory-stats.json"));
+        beforeAll(async (done) => {
+            await display("tests/data/factory.json", "tests/data/factory-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
 
         it('the graph should contain four nodes', () => {
             expect(d3.selectAll('circle').size()).toBe(4);
@@ -103,16 +109,38 @@ xdescribe("Factory pattern", () => {
             expect(d3.select('text[name = "ShapeFactory"]').html()).toBe("F");
         });
 
+        afterAll(() => sessionStorage.clear())
+
     });
 
-    xdescribe("Checking JSON output", () => {
+    describe("Checking visualization with variants", () => {
+
+        beforeAll(async (done) => {
+            setStorageValuestoMockVariantsDisplaying();
+            await display("tests/data/factory.json", "tests/data/factory-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the graph should contain four nodes', () => {
+            expect(d3.selectAll('circle').size()).toBe(4);
+        });
+        it('ShapeFactory node should have an F on it', () => {
+            expect(d3.select('text[name = "ShapeFactory"]').html()).toBe("F");
+        });
+
+        afterAll(() => sessionStorage.clear())
+
+    });
+
+    describe("Checking JSON output", () => {
 
         var jsonData, jsonStatsData;
 
-        beforeAll(async () => {
+        beforeAll(async (done) => {
             const [graph, stats] = await getJsonData("tests/data/factory.json", "tests/data/factory-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
+            done();
         });
 
         it('ShapeFactory should be a factory', () => {
@@ -134,15 +162,20 @@ xdescribe("Factory pattern", () => {
             expect(jsonStatsData.constructorsVariants).toBe(4);
         });
 
+        afterAll(() => sessionStorage.clear())
+
     });
 
 });
 
-xdescribe("Template pattern", () => {
+describe("Template pattern", () => {
 
-    describe("Checking visualization", () => {
+    describe("Checking visualization without variants", () => {
 
-        beforeAll(beforeAllVisualization("tests/data/template.json", "tests/data/template-stats.json"));
+        beforeAll(async (done) => {
+            await display("tests/data/template.json", "tests/data/template-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
 
         xit('the graph should contain one node', () => {
             expect(d3.selectAll('circle').size()).toBe(1);
@@ -151,16 +184,38 @@ xdescribe("Template pattern", () => {
             expect(d3.select('text[name = "Algorithm"]').html()).toBe("T");
         });
 
+        afterAll(() => sessionStorage.clear())
+
+    });
+
+    describe("Checking visualization with variants", () => {
+
+        beforeAll(async (done) => {
+            setStorageValuestoMockVariantsDisplaying();
+            await display("tests/data/template.json", "tests/data/template-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the graph should contain two nodes', () => {
+            expect(d3.selectAll('circle').size()).toBe(2);
+        });
+        it('the node should have a T on it', () => {
+            expect(d3.select('text[name = "Algorithm"]').html()).toBe("T");
+        });
+
+        afterAll(() => sessionStorage.clear())
+
     });
 
     describe("Checking JSON output", () => {
 
         var jsonData, jsonStatsData;
 
-        beforeAll(async () => {
+        beforeAll(async (done) => {
             const [graph, stats] = await getJsonData("tests/data/template.json", "tests/data/template-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
+            done();
         });
 
         it('Algorithm should be a template', () => {
@@ -173,22 +228,48 @@ xdescribe("Template pattern", () => {
             expect(jsonStatsData.classLevelVPs).toBe(1);
         });
 
+        afterAll(() => sessionStorage.clear())
+
     });
 
 });
 
-xdescribe("Decorator pattern", () => {
+describe("Decorator pattern", () => {
 
-    describe("Checking visualization", () => {
+    describe("Checking visualization without variants", () => {
 
-        beforeAll(beforeAllVisualization("tests/data/decorator.json", "tests/data/decorator-stats.json"));
+        beforeAll(async (done) => {
+            await display("tests/data/decorator.json", "tests/data/decorator-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
 
-        it('the graph should contain two nodes: the decorator and the Troll interface', () => {
+        xit('the graph should contain two nodes: the decorator and the Troll interface', () => {
             expect(d3.selectAll('circle').size()).toBe(2);
         });
-        it('the node should have a D on it', () => {
+        xit('the node should have a D on it', () => {
             expect(d3.select('text[name = "com.iluwatar.decorator.ClubbedTroll"]').html()).toBe("D");
         });
+
+        afterAll(() => sessionStorage.clear())
+
+    });
+
+    describe("Checking visualization with variants", () => {
+
+        beforeAll(async (done) => {
+            setStorageValuestoMockVariantsDisplaying();
+            await display("tests/data/decorator.json", "tests/data/decorator-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the graph should contain four nodes', () => {
+            expect(d3.selectAll('circle').size()).toBe(4);
+        });
+        xit('the node should have a D on it', () => {
+            expect(d3.select('text[name = "com.iluwatar.decorator.ClubbedTroll"]').html()).toBe("D");
+        });
+
+        afterAll(() => sessionStorage.clear())
 
     });
 
@@ -196,10 +277,11 @@ xdescribe("Decorator pattern", () => {
 
         var jsonData, jsonStatsData;
 
-        beforeAll(async () => {
-            const [graph, stats] = await getJsonData("tests/data/template.json", "tests/data/template-stats.json");
+        beforeAll(async (done) => {
+            const [graph, stats] = await getJsonData("tests/data/decorator.json", "tests/data/decorator-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
+            done();
         });
 
 
@@ -214,15 +296,39 @@ xdescribe("Decorator pattern", () => {
             expect(jsonStatsData.classLevelVPs).toBe(1);
         });
 
+        afterAll(() => sessionStorage.clear())
+
     });
 
 });
 
 xdescribe("Abstract decorator pattern", () => {
 
-    describe("Checking visualization", () => {
+    describe("Checking visualization without variants", () => {
 
-        beforeAll(beforeAllVisualization("tests/data/abstract_decorator.json", "tests/data/abstract_decorator-stats.json"));
+        beforeAll(async (done) => {
+            await display("tests/data/abstract_decorator.json", "tests/data/abstract_decorator-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the graph should contain four nodes', () => {
+            expect(d3.selectAll('circle').size()).toBe(4);
+        });
+        it('the node should have a D on it', () => {
+            expect(d3.select('text[name = "TreeDecorator"]').html()).toBe("D");
+        });
+
+        afterAll(() => sessionStorage.clear())
+
+    });
+
+    describe("Checking visualization with variants", () => {
+
+        beforeAll(async (done) => {
+            setStorageValuestoMockVariantsDisplaying();
+            await display("tests/data/abstract_decorator.json", "tests/data/abstract_decorator-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
 
         it('the graph should contain two nodes: the decorator and the ChristmasTree interface', () => {
             expect(d3.selectAll('circle').size()).toBe(2);
@@ -231,16 +337,19 @@ xdescribe("Abstract decorator pattern", () => {
             expect(d3.select('text[name = "TreeDecorator"]').html()).toBe("D");
         });
 
+        afterAll(() => sessionStorage.clear())
+
     });
 
     describe("Checking JSON output", () => {
 
         var jsonData, jsonStatsData;
 
-        beforeAll(async () => {
+        beforeAll(async (done) => {
             const [graph, stats] = await getJsonData("tests/data/abstract_decorator.json", "tests/data/abstract_decorator-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
+            done();
         });
 
         xit('the node should be a decorator', () => {
@@ -259,15 +368,20 @@ xdescribe("Abstract decorator pattern", () => {
             expect(jsonStatsData.classLevelVariants).toBe(2);
         });
 
+        afterAll(() => sessionStorage.clear())
+
     });
 
 });
 
 xdescribe("Generic decorator pattern", () => {
 
-    describe("Checking visualization", () => {
+    describe("Checking visualization without variants", () => {
 
-        beforeAll(beforeAllVisualization("tests/data/generic_decorator.json", "tests/data/generic_decorator-stats.json"));
+        beforeAll(async (done) => {
+            await display("tests/data/generic_decorator.json", "tests/data/generic_decorator-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
 
         it('the graph should contain two nodes: the decorator and the ChristmasTree interface', () => {
             expect(d3.selectAll('circle').size()).toBe(2);
@@ -276,6 +390,26 @@ xdescribe("Generic decorator pattern", () => {
             expect(d3.select('text[name = "TreeDecorator"]').html()).toBe("D");
         });
 
+        afterAll(() => sessionStorage.clear())
+
+    });
+
+    describe("Checking visualization with variants", () => {
+
+        beforeAll(async (done) => {
+            setStorageValuestoMockVariantsDisplaying();
+            await display("tests/data/generic_decorator.json", "tests/data/generic_decorator-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the graph should contain two nodes: the decorator and the ChristmasTree interface', () => {
+            expect(d3.selectAll('circle').size()).toBe(2);
+        });
+        it('the node should have a D on it', () => {
+            expect(d3.select('text[name = "TreeDecorator"]').html()).toBe("D");
+        });
+
+        afterAll(() => sessionStorage.clear())
 
     });
 
@@ -283,31 +417,38 @@ xdescribe("Generic decorator pattern", () => {
 
         var jsonData, jsonStatsData;
 
-        beforeAll(async () => {
+        beforeAll(async (done) => {
             const [graph, stats] = await getJsonData("tests/data/generic_decorator.json", "tests/data/generic_decorator-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
+            done();
         });
 
         xit('the node should be a decorator', () => {
             expect(getNodeWithName(jsonData, "TreeDecorator").types.includes("DECORATOR")).toBeTruthy();
         });
 
+        afterAll(() => sessionStorage.clear())
+
     });
 
 });
 
-xdescribe("Multiple patterns", () => {
+describe("Multiple patterns", () => {
 
     describe("Checking visualization", () => {
 
-        beforeAll(beforeAllVisualization("tests/data/multiple_patterns.json", "tests/data/multiple_patterns-stats.json"));
-
+        beforeAll(async (done) => {
+            await display("tests/data/multiple_patterns.json", "tests/data/multiple_patterns-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
 
         it('Factory node should have a F and a S on it', () => {
             expect(d3.select('text[name = "Factory"]').html().includes("F")).toBeTruthy();
             expect(d3.select('text[name = "Factory"]').html().includes("S")).toBeTruthy();
         });
+
+        afterAll(() => sessionStorage.clear())
 
     });
 
@@ -315,16 +456,19 @@ xdescribe("Multiple patterns", () => {
 
         var jsonData, jsonStatsData;
 
-        beforeAll(async () => {
+        beforeAll(async (done) => {
             const [graph, stats] = await getJsonData("tests/data/multiple_patterns.json", "tests/data/multiple_patterns-stats.json");
             jsonData = graph;
             jsonStatsData = stats;
+            done();
         });
 
         it('Factory should be a factory and a strategy', () => {
             expect(getNodeWithName(jsonData, "Factory").types.includes("FACTORY")).toBeTruthy();
             expect(getNodeWithName(jsonData, "Factory").types.includes("STRATEGY")).toBeTruthy();
         });
+
+        afterAll(() => sessionStorage.clear())
 
     });
 
