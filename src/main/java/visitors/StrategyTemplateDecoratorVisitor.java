@@ -47,6 +47,9 @@ public class StrategyTemplateDecoratorVisitor extends ImportsVisitor {
                     if (fieldTypeBinding.getName().contains("Strategy") || neoGraph.getNbVariants(node) >= 2) {
                         neoGraph.addLabelToNode(node, DesignPatternType.STRATEGY.toString());
                     }
+                    if (fieldTypeBinding.getName().contains("Decorator")) {
+                        neoGraph.addLabelToNode(node, DesignPatternType.DECORATOR.toString());
+                    }
                     checkAbstractDecorator(fieldDeclaringClassBinding, fieldTypeBinding);
                 });
             }
