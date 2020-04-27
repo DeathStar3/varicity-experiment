@@ -32,7 +32,10 @@ jobs:
       name: "Tests on sample projects"
       script: ./run_integration_tests.sh
     - name: "Acceptance tests on a pilot project"
-      script: ./run_acceptance_tests.sh junit
+      script: ./run_acceptance_tests.sh sat4j
+    - stage: "Feature extraction"
+      name: "Extracting features from Sat4j"
+      script: ./sat4j-feature-extraction.sh --local
 
 notifications:
   email: false

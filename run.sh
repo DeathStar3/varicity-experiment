@@ -34,8 +34,6 @@ create_directory(){
 create_directory resources
 create_directory generated_visualizations
 
-#SYMFINDER_PROJECTS="$@"
-
 if [[ "$1" == "--local" ]]; then
     export TAG=local
     SYMFINDER_PROJECTS="${@:2}"
