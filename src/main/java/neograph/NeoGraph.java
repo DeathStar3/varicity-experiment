@@ -358,10 +358,6 @@ public class NeoGraph {
         return Arrays.stream(types).map(nodeType -> nodeName + ":" + nodeType.toString()).collect(Collectors.joining(" OR "));
     }
 
-    public void writeGraphFile(String filePath) {
-        writeToFile(filePath, generateJsonGraph());
-    }
-
     public void writeVPGraphFile(String filePath) {
         writeToFile(filePath, generateVPJsonGraph());
     }
@@ -519,22 +515,29 @@ public class NeoGraph {
      * @return true if a relationship exists, false otherwise
      */
     public boolean relatedTo(Node parentNode, Node childNode) {
-        return submitRequest("MATCH(source) WHERE ID(source) = $idSource MATCH(dest) WHERE ID(dest) = $idDest RETURN EXISTS((source)-[]->(dest))", "idSource", parentNode.id(), "idDest", childNode.id())
+        return submitRequest("MATCH(source) WHERE ID(source) = $idSource MATCH(dest) " +
+                "WHERE ID(dest) = $idDest RETURN EXISTS((source)-[]->(dest))",
+                "idSource", parentNode.id(), "idDest", childNode.id())
                 .list().get(0).get(0).asBoolean();
     }
 
-    private String generateJsonGraph() {
-        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(false), getLinksAsJson(false));
+    public String generateVPJsonGraph() {
+        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson());
     }
 
-    private String generateVPJsonGraph() {
-        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(true), getLinksAsJson(true));
-    }
-
-    private String getNodesAsJson(boolean onlyVPs) {
-        String request = onlyVPs ?
-                "MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants, classVariants:c.classVariants})" :
-                "MATCH (c) RETURN collect({types:labels(c), name:c.name, methodVPs:c.methodVPs, constructorVPs:c.constructorVPs, methodVariants:c.methodVariants, constructorVariants:c.constructorVariants})";
+    private String getNodesAsJson() {
+        String request =
+                "MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP " +
+                        "OPTIONAL MATCH (c)-->(m1:METHOD) OPTIONAL MATCH (c)-->(m2:METHOD) " +
+                        "WHERE m1.name = m2.name AND ID(m1) <> ID(m2) " +
+                        "WITH CASE WHEN m1.name IS NOT NULL THEN {name: m1.name, number: count(m1)} ELSE NULL END " +
+                        "AS cntMeths, c " +
+                        "OPTIONAL MATCH (c)-->(co1:CONSTRUCTOR) OPTIONAL MATCH (c)-->(co2:CONSTRUCTOR) " +
+                        "WHERE co1.name = co2.name AND ID(co1) <> ID(co2) " +
+                        "WITH CASE WHEN co1.name IS NOT NULL THEN {name: co1.name, number: count(co1)} ELSE NULL END " +
+                        "AS cntConstrs, cntMeths, c " +
+                        "WITH collect(cntMeths) AS methods, collect(cntConstrs) AS constructors, c " +
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, methods, constructors})";
         return submitRequest(request)
                 .list()
                 .get(0)
@@ -545,10 +548,10 @@ public class NeoGraph {
                 .collect(Collectors.joining(","));
     }
 
-    private String getLinksAsJson(boolean onlyVPs) {
-        String request = onlyVPs ?
-                "MATCH path = (c1:VP)-[r:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
-                "MATCH path = (c1)-[r:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+    private String getLinksAsJson() {
+        String request =
+                "MATCH path = (c1:VP)-[r:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) " +
+                        "RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .list()
                 .get(0)

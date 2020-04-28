@@ -4,6 +4,7 @@ PROJECT_DIR="sat4j-94b8f"
 
 if [[ "$1" == "--local" ]]; then
     export TAG=local
+    ./build.sh -DskipTests
     ./run.sh --local sat4j
 else
     export TAG=latest
