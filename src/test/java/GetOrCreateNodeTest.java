@@ -21,7 +21,7 @@
 
 import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.Transaction;

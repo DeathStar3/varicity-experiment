@@ -22,7 +22,7 @@
 import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.neo4j.driver.types.Node;
 
 import static org.junit.Assert.assertFalse;

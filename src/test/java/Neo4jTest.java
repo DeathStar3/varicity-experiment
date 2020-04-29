@@ -20,34 +20,29 @@
  */
 
 import neograph.NeoGraph;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
+import org.neo4j.driver.Config;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.harness.junit.rule.Neo4jRule;
+import org.neo4j.harness.Neo4j;
+import org.neo4j.harness.internal.InProcessNeo4jBuilder;
 
 import java.util.function.Consumer;
 
 public class Neo4jTest {
 
-    @Rule
-    public Neo4jRule neo4jRule = new Neo4jRule();
-    protected GraphDatabaseService graphDatabaseService;
+    private static final Config driverConfig = Config.defaultConfig();
+    private Neo4j embeddedDatabaseServer = new InProcessNeo4jBuilder().build();
+    protected GraphDatabaseService graphDatabaseService = embeddedDatabaseServer.defaultDatabaseService();
 
-    @Before
-    public void setUp() {
-        graphDatabaseService = neo4jRule.defaultDatabaseService();
-    }
-
-    @After
+    @AfterEach
     public void tearDown() {
         graphDatabaseService.executeTransactionally("MATCH (n) DETACH DELETE (n)");
     }
 
     protected void runTest(Consumer<NeoGraph> consumer){
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI())) {
+        try (Driver driver = GraphDatabase.driver(embeddedDatabaseServer.boltURI(), driverConfig)) {
             NeoGraph graph = new NeoGraph(driver);
             consumer.accept(graph);
         }

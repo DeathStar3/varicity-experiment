@@ -24,7 +24,7 @@ import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
 import neograph.NeoGraph;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.neo4j.graphdb.*;
 
 import java.util.List;

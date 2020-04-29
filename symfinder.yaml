@@ -1,5 +1,5 @@
 neo4j:
-  boltAddress: bolt://neo4j:7687
+  boltAddress: bolt://localhost:7687
   user: neo4j
   password: root
 
