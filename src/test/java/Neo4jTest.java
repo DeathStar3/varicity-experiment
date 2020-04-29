@@ -23,11 +23,10 @@ import neograph.NeoGraph;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
-import org.neo4j.driver.v1.Config;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.harness.junit.Neo4jRule;
+import org.neo4j.harness.junit.rule.Neo4jRule;
 
 import java.util.function.Consumer;
 
@@ -39,16 +38,16 @@ public class Neo4jTest {
 
     @Before
     public void setUp() {
-        graphDatabaseService = neo4jRule.getGraphDatabaseService();
+        graphDatabaseService = neo4jRule.defaultDatabaseService();
     }
 
     @After
     public void tearDown() {
-        graphDatabaseService.shutdown();
+        graphDatabaseService.executeTransactionally("MATCH (n) DETACH DELETE (n)");
     }
 
     protected void runTest(Consumer<NeoGraph> consumer){
-        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI(), Config.build().withoutEncryption().toConfig())) {
+        try (Driver driver = GraphDatabase.driver(neo4jRule.boltURI())) {
             NeoGraph graph = new NeoGraph(driver);
             consumer.accept(graph);
         }

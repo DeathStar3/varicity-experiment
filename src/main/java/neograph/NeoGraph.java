@@ -23,10 +23,10 @@ package neograph;
 
 import neo4j_types.*;
 import org.json.JSONObject;
-import org.neo4j.driver.v1.*;
-import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
-import org.neo4j.driver.v1.types.MapAccessor;
-import org.neo4j.driver.v1.types.Node;
+import org.neo4j.driver.*;
+import org.neo4j.driver.exceptions.ServiceUnavailableException;
+import org.neo4j.driver.types.MapAccessor;
+import org.neo4j.driver.types.Node;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -36,38 +36,22 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.neo4j.driver.v1.Values.parameters;
+import static org.neo4j.driver.Values.parameters;
 
 public class NeoGraph {
 
     private Driver driver;
 
     public NeoGraph(String uri, String user, String password) {
-        driver = getDriver(uri, user, password);
-    }
-
-    private Driver getDriver(String uri, String user, String password) {
-        int count = 0;
-        int maxTries = 10;
-        while (true) {
-            try {
-                return GraphDatabase.driver(uri, AuthTokens.basic(user, password));
-            } catch (ServiceUnavailableException e) { // The database is not ready, retry to connect
-                System.out.println("Waiting for Neo4j database to be ready...");
-                if (++ count == maxTries) {
-                    throw e;
-                }
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
+        driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
     }
 
     public NeoGraph(Driver driver) {
         this.driver = driver;
+    }
+
+    public static String getClauseForNodesMatchingLabels(String nodeName, NodeType... types) {
+        return Arrays.stream(types).map(nodeType -> nodeName + ":" + nodeType.toString()).collect(Collectors.joining(" OR "));
     }
 
     /**
@@ -82,11 +66,11 @@ public class NeoGraph {
         return submitRequest(String.format("CREATE (n:%s { name: $name}) RETURN (n)",
                 nodeTypes.stream().map(NodeType::getString).collect(Collectors.joining(":"))),
                 "name", name)
-                .list().get(0).get(0).asNode();
+                .get(0).get(0).asNode();
     }
 
     public Optional <Node> getNode(String name) {
-        List <Record> recordList = submitRequest("MATCH (n {name: $name}) RETURN (n)", "name", name).list();
+        List <Record> recordList = submitRequest("MATCH (n {name: $name}) RETURN (n)", "name", name);
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
@@ -98,7 +82,7 @@ public class NeoGraph {
      * @return the node if it exists, Optional.empty otherwise
      */
     public Optional <Node> getClassNode(String name) {
-        List <Record> recordList = submitRequest("MATCH (n:CLASS {name: $name}) RETURN (n)", "name", name).list();
+        List <Record> recordList = submitRequest("MATCH (n:CLASS {name: $name}) RETURN (n)", "name", name);
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
@@ -110,7 +94,7 @@ public class NeoGraph {
      * @return the node if it exists, Optional.empty otherwise
      */
     public Optional <Node> getInterfaceNode(String name) {
-        List <Record> recordList = submitRequest("MATCH (n:INTERFACE {name: $name}) RETURN (n)", "name", name).list();
+        List <Record> recordList = submitRequest("MATCH (n:INTERFACE {name: $name}) RETURN (n)", "name", name);
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
@@ -121,7 +105,7 @@ public class NeoGraph {
      * @return the node if it exists, Optional.empty otherwise
      */
     public Optional <Node> getSuperclassNode(String name) {
-        List <Record> recordList = submitRequest("MATCH (s:CLASS)-[:EXTENDS]->(n {name: $name}) RETURN (s)", "name", name).list();
+        List <Record> recordList = submitRequest("MATCH (s:CLASS)-[:EXTENDS]->(n {name: $name}) RETURN (s)", "name", name);
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
@@ -132,13 +116,12 @@ public class NeoGraph {
      * @return the node if it exists, Optional.empty otherwise
      */
     public List <Node> getImplementedInterfacesNodes(String name) {
-        List <Record> recordList = submitRequest("MATCH (s:INTERFACE)-[:IMPLEMENTS]->(n {name: $name}) RETURN (s)", "name", name).list();
+        List <Record> recordList = submitRequest("MATCH (s:INTERFACE)-[:IMPLEMENTS]->(n {name: $name}) RETURN (s)", "name", name);
         return recordList.size() == 0 ? Collections.emptyList() : recordList.stream().map(record -> record.get(0).asNode()).collect(Collectors.toList());
     }
 
-
     public Optional <Node> getNodeWithNameInPackage(String name, String packageName) {
-        List <Record> recordList = submitRequest("MATCH (n) WHERE (n:CLASS OR n:INTERFACE) AND n.name STARTS WITH $package AND n.name ENDS WITH $inheritedClassName RETURN (n)", "package", packageName + ".", "inheritedClassName", "." + name).list();
+        List <Record> recordList = submitRequest("MATCH (n) WHERE (n:CLASS OR n:INTERFACE) AND n.name STARTS WITH $package AND n.name ENDS WITH $inheritedClassName RETURN (n)", "package", packageName + ".", "inheritedClassName", "." + name);
         return recordList.size() == 0 ? Optional.empty() : Optional.of(recordList.get(0).get(0).asNode());
     }
 
@@ -167,7 +150,7 @@ public class NeoGraph {
                 type.toString(),
                 onCreateAttributes,
                 onMatchAttributes), "name", name)
-                .list().get(0).get(0).asNode();
+                .get(0).get(0).asNode();
     }
 
     public Node getOrCreateNode(String name, EntityType type) {
@@ -216,7 +199,7 @@ public class NeoGraph {
                 "MATCH (:CLASS { name: '%s' })-->(a:METHOD) MATCH (:CLASS { name: '%s' })-->(b:METHOD)\n" +
                         "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
                         "return DISTINCT a.name, count(DISTINCT a)", parent, parent))
-                .list()
+
                 .stream()
                 .map(Record::asMap)
                 .collect(Collectors.toMap(
@@ -225,7 +208,8 @@ public class NeoGraph {
 
     }
 
-    public void detectVPsAndVariants(){
+    public void detectVPsAndVariants() {
+        setMethodVPs();
         setMethodVPs();
         setMethodVariants();
         setConstructorVPs();
@@ -234,6 +218,23 @@ public class NeoGraph {
         setVPLabels();
         setMethodLevelVPLabels();
         setVariantsLabels();
+    }
+
+    /**
+     * This methods runs a query on a graph where Attribute nodes have been created.
+     * Such a graph is currently created by the C++ analyser, but not by the Java runner
+     * Execution on a java run will not have any effect
+     */
+    public void detectCPPStrategyPatterns() {
+        submitRequest("Match (strategy:CLASS)-[:EXTENDS]-(child1:CLASS)\n" +
+                "MATCH (strategy:CLASS)-[:EXTENDS]-(child2:CLASS)\n" +
+                "MATCH (n:CLASS)-[:ATTRIBUTE]-(a:ATTRIBUTE)  \n" +
+                "WHERE  a.type = strategy.name and not child1=child2\n" +
+                "SET strategy:STRATEGY");
+        submitRequest("MATCH (n:CLASS)-[:ATTRIBUTE]-(a:ATTRIBUTE)" +
+                "WHERE a.type CONTAINS \"Strategy\" " +
+                "MATCH(s:CLASS) WHERE s.name=a.type " +
+                "SET s:STRATEGY");
     }
 
     /**
@@ -296,6 +297,7 @@ public class NeoGraph {
                 "WHERE NOT EXISTS(c.constructorVPs)\n" +
                 "SET c.constructorVPs = 0");
     }
+
     /**
      * Sets the number of overloads of the constructor in the class.
      * If there is no overload (i.e. there is 0 or 1 constructor), the property is set to 0.
@@ -313,7 +315,7 @@ public class NeoGraph {
      * Creates for all class and interfaces nodes a property classVariants expressing the number of subclasses it contains.
      */
     public void setNbVariantsProperty() {
-        submitRequest("MATCH (c)-[:EXTENDS|:IMPLEMENTS]->(sc:CLASS) WITH count(sc) AS nbVar, c SET c.classVariants = nbVar");
+        submitRequest("MATCH (c)-[:EXTENDS|IMPLEMENTS]->(sc:CLASS) WITH count(sc) AS nbVar, c SET c.classVariants = nbVar");
         submitRequest("MATCH (c) WHERE ((c:CLASS OR c:INTERFACE) AND NOT EXISTS (c.classVariants)) SET c.classVariants = 0");
     }
 
@@ -337,7 +339,7 @@ public class NeoGraph {
     }
 
     public void setVariantsLabels() {
-        submitRequest(String.format("MATCH (sc:VP)-[:EXTENDS|:IMPLEMENTS]->(c) WHERE c:CLASS OR c:INTERFACE SET c:%s",
+        submitRequest(String.format("MATCH (sc:VP)-[:EXTENDS|IMPLEMENTS]->(c) WHERE c:CLASS OR c:INTERFACE SET c:%s",
                 EntityAttribute.VARIANT));
     }
 
@@ -345,17 +347,18 @@ public class NeoGraph {
         submitRequest(String.format("MATCH (n) WHERE ID(n) = $id SET n:%s RETURN (n)", label), "id", node.id());
     }
 
+    public void setNodeAttribute(Node node, String name, Object value) {
+        submitRequest(String.format("MATCH (n) WHERE ID(n) = $id SET n.%s=\"%s\" RETURN (n)", name, value), "id", node.id());
+
+    }
+
     public int getNbNodesHavingDesignPatterns() {
         return submitRequest(String.format("MATCH (n) WHERE %s RETURN COUNT(n)", getClauseForHavingDesignPattern("n")))
-                .list().get(0).get(0).asInt();
+                .get(0).get(0).asInt();
     }
 
     private String getClauseForHavingDesignPattern(String n) {
         return getClauseForNodesMatchingLabels(n, DesignPatternType.values());
-    }
-
-    public static String getClauseForNodesMatchingLabels(String nodeName, NodeType... types) {
-        return Arrays.stream(types).map(nodeType -> nodeName + ":" + nodeType.toString()).collect(Collectors.joining(" OR "));
     }
 
     public void writeVPGraphFile(String filePath) {
@@ -389,10 +392,10 @@ public class NeoGraph {
      * @return Number of subclasses or implementations
      */
     public int getNbVariants(Node node) {
-        return submitRequest("MATCH (c)-[:EXTENDS|:IMPLEMENTS]->(c2:CLASS) " +
+        return submitRequest("MATCH (c)-[:EXTENDS|IMPLEMENTS]->(c2:CLASS) " +
                 "WHERE ID(c) = $id " +
                 "RETURN count(c2)", "id", node.id())
-                .list().get(0).get(0).asInt();
+                .get(0).get(0).asInt();
     }
 
     /**
@@ -414,7 +417,7 @@ public class NeoGraph {
      */
     public int getNbClassLevelVariants() {
         return submitRequest("MATCH (c:VARIANT) RETURN (COUNT(DISTINCT c))")
-                .list().get(0).get(0).asInt();
+                .get(0).get(0).asInt();
     }
 
     /**
@@ -435,7 +438,7 @@ public class NeoGraph {
      */
     public int getNbMethodVariants() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodVariants))")
-                .list().get(0).get(0).asInt();
+                .get(0).get(0).asInt();
     }
 
     /**
@@ -446,7 +449,7 @@ public class NeoGraph {
      */
     public int getNbConstructorVariants() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constructorVariants))")
-                .list().get(0).get(0).asInt();
+                .get(0).get(0).asInt();
     }
 
     /**
@@ -456,7 +459,7 @@ public class NeoGraph {
      */
     public int getNbConstructorVPs() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constructorVPs))")
-                .list().get(0).get(0).asInt();
+                .get(0).get(0).asInt();
     }
 
     /**
@@ -466,7 +469,7 @@ public class NeoGraph {
      */
     public int getNbMethodVPs() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodVPs))")
-                .list().get(0).get(0).asInt();
+                .get(0).get(0).asInt();
     }
 
 
@@ -504,7 +507,7 @@ public class NeoGraph {
      */
     public int getNbClassLevelVPs() {
         return submitRequest("MATCH (c:VP) RETURN COUNT (DISTINCT c)")
-                .list().get(0).get(0).asInt();
+                .get(0).get(0).asInt();
     }
 
     /**
@@ -518,28 +521,31 @@ public class NeoGraph {
         return submitRequest("MATCH(source) WHERE ID(source) = $idSource MATCH(dest) " +
                 "WHERE ID(dest) = $idDest RETURN EXISTS((source)-[]->(dest))",
                 "idSource", parentNode.id(), "idDest", childNode.id())
-                .list().get(0).get(0).asBoolean();
+                .get(0).get(0).asBoolean();
     }
 
-    public String generateVPJsonGraph() {
-        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson());
+    private String generateVPJsonGraph() {
+        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson(true));
     }
+
+//    MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP WITH c AS n CALL {  WITH n OPTIONAL MATCH (n)-->(m1:METHOD) OPTIONAL MATCH (n)-->(m2:METHOD) WHERE m1.name = m2.name AND ID(m1) <> ID(m2)   WITH CASE WHEN m1.name IS NOT NULL THEN {name: m1.name, number: count(m1)} ELSE NULL END AS cntMeths   RETURN collect(cntMeths) AS methods } CALL { WITH n  OPTIONAL MATCH (n)-->(co1:CONSTRUCTOR) OPTIONAL MATCH (n)-->(co2:CONSTRUCTOR) WHERE co1.name = co2.name AND ID(co1) <> ID(co2)   WITH CASE WHEN co1.name IS NOT NULL THEN {name: co1.name, number: count(co1)} ELSE NULL END AS cntConstrs   RETURN collect(cntConstrs) AS constructors } RETURN collect(n {types:labels(n), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, methods, constructors})
 
     private String getNodesAsJson() {
         String request =
                 "MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP " +
-                        "OPTIONAL MATCH (c)-->(m1:METHOD) OPTIONAL MATCH (c)-->(m2:METHOD) " +
-                        "WHERE m1.name = m2.name AND ID(m1) <> ID(m2) " +
-                        "WITH CASE WHEN m1.name IS NOT NULL THEN {name: m1.name, number: count(m1)} ELSE NULL END " +
-                        "AS cntMeths, c " +
-                        "OPTIONAL MATCH (c)-->(co1:CONSTRUCTOR) OPTIONAL MATCH (c)-->(co2:CONSTRUCTOR) " +
-                        "WHERE co1.name = co2.name AND ID(co1) <> ID(co2) " +
-                        "WITH CASE WHEN co1.name IS NOT NULL THEN {name: co1.name, number: count(co1)} ELSE NULL END " +
-                        "AS cntConstrs, cntMeths, c " +
-                        "WITH collect(cntMeths) AS methods, collect(cntConstrs) AS constructors, c " +
+                        "CALL { " +
+                        "  OPTIONAL MATCH (c)-->(m1:METHOD) OPTIONAL MATCH (c)-->(m2:METHOD) WHERE m1.name = m2.name AND ID(m1) <> ID(m2) " +
+                        "  WITH CASE WHEN m1.name IS NOT NULL THEN {name: m1.name, number: count(m1)} ELSE NULL END AS cntMeths " +
+                        "  RETURN collect(cntMeths) AS methods " +
+                        "} " +
+                        "CALL { " +
+                        "  OPTIONAL MATCH (c)-->(co1:CONSTRUCTOR) OPTIONAL MATCH (c)-->(co2:CONSTRUCTOR) WHERE co1.name = co2.name AND ID(co1) <> ID(co2) " +
+                        "  WITH CASE WHEN co1.name IS NOT NULL THEN {name: co1.name, number: count(co1)} ELSE NULL END AS cntConstrs " +
+                        "  RETURN collect(cntConstrs) AS constructors " +
+                        "} " +
                         "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, methods, constructors})";
         return submitRequest(request)
-                .list()
+
                 .get(0)
                 .get(0)
                 .asList(MapAccessor::asMap)
@@ -548,12 +554,11 @@ public class NeoGraph {
                 .collect(Collectors.joining(","));
     }
 
-    private String getLinksAsJson() {
-        String request =
-                "MATCH path = (c1:VP)-[r:EXTENDS|:IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) " +
-                        "RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+    private String getLinksAsJson(boolean onlyVPs) {
+        String request = onlyVPs ?
+                "MATCH path = (c1:VP)-[r:EXTENDS|IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
+                "MATCH path = (c1)-[r:EXTENDS|IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
-                .list()
                 .get(0)
                 .get(0)
                 .asList(MapAccessor::asMap)
@@ -577,15 +582,15 @@ public class NeoGraph {
     }
 
     public int getNbNodes() {
-        return submitRequest("MATCH(n) RETURN count(*)").list().get(0).get(0).asInt();
+        return submitRequest("MATCH(n) RETURN count(*)").get(0).get(0).asInt();
     }
 
     public int getNbRelationships() {
-        return submitRequest("MATCH (n)-[r]->() RETURN COUNT(r)").list().get(0).get(0).asInt();
+        return submitRequest("MATCH (n)-[r]->() RETURN COUNT(r)").get(0).get(0).asInt();
     }
 
     public int getNbInheritanceRelationships() {
-        return submitRequest("MATCH (n)-[r:EXTENDS|:IMPLEMENTS]->() RETURN COUNT(r)").list().get(0).get(0).asInt();
+        return submitRequest("MATCH (n)-[r:EXTENDS|IMPLEMENTS]->() RETURN COUNT(r)").get(0).get(0).asInt();
     }
 
     public void createClassesIndex() {
@@ -603,9 +608,27 @@ public class NeoGraph {
         submitRequest("MATCH (n) DETACH DELETE (n)");
     }
 
-    private StatementResult submitRequest(String request, Object... parameters) {
-        try (Session session = driver.session()) {
-            return session.writeTransaction(tx -> tx.run(request, parameters(parameters)));
+    private List <Record> submitRequest(String request, Object... parameters) {
+        int count = 0;
+        int maxTries = 10;
+        while (true) {
+            try (Session session = driver.session()) {
+                try (Transaction tx = session.beginTransaction()) {
+                    List <Record> result = tx.run(request, parameters(parameters)).list();
+                    tx.commit();
+                    return result;
+                }
+            } catch (ServiceUnavailableException e) { // The database is not ready, retry to connect
+                System.out.println("Waiting for Neo4j database to be ready...");
+                if (++ count == maxTries) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 
@@ -613,4 +636,28 @@ public class NeoGraph {
         driver.close();
     }
 
+    /**
+     * Use a neo4j query to detect if a class is abstract
+     *
+     * @param node Class Node
+     */
+    public void detectCPPClassAbstract(Node node) {
+        submitRequest("MATCH (n:CLASS)-[:METHOD]-(m:METHOD:ABSTRACT) where ID(n)=$nodeId set n:ABSTRACT", "nodeId", node.id());
+    }
+
+    public void detectCPPDecoratorPatterns() {
+        submitRequest("MATCH (parent:CLASS)-[:EXTENDS]->(child:CLASS)\n" +
+                "WITH COUNT(child) as children,parent\n" +
+                "MATCH (parent:CLASS)-[:EXTENDS]->(abstractDecorator:CLASS) \n" +
+                "MATCH (abstractDecorator:CLASS)-[:EXTENDS]->(concreteDecorator:CLASS)\n" +
+                "WITH COUNT( DISTINCT concreteDecorator) as concreteCount,\t\n" +
+                "\t\tabstractDecorator,parent\n" +
+                "WHERE concreteCount >=1\n" +
+                "MATCH (abstractDecorator)-[:ATTRIBUTE]->(attribute:ATTRIBUTE)\n" +
+                "WHERE attribute.type=parent.name\n" +
+                "SET abstractDecorator:DECORATOR");
+        submitRequest("MATCH (n:CLASS)-[:ATTRIBUTE]-(a:ATTRIBUTE)" +
+                "WHERE n.name CONTAINS \"Decorator\" " +
+                "SET n:DECORATOR");
+    }
 }

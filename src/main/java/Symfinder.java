@@ -73,8 +73,8 @@ public class Symfinder {
         String classpathPath;
 
         classpathPath = System.getenv("JAVA_HOME");
-        if (classpathPath == null) { // default to linux openJDK 8 path
-            classpathPath = "/usr/lib/jvm/java-8-openjdk";
+        if (classpathPath == null) { // default to linux openJDK 11 path
+            classpathPath = "/usr/lib/jvm/java-11-openjdk";
         }
 
         List <File> files = Files.walk(Paths.get(sourcePackage))
@@ -84,8 +84,8 @@ public class Symfinder {
                 .filter(file -> file.getName().endsWith(".java"))
                 .collect(Collectors.toList());
 
-        neoGraph.createClassesIndex();
-        neoGraph.createInterfacesIndex();
+//        neoGraph.createClassesIndex();
+//        neoGraph.createInterfacesIndex();
 
         logger.log(Level.getLevel("MY_LEVEL"), "ClassesVisitor");
         visitPackage(classpathPath, files, new ClassesVisitor(neoGraph));
