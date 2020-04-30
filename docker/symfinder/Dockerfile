@@ -19,13 +19,13 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-FROM maven:3.6.0-jdk-13-alpine as building
+FROM maven:3.6.1-jdk-13-alpine as building
 ARG BUILD_PARAMS
 ARG SOURCES_PACKAGE
 ARG GRAPH_OUTPUT_PATH
 ADD src/ /src
 ADD pom.xml /pom.xml
-RUN mvn clean install $BUILD_PARAMS
+RUN mvn --no-transfer-progress clean install $BUILD_PARAMS
 
 FROM openjdk:14-jdk-alpine3.10
 RUN apk add --no-cache git

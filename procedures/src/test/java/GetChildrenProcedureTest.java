@@ -72,7 +72,6 @@ public class GetChildrenProcedureTest {
             Result result = session.run("CALL symfinder.count($idNode, $label) YIELD result as res", parameters("idNode", nodeId, "label", "METHOD"));
 
             List <Object> x = result.single().get("res").asList();
-            System.out.println(x);
             assertEquals(1, x.size());
             assertEquals(3L, ((Map<String, Object>) x.get(0)).get("number"));
         }

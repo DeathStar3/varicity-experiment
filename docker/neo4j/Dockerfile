@@ -19,9 +19,9 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-FROM maven:3.6.0-jdk-13-alpine as building
+FROM maven:3.6.1-jdk-13-alpine as building
 ADD procedures/ /
-RUN mvn clean install
+RUN mvn --no-transfer-progress clean install
 
 FROM neo4j:4.0.3
 COPY --from=building /target/original-symfinder-neo4j-procedures-1.0-SNAPSHOT.jar /plugins/procedures.jar

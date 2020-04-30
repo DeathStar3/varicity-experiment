@@ -80,12 +80,25 @@ describe("Acceptance tests for all projects", () => {
 
                 it('The number of method VPs corresponds to the number of methods appearing at least two times', () => {
                     expect(jsonData.nodes.every(n => {
-                        if (typeof n.methodVPs === 'undefined') {
-                            return typeof n.methodVPs === 'undefined' || n.methods === 0;
+                        if (typeof n.methodVPs !== 'undefined') {
+                            var nbVPs = n.methodVPs;
+                            var nbMethodsWithAtLeastTwoAppearances = n.methods.filter(m => m.number >= 2).length;
+                            return nbVPs === nbMethodsWithAtLeastTwoAppearances;
                         }
-                        var nbVPs = n.methodVPs;
-                        var nbMethodsWithAtLeastTwoAppearances = n.methods.filter(m => m.number >= 2).length;
-                        return nbVPs === nbMethodsWithAtLeastTwoAppearances;
+                        return true;
+                    })).toBeTruthy();
+                });
+
+                it('The number of constructor VPs corresponds to 1 if there is more than one constructor', () => {
+                    expect(jsonData.nodes.every(n => {
+                        if ((typeof n.constructorVPs !== 'undefined') && (typeof n.constructors !== 'undefined')) {
+                            if (n.constructors.length === 0 || n.constructors[0].number === 1) {
+                                return n.constructorVPs === 0;
+                            } else {
+                                return n.constructorVPs === 1;
+                            }
+                        }
+                        return true;
                     })).toBeTruthy();
                 });
 
@@ -108,7 +121,7 @@ describe("Acceptance tests for all projects", () => {
                     expect(jsonData.nodes.every(n => {
                         if ((typeof n.constructorVariants !== 'undefined') && (typeof n.constructors !== 'undefined')) {
                             var nbVariants = n.constructorVariants;
-                            if (nbVariants === 0 || nbVariants === 1){
+                            if (nbVariants === 0 || nbVariants === 1) {
                                 return n.constructors.length === 0 || n.constructors[0].number === 1;
                             } else {
                                 return nbVariants === n.constructors[0].number
