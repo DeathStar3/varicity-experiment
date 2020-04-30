@@ -121,7 +121,7 @@ public class Symfinder {
         for (File file : files) {
             String fileContent = getFileLines(file);
 
-            ASTParser parser = ASTParser.newParser(AST.JLS8);
+            ASTParser parser = ASTParser.newParser(AST.JLS13);
             parser.setResolveBindings(true);
             parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
@@ -135,7 +135,7 @@ public class Symfinder {
             parser.setSource(fileContent.toCharArray());
 
             Map <String, String> options = JavaCore.getOptions();
-            options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+            options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_13);
             parser.setCompilerOptions(options);
 
             CompilationUnit cu = (CompilationUnit) parser.createAST(null);
@@ -175,10 +175,14 @@ public class Symfinder {
         return null;
     }
 
-    private String formatExecutionTime(long execTime) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
-        Date resultdate = new Date(execTime);
-        return sdf.format(resultdate);
+    static String formatExecutionTime(long execTime) {
+        long ms = execTime % 1000;
+        long seconds = (execTime - ms) / 1000;
+        long s = seconds % 60;
+        long minutes = (seconds - s) / 60;
+        long m = minutes % 60;
+        long hours = (minutes - m) / 60;
+        return String.format("%02d:%02d:%02d.%03d", hours, m, s, ms);
     }
 
 }
