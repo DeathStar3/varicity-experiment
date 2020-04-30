@@ -532,20 +532,11 @@ public class NeoGraph {
 
     private String getNodesAsJson() {
         String request =
-                "MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP " +
-                        "CALL { " +
-                        "  OPTIONAL MATCH (c)-->(m1:METHOD) OPTIONAL MATCH (c)-->(m2:METHOD) WHERE m1.name = m2.name AND ID(m1) <> ID(m2) " +
-                        "  WITH CASE WHEN m1.name IS NOT NULL THEN {name: m1.name, number: count(m1)} ELSE NULL END AS cntMeths " +
-                        "  RETURN collect(cntMeths) AS methods " +
-                        "} " +
-                        "CALL { " +
-                        "  OPTIONAL MATCH (c)-->(co1:CONSTRUCTOR) OPTIONAL MATCH (c)-->(co2:CONSTRUCTOR) WHERE co1.name = co2.name AND ID(co1) <> ID(co2) " +
-                        "  WITH CASE WHEN co1.name IS NOT NULL THEN {name: co1.name, number: count(co1)} ELSE NULL END AS cntConstrs " +
-                        "  RETURN collect(cntConstrs) AS constructors " +
-                        "} " +
+                "MATCH (c) WHERE c:VP  OR c:VARIANT OR c:METHOD_LEVEL_VP " +
+                        "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
+                        "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, methods, constructors})";
         return submitRequest(request)
-
                 .get(0)
                 .get(0)
                 .asList(MapAccessor::asMap)

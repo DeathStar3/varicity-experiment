@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 # This file is part of symfinder.
 #
@@ -20,8 +19,9 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-docker build -f docker/sources_fetcher/Dockerfile -t deathstar3/symfinder-fetcher:local .
-docker build -f docker/symfinder/Dockerfile -t deathstar3/symfinder-engine:local --build-arg BUILD_PARAMS="$@" .
-docker build -f docker/neo4j/Dockerfile -t deathstar3/symfinder-neo4j:local .
-docker build -f docker/runner/Dockerfile -t deathstar3/symfinder-runner:local .
-docker build -f docker/features-extractor/Dockerfile -t deathstar3/features-extractor:local .
+FROM maven:3.6.0-jdk-13-alpine as building
+ADD procedures/ /
+RUN mvn clean install
+
+FROM neo4j:4.0.3
+COPY --from=building target/original-symfinder-neo4j-procedures-1.0-SNAPSHOT.jar /plugins/procedures.jar

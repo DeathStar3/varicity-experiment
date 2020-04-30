@@ -84,8 +84,8 @@ public class Symfinder {
                 .filter(file -> file.getName().endsWith(".java"))
                 .collect(Collectors.toList());
 
-//        neoGraph.createClassesIndex();
-//        neoGraph.createInterfacesIndex();
+        neoGraph.createClassesIndex();
+        neoGraph.createInterfacesIndex();
 
         logger.log(Level.getLevel("MY_LEVEL"), "ClassesVisitor");
         visitPackage(classpathPath, files, new ClassesVisitor(neoGraph));

@@ -46,7 +46,7 @@ services:
       - SYMFINDER_VERSION=${SYMFINDER_VERSION}
 
   neo4j:
-    image: neo4j:4.0.3
+    image: deathstar3/symfinder-neo4j:${TAG}
     container_name: symfinder-neo4j
     ports:
       - "127.0.0.1:7474:7474"

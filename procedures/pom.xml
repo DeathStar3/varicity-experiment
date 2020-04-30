@@ -97,24 +97,13 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
                 <configuration>
-                    <!-- Neo4j Procedures require Java 8 -->
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>
-                <!-- This generates a jar-file with our procedure code,
-                     plus any dependencies marked as `compile` scope.
-                     This should then be deployed in the `plugins` directory
-                     of each Neo4j instance in your deployment.
-                     After a restart, the procedure is available for calling. -->
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven-shade-plugin.version}</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>

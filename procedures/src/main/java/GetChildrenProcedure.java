@@ -1,13 +1,11 @@
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.ResultTransformer;
 import org.neo4j.logging.Log;
 import org.neo4j.procedure.Context;
 import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
 import org.neo4j.procedure.Procedure;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -25,12 +23,15 @@ public class GetChildrenProcedure {
     public Log log;
 
     @Procedure(value = "symfinder.count")
-    @Description("Execute lucene query in the given index, return found nodes")
-    public Stream <Output> search(@Name("nodeId") long nodeId, @Name("label") String label) {
-        return Stream.of(db.executeTransactionally(String.format("OPTIONAL MATCH (c)-->(m1:%s) OPTIONAL MATCH (c)-->(m2:%s) " +
-                "WHERE ID(c) = %d AND m1.name = m2.name AND ID(m1) <> ID(m2) " +
+    @Description("Counts for the node of given ID the number of its children having a given label. " +
+            "Returns a map with the number of occurences for nodes having the same name.")
+    public Stream <Output> count(@Name("nodeId") long nodeId, @Name("label") String label) {
+        final Output output = db.executeTransactionally(String.format("MATCH (c) WHERE ID(c) = $idNode " +
+                "OPTIONAL MATCH (c)-->(m1:%s) OPTIONAL MATCH (c)-->(m2:%s) " +
+                "WHERE m1.name = m2.name AND ID(m1) <> ID(m2) " +
                 "WITH CASE WHEN m1.name IS NOT NULL THEN {name: m1.name, number: count(m1)} ELSE NULL END as counter " +
-                "RETURN collect(counter)", label, label, nodeId), new HashMap <>(), Output::new));
+                "RETURN collect(counter)", label, label), Map.of("idNode", nodeId), Output::new);
+        return Stream.of(output);
     }
 
     public class Output {
@@ -40,6 +41,13 @@ public class GetChildrenProcedure {
             result.stream()
                     .findFirst().flatMap(stringObjectMap -> stringObjectMap.entrySet().stream()
                     .findFirst()).ifPresent(stringObjectEntry -> this.result = stringObjectEntry.getValue());
+        }
+
+        @Override
+        public String toString() {
+            return "Output{" +
+                    "result=" + result +
+                    '}';
         }
     }
 }
