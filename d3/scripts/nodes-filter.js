@@ -112,6 +112,11 @@ class NodesFilter {
         return listToFilter.filter(l => !this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)) && !this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter)))
     }
 
+    async addFilterAndRefresh(value){
+        this.addFilter(value);
+        await this.displayGraphFunction();
+    }
+
 }
 
 export { NodesFilter };

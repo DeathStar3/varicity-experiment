@@ -22,6 +22,12 @@
 
 set -e
 
-java -jar /symfinder.jar /resources/"$1" "$2"
+if [[ -d /resources2 ]]; then
+  echo "Copying resources to analyse in tmpfs mount..."
+  cp -r /resources2/"$1" /resources/
+  java -jar /symfinder.jar /resources/ "$2"
+else
+  java -jar /symfinder.jar /resources/"$1" "$2"
+fi
 
 chown -R $SYMFINDER_UID:$SYMFINDER_GID /generated_visualizations

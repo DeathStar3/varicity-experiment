@@ -62,13 +62,13 @@ public class Symfinder {
     public Symfinder(String sourcePackage, String graphOutputPath) {
         this.sourcePackage = sourcePackage;
         this.graphOutputPath = graphOutputPath;
-        this.neoGraph = new
-                NeoGraph(Configuration.getNeo4JBoltAddress(),
+        this.neoGraph = new NeoGraph(Configuration.getNeo4JBoltAddress(),
                 Configuration.getNeo4JUser(),
                 Configuration.getNeo4JPassword());
     }
 
     public void run() throws IOException {
+        long symfinderStartTime = System.currentTimeMillis();
         logger.log(Level.getLevel("MY_LEVEL"), "Symfinder version: " + System.getenv("SYMFINDER_VERSION"));
         String classpathPath;
 
@@ -114,6 +114,8 @@ public class Symfinder {
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         logger.debug(neoGraph.generateStatisticsJson());
         neoGraph.closeDriver();
+        long symfinderExecutionTime = System.currentTimeMillis() - symfinderStartTime;
+        logger.printf(Level.getLevel("MY_LEVEL"), "Total execution time: %s", formatExecutionTime(symfinderExecutionTime));
     }
 
     private void visitPackage(String classpathPath, List <File> files, ASTVisitor visitor) throws IOException {
