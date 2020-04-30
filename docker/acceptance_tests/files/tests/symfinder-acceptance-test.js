@@ -89,36 +89,32 @@ describe("Acceptance tests for all projects", () => {
                     })).toBeTruthy();
                 });
 
-                it('The number of constructor VPs corresponds to 1 is the constructor appears more than once', () => {
-                    expect(jsonData.nodes.every(n => {
-                        if (typeof n.constructorVPs === 'undefined') {
-                            return typeof n.constructors === 'undefined' || n.constructors === 0;
-                        }
-                        var nbVPs = n.constructorVPs;
-                        var nbMethodsWithAtLeastTwoAppearances = n.constructors.filter(m => m.number >= 2).length;
-                        return nbVPs === nbMethodsWithAtLeastTwoAppearances;
-                    })).toBeTruthy();
+                it('The constructors have the same name.', () => {
+                    expect(jsonData.nodes.every(n => n.constructors.length <= 1)).toBeTruthy();
                 });
 
                 it('The number of method variants corresponds to the number of appearances of methods that appear more than once', () => {
                     expect(jsonData.nodes.every(n => {
-                        if(typeof n.methodVariants === 'undefined'){
-                            return typeof n.methods === 'undefined' || n.methods.length === 0;
+                        if (typeof n.methodVariants !== 'undefined') {
+                            var nbVariants = n.methodVariants;
+                            var nbMethodsWithAtLeastTwoAppearances = n.methods.filter(m => m.number >= 2).map(m => m.number).reduce((a, b) => a + b, 0);
+                            return nbVariants === nbMethodsWithAtLeastTwoAppearances;
                         }
-                        var nbVariants = n.methodVariants;
-                        var nbMethodsWithAtLeastTwoAppearances = n.methods.map(m => m.number).filter(nb => nb >= 2).reduce((a, b) => a + b, 0);
-                        return nbVariants === nbMethodsWithAtLeastTwoAppearances;
+                        return true;
                     })).toBeTruthy();
                 });
 
                 it('The number of constructor variants corresponds to the number of constructors', () => {
                     expect(jsonData.nodes.every(n => {
-                        if(typeof n.constructorVariants === 'undefined'){
-                            return typeof n.constructors === 'undefined' || n.constructors.length === 0;
+                        if ((typeof n.constructorVariants !== 'undefined') && (typeof n.constructors !== 'undefined')) {
+                            var nbVariants = n.constructorVariants;
+                            if (nbVariants === 0 || nbVariants === 1){
+                                return n.constructors.length === 0 || n.constructors[0].number === 1;
+                            } else {
+                                return nbVariants === n.constructors[0].number
+                            }
                         }
-                        var nbVariants = n.constructorVariants;
-                        var nbMethodsWithAtLeastTwoAppearances = n.constructors.map(m => m.number).reduce((a, b) => a + b, 0);
-                        return nbVariants === nbMethodsWithAtLeastTwoAppearances;
+                        return true;
                     })).toBeTruthy();
                 });
 
@@ -198,7 +194,7 @@ describe("Acceptance tests for all projects", () => {
 
                 it('No variant is on the visualization if it is not a VP too', () => {
                     expect(jsonData.nodes
-                        .filter(n => n.types.includes("VARIANT") && ! ["VP", "METHOD_LEVEL_VP"].some(label => n.types.includes(label)))
+                        .filter(n => n.types.includes("VARIANT") && !["VP", "METHOD_LEVEL_VP"].some(label => n.types.includes(label)))
                         .map(n => d3.select('circle[name = "' + n.name + '"]'))
                         .every(c => c.empty() === true))
                         .toBeTruthy();

@@ -29,7 +29,7 @@ public class GetChildrenProcedure {
         final Output output = db.executeTransactionally(String.format("MATCH (c) WHERE ID(c) = $idNode " +
                 "OPTIONAL MATCH (c)-->(m1:%s) OPTIONAL MATCH (c)-->(m2:%s) " +
                 "WHERE m1.name = m2.name AND ID(m1) <> ID(m2) " +
-                "WITH CASE WHEN m1.name IS NOT NULL THEN {name: m1.name, number: count(m1)} ELSE NULL END as counter " +
+                "WITH CASE WHEN m1.name IS NOT NULL THEN {name: m1.name, number: count(DISTINCT m1)} ELSE NULL END as counter " +
                 "RETURN collect(counter)", label, label), Map.of("idNode", nodeId), Output::new);
         return Stream.of(output);
     }

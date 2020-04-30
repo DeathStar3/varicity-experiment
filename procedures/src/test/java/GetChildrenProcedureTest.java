@@ -28,8 +28,13 @@ public class GetChildrenProcedureTest {
 
             Result result = session.run("CALL symfinder.count($idNode, $label) YIELD result as res", parameters("idNode", nodeId, "label", "METHOD"));
 
-            List <Object> x = result.single().get("res").asList();
+            List <Map <String, Object>> x = result.single().get("res").asList(MapAccessor::asMap);
             assertEquals(2, x.size());
+            final Map <String, Object> method1 = x.stream().filter(stringObjectMap -> stringObjectMap.containsValue("method1")).findFirst().get();
+            assertEquals(1L, method1.get("number"));
+            final Map <String, Object> method2 = x.stream().filter(stringObjectMap -> stringObjectMap.containsValue("method2")).findFirst().get();
+            assertEquals(1L, method2.get("number"));
+
         }
     }
 
@@ -46,8 +51,30 @@ public class GetChildrenProcedureTest {
 
             Result result = session.run("CALL symfinder.count($idNode, $label) YIELD result as res", parameters("idNode", nodeId, "label", "METHOD"));
 
-            List <Object> x = result.single().get("res").asList();
+            List <Map <String, Object>> x = result.single().get("res").asList(MapAccessor::asMap);
             assertEquals(1, x.size());
+            assertEquals(2L, x.get(0).get("number"));
+        }
+    }
+
+    @Test
+    public void oneMethodThreeVariants() {
+
+        try (Driver driver = GraphDatabase.driver(embeddedDatabaseServer.boltURI(), driverConfig) ;
+             Session session = driver.session()) {
+            long nodeId = session.run("CREATE (n:CLASS {name:'Class1'}) RETURN ID(n)")
+                    .single().get(0).asLong();
+
+            session.run("MATCH (n) WHERE ID(n) = $idNode CREATE (n)-[r:METHOD]->(m:METHOD {name:'method1'})", parameters("idNode", nodeId));
+            session.run("MATCH (n) WHERE ID(n) = $idNode CREATE (n)-[r:METHOD]->(m:METHOD {name:'method1'})", parameters("idNode", nodeId));
+            session.run("MATCH (n) WHERE ID(n) = $idNode CREATE (n)-[r:METHOD]->(m:METHOD {name:'method1'})", parameters("idNode", nodeId));
+
+            Result result = session.run("CALL symfinder.count($idNode, $label) YIELD result as res", parameters("idNode", nodeId, "label", "METHOD"));
+
+            List <Object> x = result.single().get("res").asList();
+            System.out.println(x);
+            assertEquals(1, x.size());
+            assertEquals(3L, ((Map<String, Object>) x.get(0)).get("number"));
         }
     }
 
@@ -73,7 +100,6 @@ public class GetChildrenProcedureTest {
                             "RETURN collect(c {.name, methods, constructors})", parameters());
 
             List <Map <String, Object>> finalResult = result.list().get(0).get(0).asList(MapAccessor::asMap);
-            System.out.println(finalResult);
             assertEquals(2, finalResult.size());  // Two classes have been visited
 
             // Class1

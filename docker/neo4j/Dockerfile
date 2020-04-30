@@ -24,4 +24,4 @@ ADD procedures/ /
 RUN mvn clean install
 
 FROM neo4j:4.0.3
-COPY --from=building target/original-symfinder-neo4j-procedures-1.0-SNAPSHOT.jar /plugins/procedures.jar
+COPY --from=building /target/original-symfinder-neo4j-procedures-1.0-SNAPSHOT.jar /plugins/procedures.jar
