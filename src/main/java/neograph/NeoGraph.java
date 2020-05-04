@@ -210,7 +210,6 @@ public class NeoGraph {
 
     public void detectVPsAndVariants() {
         setMethodVPs();
-        setMethodVPs();
         setMethodVariants();
         setConstructorVPs();
         setConstructorVariants();
