@@ -26,12 +26,18 @@ class SourceFile(Asset):
     def __init__(self, name, features=[]):
         super().__init__(name, features)
 
+    def __eq__(self, other):
+        return isinstance(other, SourceFile) and self.name == other.name
+
 
 class Method(Asset):
 
     def __init__(self, name, parent_class, features=[]):
         super().__init__(name, features)
         self.parent_class = parent_class
+
+    def __eq__(self, other):
+        return isinstance(other, Method) and self.name == other.name and self.parent_class == other.parent_class
 
 
 class Mapper:
@@ -53,31 +59,23 @@ class Mapper:
 
     def map_class(self, class_object):
         node_name = class_object["name"]
-        if node_name not in self.classes_list:
-            self.classes_list.append(SourceFile(node_name))
-        source_file = self.classes_list[node_name]
+        new_file = SourceFile(node_name)
+        if new_file not in self.classes_list:
+            self.classes_list.append(new_file)
+        source_file = self.classes_list[self.classes_list.index(new_file)]
         source_file.vp = "VP" in class_object["types"]
         source_file.variant = "VARIANT" in class_object["types"]
         return node_name
 
     def map_method(self, method, parent_name):
-        name = method["name"]
         if method["number"] > 1:
-            if name not in self.methods_list:
-                self.methods_list.append(Method(name, parent_name))
-            self.methods_list[name].vp = True
+            new_method = Method(method["name"], parent_name)
+            if new_method not in self.methods_list:
+                self.methods_list.append(new_method)
+            self.methods_list[self.methods_list.index(new_method)].vp = True
 
-    def calculate_all_measures(self):
-        print("CLASSES")
-        print(self.calculate_measures_for_class_traces())
-        print("\nMETHODS AND CONSTRUCTORS")
-        print(self.calculate_measures_for_method_traces())
-
-    def calculate_measures_for_class_traces(self):
-        return MappingResults(self.classes_list)
-
-    def calculate_measures_for_method_traces(self):
-        return MappingResults(self.methods_list)
+    def calculate_measures(self):
+        return MappingResults(self.classes_list + self.methods_list)
 
 
 class MappingResults:
