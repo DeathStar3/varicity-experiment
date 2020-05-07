@@ -177,36 +177,6 @@ public class NeoGraph {
                 "CREATE (a)-[r:%s]->(b)", type), "aId", node1.id(), "bId", node2.id());
     }
 
-    /**
-     * Returns a map containing for each overloaded method the number of overloads it has in the class.
-     * <p>
-     * Example of a class containing the following methods:
-     * - public void add(Point2D pt)
-     * - public void add(Rectangle2D r)
-     * - public void add(double newx, double newy)
-     * - public PathIterator getPathIterator(AffineTransform at)
-     * - public PathIterator getPathIterator(AffineTransform at, double flatness)
-     * - public void setFrame(double x, double y, double w, double h)
-     * <p>
-     * The returned map will be : {"add": 3, "getPathIterator": 2}
-     * As setFrame is not overloaded, it will not appear in the map.
-     *
-     * @param parent
-     * @return
-     */
-    public Map <String, Long> getNbOverloads(String parent) {
-        return submitRequest(String.format(
-                "MATCH (:CLASS { name: '%s' })-->(a:METHOD) MATCH (:CLASS { name: '%s' })-->(b:METHOD)\n" +
-                        "WHERE a.name = b.name AND ID(a) <> ID(b)\n" +
-                        "return DISTINCT a.name, count(DISTINCT a)", parent, parent))
-
-                .stream()
-                .map(Record::asMap)
-                .collect(Collectors.toMap(
-                        recordMap -> (String) recordMap.get("a.name"),
-                        recordMap -> (Long) recordMap.get("count(DISTINCT a)")));
-
-    }
 
     public void detectVPsAndVariants() {
         setMethodVPs();
@@ -217,23 +187,6 @@ public class NeoGraph {
         setVPLabels();
         setMethodLevelVPLabels();
         setVariantsLabels();
-    }
-
-    /**
-     * This methods runs a query on a graph where Attribute nodes have been created.
-     * Such a graph is currently created by the C++ analyser, but not by the Java runner
-     * Execution on a java run will not have any effect
-     */
-    public void detectCPPStrategyPatterns() {
-        submitRequest("Match (strategy:CLASS)-[:EXTENDS]-(child1:CLASS)\n" +
-                "MATCH (strategy:CLASS)-[:EXTENDS]-(child2:CLASS)\n" +
-                "MATCH (n:CLASS)-[:ATTRIBUTE]-(a:ATTRIBUTE)  \n" +
-                "WHERE  a.type = strategy.name and not child1=child2\n" +
-                "SET strategy:STRATEGY");
-        submitRequest("MATCH (n:CLASS)-[:ATTRIBUTE]-(a:ATTRIBUTE)" +
-                "WHERE a.type CONTAINS \"Strategy\" " +
-                "MATCH(s:CLASS) WHERE s.name=a.type " +
-                "SET s:STRATEGY");
     }
 
     /**
@@ -344,16 +297,6 @@ public class NeoGraph {
 
     public void addLabelToNode(Node node, String label) {
         submitRequest(String.format("MATCH (n) WHERE ID(n) = $id SET n:%s RETURN (n)", label), "id", node.id());
-    }
-
-    public void setNodeAttribute(Node node, String name, Object value) {
-        submitRequest(String.format("MATCH (n) WHERE ID(n) = $id SET n.%s=\"%s\" RETURN (n)", name, value), "id", node.id());
-
-    }
-
-    public int getNbNodesHavingDesignPatterns() {
-        return submitRequest(String.format("MATCH (n) WHERE %s RETURN COUNT(n)", getClauseForHavingDesignPattern("n")))
-                .get(0).get(0).asInt();
     }
 
     private String getClauseForHavingDesignPattern(String n) {
@@ -527,8 +470,6 @@ public class NeoGraph {
         return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson(true));
     }
 
-//    MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP WITH c AS n CALL {  WITH n OPTIONAL MATCH (n)-->(m1:METHOD) OPTIONAL MATCH (n)-->(m2:METHOD) WHERE m1.name = m2.name AND ID(m1) <> ID(m2)   WITH CASE WHEN m1.name IS NOT NULL THEN {name: m1.name, number: count(m1)} ELSE NULL END AS cntMeths   RETURN collect(cntMeths) AS methods } CALL { WITH n  OPTIONAL MATCH (n)-->(co1:CONSTRUCTOR) OPTIONAL MATCH (n)-->(co2:CONSTRUCTOR) WHERE co1.name = co2.name AND ID(co1) <> ID(co2)   WITH CASE WHEN co1.name IS NOT NULL THEN {name: co1.name, number: count(co1)} ELSE NULL END AS cntConstrs   RETURN collect(cntConstrs) AS constructors } RETURN collect(n {types:labels(n), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, methods, constructors})
-
     private String getNodesAsJson() {
         String request =
                 "MATCH (c) WHERE c:VP  OR c:VARIANT OR c:METHOD_LEVEL_VP " +
@@ -626,28 +567,4 @@ public class NeoGraph {
         driver.close();
     }
 
-    /**
-     * Use a neo4j query to detect if a class is abstract
-     *
-     * @param node Class Node
-     */
-    public void detectCPPClassAbstract(Node node) {
-        submitRequest("MATCH (n:CLASS)-[:METHOD]-(m:METHOD:ABSTRACT) where ID(n)=$nodeId set n:ABSTRACT", "nodeId", node.id());
-    }
-
-    public void detectCPPDecoratorPatterns() {
-        submitRequest("MATCH (parent:CLASS)-[:EXTENDS]->(child:CLASS)\n" +
-                "WITH COUNT(child) as children,parent\n" +
-                "MATCH (parent:CLASS)-[:EXTENDS]->(abstractDecorator:CLASS) \n" +
-                "MATCH (abstractDecorator:CLASS)-[:EXTENDS]->(concreteDecorator:CLASS)\n" +
-                "WITH COUNT( DISTINCT concreteDecorator) as concreteCount,\t\n" +
-                "\t\tabstractDecorator,parent\n" +
-                "WHERE concreteCount >=1\n" +
-                "MATCH (abstractDecorator)-[:ATTRIBUTE]->(attribute:ATTRIBUTE)\n" +
-                "WHERE attribute.type=parent.name\n" +
-                "SET abstractDecorator:DECORATOR");
-        submitRequest("MATCH (n:CLASS)-[:ATTRIBUTE]-(a:ATTRIBUTE)" +
-                "WHERE n.name CONTAINS \"Decorator\" " +
-                "SET n:DECORATOR");
-    }
 }
