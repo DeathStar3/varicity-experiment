@@ -21,6 +21,7 @@
 
 import neograph.NeoGraph;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.neo4j.driver.Config;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -32,17 +33,22 @@ import java.util.function.Consumer;
 
 public class Neo4jTest {
 
-    private static final Config driverConfig = Config.defaultConfig();
-    private Neo4j embeddedDatabaseServer = new InProcessNeo4jBuilder().build();
-    protected GraphDatabaseService graphDatabaseService = embeddedDatabaseServer.defaultDatabaseService();
+    private static Neo4j embeddedDatabaseServer;
+    protected static GraphDatabaseService graphDatabaseService;
 
+    @BeforeAll
+    static void setUp() {
+        embeddedDatabaseServer = new InProcessNeo4jBuilder().build();
+        graphDatabaseService = embeddedDatabaseServer.defaultDatabaseService();
+    }
+    	
     @AfterEach
     public void tearDown() {
         graphDatabaseService.executeTransactionally("MATCH (n) DETACH DELETE (n)");
     }
 
     protected void runTest(Consumer<NeoGraph> consumer){
-        try (Driver driver = GraphDatabase.driver(embeddedDatabaseServer.boltURI(), driverConfig)) {
+        try (Driver driver = GraphDatabase.driver(embeddedDatabaseServer.boltURI(), Config.defaultConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             consumer.accept(graph);
         }
