@@ -1,6 +1,9 @@
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.MapAccessor;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.internal.InProcessNeo4jBuilder;
 
@@ -13,7 +16,19 @@ import static org.neo4j.driver.Values.parameters;
 
 public class GetChildrenProcedureTest {
     private static final Config driverConfig = Config.defaultConfig();
-    private Neo4j embeddedDatabaseServer = new InProcessNeo4jBuilder().withProcedure(GetChildrenProcedure.class).build();
+    private static Neo4j embeddedDatabaseServer;
+    protected static GraphDatabaseService graphDatabaseService;
+
+    @BeforeAll
+    static void setUp() {
+        embeddedDatabaseServer = new InProcessNeo4jBuilder().withProcedure(GetChildrenProcedure.class).build();
+        graphDatabaseService = embeddedDatabaseServer.defaultDatabaseService();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        graphDatabaseService.executeTransactionally("MATCH (n) DETACH DELETE (n)");
+    }
 
     @Test
     public void twoMethods() {
