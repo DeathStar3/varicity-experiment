@@ -20,8 +20,9 @@
 #
 
 FROM maven:3.6.1-jdk-13-alpine as building
+ARG BUILD_PARAMS
 ADD procedures/ /
-RUN mvn --no-transfer-progress clean install
+RUN mvn --no-transfer-progress clean install $BUILD_PARAMS
 
 FROM neo4j:4.0.3
 COPY --from=building /target/original-symfinder-neo4j-procedures-1.0-SNAPSHOT.jar /plugins/procedures.jar
