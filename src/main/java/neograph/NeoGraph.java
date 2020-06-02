@@ -472,7 +472,7 @@ public class NeoGraph {
 
     private String getNodesAsJson() {
         String request =
-                "MATCH (c) WHERE c:VP  OR c:VARIANT OR c:METHOD_LEVEL_VP " +
+                "MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP " +
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, methods, constructors})";
@@ -486,9 +486,7 @@ public class NeoGraph {
     }
 
     private String getLinksAsJson(boolean onlyVPs) {
-        String request = onlyVPs ?
-                "MATCH path = (c1:VP)-[r:EXTENDS|IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})" :
-                "MATCH path = (c1)-[r:EXTENDS|IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+        String request = "MATCH path = (c1)-[r:EXTENDS|IMPLEMENTS]->(c2) WHERE (c1:VP OR c1:VARIANT OR c1:METHOD_LEVEL_VP) AND NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .get(0)
                 .get(0)

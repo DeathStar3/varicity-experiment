@@ -25,27 +25,6 @@ import {VariantsFilter} from "./variants-filter.js";
 import {IsolatedFilter} from "./isolated-filter.js";
 
 class Graph {
-//	data stores
-    graph;
-    store;
-
-    width;
-    height;
-
-    filterIsolated;
-    filterVariants;
-
-    jsonFile;
-    jsonStatsFile;
-
-
-    filter;
-    packageColorer;
-
-    svg; g; link; node; label;
-
-    //	d3 color scales
-    color;
 
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.jsonFile = jsonFile;

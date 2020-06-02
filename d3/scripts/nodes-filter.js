@@ -23,13 +23,6 @@
 
 class NodesFilter {
 
-    filterButtonSelector;
-    filterInputSelector;
-    filtersListSelector;
-    displayGraphFunction;
-
-    filtersList;
-
     constructor(filterButtonSelector, filterInputSelector, filtersListSelector, nodeFilters, displayGraphFunction) {
         this.filterButtonSelector = filterButtonSelector;
         this.filterInputSelector = filterInputSelector;
