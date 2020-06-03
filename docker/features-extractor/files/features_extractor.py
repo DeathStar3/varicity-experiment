@@ -18,6 +18,8 @@ for line in lines:
         source_files.append(SourceFile(entity_name, [feature]))
     if entity_type in ["METHOD"]:
         methods.append(Method(entity_name.split("(")[0], parent, [feature]))
+    if entity_type in ["FIELD"]:
+        source_files.append(SourceFile(parent, [feature]))
 
 with open(symfinder_json_output, "r") as fil:
     symfinder_output = json.load(fil)

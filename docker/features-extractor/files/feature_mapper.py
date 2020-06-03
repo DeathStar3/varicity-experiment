@@ -50,12 +50,12 @@ class Mapper:
     def make_mapping(self):
         for node in self.json_output["nodes"]:
             node_name = self.map_class(node)
-            if node["constructors"]:
-                constructor = node["constructors"][0]
-                self.map_method(constructor, node_name)
-            if node["methods"]:
-                for method in node["methods"]:
-                    self.map_method(method, node_name)
+            # if node["constructors"]:
+            #     constructor = node["constructors"][0]
+            #     self.map_method(constructor, node_name)
+            # if node["methods"]:
+            #     for method in node["methods"]:
+            #         self.map_method(method, node_name)
 
     def map_class(self, class_object):
         node_name = class_object["name"]
@@ -63,7 +63,7 @@ class Mapper:
         if new_file not in self.classes_list:
             self.classes_list.append(new_file)
         source_file = self.classes_list[self.classes_list.index(new_file)]
-        source_file.vp = "VP" in class_object["types"]
+        source_file.vp = "VP" in class_object["types"] or "METHOD_LEVEL_VP" in class_object["types"]
         source_file.variant = "VARIANT" in class_object["types"]
         return node_name
 
@@ -85,13 +85,15 @@ class MappingResults:
 
     # Number of traces
     def get_number_of_traces(self):
-        traces = reduce(lambda a, b: a + b, [a.features for a in self.assets], [])
-        return len(traces)
+        return len([a for a in self.assets if a.features])
+
+    # Number of traces
+    def get_number_of_vps_and_vs(self):
+        return len([a for a in self.assets if a.is_vp_or_variant()])
 
     # Number of traces feature <--> asset where the asset is a VP or variant
     def get_true_positives(self):
-        traces = reduce(lambda a, b: a + b, [a.features for a in self.assets if a.is_vp_or_variant()], [])
-        return len(traces)
+        return len([a for a in self.assets if a.features and a.is_vp_or_variant()])
 
     # Number of assets being a VP or variant but not linked to any feature
     def get_false_positives(self):
@@ -99,8 +101,7 @@ class MappingResults:
 
     # Number of traces feature <--> asset where the asset is not a VP nor variant
     def get_false_negatives(self):
-        traces = reduce(lambda a, b: a + b, [a.features for a in self.assets if not a.is_vp_or_variant()], [])
-        return len(traces)
+        return len([a for a in self.assets if a.features and not a.is_vp_or_variant()])
 
     def get_precision(self):
         tp = self.get_true_positives()
@@ -113,13 +114,14 @@ class MappingResults:
         return tp / (tp + fn)
 
     def __str__(self):
-        return """Number of assets linked to a feature: %s
-Number of VPs and variants linked to features (TP): %s
+        return """Number of VPs and variants linked to features (TP): %s
 Number of VPs and variants not linked to features (FP): %s
 Number of features traces not linked to any VP nor variant (FN): %s
+Number of traces (TP + FN): %s
+Number of VPs / variants (TP + FP): %s
 Precision = TP / (TP + FP): %s
-Recall = TP / (TP + FN): %s""" % (self.get_number_of_traces(),
-                                  self.get_true_positives(), self.get_false_positives(), self.get_false_negatives(),
+Recall = TP / (TP + FN): %s""" % (self.get_true_positives(), self.get_false_positives(), self.get_false_negatives(),
+                                  self.get_number_of_traces(), self.get_number_of_vps_and_vs(),
                                   self.get_precision(), self.get_recall())
 
 

@@ -15,6 +15,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, result.get_false_positives())
         self.assertEqual(0, result.get_false_negatives())
         self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_one_false_positive_one_false_negative(self):
         mapper = Mapper(
@@ -27,6 +28,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(1, result.get_false_positives())
         self.assertEqual(1, result.get_false_negatives())
         self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_two_false_positives_one_false_negative(self):
         mapper = Mapper(
@@ -40,6 +42,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(2, result.get_false_positives())
         self.assertEqual(1, result.get_false_negatives())
         self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_one_false_positive_two_false_negatives(self):
         mapper = Mapper(
@@ -52,6 +55,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(1, result.get_false_positives())
         self.assertEqual(2, result.get_false_negatives())
         self.assertEqual(2, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_multiple_traces_for_one_class(self):
         mapper = Mapper(
@@ -60,10 +64,11 @@ class MyTestCase(unittest.TestCase):
             {"nodes": [{"name": "Class1", "types": ["VARIANT"], "methods": [], "constructors": []}], "links": []})
         mapper.make_mapping()
         result = mapper.calculate_measures()
-        self.assertEqual(2, result.get_true_positives())
+        self.assertEqual(1, result.get_true_positives())
         self.assertEqual(0, result.get_false_positives())
         self.assertEqual(0, result.get_false_negatives())
-        self.assertEqual(2, result.get_number_of_traces())
+        self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_method_trace_no_variant(self):
         mapper = Mapper(
@@ -76,6 +81,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, result.get_false_positives())
         self.assertEqual(1, result.get_false_negatives())
         self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_two_method_traces_not_vp(self):
         mapper = Mapper(
@@ -86,8 +92,9 @@ class MyTestCase(unittest.TestCase):
         result = mapper.calculate_measures()
         self.assertEqual(0, result.get_true_positives())
         self.assertEqual(0, result.get_false_positives())
-        self.assertEqual(2, result.get_false_negatives())
-        self.assertEqual(2, result.get_number_of_traces())
+        self.assertEqual(1, result.get_false_negatives())
+        self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_method_trace_one_variant(self):
         mapper = Mapper(
@@ -100,6 +107,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, result.get_false_positives())
         self.assertEqual(1, result.get_false_negatives())
         self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_method_trace_vp(self):
         mapper = Mapper(
@@ -112,6 +120,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, result.get_false_positives())
         self.assertEqual(0, result.get_false_negatives())
         self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_method_no_trace_but_vp(self):
         mapper = Mapper(
@@ -124,6 +133,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(1, result.get_false_positives())
         self.assertEqual(0, result.get_false_negatives())
         self.assertEqual(0, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_method_with_two_traces_and_vp(self):
         mapper = Mapper(
@@ -132,10 +142,11 @@ class MyTestCase(unittest.TestCase):
             {"nodes": [{"name": "Class1", "types": [], "methods": [{"name": "method1", "number": 2}], "constructors": []}], "links": []})
         mapper.make_mapping()
         result = mapper.calculate_measures()
-        self.assertEqual(2, result.get_true_positives())
+        self.assertEqual(1, result.get_true_positives())
         self.assertEqual(0, result.get_false_positives())
         self.assertEqual(0, result.get_false_negatives())
-        self.assertEqual(2, result.get_number_of_traces())
+        self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_two_methods_with_traces_and_vp(self):
         mapper = Mapper(
@@ -148,6 +159,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, result.get_false_positives())
         self.assertEqual(0, result.get_false_negatives())
         self.assertEqual(2, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_two_methods_with_traces_and_but_homonym_in_another_class_is_vp(self):
         mapper = Mapper(
@@ -160,6 +172,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(1, result.get_false_positives())
         self.assertEqual(1, result.get_false_negatives())
         self.assertEqual(2, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_constructor_true_positive(self):
         mapper = Mapper(
@@ -172,6 +185,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, result.get_false_positives())
         self.assertEqual(0, result.get_false_negatives())
         self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_constructor_false_positive(self):
         mapper = Mapper(
@@ -184,6 +198,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(1, result.get_false_positives())
         self.assertEqual(0, result.get_false_negatives())
         self.assertEqual(0, result.get_number_of_traces())
+        self.check_sums(result)
 
     def test_constructor_false_negative(self):
         mapper = Mapper(
@@ -196,6 +211,12 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, result.get_false_positives())
         self.assertEqual(1, result.get_false_negatives())
         self.assertEqual(1, result.get_number_of_traces())
+        self.check_sums(result)
+
+    def check_sums(self, result):
+        # self.assertTrue(True)
+        self.assertEqual(result.get_number_of_traces(), result.get_true_positives() + result.get_false_negatives())
+        self.assertEqual(result.get_number_of_vps_and_vs(), result.get_true_positives() + result.get_false_positives())
 
 
 if __name__ == '__main__':

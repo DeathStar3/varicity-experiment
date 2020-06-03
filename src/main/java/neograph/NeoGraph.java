@@ -467,7 +467,7 @@ public class NeoGraph {
     }
 
     private String generateVPJsonGraph() {
-        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson(true));
+        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson());
     }
 
     private String getNodesAsJson() {
@@ -485,8 +485,8 @@ public class NeoGraph {
                 .collect(Collectors.joining(","));
     }
 
-    private String getLinksAsJson(boolean onlyVPs) {
-        String request = "MATCH path = (c1)-[r:EXTENDS|IMPLEMENTS]->(c2) WHERE (c1:VP OR c1:VARIANT OR c1:METHOD_LEVEL_VP) AND NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+    private String getLinksAsJson() {
+        String request = "MATCH path = (c1:VP)-[r:EXTENDS|IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
