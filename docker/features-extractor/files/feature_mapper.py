@@ -49,13 +49,17 @@ class Mapper:
 
     def make_mapping(self):
         for node in self.json_output["nodes"]:
-            node_name = self.map_class(node)
-            # if node["constructors"]:
-            #     constructor = node["constructors"][0]
-            #     self.map_method(constructor, node_name)
-            # if node["methods"]:
-            #     for method in node["methods"]:
-            #         self.map_method(method, node_name)
+            self.map_class(node)
+
+    def make_mapping_with_method_level(self):
+        for node in self.json_output["nodes"]:
+            node_name = self.map_class_with_method_level(node)
+            if node["constructors"]:
+                constructor = node["constructors"][0]
+                self.map_method(constructor, node_name)
+            if node["methods"]:
+                for method in node["methods"]:
+                    self.map_method(method, node_name)
 
     def map_class(self, class_object):
         node_name = class_object["name"]
@@ -64,6 +68,16 @@ class Mapper:
             self.classes_list.append(new_file)
         source_file = self.classes_list[self.classes_list.index(new_file)]
         source_file.vp = "VP" in class_object["types"] or "METHOD_LEVEL_VP" in class_object["types"]
+        source_file.variant = "VARIANT" in class_object["types"]
+        return node_name
+
+    def map_class_with_method_level(self, class_object):
+        node_name = class_object["name"]
+        new_file = SourceFile(node_name)
+        if new_file not in self.classes_list:
+            self.classes_list.append(new_file)
+        source_file = self.classes_list[self.classes_list.index(new_file)]
+        source_file.vp = "VP" in class_object["types"]
         source_file.variant = "VARIANT" in class_object["types"]
         return node_name
 
