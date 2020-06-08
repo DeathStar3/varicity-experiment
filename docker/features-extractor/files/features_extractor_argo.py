@@ -14,20 +14,20 @@ methods = []
 regex = re.compile(r"^(.*)(\(.*\)) (.*)$", re.MULTILINE)
 
 
-def add_source_file(sourcefile):
-    existing_sourcefile = [s for s in source_files if s.name == sourcefile.name]
-    if existing_sourcefile:
-        source_files[source_files.index(existing_sourcefile[0])].features.append(sourcefile.features[0])
+def add_source_file(entity_name, feature):
+    existing_sourcefile = [sf for sf in source_files if sf.name == entity_name]
+    if not existing_sourcefile:
+        source_files.append(SourceFile(entity_name, [feature]))
     else:
-        source_files.append(sourcefile)
+        source_files[source_files.index(existing_sourcefile[0])].features.append(feature)
 
 
-def add_method(method):
-    existing_method = [m for m in methods if m == method]
-    if existing_method:
-        methods[methods.index(existing_method[0])].features.append(method.features[0])
+def add_method(method_name, parent, feature):
+    existing_method = [m for m in methods if m.name == method_name]
+    if not existing_method:
+        methods.append(Method(method_name, parent, [feature]))
     else:
-        methods.append(method)
+        methods[methods.index(existing_method[0])].features.append(feature)
 
 
 for filename in os.listdir(features_lists_dir):
@@ -40,33 +40,33 @@ for filename in os.listdir(features_lists_dir):
                 line = regex.sub(r"\g<1>() \g<3>".strip(), line)
                 line_items = line.split()
                 if len(line_items) == 1:  # class level
-                    add_source_file(SourceFile(line_items[0], [feature_name]))
+                    add_source_file(line_items[0], feature_name)
                 elif len(line_items) == 2:
                     if "Refinement" in line_items:  # class level refinement
                         class_name, _ = line_items
-                        add_source_file(SourceFile(class_name, [feature_name]))
+                        add_source_file(class_name, feature_name)
                     else:  # method
                         class_name, method_name = line_items
-                        add_method(Method(method_name.split("(")[0], class_name, [feature_name]))
+                        add_method(method_name.split("(")[0], class_name, feature_name)
                 else:  # len == 3, method refinement
                     class_name, method_name, _ = line_items
-                    add_method(Method(method_name.split("(")[0], class_name, [feature_name]))
+                    add_method(method_name.split("(")[0], class_name, feature_name)
         else:
             for line in lines:
                 line = regex.sub(r"\g<1>() \g<3>".strip(), line)
                 line_items = line.split()
                 if len(line_items) == 1:  # class level
-                    add_source_file(SourceFile(line_items[0], [feature_name]))
+                    add_source_file(line_items[0], feature_name)
                 elif len(line_items) == 2:
                     if "Refinement" in line_items:  # class level refinement
                         class_name, _ = line_items
-                        add_source_file(SourceFile(class_name, [feature_name]))
+                        add_source_file(class_name, feature_name)
                     else:  # method
                         class_name, method_name = line_items
-                        add_source_file(SourceFile(class_name, [feature_name]))
+                        add_source_file(class_name, feature_name)
                 else:  # len == 3, method refinement
                     class_name, method_name, _ = line_items
-                    add_source_file(SourceFile(class_name, [feature_name]))
+                    add_source_file(class_name, feature_name)
 
 # print(source_files)
 # print(methods)

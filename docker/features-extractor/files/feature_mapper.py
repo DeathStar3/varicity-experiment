@@ -40,6 +40,41 @@ class Method(Asset):
         return isinstance(other, Method) and self.name == other.name and self.parent_class == other.parent_class
 
 
+class JSONFilter:
+
+    def __init__(self, symfinder_json_content, selected_classes):
+        self.symfinder_json_content = symfinder_json_content
+        self.selected_classes = selected_classes
+
+    def get_selected_classes_variants(self):
+        new_classes = []
+        for clazz in self.selected_classes:
+            new_classes += self.get_children(clazz, [])
+        return new_classes
+
+    def get_children(self, root_node, nodes_list):
+        nodes_list.append(root_node)
+        for node in [l["target"] for l in self.symfinder_json_content["links"] if l["source"] == root_node]:
+            self.get_children(node, nodes_list)
+        return nodes_list
+
+    # function getChildren(rootNode, list) {
+    #     list.push(rootNode);
+    #     graph.links
+    #         .filter(l => l.source.name === rootNode)
+    #         .forEach(l => getChildren(l.target.name, list));
+    #     return list
+    # }
+
+    def get_filtered_json(self):
+        all_selected_classes_ = set(self.selected_classes + self.get_selected_classes_variants())
+        filtered_json = {"nodes": [], "links": self.symfinder_json_content["links"]}
+        for node in self.symfinder_json_content["nodes"]:
+            if node["name"] in all_selected_classes_:
+                filtered_json["nodes"].append(node)
+        return filtered_json
+
+
 class Mapper:
 
     def __init__(self, classes_with_feature, methods_with_feature, json_output):
