@@ -8,10 +8,16 @@ from feature_mapper import Mapper, SourceFile, Method
 features_lists_dir = argv[1]
 symfinder_json_output = argv[2]
 
+out_of_scope_packages = ["org.argouml.model.", "org.argouml.sequence2."]
+
 source_files = []
 methods = []
 
 regex = re.compile(r"^(.*)(\(.*\)) (.*)$", re.MULTILINE)
+
+
+def is_in_out_of_scope_package(line):
+    return any(line.startswith(package) for package in out_of_scope_packages)
 
 
 def add_source_file(entity_name, feature):
@@ -34,7 +40,7 @@ for filename in os.listdir(features_lists_dir):
     if filename.endswith(".txt"):
         feature_name = filename.split(".txt")[0]
         with open(os.path.join(features_lists_dir, filename), "r") as fil:
-            lines = [line.strip() for line in fil.readlines()]
+            lines = [line.strip() for line in fil.readlines() if not is_in_out_of_scope_package(line)]
         if len(argv) == 4:
             for line in lines:
                 line = regex.sub(r"\g<1>() \g<3>".strip(), line)
@@ -67,10 +73,6 @@ for filename in os.listdir(features_lists_dir):
                 else:  # len == 3, method refinement
                     class_name, method_name, _ = line_items
                     add_source_file(class_name, feature_name)
-
-# print(source_files)
-# print(methods)
-
 
 with open(symfinder_json_output, "r") as fil:
     symfinder_output = json.load(fil)

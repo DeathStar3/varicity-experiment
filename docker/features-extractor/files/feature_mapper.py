@@ -53,18 +53,11 @@ class JSONFilter:
         return new_classes
 
     def get_children(self, root_node, nodes_list):
-        nodes_list.append(root_node)
-        for node in [l["target"] for l in self.symfinder_json_content["links"] if l["source"] == root_node]:
-            self.get_children(node, nodes_list)
+        if root_node in [n["name"] for n in self.symfinder_json_content["nodes"]]:
+            nodes_list.append(root_node)
+            for node in [l["target"] for l in self.symfinder_json_content["links"] if l["source"] == root_node]:
+                self.get_children(node, nodes_list)
         return nodes_list
-
-    # function getChildren(rootNode, list) {
-    #     list.push(rootNode);
-    #     graph.links
-    #         .filter(l => l.source.name === rootNode)
-    #         .forEach(l => getChildren(l.target.name, list));
-    #     return list
-    # }
 
     def get_filtered_json(self):
         all_selected_classes_ = set(self.selected_classes + self.get_selected_classes_variants())
