@@ -178,6 +178,13 @@ public class NeoGraph {
     }
 
 
+    public void detectHotspots(int threshold) {
+        submitRequest(String.format("MATCH (vp:VP)-->(v:VARIANT) " +
+                "WITH count(v) as cnt, collect(v) AS collected " +
+                "WHERE cnt >= $threshold " +
+                "FOREACH (v1 IN collected | SET v1:%s)", EntityAttribute.HOTSPOT), "threshold", threshold);
+    }
+
     public void detectVPsAndVariants() {
         setMethodVPs();
         setMethodVariants();
@@ -461,7 +468,7 @@ public class NeoGraph {
      */
     public boolean relatedTo(Node parentNode, Node childNode) {
         return submitRequest("MATCH(source) WHERE ID(source) = $idSource MATCH(dest) " +
-                "WHERE ID(dest) = $idDest RETURN EXISTS((source)-[]->(dest))",
+                        "WHERE ID(dest) = $idDest RETURN EXISTS((source)-[]->(dest))",
                 "idSource", parentNode.id(), "idDest", childNode.id())
                 .get(0).get(0).asBoolean();
     }

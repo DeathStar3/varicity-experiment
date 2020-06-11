@@ -22,6 +22,7 @@
 import neograph.NeoGraph;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Config;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -49,6 +50,7 @@ public class Neo4jTest {
 
     protected void runTest(Consumer<NeoGraph> consumer){
         try (Driver driver = GraphDatabase.driver(embeddedDatabaseServer.boltURI(), Config.defaultConfig())) {
+//        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "root"))) {
             NeoGraph graph = new NeoGraph(driver);
             consumer.accept(graph);
         }
