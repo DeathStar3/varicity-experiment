@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT_DIR="sat4j-42a72c20d4371a4d240d6ea85a5ec3a8265c3585"
+PROJECT_DIR="sat4j-22374e5e"
 
 if [[ "$1" == "--local" ]]; then
     export TAG=local

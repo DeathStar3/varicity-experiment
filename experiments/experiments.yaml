@@ -86,4 +86,4 @@ sat4j:
   repositoryUrl: https://gitlab.ow2.org/sat4j/sat4j.git/
   sourcePackage: org.sat4j.core
   commitIds:
-    - 42a72c20d4371a4d240d6ea85a5ec3a8265c3585
+    - 22374e5e
