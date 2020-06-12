@@ -8,7 +8,7 @@ class MyTestCase(unittest.TestCase):
         mapper = Mapper(
             [SourceFile("Class1", ["feature1"])],
             [],
-            {"nodes": [{"name": "Class1", "types": ["VP"], "methods": [], "constructors": []}], "links": []})
+            {"nodes": [{"name": "Class1", "types": ["VP", "HOTSPOT"], "methods": [], "constructors": []}], "links": []})
         mapper.make_mapping()
         result = mapper.calculate_measures()
         self.assertEqual(1, result.get_true_positives())
@@ -21,7 +21,7 @@ class MyTestCase(unittest.TestCase):
         mapper = Mapper(
             [SourceFile("Class1", ["feature1"])],
             [],
-            {"nodes": [{"name": "Class2", "types": ["VP"], "methods": [], "constructors": []}], "links": []})
+            {"nodes": [{"name": "Class2", "types": ["VP", "HOTSPOT"], "methods": [], "constructors": []}], "links": []})
         mapper.make_mapping()
         result = mapper.calculate_measures()
         self.assertEqual(0, result.get_true_positives())
@@ -34,8 +34,8 @@ class MyTestCase(unittest.TestCase):
         mapper = Mapper(
             [SourceFile("Class1", ["feature1"])],
             [],
-            {"nodes": [{"name": "Class2", "types": ["VP"], "methods": [], "constructors": []},
-                       {"name": "Class3", "types": ["VARIANT"], "methods": [], "constructors": []}], "links": []})
+            {"nodes": [{"name": "Class2", "types": ["VP", "HOTSPOT"], "methods": [], "constructors": []},
+                       {"name": "Class3", "types": ["VARIANT", "HOTSPOT"], "methods": [], "constructors": []}], "links": []})
         mapper.make_mapping()
         result = mapper.calculate_measures()
         self.assertEqual(0, result.get_true_positives())
@@ -48,7 +48,7 @@ class MyTestCase(unittest.TestCase):
         mapper = Mapper(
             [SourceFile("Class1", ["feature1"]), SourceFile("Class2", ["feature2"])],
             [],
-            {"nodes": [{"name": "Class3", "types": ["VARIANT"], "methods": [], "constructors": []}], "links": []})
+            {"nodes": [{"name": "Class3", "types": ["VARIANT", "HOTSPOT"], "methods": [], "constructors": []}], "links": []})
         mapper.make_mapping()
         result = mapper.calculate_measures()
         self.assertEqual(0, result.get_true_positives())
@@ -61,7 +61,7 @@ class MyTestCase(unittest.TestCase):
         mapper = Mapper(
             [SourceFile("Class1", ["feature1", "feature2"])],
             [],
-            {"nodes": [{"name": "Class1", "types": ["VARIANT"], "methods": [], "constructors": []}], "links": []})
+            {"nodes": [{"name": "Class1", "types": ["VARIANT", "HOTSPOT"], "methods": [], "constructors": []}], "links": []})
         mapper.make_mapping()
         result = mapper.calculate_measures()
         self.assertEqual(1, result.get_true_positives())
@@ -69,6 +69,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, result.get_false_negatives())
         self.assertEqual(1, result.get_number_of_traces())
         self.check_sums(result)
+
 
     def check_sums(self, result):
         # self.assertTrue(True)

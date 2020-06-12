@@ -76,7 +76,8 @@ class Mapper:
         self.json_output = json_output
 
     def make_mapping(self):
-        for node in self.json_output["nodes"]:
+        nodes_list = [n for n in self.json_output["nodes"] if "HOTSPOT" in n["types"]]
+        for node in nodes_list:
             self.map_class(node)
 
     def make_mapping_with_method_level(self):
