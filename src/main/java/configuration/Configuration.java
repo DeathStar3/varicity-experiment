@@ -64,4 +64,8 @@ public class Configuration {
         return properties.getNeo4j().getPassword();
     }
 
+    public static int getVariantsThreshold() {
+        return properties.getHotspotsParameters().getVariantsThreshold();
+    }
+
 }
