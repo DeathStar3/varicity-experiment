@@ -23,6 +23,7 @@ import {NodesFilter} from "./nodes-filter.js";
 import {PackageColorer} from "./package-colorer.js";
 import {VariantsFilter} from "./variants-filter.js";
 import {IsolatedFilter} from "./isolated-filter.js";
+import {HotspotsFilter} from "./hotspots-filter.js";
 
 class Graph {
 
@@ -43,11 +44,13 @@ class Graph {
         if (sessionStorage.getItem("firstTime") === "true") {
             sessionStorage.setItem("filteredIsolated", "false");
             sessionStorage.setItem("filteredVariants", "true");
+            sessionStorage.setItem("onlyHotspots", "false");
             sessionStorage.setItem("firstTime", "false");
         }
         d3.selectAll("svg > *").remove();
         this.filterIsolated = sessionStorage.getItem("filteredIsolated") === "true";
         this.filterVariants = sessionStorage.getItem("filteredVariants") === "true";
+        this.onlyHotspots = sessionStorage.getItem("onlyHotspots") === "true";
         await this.generateGraph();
         return this.graph;
     }
@@ -160,6 +163,13 @@ class Graph {
         if (this.filterIsolated) {
             var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
             this.graph.nodes = isolatedFilter.getFilteredNodesList();
+            this.graph.links = isolatedFilter.getFilteredLinksList();
+        }
+
+        if (this.onlyHotspots) {
+            var hotspotsFilter = new HotspotsFilter(this.graph.nodes, this.graph.links);
+            this.graph.nodes = hotspotsFilter.getFilteredNodesList();
+            this.graph.links = hotspotsFilter.getFilteredLinksList();
         }
 
     }
@@ -279,8 +289,8 @@ class Graph {
             //	tick event handler with bounded box
             .on("tick", () => {
                 this.node
-                // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-                // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+                    // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+                    // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
                     .attr("cx", function (d) {
                         return d.x;
                     })
@@ -364,10 +374,17 @@ class Graph {
 
         $("#filter-variants-button").on('click', async e => {
             e.preventDefault();
-            console.log(sessionStorage.getItem("filteredVariants"));
             var previouslyFiltered = sessionStorage.getItem("filteredVariants") === "true";
             sessionStorage.setItem("filteredVariants", previouslyFiltered ? "false" : "true");
             $("#filter-variants-button").text(previouslyFiltered ? "Hide variants" : "Show variants");
+            await this.displayGraph();
+        });
+
+        $("#hotspots-only-button").on('click', async e => {
+            e.preventDefault();
+            var previouslyFiltered = sessionStorage.getItem("onlyHotspots") === "true";
+            sessionStorage.setItem("onlyHotspots", previouslyFiltered ? "false" : "true");
+            $("#hotspots-only-button").text(previouslyFiltered ? "Show all nodes" : "Show only hotspots");
             await this.displayGraph();
         });
 

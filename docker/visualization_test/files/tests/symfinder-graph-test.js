@@ -145,14 +145,14 @@ describe("Testing utils functions : distanceToRed", () => {
 xdescribe("Testing utils functions : matchesFilter", () => {
 
     it('package filtering', () => {
-        expect(matchesFilter("foo.bar.Clazz", "foo.bar")).toBeTruthy();
-        expect(matchesFilter("bar.Clazz", "foo.bar")).toBeFalsy();
-        expect(matchesFilter("foo.bar.Clazz", "bar")).toBeFalsy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazz", "foo.bar")).toBeTruthy();
+        expect(NodeFilter.matchesFilter("bar.Clazz", "foo.bar")).toBeFalsy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazz", "bar")).toBeFalsy();
     });
     it('class filtering', () => {
-        expect(matchesFilter("foo.bar.Clazz", "foo.bar.Clazz")).toBeTruthy();
-        expect(matchesFilter("foo.bar.Clazz", "foo.bar.Clazzz")).toBeFalsy();
-        expect(matchesFilter("foo.bar.Clazzz", "foo.bar.Clazz")).toBeFalsy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazz", "foo.bar.Clazz")).toBeTruthy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazz", "foo.bar.Clazzz")).toBeFalsy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazzz", "foo.bar.Clazz")).toBeFalsy();
     });
 
 });

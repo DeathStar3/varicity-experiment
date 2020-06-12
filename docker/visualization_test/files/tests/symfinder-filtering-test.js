@@ -173,7 +173,7 @@ describe("Unfiltering a package", () => {
 
 });
 
-xdescribe("Filtering isolated nodes", () => {
+describe("Filtering isolated nodes", () => {
 
     beforeAll(async (done) => {
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
@@ -191,6 +191,26 @@ xdescribe("Filtering isolated nodes", () => {
             linkedNodes.add(n.getAttribute("target"));
         });
         expect(d3.selectAll('circle').nodes().every(n => linkedNodes.has(n.getAttribute("name")))).toBe(true);
+    });
+
+    afterAll(resetPage);
+
+});
+
+describe("Filtering nodes that are not hotspots", () => {
+
+    beforeAll(async (done) => {
+        await display("tests/data/hotspots.json", "tests/data/stats.json", []);
+        $("#hotspots-only-button").trigger("click");
+        setTimeout(() => done(), 700); // wait for onclick event to execute totally
+    });
+
+    it('five nodes remain', async () => {
+        expect(d3.selectAll('circle').size()).toBe(5);
+    });
+
+    it('the five remaining nodes all have the HOTSPOT type', async () => {
+        expect(d3.selectAll('circle').nodes().every(n => n.__data__.types.includes("HOTSPOT"))).toBe(true);
     });
 
     afterAll(resetPage);
