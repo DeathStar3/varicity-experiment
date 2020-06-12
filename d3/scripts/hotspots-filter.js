@@ -22,7 +22,7 @@
 import {Filter} from "./filter.js";
 
 /**
- * This filter removes nodes being isolated, meaning that they are not linked to any other node.
+ * This filter removes nodes not being hotspots.
  */
 class HotspotsFilter extends Filter {
 

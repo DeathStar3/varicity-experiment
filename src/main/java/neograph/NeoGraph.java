@@ -177,12 +177,40 @@ public class NeoGraph {
                 "CREATE (a)-[r:%s]->(b)", type), "aId", node1.id(), "bId", node2.id());
     }
 
+    public void setNodeAttribute(Node node, String attributeName, int value) {
+        submitRequest(String.format("MATCH (n) WHERE ID(n) = $idNode SET n.%s = $value", attributeName),
+                "idNode", node.id(), "value", value);
+    }
 
-    public void detectHotspots(int threshold) {
+    public void detectHotspotsInSubtyping(int threshold) {
         submitRequest(String.format("MATCH (vp:VP)-->(v:VARIANT) " +
-                "WITH count(v) as cnt, collect(v) AS collected " +
+                "WITH count(v) as cnt, [vp] + collect(v) AS collected " +
                 "WHERE cnt >= $threshold " +
                 "FOREACH (v1 IN collected | SET v1:%s)", EntityAttribute.HOTSPOT), "threshold", threshold);
+    }
+
+    public void detectHotspotsInMethodOverloading(int threshold) {
+        submitRequest(String.format("MATCH (n) " +
+                "WHERE n.methodVariants >= $threshold " +
+                "SET n:%s", EntityAttribute.HOTSPOT), "threshold", threshold);
+    }
+
+    public void detectHotspotsInConstructorOverloading(int threshold) {
+        submitRequest(String.format("MATCH (n) " +
+                "WHERE n.constructorVariants >= $threshold " +
+                "SET n:%s", EntityAttribute.HOTSPOT), "threshold", threshold);
+    }
+
+    public void detectHotspotsInVPConcentration(int threshold) {
+        submitRequest(String.format("MATCH p = (vp1:VP)-[:EXTENDS|IMPLEMENTS*%d..]->(vp2:VP) " +
+                "FOREACH (n IN nodes(p) | SET n:%s)", threshold - 1, EntityAttribute.HOTSPOT));
+        markHotspotVariantsAsHotspots();
+    }
+
+    public void markHotspotVariantsAsHotspots() {
+        submitRequest(String.format("MATCH (vp:VP:HOTSPOT)-[:EXTENDS|IMPLEMENTS]->(v:VARIANT) " +
+                "WITH collect(v) as collected " +
+                "FOREACH (n IN collected | SET n:%s)", EntityAttribute.HOTSPOT));
     }
 
     public void detectVPsAndVariants() {

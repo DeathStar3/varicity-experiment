@@ -24,12 +24,13 @@ function resetPage() {
     $("#list-tab").empty();
     $("#package-to-filter").val("");
     sessionStorage.clear();
+    d3.selectAll("svg > *").remove();
 }
 
 describe("Filtering an isolated node", () => {
 
     beforeAll(async (done) => {
-        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
+        await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
         setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
 
@@ -50,7 +51,7 @@ describe("Filtering an isolated node", () => {
 describe("Using a default filter", () => {
 
     beforeAll(async (done) => {
-        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
+        await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
         setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
 
@@ -69,7 +70,7 @@ describe("Using a default filter", () => {
 describe("Unfiltering an isolated node", () => {
 
     beforeAll(async (done) => {
-        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
+        await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["Shape"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
@@ -79,16 +80,16 @@ describe("Unfiltering an isolated node", () => {
     });
     it('the node is brought back to the visualization', () => {
         expect(d3.select('circle[name = "Shape"]').empty()).toBeFalsy();
-
     });
 
     afterAll(resetPage);
 
 });
+
 describe("Filtering a linked node", () => {
 
     beforeAll(async (done) => {
-        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"]);
+        await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"]);
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
 
@@ -109,7 +110,7 @@ describe("Filtering a linked node", () => {
 describe("Unfiltering a linked node", () => {
 
     beforeAll(async (done) => {
-        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"]);
+        await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
@@ -131,7 +132,7 @@ describe("Unfiltering a linked node", () => {
 describe("Filtering a package", () => {
 
     beforeAll(async (done) => {
-        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);
+        await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);
         // $("#package-to-filter").val("foo.bar");
         // $("#add-filter-button").trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
@@ -155,7 +156,7 @@ describe("Filtering a package", () => {
 describe("Unfiltering a package", () => {
 
     beforeAll(async (done) => {
-        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);
+        await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);
         $(".close > span").first().trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
@@ -176,7 +177,7 @@ describe("Unfiltering a package", () => {
 describe("Filtering isolated nodes", () => {
 
     beforeAll(async (done) => {
-        await display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
+        await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
         $("#filter-isolated").trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
@@ -200,9 +201,9 @@ describe("Filtering isolated nodes", () => {
 describe("Filtering nodes that are not hotspots", () => {
 
     beforeAll(async (done) => {
-        await display("tests/data/hotspots.json", "tests/data/stats.json", []);
+        await this.display("tests/data/hotspots.json", "tests/data/stats.json", []);
         $("#hotspots-only-button").trigger("click");
-        setTimeout(() => done(), 700); // wait for onclick event to execute totally
+        setTimeout(() => done(), 800); // wait for onclick event to execute totally
     });
 
     it('five nodes remain', async () => {

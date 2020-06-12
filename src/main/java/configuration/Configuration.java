@@ -26,7 +26,6 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 public class Configuration {
     private static Configuration ourInstance = new Configuration();
@@ -53,19 +52,31 @@ public class Configuration {
     }
 
     public static String getNeo4JBoltAddress() {
-        return properties.getNeo4j().getBoltAddress();
+        return properties.getNeo4j().boltAddress;
     }
 
     public static String getNeo4JUser() {
-        return properties.getNeo4j().getUser();
+        return properties.getNeo4j().user;
     }
 
     public static String getNeo4JPassword() {
-        return properties.getNeo4j().getPassword();
+        return properties.getNeo4j().password;
     }
 
-    public static int getVariantsThreshold() {
-        return properties.getHotspotsParameters().getVariantsThreshold();
+    public static int getSubtypingThreshold() {
+        return properties.getHotspotsParameters().subtypingThreshold;
+    }
+
+    public static int getMethodOverloadingThreshold() {
+        return properties.getHotspotsParameters().methodOverloadingThreshold;
+    }
+
+    public static int getConstructorOverloadingThreshold() {
+        return properties.getHotspotsParameters().constructorOverloadingThreshold;
+    }
+
+    public static int getVPsConcentrationThreshold() {
+        return properties.getHotspotsParameters().VPsConcentrationThreshold;
     }
 
 }

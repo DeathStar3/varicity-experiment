@@ -2,9 +2,9 @@ package configuration;
 
 public class HotspotsParameters {
 
-    public int variantsThreshold;
+    public int subtypingThreshold;
+    public int methodOverloadingThreshold;
+    public int constructorOverloadingThreshold;
+    public int VPsConcentrationThreshold;
 
-    public int getVariantsThreshold() {
-        return variantsThreshold;
-    }
 }

@@ -160,16 +160,16 @@ class Graph {
             this.graph.links = variantsFilter.getFilteredLinksList();
         }
 
-        if (this.filterIsolated) {
-            var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
-            this.graph.nodes = isolatedFilter.getFilteredNodesList();
-            this.graph.links = isolatedFilter.getFilteredLinksList();
-        }
-
         if (this.onlyHotspots) {
             var hotspotsFilter = new HotspotsFilter(this.graph.nodes, this.graph.links);
             this.graph.nodes = hotspotsFilter.getFilteredNodesList();
             this.graph.links = hotspotsFilter.getFilteredLinksList();
+        }
+
+        if (this.filterIsolated) {
+            var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
+            this.graph.nodes = isolatedFilter.getFilteredNodesList();
+            this.graph.links = isolatedFilter.getFilteredLinksList();
         }
 
     }
@@ -359,12 +359,12 @@ class Graph {
     }
 
     setButtonsClickActions(){
-        $(document).on('click', ".list-group-item", e => {
+        $(document).on('click', ".list-group-item", async e => {
             e.preventDefault();
             $('.active').removeClass('active');
         });
 
-        $("#filter-isolated").on('click', async e => {
+        $(document).on('click', "#filter-isolated", async e => {
             e.preventDefault();
             var previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
             sessionStorage.setItem("filteredIsolated", previouslyFiltered ? "false" : "true");
@@ -372,7 +372,7 @@ class Graph {
             await this.displayGraph();
         });
 
-        $("#filter-variants-button").on('click', async e => {
+        $(document).on('click', "#filter-variants-button", async e => {
             e.preventDefault();
             var previouslyFiltered = sessionStorage.getItem("filteredVariants") === "true";
             sessionStorage.setItem("filteredVariants", previouslyFiltered ? "false" : "true");
@@ -380,7 +380,7 @@ class Graph {
             await this.displayGraph();
         });
 
-        $("#hotspots-only-button").on('click', async e => {
+        $(document).on('click', "#hotspots-only-button", async e => {
             e.preventDefault();
             var previouslyFiltered = sessionStorage.getItem("onlyHotspots") === "true";
             sessionStorage.setItem("onlyHotspots", previouslyFiltered ? "false" : "true");

@@ -41,8 +41,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -97,7 +95,10 @@ public class Symfinder {
         visitPackage(classpathPath, files, new FactoryVisitor(neoGraph));
 
         neoGraph.detectVPsAndVariants();
-        neoGraph.detectHotspots(Configuration.getVariantsThreshold());
+        neoGraph.detectHotspotsInSubtyping(Configuration.getSubtypingThreshold());
+        neoGraph.detectHotspotsInMethodOverloading(Configuration.getMethodOverloadingThreshold());
+        neoGraph.detectHotspotsInConstructorOverloading(Configuration.getConstructorOverloadingThreshold());
+        neoGraph.detectHotspotsInVPConcentration(Configuration.getVPsConcentrationThreshold());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods VPs: " + neoGraph.getNbMethodVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors VPs: " + neoGraph.getNbConstructorVPs());
