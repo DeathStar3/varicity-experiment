@@ -39,11 +39,13 @@ jobs:
       script: ./run_integration_tests.sh
     - name: "Acceptance tests on a pilot project"
       script: ./run_acceptance_tests.sh sat4j
-    - stage: "Feature extraction"
-      name: "Sat4j features extractor unit tests"
+    - stage: "Feature mapping"
+      name: "Features extractor unit tests"
       script: docker build -f docker/features-extractor/Dockerfile -t deathstar3/features-extractor:local .
-    - name: "Extracting features from Sat4j"
-      script: ./sat4j-feature-extraction.sh --local
+    - name: "Mapping features from Sat4j"
+      script: ./sat4j-feature-mapping.sh --local
+    - name: "Mapping features from ArgoUML"
+      script: ./argouml-feature-mapping.sh --local
 
 notifications:
   email: false

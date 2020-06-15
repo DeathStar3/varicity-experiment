@@ -5,13 +5,9 @@ from feature_mapper import Mapper, SourceFile, Method, JSONFilter
 
 features_list = argv[1]
 symfinder_json_output = argv[2]
-selected_classes_file = argv[3]
 
 with open(features_list, "r") as fil:
     lines = [line.strip() for line in fil.readlines() if line.startswith("+")]
-
-with open(selected_classes_file, "r") as fil:
-    selected_classes = [line.strip() for line in fil.readlines()]
 
 source_files = []
 methods = []
@@ -53,8 +49,7 @@ else:
 with open(symfinder_json_output, "r") as fil:
     symfinder_output = json.load(fil)
 
-filtered_json = JSONFilter(symfinder_output, selected_classes).get_filtered_json()
-mapper = Mapper(source_files, methods, filtered_json)
+mapper = Mapper(source_files, methods, symfinder_output)
 if len(argv) == 5:
     mapper.make_mapping_with_method_level()
 else:

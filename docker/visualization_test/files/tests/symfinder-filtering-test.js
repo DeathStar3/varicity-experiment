@@ -171,7 +171,7 @@ describe("Unfiltering a package", () => {
 
 });
 
-describe("Filtering isolated nodes", () => {
+xdescribe("Filtering isolated nodes", () => {
 
     beforeAll(async (done) => {
         await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
@@ -195,7 +195,7 @@ describe("Filtering isolated nodes", () => {
 
 });
 
-describe("Filtering nodes that are not hotspots", () => {
+xdescribe("Filtering nodes that are not hotspots", () => {
 
     beforeAll(async (done) => {
         await this.display("tests/data/hotspots.json", "tests/data/stats.json", []);

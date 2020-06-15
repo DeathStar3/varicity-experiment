@@ -204,7 +204,7 @@ public class NeoGraph {
     public void detectHotspotsInVPConcentration(int threshold) {
         submitRequest(String.format("MATCH p = (vp1:VP)-[:EXTENDS|IMPLEMENTS*%d..]->(vp2:VP) " +
                 "FOREACH (n IN nodes(p) | SET n:%s)", threshold - 1, EntityAttribute.HOTSPOT));
-        markHotspotVariantsAsHotspots();
+//        markHotspotVariantsAsHotspots();
     }
 
     public void markHotspotVariantsAsHotspots() {
