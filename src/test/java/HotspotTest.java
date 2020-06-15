@@ -181,6 +181,7 @@ public class HotspotTest extends Neo4jTest {
             graph.linkTwoNodes(vp1, v1, RelationType.EXTENDS);
             graph.linkTwoNodes(vp2, v2, RelationType.EXTENDS);
             graph.detectHotspotsInVPConcentration(2);
+            graph.markHotspotVariantsAsHotspots();
             assertTrue(graph.getNode("Vp1").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
             assertTrue(graph.getNode("Vp2").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
             assertTrue(graph.getNode("V1").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
