@@ -24,7 +24,6 @@ function resetPage() {
     $("#list-tab").empty();
     $("#package-to-filter").val("");
     sessionStorage.clear();
-    d3.selectAll("svg > *").remove();
 }
 
 describe("Filtering an isolated node", () => {
@@ -133,8 +132,6 @@ describe("Filtering a package", () => {
 
     beforeAll(async (done) => {
         await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);
-        // $("#package-to-filter").val("foo.bar");
-        // $("#add-filter-button").trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
 
@@ -178,20 +175,20 @@ describe("Filtering isolated nodes", () => {
 
     beforeAll(async (done) => {
         await this.display("tests/data/graph-to-filter.json", "tests/data/stats.json", []);
-        $("#filter-isolated").trigger("click");
-        setTimeout(() => done(), 700); // wait for onclick event to execute totally
+        await $("#filter-isolated").click();
+        setTimeout(() => done(), 2000); // wait for onclick event to execute totally
     });
 
-    it('two nodes remain', async () => {
-        expect(d3.selectAll('circle').size()).toBe(2);
-    });
-    it('the two nodes are linked', async () => {
+    it('two nodes remain and they are linked', async () => {
+        this.remainingNodes = $("circle").toArray();
+        expect(this.remainingNodes.length).toBe(2);
+
         var linkedNodes = new Set();
         d3.selectAll('line').nodes().forEach(n => {
             linkedNodes.add(n.getAttribute("source"));
             linkedNodes.add(n.getAttribute("target"));
         });
-        expect(d3.selectAll('circle').nodes().every(n => linkedNodes.has(n.getAttribute("name")))).toBe(true);
+        expect(this.remainingNodes.every(n => linkedNodes.has(n.getAttribute("name")))).toBe(true);
     });
 
     afterAll(resetPage);
@@ -202,16 +199,14 @@ describe("Filtering nodes that are not hotspots", () => {
 
     beforeAll(async (done) => {
         await this.display("tests/data/hotspots.json", "tests/data/stats.json", []);
-        $("#hotspots-only-button").trigger("click");
-        setTimeout(() => done(), 800); // wait for onclick event to execute totally
+        await $("#hotspots-only-button").click();
+        setTimeout(() => done(), 2000); // wait for onclick event to execute totally
     });
 
-    it('five nodes remain', async () => {
-        expect(d3.selectAll('circle').size()).toBe(5);
-    });
-
-    it('the five remaining nodes all have the HOTSPOT type', async () => {
-        expect(d3.selectAll('circle').nodes().every(n => n.__data__.types.includes("HOTSPOT"))).toBe(true);
+    it('five nodes remain and they all have the HOTSPOT type', () => {
+        this.remainingNodes = $("circle").toArray();
+        expect(this.remainingNodes.length).toBe(5);
+        expect(this.remainingNodes.every(n => n.__data__.types.includes("HOTSPOT"))).toBe(true);
     });
 
     afterAll(resetPage);

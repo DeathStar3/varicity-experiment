@@ -36,7 +36,6 @@ class Graph {
             sessionStorage.setItem("firstTime", "true");
         }
         this.color = d3.scaleLinear();
-        this.setButtonsClickActions();
     }
 
 
@@ -52,6 +51,7 @@ class Graph {
         this.filterVariants = sessionStorage.getItem("filteredVariants") === "true";
         this.onlyHotspots = sessionStorage.getItem("onlyHotspots") === "true";
         await this.generateGraph();
+        this.setButtonsClickActions();
         return this.graph;
     }
 
@@ -366,7 +366,7 @@ class Graph {
 
         $(document).on('click', "#filter-isolated", async e => {
             e.preventDefault();
-            var previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
+            const previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
             sessionStorage.setItem("filteredIsolated", previouslyFiltered ? "false" : "true");
             $("#filter-isolated").text(previouslyFiltered ? "Unfilter isolated nodes" : "Filter isolated nodes");
             await this.displayGraph();
@@ -374,7 +374,7 @@ class Graph {
 
         $(document).on('click', "#filter-variants-button", async e => {
             e.preventDefault();
-            var previouslyFiltered = sessionStorage.getItem("filteredVariants") === "true";
+            const previouslyFiltered = sessionStorage.getItem("filteredVariants") === "true";
             sessionStorage.setItem("filteredVariants", previouslyFiltered ? "false" : "true");
             $("#filter-variants-button").text(previouslyFiltered ? "Hide variants" : "Show variants");
             await this.displayGraph();
@@ -382,7 +382,7 @@ class Graph {
 
         $(document).on('click', "#hotspots-only-button", async e => {
             e.preventDefault();
-            var previouslyFiltered = sessionStorage.getItem("onlyHotspots") === "true";
+            const previouslyFiltered = sessionStorage.getItem("onlyHotspots") === "true";
             sessionStorage.setItem("onlyHotspots", previouslyFiltered ? "false" : "true");
             $("#hotspots-only-button").text(previouslyFiltered ? "Show all nodes" : "Show only hotspots");
             await this.displayGraph();
