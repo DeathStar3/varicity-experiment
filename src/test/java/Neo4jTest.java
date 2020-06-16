@@ -20,6 +20,7 @@
  */
 
 import neograph.NeoGraph;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.neo4j.driver.AuthTokens;
@@ -48,9 +49,13 @@ public class Neo4jTest {
         graphDatabaseService.executeTransactionally("MATCH (n) DETACH DELETE (n)");
     }
 
+    @AfterAll
+    static void tearDownAll() {
+        embeddedDatabaseServer.close();
+    }
+
     protected void runTest(Consumer<NeoGraph> consumer){
         try (Driver driver = GraphDatabase.driver(embeddedDatabaseServer.boltURI(), Config.defaultConfig())) {
-//        try (Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "root"))) {
             NeoGraph graph = new NeoGraph(driver);
             consumer.accept(graph);
         }

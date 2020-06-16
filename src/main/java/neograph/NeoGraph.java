@@ -187,11 +187,18 @@ public class NeoGraph {
                 "WITH count(v) as cnt, [vp] + collect(v) AS collected " +
                 "WHERE cnt >= $threshold " +
                 "FOREACH (v1 IN collected | SET v1:%s)", EntityAttribute.HOTSPOT), "threshold", threshold);
+//        markHotspotParentsAsHotspots();
+    }
+
+    public void markHotspotParentsAsHotspots() {
+        submitRequest(String.format("MATCH (v:HOTSPOT)<-[:EXTENDS|IMPLEMENTS]-(vp:VP) " +
+                "WITH collect(vp) as collected " +
+                "FOREACH (n IN collected | SET n:%s)", EntityAttribute.HOTSPOT));
     }
 
     public void detectHotspotsInMethodOverloading(int threshold) {
         submitRequest(String.format("MATCH (n) " +
-                "WHERE n.methodVariants >= $threshold " +
+                "WHERE n.methodVPs >= $threshold " +
                 "SET n:%s", EntityAttribute.HOTSPOT), "threshold", threshold);
     }
 
@@ -204,7 +211,7 @@ public class NeoGraph {
     public void detectHotspotsInVPConcentration(int threshold) {
         submitRequest(String.format("MATCH p = (vp1:VP)-[:EXTENDS|IMPLEMENTS*%d..]->(vp2:VP) " +
                 "FOREACH (n IN nodes(p) | SET n:%s)", threshold - 1, EntityAttribute.HOTSPOT));
-//        markHotspotVariantsAsHotspots();
+        markHotspotVariantsAsHotspots();
     }
 
     public void markHotspotVariantsAsHotspots() {

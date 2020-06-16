@@ -7,6 +7,6 @@ hotspots:
   subtypingThreshold: 4
   methodOverloadingThreshold: 5
   constructorOverloadingThreshold: 5
-  VPsConcentrationThreshold: 3
+  VPsConcentrationThreshold: 4
 
 experimentsFile: experiments.yaml

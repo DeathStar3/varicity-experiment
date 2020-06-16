@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,11 @@ public class GetChildrenProcedureTest {
     @AfterEach
     public void tearDown() {
         graphDatabaseService.executeTransactionally("MATCH (n) DETACH DELETE (n)");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        embeddedDatabaseServer.close();
     }
 
     @Test
