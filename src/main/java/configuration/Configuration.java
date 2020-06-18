@@ -67,16 +67,12 @@ public class Configuration {
         return properties.getHotspotsParameters().subtypingThreshold;
     }
 
-    public static int getMethodOverloadingThreshold() {
-        return properties.getHotspotsParameters().methodOverloadingThreshold;
+    public static int getOverloadingThreshold() {
+        return properties.getHotspotsParameters().overloadingThreshold;
     }
 
-    public static int getConstructorOverloadingThreshold() {
-        return properties.getHotspotsParameters().constructorOverloadingThreshold;
-    }
-
-    public static int getVPsConcentrationThreshold() {
-        return properties.getHotspotsParameters().VPsConcentrationThreshold;
-    }
+//    public static int getVPsConcentrationThreshold() {
+//        return properties.getHotspotsParameters().VPsConcentrationThreshold;
+//    }
 
 }

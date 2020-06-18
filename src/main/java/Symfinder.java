@@ -96,9 +96,9 @@ public class Symfinder {
 
         neoGraph.detectVPsAndVariants();
         neoGraph.detectHotspotsInSubtyping(Configuration.getSubtypingThreshold());
-        neoGraph.detectHotspotsInMethodOverloading(Configuration.getMethodOverloadingThreshold());
-        neoGraph.detectHotspotsInConstructorOverloading(Configuration.getConstructorOverloadingThreshold());
-        neoGraph.detectHotspotsInVPConcentration(Configuration.getVPsConcentrationThreshold());
+        neoGraph.detectHotspotsInOverloading(Configuration.getOverloadingThreshold());
+//        neoGraph.detectHotspotsInVPConcentration(Configuration.getVPsConcentrationThreshold());
+        neoGraph.markHotspotVariantsAsHotspots();
         logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods VPs: " + neoGraph.getNbMethodVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors VPs: " + neoGraph.getNbConstructorVPs());

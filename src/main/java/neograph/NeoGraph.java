@@ -196,15 +196,9 @@ public class NeoGraph {
                 "FOREACH (n IN collected | SET n:%s)", EntityAttribute.HOTSPOT));
     }
 
-    public void detectHotspotsInMethodOverloading(int threshold) {
+    public void detectHotspotsInOverloading(int threshold) {
         submitRequest(String.format("MATCH (n) " +
-                "WHERE n.methodVPs >= $threshold " +
-                "SET n:%s", EntityAttribute.HOTSPOT), "threshold", threshold);
-    }
-
-    public void detectHotspotsInConstructorOverloading(int threshold) {
-        submitRequest(String.format("MATCH (n) " +
-                "WHERE n.constructorVariants >= $threshold " +
+                "WHERE n.methodVPs + n.constructorVPs >= $threshold " +
                 "SET n:%s", EntityAttribute.HOTSPOT), "threshold", threshold);
     }
 

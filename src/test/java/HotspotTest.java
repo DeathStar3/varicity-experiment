@@ -22,6 +22,7 @@
 import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.types.Node;
 
@@ -111,7 +112,8 @@ public class HotspotTest extends Neo4jTest {
         runTest(graph -> {
             Node shapeNode = graph.createNode("Shape", EntityType.CLASS);
             graph.setNodeAttribute(shapeNode, "methodVPs", 2);
-            graph.detectHotspotsInMethodOverloading(3);
+            graph.setNodeAttribute(shapeNode, "constructorVPs", 0);
+            graph.detectHotspotsInOverloading(3);
             assertFalse(graph.getNode("Shape").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
         });
     }
@@ -121,17 +123,19 @@ public class HotspotTest extends Neo4jTest {
         runTest(graph -> {
             Node shapeNode = graph.createNode("Shape", EntityType.CLASS);
             graph.setNodeAttribute(shapeNode, "methodVPs", 3);
-            graph.detectHotspotsInMethodOverloading(3);
+            graph.setNodeAttribute(shapeNode, "constructorVPs", 0);
+            graph.detectHotspotsInOverloading(3);
             assertTrue(graph.getNode("Shape").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
         });
     }
 
     @Test
-    public void constructorOverloadingTwoVariantsThresholdThree() {
+    public void constructorOverloadingOneVPThresholdThree() {
         runTest(graph -> {
             Node shapeNode = graph.createNode("Shape", EntityType.CLASS);
-            graph.setNodeAttribute(shapeNode, "constructorVariants", 2);
-            graph.detectHotspotsInConstructorOverloading(3);
+            graph.setNodeAttribute(shapeNode, "methodVPs", 0);
+            graph.setNodeAttribute(shapeNode, "constructorVPs", 1);
+            graph.detectHotspotsInOverloading(3);
             assertFalse(graph.getNode("Shape").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
         });
     }
@@ -140,8 +144,31 @@ public class HotspotTest extends Neo4jTest {
     public void constructorOverloadingThreeVariantsThresholdThree() {
         runTest(graph -> {
             Node shapeNode = graph.createNode("Shape", EntityType.CLASS);
-            graph.setNodeAttribute(shapeNode, "constructorVariants", 3);
-            graph.detectHotspotsInConstructorOverloading(3);
+            graph.setNodeAttribute(shapeNode, "methodVPs", 0);
+            graph.setNodeAttribute(shapeNode, "constructorVPs", 3);
+            graph.detectHotspotsInOverloading(3);
+            assertTrue(graph.getNode("Shape").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
+        });
+    }
+
+    @Test
+    public void mixedOverloadingTwoVPsThresholdThree() {
+        runTest(graph -> {
+            Node shapeNode = graph.createNode("Shape", EntityType.CLASS);
+            graph.setNodeAttribute(shapeNode, "constructorVPs", 1);
+            graph.setNodeAttribute(shapeNode, "methodVPs", 1);
+            graph.detectHotspotsInOverloading(3);
+            assertFalse(graph.getNode("Shape").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
+        });
+    }
+
+    @Test
+    public void mixedOverloadingThreeVPsThresholdThree() {
+        runTest(graph -> {
+            Node shapeNode = graph.createNode("Shape", EntityType.CLASS);
+            graph.setNodeAttribute(shapeNode, "constructorVPs", 2);
+            graph.setNodeAttribute(shapeNode, "methodVPs", 1);
+            graph.detectHotspotsInOverloading(3);
             assertTrue(graph.getNode("Shape").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
         });
     }
@@ -159,10 +186,35 @@ public class HotspotTest extends Neo4jTest {
     }
 
     @Test
+    @Disabled
+    public void VPConcentrationTwoVPsOneMethodLevelThresholdTwo() {
+        runTest(graph -> {
+            Node vp1 = graph.createNode("Vp1", EntityType.CLASS, EntityAttribute.VP);
+            Node vp2 = graph.createNode("Vp2", EntityType.CLASS, EntityAttribute.METHOD_LEVEL_VP);
+            graph.linkTwoNodes(vp1, vp2, RelationType.EXTENDS);
+            graph.detectHotspotsInVPConcentration(2);
+            assertTrue(graph.getNode("Vp1").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
+            assertTrue(graph.getNode("Vp2").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
+        });
+    }
+
+    @Test
     public void VPConcentrationTwoVPsThresholdThree() {
         runTest(graph -> {
             Node vp1 = graph.createNode("Vp1", EntityType.CLASS, EntityAttribute.VP);
             Node vp2 = graph.createNode("Vp2", EntityType.CLASS, EntityAttribute.VP);
+            graph.linkTwoNodes(vp1, vp2, RelationType.EXTENDS);
+            graph.detectHotspotsInVPConcentration(3);
+            assertFalse(graph.getNode("Vp1").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
+            assertFalse(graph.getNode("Vp2").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
+        });
+    }
+
+    @Test
+    public void VPConcentrationTwoVPsOneMethodLevelThresholdThree() {
+        runTest(graph -> {
+            Node vp1 = graph.createNode("Vp1", EntityType.CLASS, EntityAttribute.VP);
+            Node vp2 = graph.createNode("Vp2", EntityType.CLASS, EntityAttribute.METHOD_LEVEL_VP);
             graph.linkTwoNodes(vp1, vp2, RelationType.EXTENDS);
             graph.detectHotspotsInVPConcentration(3);
             assertFalse(graph.getNode("Vp1").get().hasLabel(EntityAttribute.HOTSPOT.toString()));
