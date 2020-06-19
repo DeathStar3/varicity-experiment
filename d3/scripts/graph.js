@@ -32,10 +32,10 @@ class Graph {
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        if(sessionStorage.getItem("firstTime") === null){
-            sessionStorage.setItem("firstTime", "true");
-        }
+        sessionStorage.clear();
+        sessionStorage.setItem("firstTime", "true");
         this.color = d3.scaleLinear();
+        this.setButtonsClickActions();
     }
 
 
@@ -50,8 +50,8 @@ class Graph {
         this.filterIsolated = sessionStorage.getItem("filteredIsolated") === "true";
         this.filterVariants = sessionStorage.getItem("filteredVariants") === "true";
         this.onlyHotspots = sessionStorage.getItem("onlyHotspots") === "true";
+        console.log(this.onlyHotspots);
         await this.generateGraph();
-        this.setButtonsClickActions();
         return this.graph;
     }
 
@@ -160,12 +160,6 @@ class Graph {
             this.graph.links = variantsFilter.getFilteredLinksList();
         }
 
-        if (this.onlyHotspots) {
-            var hotspotsFilter = new HotspotsFilter(this.graph.nodes, this.graph.links);
-            this.graph.nodes = hotspotsFilter.getFilteredNodesList();
-            this.graph.links = hotspotsFilter.getFilteredLinksList();
-        }
-
         if (this.filterIsolated) {
             var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
             this.graph.nodes = isolatedFilter.getFilteredNodesList();
@@ -198,7 +192,12 @@ class Graph {
                 return d.radius
             })
             .attr("fill", (d) => {
-                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
+                let nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants));
+                if (this.onlyHotspots) {
+                    return d.types.includes("HOTSPOT") ? nodeColor : d3.rgb(220, 220, 220);
+                } else {
+                    return nodeColor;
+                }
             })
             .attr("name", function (d) {
                 return d.name
@@ -384,7 +383,7 @@ class Graph {
             e.preventDefault();
             const previouslyFiltered = sessionStorage.getItem("onlyHotspots") === "true";
             sessionStorage.setItem("onlyHotspots", previouslyFiltered ? "false" : "true");
-            $("#hotspots-only-button").text(previouslyFiltered ? "Show all nodes" : "Show only hotspots");
+            $("#hotspots-only-button").text(previouslyFiltered ? "Show hotspots only" : "Show all nodes");
             await this.displayGraph();
         });
 
