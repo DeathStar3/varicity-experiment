@@ -50,8 +50,7 @@ with open(symfinder_json_output, "r") as fil:
     symfinder_output = json.load(fil)
 
 mapper = Mapper(source_files, methods, symfinder_output)
-if len(argv) == 5:
-    mapper.make_mapping_with_method_level()
+if "hotspots" in argv:
+    mapper.make_mapping(hotspots=True)
 else:
-    mapper.make_mapping()
-print(mapper.calculate_measures())
+    mapper.make_mapping(hotspots=False)

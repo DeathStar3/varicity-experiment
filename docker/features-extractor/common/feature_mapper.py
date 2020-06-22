@@ -71,14 +71,16 @@ class JSONFilter:
 class Mapper:
 
     def __init__(self, classes_with_feature, methods_with_feature, json_output):
-        self.classes_list = classes_with_feature
-        self.methods_list = methods_with_feature
-        self.json_output = json_output
+        self.classes_list = classes_with_feature.copy()
+        self.methods_list = methods_with_feature.copy()
+        self.json_output = json_output.copy()
 
-    def make_mapping(self):
-        nodes_list = [n for n in self.json_output["nodes"] if "HOTSPOT" in n["types"]]
+    def make_mapping(self, hotspots=False):
+        nodes_list = [n for n in self.json_output["nodes"] if "HOTSPOT" in n["types"]] \
+            if hotspots else self.json_output["nodes"]
         for node in nodes_list:
             self.map_class(node)
+        print(self.calculate_measures())
 
     def make_mapping_with_method_level(self):
         for node in self.json_output["nodes"]:
@@ -124,7 +126,7 @@ class Mapper:
 class MappingResults:
 
     def __init__(self, assets):
-        self.assets = assets
+        self.assets = assets.copy()
 
     # Number of traces
     def get_number_of_traces(self):
