@@ -151,7 +151,8 @@ public class Symfinder {
 
     private boolean isTestPath(Path path) {
         for (int i = 0 ; i < path.getNameCount() ; i++) {
-            if (path.getName(i).toString().equals("test")) {
+            int finalI = i;
+            if (List.of("test", "tests").stream().anyMatch(s -> path.getName(finalI).toString().equals(s))) {
                 return true;
             }
         }

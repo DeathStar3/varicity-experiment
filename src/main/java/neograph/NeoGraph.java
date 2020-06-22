@@ -509,9 +509,7 @@ public class NeoGraph {
     private String getNodesAsJson() {
         String request =
                 "MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP " +
-                        "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
-                        "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, methods, constructors})";
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
