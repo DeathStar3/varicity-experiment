@@ -62,19 +62,19 @@ public class Symfinder {
     public Symfinder(String sourcePackage, String graphOutputPath) {
         this.sourcePackage = sourcePackage;
         this.graphOutputPath = graphOutputPath;
-        this.neoGraph = new
-                NeoGraph(Configuration.getNeo4JBoltAddress(),
+        this.neoGraph = new NeoGraph(Configuration.getNeo4JBoltAddress(),
                 Configuration.getNeo4JUser(),
                 Configuration.getNeo4JPassword());
     }
 
     public void run() throws IOException {
+        long symfinderStartTime = System.currentTimeMillis();
         logger.log(Level.getLevel("MY_LEVEL"), "Symfinder version: " + System.getenv("SYMFINDER_VERSION"));
         String classpathPath;
 
         classpathPath = System.getenv("JAVA_HOME");
-        if (classpathPath == null) { // default to linux openJDK 8 path
-            classpathPath = "/usr/lib/jvm/java-8-openjdk";
+        if (classpathPath == null) { // default to linux openJDK 11 path
+            classpathPath = "/usr/lib/jvm/java-11-openjdk";
         }
 
         List <File> files = Files.walk(Paths.get(sourcePackage))
@@ -114,6 +114,8 @@ public class Symfinder {
         neoGraph.writeStatisticsFile(graphOutputPath.replace(".json", "-stats.json"));
         logger.debug(neoGraph.generateStatisticsJson());
         neoGraph.closeDriver();
+        long symfinderExecutionTime = System.currentTimeMillis() - symfinderStartTime;
+        logger.printf(Level.getLevel("MY_LEVEL"), "Total execution time: %s", formatExecutionTime(symfinderExecutionTime));
     }
 
     private void visitPackage(String classpathPath, List <File> files, ASTVisitor visitor) throws IOException {
@@ -121,7 +123,7 @@ public class Symfinder {
         for (File file : files) {
             String fileContent = getFileLines(file);
 
-            ASTParser parser = ASTParser.newParser(AST.JLS8);
+            ASTParser parser = ASTParser.newParser(AST.JLS13);
             parser.setResolveBindings(true);
             parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
@@ -135,7 +137,7 @@ public class Symfinder {
             parser.setSource(fileContent.toCharArray());
 
             Map <String, String> options = JavaCore.getOptions();
-            options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+            options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_13);
             parser.setCompilerOptions(options);
 
             CompilationUnit cu = (CompilationUnit) parser.createAST(null);
@@ -175,10 +177,14 @@ public class Symfinder {
         return null;
     }
 
-    private String formatExecutionTime(long execTime) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
-        Date resultdate = new Date(execTime);
-        return sdf.format(resultdate);
+    static String formatExecutionTime(long execTime) {
+        long ms = execTime % 1000;
+        long seconds = (execTime - ms) / 1000;
+        long s = seconds % 60;
+        long minutes = (seconds - s) / 60;
+        long m = minutes % 60;
+        long hours = (minutes - m) / 60;
+        return String.format("%02d:%02d:%02d.%03d", hours, m, s, ms);
     }
 
 }

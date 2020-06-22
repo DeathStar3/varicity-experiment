@@ -23,13 +23,6 @@
 
 class NodesFilter {
 
-    filterButtonSelector;
-    filterInputSelector;
-    filtersListSelector;
-    displayGraphFunction;
-
-    filtersList;
-
     constructor(filterButtonSelector, filterInputSelector, filtersListSelector, nodeFilters, displayGraphFunction) {
         this.filterButtonSelector = filterButtonSelector;
         this.filterInputSelector = filterInputSelector;
@@ -110,6 +103,11 @@ class NodesFilter {
 
     getLinksListWithoutMatchingFilter(listToFilter){
         return listToFilter.filter(l => !this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)) && !this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter)))
+    }
+
+    async addFilterAndRefresh(value){
+        this.addFilter(value);
+        await this.displayGraphFunction();
     }
 
 }

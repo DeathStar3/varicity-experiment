@@ -25,27 +25,6 @@ import {VariantsFilter} from "./variants-filter.js";
 import {IsolatedFilter} from "./isolated-filter.js";
 
 class Graph {
-//	data stores
-    graph;
-    store;
-
-    width;
-    height;
-
-    filterIsolated;
-    filterVariants;
-
-    jsonFile;
-    jsonStatsFile;
-
-
-    filter;
-    packageColorer;
-
-    svg; g; link; node; label;
-
-    //	d3 color scales
-    color;
 
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.jsonFile = jsonFile;
@@ -266,9 +245,10 @@ class Graph {
         //	ENTER + UPDATE
         this.label = this.label.merge(newLabel);
 
-        // d3.selectAll("circle.node").on("click", () => {
-        //     this.filter.addFilter(d3.select(this).attr("name"), );
-        // });
+        d3.selectAll("circle.node").on("contextmenu", async (node) => {
+            d3.event.preventDefault();
+            await this.filter.addFilterAndRefresh(d3.select(node).node().name);
+        });
 
         this.addAdvancedBehaviour(newNode, this.width, this.height);
     }

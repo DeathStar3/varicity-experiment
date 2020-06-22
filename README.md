@@ -3,7 +3,7 @@
 ## Technical Requirements
 
 - Docker
-    - Instructions to install Docker are available [here](https://docs.docker.com/install/#supported-platforms).
+    - Instructions to install Docker are available [here](https://docs.docker.com/get-docker/).
 - Docker Compose
     - Instructions to install Docker Compose are available [here](https://docs.docker.com/compose/install/#install-compose).
 
@@ -62,6 +62,13 @@ This command will analyse the following projects:
 - [JFreeChart 1.5.0](https://github.com/jfree/jfreechart/tree/v1.5.0/src/main/java/org/jfree)
 - [JavaGeom](https://github.com/dlegland/javaGeom/tree/7e5ee60ea9febe2acbadb75557d9659d7fafdd28/src)
 - [ArgoUML](https://github.com/marcusvnac/argouml-spl/tree/bcae37308b13b7ee62da0867a77d21a0141a0f18/src)
+- [Jackson Core](https://github.com/FasterXML/jackson-core/tree/jackson-core-2.10.1/src/main/java/)
+- [ZXing](https://github.com/zxing/zxing/tree/zxing-3.4.0/core/src/main/java/)
+- [Mockito](https://github.com/mockito/mockito/tree/v3.1.12/src/main/java/)
+- [DeepLearning4j](https://github.com/eclipse/deeplearning4j/tree/deeplearning4j-1.0.0-beta5/deeplearning4j/)
+- [RxJava](https://github.com/ReactiveX/RxJava/tree/v2.2.15/src/main/java/)
+- [Guava](https://github.com/google/guava/tree/v28.1/guava/src/com/google/common)
+- [Elasticsearch](https://github.com/elastic/elasticsearch/tree/v6.8.5/server/src/)
 
 You can specify the projects you want to run by passing their names as parameters of the running script, for example
 
@@ -175,12 +182,12 @@ junit:
 
 You can build symfinder's Docker images by running
 
-	```bash
-	./build.sh
-	```
+```bash
+./build.sh
+```
 
 Then, run symfinder using the local images that you just built.
 
-	```bash
-	./run.sh --local
-	```
+```bash
+./run.sh --local
+```
