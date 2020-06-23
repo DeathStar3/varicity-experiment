@@ -51,7 +51,6 @@ class Graph {
         this.filterIsolated = sessionStorage.getItem("filteredIsolated") === "true";
         this.filterVariants = sessionStorage.getItem("filteredVariants") === "true";
         this.onlyHotspots = sessionStorage.getItem("onlyHotspots") === "true";
-        console.log(this.onlyHotspots);
         await this.generateGraph();
         return this.graph;
     }

@@ -177,7 +177,7 @@ describe("Template pattern", () => {
             setTimeout(() => done(), timeout); // wait
         });
 
-        xit('the graph should contain one node', () => {
+        it('the graph should contain one node', () => {
             expect(d3.selectAll('circle').size()).toBe(1);
         });
         it('the node should have a T on it', () => {

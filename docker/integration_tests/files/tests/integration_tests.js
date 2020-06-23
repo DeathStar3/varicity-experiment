@@ -19,6 +19,12 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
+function resetPage() {
+    $("#list-tab").empty();
+    $("#package-to-filter").val("");
+    sessionStorage.clear();
+}
+
 describe("Basic inheritance", () => {
 
     describe("Checking visualization without variants", () => {
@@ -45,7 +51,7 @@ describe("Basic inheritance", () => {
             expect(d3.select('line').attr("source")).toBe("Superclass");
         });
 
-        afterAll(() => sessionStorage.clear())
+        afterAll(resetPage);
 
     });
 
@@ -70,7 +76,7 @@ describe("Basic inheritance", () => {
             expect(d3.selectAll('line').size()).toBe(2);
         });
 
-        afterAll(() => sessionStorage.clear())
+        afterAll(resetPage);
 
     });
 
@@ -194,12 +200,6 @@ describe("Comparing metrics evolution", () => {
         });
         it('TwoConstructorOverloads should have the METHOD_LEVEL_VP label', () => {
             expect(getNodeWithName(jsonData, "TwoConstructorOverloads").types.includes("METHOD_LEVEL_VP")).toBeTruthy();
-        });
-        xit('NoMethodOverload should have 0 method VP', () => {
-            expect(getNodeWithName(jsonData, "NoMethodOverload").methodVPs).toBe(0);
-        });
-        xit('NoMethodOverload should have 0 method variant', () => {
-            expect(getNodeWithName(jsonData, "NoMethodOverload").methodVariants).toBe(0);
         });
         it('OneMethodOverload should have 1 method VP', () => {
             expect(getNodeWithName(jsonData, "OneMethodOverload").methodVPs).toBe(1);
