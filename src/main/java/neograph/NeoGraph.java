@@ -394,7 +394,7 @@ public class NeoGraph {
      * @return Number of class level variants
      */
     public int getNbClassLevelVariants() {
-        return submitRequest("MATCH (c:VARIANT) RETURN (COUNT(DISTINCT c))")
+        return submitRequest("MATCH (c:VARIANT) WHERE NOT c:VP RETURN (COUNT(DISTINCT c))")
                 .get(0).get(0).asInt();
     }
 
