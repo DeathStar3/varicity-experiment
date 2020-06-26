@@ -1,0 +1,10 @@
+- [x] run.sh
+- [ ] Docker compose
+- [ ] Tests unitaires
+- [ ] répertoire docker
+- [ ] répertoire procédure 
+- [ ] répertoire d3
+- [ ] arguments pour la création  d'un objet Symfinder 
+- [ ] répertoire configuration 
+- [ ] Build.sh après chaque modification
+- [ ] Épurer la chaîne pour une compilation plus rapide
