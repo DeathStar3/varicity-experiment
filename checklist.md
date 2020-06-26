@@ -1,10 +1,11 @@
 - [x] run.sh
-- [ ] Docker compose
-- [ ] Tests unitaires
-- [ ] répertoire docker
-- [ ] répertoire procédure 
-- [ ] répertoire d3
-- [ ] arguments pour la création  d'un objet Symfinder 
-- [ ] répertoire configuration 
-- [ ] Build.sh après chaque modification
-- [ ] Épurer la chaîne pour une compilation plus rapide
+- [x] Docker compose
+- [x] Tests unitaires
+- [x] répertoire docker
+- [x] neo4g base de données
+- [x] répertoire procédure 
+- [x] répertoire d3
+- [x] arguments pour la création d'un objet Symfinder 
+- [x] répertoire configuration 
+- [x] Build.sh après chaque modification
+- [x] Épurer la chaîne pour une compilation plus rapide
