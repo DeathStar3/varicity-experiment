@@ -327,6 +327,11 @@ public class NeoGraph {
     }
 
 
+    public int getNbPublicClass(){
+        return submitRequest("MATCH (c:PUBLIC) RETURN (COUNT(DISTINCT c))")
+                .get(0).get(0).asInt();
+    }
+
     /**
      * Get number of subclasses of a class or implementations of an interface
      *

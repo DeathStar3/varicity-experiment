@@ -1,8 +1,6 @@
 package visitors;
 
-import neo4j_types.EntityAttribute;
-import neo4j_types.EntityType;
-import neo4j_types.RelationType;
+import neo4j_types.*;
 import neograph.NeoGraph;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +10,9 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.neo4j.driver.types.Node;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Parses all classes and the methods they contain, and adds them to the database.
@@ -29,20 +30,22 @@ public class ClassesVisitor extends SymfinderVisitor {
         if (super.visit(type)) {
             EntityType nodeType;
             EntityAttribute[] nodeAttributes;
+            EntityVisibility nodeVisibility = Modifier.isPublic(type.getModifiers()) ? EntityVisibility.PUBLIC : EntityVisibility.PRIVATE;
+            NodeType [] nodeTypeList;
             // If the class is abstract
             if (Modifier.isAbstract(type.getModifiers())) {
                 nodeType = EntityType.CLASS;
-                nodeAttributes = new EntityAttribute[]{EntityAttribute.ABSTRACT};
+                nodeTypeList = new NodeType[]{EntityAttribute.ABSTRACT, nodeVisibility};
                 // If the type is an interface
             } else if (type.isInterface()) {
                 nodeType = EntityType.INTERFACE;
-                nodeAttributes = new EntityAttribute[]{};
+                nodeTypeList = new NodeType[]{nodeVisibility};
                 // The type is a class
             } else {
                 nodeType = EntityType.CLASS;
-                nodeAttributes = new EntityAttribute[]{};
+                nodeTypeList = new NodeType[]{nodeVisibility};
             }
-            neoGraph.createNode(type.resolveBinding().getQualifiedName(), nodeType, nodeAttributes);
+            neoGraph.createNode(type.resolveBinding().getQualifiedName(), nodeType, nodeTypeList);
             return true;
         }
         return false;
