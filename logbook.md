@@ -74,7 +74,8 @@ Semaine de démarrage, présentation et compréhension du sujet, définition du 
 
 ### Semaine 2
 Modification du code pour détecter et visualiser les classes et méthodes publiques de JUnit4.
-* **22 Juin 2020**
+* **29 Juin 2020**
 
         - Appel slack d'environ 20 min
         - Mise à jour du logbook
+        - Détection des classes "public" de JUnit4
