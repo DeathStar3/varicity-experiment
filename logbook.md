@@ -24,7 +24,8 @@ La notion de variabilié est une est notion pas évidente à appréhender du pre
 ### Points techniques à explorer
 AST ? Abstract Syntax Trick
 Patron de conception Visiteur
-
+### Notes
+ [Notes de stage (google docs)](https://docs.google.com/document/d/1KXAPch3qqgXP3Mnon6vU7TWw2jPbenwqKQ-6ZYf9UIA/edit?usp=sharing)
 
 ## Organisation du travail
 * Daily Meetings
