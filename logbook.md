@@ -79,3 +79,6 @@ Modification du code pour détecter et visualiser les classes et méthodes publi
         - Appel slack d'environ 20 min
         - Mise à jour du logbook
         - Détection des classes "public" de JUnit4
+
+* **30 Juin 2020**
+        - Détection des méthodes "public" dans les classes "public" de JUnit4
