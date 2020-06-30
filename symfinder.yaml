@@ -3,4 +3,4 @@ neo4j:
   user: neo4j
   password: root
 
-experimentsFile: experiments.yaml
+experimentsFile: test-experiments.yaml

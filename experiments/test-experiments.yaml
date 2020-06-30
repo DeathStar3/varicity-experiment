@@ -52,3 +52,6 @@ vps_and_variants:
 vps_in_different_packages:
   localDirectory: vps_in_different_packages
   sourcePackage: .
+visibilityTest:
+  localDirectory: visibilityTest
+  sourcePackage: .
