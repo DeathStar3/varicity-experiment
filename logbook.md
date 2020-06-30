@@ -82,3 +82,5 @@ Modification du code pour détecter et visualiser les classes et méthodes publi
 
 * **30 Juin 2020**
         - Détection des méthodes "public" dans les classes "public" de JUnit4
+        - Ajout d'un nouveau proljet qui sera utilisé pour tester le fonctonnement de la détection des méthodes
+        -
