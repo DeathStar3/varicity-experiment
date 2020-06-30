@@ -213,6 +213,16 @@ public class NeoGraph {
                 "SET c.methodVPs = 0");
     }
 
+    public void setMethodPublics() {
+        submitRequest("MATCH (c)-->(a) \n" +
+                "WHERE c:PUBLIC AND c:CLASS AND  a:METHOD AND a:PUBLIC\n" +
+                "WITH count(DISTINCT a.name ) AS cnt, c\n" +
+                "SET c.methodsPublics = cnt");
+        submitRequest("MATCH (c:CLASS)\n" +
+                "WHERE NOT EXISTS(c.methodsPublics)\n" +
+                "SET c.methodsPublics = 0");
+    }
+
     /**
      * Sets the number of method variants induced by method VPs.
      * <p>
@@ -416,6 +426,11 @@ public class NeoGraph {
      */
     public int getNbMethodVPs() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodVPs))")
+                .get(0).get(0).asInt();
+    }
+
+    public int getNbPublicMethods(){
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodsPublics))")
                 .get(0).get(0).asInt();
     }
 

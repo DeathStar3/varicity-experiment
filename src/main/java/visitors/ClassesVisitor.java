@@ -29,7 +29,6 @@ public class ClassesVisitor extends SymfinderVisitor {
     public boolean visit(TypeDeclaration type) {
         if (super.visit(type)) {
             EntityType nodeType;
-            EntityAttribute[] nodeAttributes;
             EntityVisibility nodeVisibility = Modifier.isPublic(type.getModifiers()) ? EntityVisibility.PUBLIC : EntityVisibility.PRIVATE;
             NodeType [] nodeTypeList;
             // If the class is abstract
@@ -60,12 +59,34 @@ public class ClassesVisitor extends SymfinderVisitor {
             String methodName = method.getName().getIdentifier();
             String parentClassName = declaringClass.getQualifiedName();
             logger.printf(Level.DEBUG, "Method: %s, parent: %s", methodName, parentClassName);
-            EntityType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
-            Node methodNode = Modifier.isAbstract(method.getModifiers()) ? neoGraph.createNode(methodName, methodType, EntityAttribute.ABSTRACT) : neoGraph.createNode(methodName, methodType);
+            //Node methodNode = Modifier.isAbstract(method.getModifiers()) ? neoGraph.createNode(methodName, methodType, EntityAttribute.ABSTRACT) : neoGraph.createNode(methodName, methodType);
             Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
+            Node methodNode = createMethodNode(declaringClass,method);
             neoGraph.linkTwoNodes(parentClassNode, methodNode, RelationType.METHOD);
         }
         return false;
+    }
+
+    private Node createMethodNode(ITypeBinding declaringClass, MethodDeclaration method){
+        NodeType [] nodeTypeList;
+        String methodName = method.getName().getIdentifier();
+        EntityVisibility nodeVisibility = Modifier.isPublic(method.getModifiers()) ? EntityVisibility.PUBLIC : EntityVisibility.PRIVATE;
+        EntityType methodType = method.isConstructor() ? EntityType.CONSTRUCTOR : EntityType.METHOD;
+
+        if(Modifier.isPublic(declaringClass.getModifiers())){
+            if(Modifier.isAbstract(method.getModifiers())){
+                nodeTypeList = new NodeType[] {EntityAttribute.ABSTRACT,nodeVisibility};
+            }else{
+                nodeTypeList = new NodeType[] {nodeVisibility};
+            }
+        }else{
+            if(Modifier.isAbstract(method.getModifiers())){
+                nodeTypeList = new NodeType[] {EntityAttribute.ABSTRACT};
+            }else{
+                nodeTypeList = new NodeType[] {};
+            }
+        }
+        return neoGraph.createNode(methodName, methodType, nodeTypeList);
     }
 }
 

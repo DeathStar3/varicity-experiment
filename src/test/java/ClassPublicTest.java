@@ -33,4 +33,15 @@ public class ClassPublicTest extends Neo4jTest{
             assertEquals(1, graph.getNbPublicClass());
         });
     }
+
+    @Test
+    public void TwoPublicAndOnePrivateClass() {
+        runTest(graph -> {
+            graph.createNode("Forms", EntityType.CLASS, EntityVisibility.PUBLIC);
+            graph.createNode("Cricle", EntityType.CLASS, EntityVisibility.PRIVATE);
+            graph.createNode("Test2",EntityType.INTERFACE,EntityVisibility.PUBLIC);
+            graph.detectVPsAndVariants();
+            assertEquals(2, graph.getNbPublicClass());
+        });
+    }
 }
