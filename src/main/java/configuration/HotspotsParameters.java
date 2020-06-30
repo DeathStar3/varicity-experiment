@@ -2,8 +2,7 @@ package configuration;
 
 public class HotspotsParameters {
 
-    public int subtypingThreshold;
-    public int overloadingThreshold;
-//    public int VPsConcentrationThreshold;
-
+    public int nbVariantsThreshold;
+    public int nbAggregatedVariantsThreshold;
+    public int nbAggregatedNeighboursThreshold;
 }

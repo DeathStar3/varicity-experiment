@@ -4,8 +4,8 @@ neo4j:
   password: root
 
 hotspots:
-  subtypingThreshold: 4
-  overloadingThreshold: 5
-#  VPsConcentrationThreshold: 30000
+  nbVariantsThreshold: 7
+  nbAggregatedVariantsThreshold: 5
+  nbAggregatedNeighboursThreshold: 3
 
 experimentsFile: experiments.yaml

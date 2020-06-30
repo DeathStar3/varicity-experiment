@@ -95,9 +95,12 @@ public class Symfinder {
         visitPackage(classpathPath, files, new FactoryVisitor(neoGraph));
 
         neoGraph.detectVPsAndVariants();
-        neoGraph.detectHotspotsInSubtyping(Configuration.getSubtypingThreshold());
-        neoGraph.detectHotspotsInOverloading(Configuration.getOverloadingThreshold());
-//        neoGraph.detectHotspotsInVPConcentration(Configuration.getVPsConcentrationThreshold());
+        neoGraph.detectInterestHotspotsInSubtyping(Configuration.getInterestThreshold());
+        neoGraph.detectInterestHotspotsInOverloading(Configuration.getInterestThreshold());
+        neoGraph.detectSingularHotspotsInSubtyping(Configuration.getSingularityThreshold());
+        neoGraph.detectSingularHotspotsInOverloading(Configuration.getSingularityThreshold());
+        neoGraph.detectAggregatedHotspots(Configuration.getAggregatedThreshold());
+        neoGraph.setHotspotLabels();
         neoGraph.markHotspotVariantsAsHotspots();
         logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods VPs: " + neoGraph.getNbMethodVPs());

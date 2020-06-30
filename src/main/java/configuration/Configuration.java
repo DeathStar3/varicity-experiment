@@ -63,16 +63,16 @@ public class Configuration {
         return properties.getNeo4j().password;
     }
 
-    public static int getSubtypingThreshold() {
-        return properties.getHotspotsParameters().subtypingThreshold;
+    public static int getSingularityThreshold() {
+        return properties.getHotspotsParameters().nbVariantsThreshold;
     }
 
-    public static int getOverloadingThreshold() {
-        return properties.getHotspotsParameters().overloadingThreshold;
+    public static int getInterestThreshold() {
+        return properties.getHotspotsParameters().nbAggregatedVariantsThreshold;
     }
 
-//    public static int getVPsConcentrationThreshold() {
-//        return properties.getHotspotsParameters().VPsConcentrationThreshold;
-//    }
+    public static int getAggregatedThreshold() {
+        return properties.getHotspotsParameters().nbAggregatedNeighboursThreshold;
+    }
 
 }
