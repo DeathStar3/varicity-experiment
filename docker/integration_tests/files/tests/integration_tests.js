@@ -249,6 +249,28 @@ describe("Comparing metrics evolution", () => {
 });
 
 
+describe("Tests on visibilityTest", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async (done) => {
+        const [graph, stats] = await getJsonData("tests/data/visibilityTest.json", "tests/data/visibilityTest-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+        done();
+    });
+
+    it('PublicClassPublicMethods should have the ABSTRACT label', () => {
+        expect(getNodeWithName(jsonData, "PublicClassPublicMethods").types.includes("ABSTRACT")).toBeTruthy();
+        /*it('there should be 5 method level VPs', () => {
+            expect(jsonStatsData.methodLevelVPs).toBe(5);*/
+    });
+
+    afterAll(() => sessionStorage.clear())
+
+});
+
+
 function getJsonData(file, statsFile) {
     return new Promise(((resolve, reject) => {
         d3.queue()
