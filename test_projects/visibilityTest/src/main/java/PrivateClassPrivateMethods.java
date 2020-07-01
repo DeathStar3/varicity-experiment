@@ -19,7 +19,7 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-class PrivateClassPrivateMethods {
+abstract class PrivateClassPrivateMethods {
 
 	public PrivateClassPrivateMethods(){
 

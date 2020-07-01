@@ -19,7 +19,7 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-public class PublicClassPublicMethods {
+public abstract class PublicClassPublicMethods {
 
 	public PublicClassPublicMethods(){
 

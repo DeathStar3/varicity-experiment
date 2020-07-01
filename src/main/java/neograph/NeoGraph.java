@@ -24,6 +24,7 @@ package neograph;
 import neo4j_types.*;
 import org.json.JSONObject;
 import org.neo4j.driver.*;
+import org.neo4j.driver.Record;
 import org.neo4j.driver.exceptions.ServiceUnavailableException;
 import org.neo4j.driver.types.MapAccessor;
 import org.neo4j.driver.types.Node;
@@ -559,7 +560,7 @@ public class NeoGraph {
 
     private List <Record> submitRequest(String request, Object... parameters) {
         int count = 0;
-        int maxTries = 10;
+        int maxTries = 50;
         while (true) {
             try (Session session = driver.session()) {
                 try (Transaction tx = session.beginTransaction()) {

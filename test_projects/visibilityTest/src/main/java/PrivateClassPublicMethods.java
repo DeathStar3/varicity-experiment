@@ -19,12 +19,13 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-class PrivateClassPublicMethods {
+abstract class PrivateClassPublicMethods {
 
 	public PrivateClassPublicMethods(){
 
 	}
 	public void run(){
 	}
+
 	
 }
