@@ -262,8 +262,15 @@ describe("Tests on visibilityTest", () => {
 
     it('PublicClassPublicMethods should have the ABSTRACT label', () => {
         expect(getNodeWithName(jsonData, "PublicClassPublicMethods").types.includes("ABSTRACT")).toBeTruthy();
-        /*it('there should be 5 method level VPs', () => {
-            expect(jsonStatsData.methodLevelVPs).toBe(5);*/
+
+    });
+
+    it('there should be 5 method level VPs', () => {
+        expect(jsonStatsData.methodLevelVPs).toBe(0);
+    });
+
+    it('there should be 1 public method ', () => {
+        expect(jsonStatsData.publicsMethods).toBe(1);
     });
 
     afterAll(() => sessionStorage.clear())

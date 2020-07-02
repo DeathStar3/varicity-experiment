@@ -188,6 +188,7 @@ public class NeoGraph {
         setVPLabels();
         setMethodLevelVPLabels();
         setVariantsLabels();
+        setMethodPublics();
     }
 
     /**
@@ -217,7 +218,7 @@ public class NeoGraph {
     public void setMethodPublics() {
         submitRequest("MATCH (c)-->(a) \n" +
                 "WHERE c:PUBLIC AND c:CLASS AND  a:METHOD AND a:PUBLIC\n" +
-                "WITH count(DISTINCT a.name ) AS cnt, c\n" +
+                "WITH count( a.name ) AS cnt, c\n" +
                 "SET c.methodsPublics = cnt");
         submitRequest("MATCH (c:CLASS)\n" +
                 "WHERE NOT EXISTS(c.methodsPublics)\n" +
@@ -528,7 +529,8 @@ public class NeoGraph {
                 .put("methodsVariants", getNbMethodVariants())
                 .put("constructorsVariants", getNbConstructorVariants())
                 .put("methodLevelVariants", getNbMethodLevelVariants())
-                .put("classLevelVariants", getNbClassLevelVariants()).toString();
+                .put("classLevelVariants", getNbClassLevelVariants())
+                .put("publicsMethods", getNbPublicMethods()).toString();
     }
 
     public int getNbNodes() {
