@@ -180,7 +180,10 @@ class Graph {
             .style("stroke-dasharray", function (d) {
                 return d.types.includes("ABSTRACT") ? "3,3" : "3,0"
             })
-            .style("stroke", "black")
+            //.style("stroke", "black")
+            .style("stroke", function (d) {
+                return d.types.includes("PUBLIC") ? "green" : "black";
+            })
             .style("stroke-width", function (d) {
                 return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
             })
