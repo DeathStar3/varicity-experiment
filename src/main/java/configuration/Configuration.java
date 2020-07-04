@@ -67,12 +67,4 @@ public class Configuration {
         return properties.getHotspotsParameters().nbVariantsThreshold;
     }
 
-    public static int getInterestThreshold() {
-        return properties.getHotspotsParameters().nbAggregatedVariantsThreshold;
-    }
-
-    public static int getAggregatedThreshold() {
-        return properties.getHotspotsParameters().nbAggregatedNeighboursThreshold;
-    }
-
 }

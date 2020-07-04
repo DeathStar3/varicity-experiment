@@ -190,14 +190,6 @@ public class NeoGraph {
         detectHotspotsInOverloading("singular", threshold);
     }
 
-    public void detectInterestHotspotsInSubtyping(int threshold) {
-        detectHotspotsInSubtyping(  "interest", threshold);
-    }
-
-    public void detectInterestHotspotsInOverloading(int threshold) {
-        detectHotspotsInOverloading("interest", threshold);
-    }
-
     void detectHotspotsInSubtyping(String property, int threshold) {
         submitRequest(String.format("MATCH (vp:VP)-->(v:VARIANT) " +
                 "WITH count(v) as cnt, [vp] + collect(v) AS collected " +
@@ -207,54 +199,14 @@ public class NeoGraph {
 
     void detectHotspotsInOverloading(String property, int threshold) {
         submitRequest(String.format("MATCH (n) " +
-                "WHERE n.methodVPs + n.constructorVPs >= $threshold " +
+                "WHERE n.methodVariants + n.constructorVariants >= $threshold " +
                 "SET n.%s = TRUE", property), "threshold", threshold);
     }
-
-
-    public void detectAggregatedHotspots(int aggregationThreshold) {
-        submitRequest("MATCH (n) " +
-                        "WHERE n.interest = TRUE AND NOT n:HOTSPOT " +
-                        "CALL apoc.path.subgraphNodes(n, {" +
-                        "   relationshipFilter: \"EXTENDS|IMPLEMENTS\", " +
-                        "   minLevel: 0, " +
-                        "   maxLevel: 4 }) " +
-                        "YIELD node " +
-                        "WITH collect(node) AS nodes, n " +
-                        "SET n.aggregated = " +
-                        "(CASE WHEN size([n2 IN nodes WHERE n2.interest = TRUE]) >= $aggregationThreshold " +
-                        "THEN TRUE ELSE FALSE END)",
-                "aggregationThreshold", aggregationThreshold);
-    }
-
-
-//    public void detectAggregatedHotspots(int aggregationThreshold) {
-//        submitRequest("MATCH (n) " +
-//                        "WHERE n.interest = TRUE AND NOT n:HOTSPOT " +
-//                        "CALL apoc.path.subgraphNodes(n, {" +
-//                        "   relationshipFilter: \"EXTENDS|IMPLEMENTS\", " +
-//                        "   minLevel: 0, " +
-//                        "   maxLevel: 4 }) " +
-//                        "YIELD node " +
-//                        "WITH collect(node) AS nodes, n " +
-//                        "FOREACH(n1 IN nodes | SET n1.aggregated = " +
-//                        "(CASE WHEN (n1.interest = TRUE) AND (size([n2 IN nodes WHERE n2.interest = TRUE]) >= $aggregationThreshold) " +
-//                        "THEN TRUE ELSE FALSE END))",
-//                "aggregationThreshold", aggregationThreshold);
-//    }
-
 
     public void setHotspotLabels() {
         submitRequest(String.format("MATCH (n) " +
                 "WHERE n.singular = TRUE OR n.aggregated = TRUE " +
                 "SET n:%s", EntityAttribute.HOTSPOT));
-    }
-
-
-    public void markHotspotVariantsAsHotspots() {
-        submitRequest(String.format("MATCH (h:HOTSPOT)-[:EXTENDS|IMPLEMENTS]->(v:VARIANT) " +
-                "WITH collect(v) as collected " +
-                "FOREACH (n IN collected | SET n:%s)", EntityAttribute.HOTSPOT));
     }
 
     public void detectVPsAndVariants() {

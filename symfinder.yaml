@@ -5,7 +5,5 @@ neo4j:
 
 hotspots:
   nbVariantsThreshold: 7
-  nbAggregatedVariantsThreshold: 5
-  nbAggregatedNeighboursThreshold: 3
 
 experimentsFile: experiments.yaml
