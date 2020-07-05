@@ -189,6 +189,7 @@ public class NeoGraph {
         setMethodLevelVPLabels();
         setVariantsLabels();
         setMethodPublics();
+        setConstructorPublics();
     }
 
     /**
@@ -260,6 +261,16 @@ public class NeoGraph {
         submitRequest("MATCH (c:CLASS)\n" +
                 "WHERE NOT EXISTS(c.constructorVPs)\n" +
                 "SET c.constructorVPs = 0");
+    }
+
+    public void setConstructorPublics() {
+        submitRequest("MATCH (c)-->(a) \n" +
+                "WHERE c:PUBLIC AND c:CLASS AND  a:CONSTRUCTOR AND a:PUBLIC\n" +
+                "WITH count( a.name ) AS cnt, c\n" +
+                "SET c.constrcutorPublics = cnt");
+        submitRequest("MATCH (c:CLASS)\n" +
+                "WHERE NOT EXISTS(c.constrcutorPublics)\n" +
+                "SET c.constrcutorPublics = 0");
     }
 
     /**
@@ -421,6 +432,11 @@ public class NeoGraph {
                 .get(0).get(0).asInt();
     }
 
+    public int getNbPublicConstructors(){
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constrcutorPublics))")
+                .get(0).get(0).asInt();
+    }
+
     /**
      * Get total number of overloaded methods.
      *
@@ -530,7 +546,8 @@ public class NeoGraph {
                 .put("constructorsVariants", getNbConstructorVariants())
                 .put("methodLevelVariants", getNbMethodLevelVariants())
                 .put("classLevelVariants", getNbClassLevelVariants())
-                .put("publicsMethods", getNbPublicMethods()).toString();
+                .put("publicsMethods", getNbPublicMethods())
+                .put("publicsConstructors",getNbPublicConstructors()).toString();
     }
 
     public int getNbNodes() {
