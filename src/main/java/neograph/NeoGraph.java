@@ -217,13 +217,12 @@ public class NeoGraph {
     }
 
     public void setMethodPublics() {
-        submitRequest("MATCH (c)-->(a) \n" +
-                "WHERE c:PUBLIC AND c:CLASS AND  a:METHOD AND a:PUBLIC\n" +
+        submitRequest("MATCH (c:CLASS:PUBLIC)-->(a:METHOD:PUBLIC)\n" +
                 "WITH count( a.name ) AS cnt, c\n" +
-                "SET c.methodsPublics = cnt");
+                "SET c.methodPublics = cnt");
         submitRequest("MATCH (c:CLASS)\n" +
-                "WHERE NOT EXISTS(c.methodsPublics)\n" +
-                "SET c.methodsPublics = 0");
+                "WHERE NOT EXISTS(c.methodPublics)\n" +
+                "SET c.methodPublics = 0");
     }
 
     /**
@@ -448,7 +447,7 @@ public class NeoGraph {
     }
 
     public int getNbPublicMethods(){
-        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodsPublics))")
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodPublics))")
                 .get(0).get(0).asInt();
     }
 
@@ -513,7 +512,7 @@ public class NeoGraph {
                 "MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP " +
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, methods, constructors})";
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, methods, constructors})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
