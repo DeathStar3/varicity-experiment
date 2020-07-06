@@ -180,10 +180,10 @@ class Graph {
             .style("stroke-dasharray", function (d) {
                 return d.types.includes("ABSTRACT") ? "3,3" : "3,0"
             })
-            //.style("stroke", "black")
-            .style("stroke", function (d) {
+            .style("stroke", "black")
+            /*.style("stroke", function (d) {
                 return d.types.includes("PUBLIC") ? "green" : "black";
-            })
+            })*/
             .style("stroke-width", function (d) {
                 return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
             })
@@ -191,7 +191,12 @@ class Graph {
                 return d.radius
             })
             .attr("fill", (d) => {
-                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
+                if(d.types.includes('INTERFACE')){
+                    return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
+                }else{
+                    return d.types.includes("PUBLIC") ? d3.rgb(this.getNodeColor(d.name, d.types, d.methodPublics)) : d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants))
+                }
+
             })
             .attr("name", function (d) {
                 return d.name
@@ -238,7 +243,7 @@ class Graph {
             .attr("dy", ".35em")
             .attr("name", d => d.name)
             .attr("fill", (d) => {
-                var nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants));
+                var nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants));
                 return contrastColor(nodeColor);
             })
             .text(function (d) {
@@ -344,8 +349,8 @@ class Graph {
         }
     }
 
-    getNodeColor(nodeName, valueOnScale){
-        var upperRangeColor = this.packageColorer.getColorForName(nodeName);
+    getNodeColor(nodeName, nodeType, valueOnScale){
+        var upperRangeColor = this.packageColorer.getColorForName(nodeName, nodeType);
         return this.color
             .range(["#FFFFFF", upperRangeColor])
             .interpolate(d3.interpolateRgb)(valueOnScale);
