@@ -76,20 +76,48 @@ Semaine de démarrage, présentation et compréhension du sujet, définition du 
 Modification du code pour détecter et visualiser les classes et méthodes publiques de JUnit4.
 * **29 Juin 2020**
 
-        - Appel slack d'environ 20 min
-        - Mise à jour du logbook
+        - Daily meeting d'environ 20 min
         - Détection des classes "public" de JUnit4
 
 * **30 Juin 2020**
 
+        - Daily meeting (20 min environ)
         - Détection des méthodes "public" dans les classes "public" de JUnit4
         - Ajout d'un nouveau projet qui sera utilisé pour tester le fonctionnement de la détection des méthodes
-        -
         
 * **01 Juillet 2020** 
 
-        - 
+        - Daily meeting (20 min environ)
+        - Ajout d'un début de test d'intégration permettant la détection de classes et méthodes "public" de junit4
         
 * **02 Juillet 2020**
+
+        - Mise à jour du graphe
+        - Démo + définition du sprint suivant (1h20min environ)
+        
+* **03 Juillet 2020**
+
+        - Daily meeting (20min environ)
+        - Ecriture des US
+        - Partage de connaissances sur les parties individuelles
+        
+* **06 Juillet 2020**
+
+        - Daily meeting (15min environ)
+        - Mise à jour de l'affichage du graphe
+
+* **07 Juillet 2020**
+
+        - 
+        
+* **08 Juillet 2020**
+
+        - 
+        
+* **09 Juillet 2020**
+
+        - 
+        
+* **10 Juillet 2020**
 
         - 
