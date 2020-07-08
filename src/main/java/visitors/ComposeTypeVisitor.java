@@ -29,14 +29,17 @@ public class ComposeTypeVisitor extends ImportsVisitor {
         ITypeBinding fieldTypeBinding = field.getType().resolveBinding();
         if (field.getParent() instanceof TypeDeclaration && fieldTypeBinding != null) { // prevents the case where the field is an enum, which does not bring variability
             fieldDeclaringClassBinding = ((TypeDeclaration) field.getParent()).resolveBinding();
-            String parentClassName = fieldDeclaringClassBinding.getName();
+            String parentClassName = fieldDeclaringClassBinding.getQualifiedName();
             Optional<String> classFullName = getClassFullName(fieldTypeBinding);
             if (classFullName.isPresent()) {
                 Optional <Node> typeNode = neoGraph.getNode(classFullName.get());
+
                 Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, fieldDeclaringClassBinding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
                 typeNode.ifPresent(node -> {
+                    if(node.get("name").asString().contains("junit")){
                         neoGraph.linkTwoNodes(parentClassNode, node, RelationType.INSTANCIATE);
                         logger.log(Level.getLevel("MY_LEVEL"),"\n ************* Attribute "+ node.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n"  );
+                    }
                 });
             }
         }
