@@ -265,7 +265,7 @@ describe("Tests on visibilityTest", () => {
 
     });
 
-    it('there should be 5 method level VPs', () => {
+    it('there is no methodsLevelVPs', () => {
         expect(jsonStatsData.methodLevelVPs).toBe(0);
     });
 

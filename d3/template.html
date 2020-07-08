@@ -71,6 +71,14 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                             <button class="btn btn-outline-dark" type="button" id="add-filter-button">Add new filter</button>
                         </div>
                     </div>
+
+                    <div class="input-group col-4">
+                        <input id="class-to-filter" type="text" class="form-control border-dark" placeholder="Some class from the api"
+                               aria-label="Package/class to filter" aria-describedby="add-filter-button">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-dark" type="button" id="add-class-button">Add a class from the api</button>
+                        </div>
+                    </div>
                     <div class="col-4">
                         <button type="button" class="btn btn-outline-dark" data-toggle="button" aria-pressed="false" id="filter-isolated" value="filter-isolated">Filter isolated nodes</button>
                     </div>
@@ -133,7 +141,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
     var visualization;
 
     async function display(jsonFile, jsonStatsFile) {
-        let filters = [];
+        let filters = [${filters}]
         visualization = new Graph(jsonFile, jsonStatsFile, filters);
         return await visualization.displayGraph();
     }
