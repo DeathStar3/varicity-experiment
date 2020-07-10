@@ -23,6 +23,8 @@ import {NodesFilter} from "./nodes-filter.js";
 import {PackageColorer} from "./package-colorer.js";
 import {VariantsFilter} from "./variants-filter.js";
 import {IsolatedFilter} from "./isolated-filter.js";
+import {ApiFilter} from "./api-filter";
+
 
 class Graph {
 
@@ -31,6 +33,7 @@ class Graph {
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
+        this.apiFilter = new ApiFilter("add-filter-name-button", "#package-to-color","#color-tab", [],async () => await this.displayGraph());
         if(sessionStorage.getItem("firstTime") === null){
             sessionStorage.setItem("firstTime", "true");
         }
@@ -44,6 +47,7 @@ class Graph {
             sessionStorage.setItem("filteredIsolated", "false");
             sessionStorage.setItem("filteredVariants", "true");
             sessionStorage.setItem("firstTime", "false");
+            sessionStorage.setItem("filterApi", "false");
         }
         d3.selectAll("svg > *").remove();
         this.filterIsolated = sessionStorage.getItem("filteredIsolated") === "true";
@@ -161,6 +165,7 @@ class Graph {
             var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
             this.graph.nodes = isolatedFilter.getFilteredNodesList();
         }
+
 
     }
 
