@@ -29,10 +29,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import visitors.ClassesVisitor;
-import visitors.FactoryVisitor;
-import visitors.GraphBuilderVisitor;
-import visitors.StrategyTemplateDecoratorVisitor;
+import visitors.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,6 +92,8 @@ public class Symfinder {
         visitPackage(classpathPath, files, new StrategyTemplateDecoratorVisitor(neoGraph));
         logger.log(Level.getLevel("MY_LEVEL"), "FactoryVisitor");
         visitPackage(classpathPath, files, new FactoryVisitor(neoGraph));
+        logger.log(Level.getLevel("MY_LEVEL"), "FactoryVisitor");
+        visitPackage(classpathPath, files, new ComposeTypeVisitor(neoGraph));
 
         neoGraph.detectVPsAndVariants();
         logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());

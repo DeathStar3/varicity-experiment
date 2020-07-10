@@ -504,7 +504,7 @@ public class NeoGraph {
     }
 
     private String generateVPJsonGraph() {
-        return String.format("{\"nodes\":[%s],\"links\":[%s]}", getNodesAsJson(), getLinksAsJson());
+        return String.format("{\"nodes\":[%s],\"links\":[%s],\"linkscompose\":[%s]}", getNodesAsJson(), getLinksComposeAsJson(), getLinksCompositeAsJson());
     }
 
     private String getNodesAsJson() {
@@ -512,7 +512,8 @@ public class NeoGraph {
                 "MATCH (c) WHERE c:VP OR c:VARIANT OR c:METHOD_LEVEL_VP " +
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, methods, constructors})";
+                        "CALL symfinder.count(ID(c), \"CLASS\") YIELD result as attributes " +
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, methods, constructors, attributes})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
@@ -522,8 +523,19 @@ public class NeoGraph {
                 .collect(Collectors.joining(","));
     }
 
-    private String getLinksAsJson() {
+    private String getLinksComposeAsJson() {
         String request = "MATCH path = (c1:VP)-[r:EXTENDS|IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+        return submitRequest(request)
+                .get(0)
+                .get(0)
+                .asList(MapAccessor::asMap)
+                .stream()
+                .map(o -> new JSONObject(o).toString())
+                .collect(Collectors.joining(","));
+    }
+
+    private String getLinksCompositeAsJson() {
+        String request = "MATCH path = (c1:CLASS)-[r:INSTANCIATE]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
