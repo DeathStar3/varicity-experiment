@@ -23,7 +23,7 @@ import {NodesFilter} from "./nodes-filter.js";
 import {PackageColorer} from "./package-colorer.js";
 import {VariantsFilter} from "./variants-filter.js";
 import {IsolatedFilter} from "./isolated-filter.js";
-import {ApiFilter} from "./api-filter";
+import {ApiFilter} from "./api-filter.js";
 
 
 class Graph {

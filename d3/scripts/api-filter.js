@@ -1,5 +1,5 @@
 
-import {NodesFilter} from "./nodes-filter";
+import {NodesFilter} from "./nodes-filter.js";
 
 /**
  * This filter removes nodes being isolated, meaning that they are not linked to any other node.
