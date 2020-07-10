@@ -185,31 +185,39 @@ class Graph {
             .style("stroke-dasharray", function (d) {
                 return d.types.includes("ABSTRACT") ? "3,3" : "3,0"
             })
-            .style("stroke", "black")
-            /*.style("stroke", function (d) {
+            //.style("stroke", "black")
+            .style("stroke", function (d) {
                 return d.types.includes("PUBLIC") ? "green" : "black";
-            })*/
+            })
             .style("stroke-width", function (d) {
-                return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
+                if(d.types.includes('PUBLIC')){
+                    //return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
+                    //return d.methodPublics;
+                    var temp = d.methodPublics;
+                    return temp < 20 ? 2 : 5;
+                }else{
+                    return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
+                }
             })
             .attr("r", function (d) {
                 return d.radius
             })
             .attr("fill", (d) => {
-                if(d.types.includes('INTERFACE')){
-                    return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
-                }else{
-                    return d.types.includes("PUBLIC") ? d3.rgb(this.getNodeColor(d.name, d.types, d.methodPublics)) : d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants))
-                }
-
+                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
             })
             .attr("name", function (d) {
                 return d.name
             });
 
         newNode.append("title").text(function (d) {
-            return "types: " + d.types + "\n" + "name: " + d.name;
+            return "types: " + d.types + "\n" + "name: " + d.name + "\n" + "number of public methods: " + d.methodPublics;
         });
+        newNode.on("mouseover", function(d) {
+            d3.select(this).style("cursor", "pointer");
+        });
+        /*newNode.on("click", function(){
+            display
+        });*/
 
         //	ENTER + UPDATE
         this.node = this.node.merge(newNode);
@@ -248,7 +256,7 @@ class Graph {
             .attr("dy", ".35em")
             .attr("name", d => d.name)
             .attr("fill", (d) => {
-                var nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants));
+                var nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants));
                 return contrastColor(nodeColor);
             })
             .text(function (d) {
@@ -292,8 +300,8 @@ class Graph {
             //	tick event handler with bounded box
             .on("tick", () => {
                 this.node
-                // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-                // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+                    // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+                    // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
                     .attr("cx", function (d) {
                         return d.x;
                     })
@@ -354,8 +362,8 @@ class Graph {
         }
     }
 
-    getNodeColor(nodeName, nodeType, valueOnScale){
-        var upperRangeColor = this.packageColorer.getColorForName(nodeName, nodeType);
+    getNodeColor(nodeName, valueOnScale){
+        var upperRangeColor = this.packageColorer.getColorForName(nodeName);
         return this.color
             .range(["#FFFFFF", upperRangeColor])
             .interpolate(d3.interpolateRgb)(valueOnScale);
