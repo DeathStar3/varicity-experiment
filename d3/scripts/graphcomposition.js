@@ -28,14 +28,12 @@ import {ApiFilter} from "./api-filter.js";
 
 class Graph {
 
-    nodesList;
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.jsonFile = jsonFile;
-        let node;
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter","#list-tab", [],async () => await this.displayGraph());
+        this.apiFilter = new ApiFilter("add-filter-name-button", "#package-to-color","#color-tab", [],async () => await this.displayGraph());
         if(sessionStorage.getItem("firstTime") === null){
             sessionStorage.setItem("firstTime", "true");
         }
@@ -126,7 +124,7 @@ class Graph {
             "Number of class level variants: " + stats["classLevelVariants"] + "<br>" +
             "Number of method level variants: " + stats["methodLevelVariants"];
 
-        var sort = gr.nodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
+        var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
         this.color.domain([sort[0] - 3, sort[sort.length - 1]]); // TODO deal with magic number
 
         var nodeByID = {};
@@ -134,47 +132,38 @@ class Graph {
         this.graph = gr;
         this.store = $.extend(true, {}, gr);
 
-        this.graph.nodes.forEach(function (n) {
+        this.graph.allnodes.forEach(function (n) {
             n.radius = n.types.includes("CLASS") ? 10 + n.methodVPs : 10;
             nodeByID[n.name] = n;
         });
 
-        this.graph.links.forEach(function (l) {
+        this.graph.linkscompose.forEach(function (l) {
             l.sourceTypes = nodeByID[l.source].types;
             l.targetTypes = nodeByID[l.target].types;
         });
 
-        this.store.nodes.forEach(function (n) {
+        this.store.allnodes.forEach(function (n) {
             n.radius = n.types.includes("CLASS") ? 10 + n.methodVPs : 10;
         });
 
-        this.store.links.forEach(function (l) {
+        this.store.linkscompose.forEach(function (l) {
             l.sourceTypes = nodeByID[l.source].types;
             l.targetTypes = nodeByID[l.target].types;
         });
 
 
-        this.graph.nodes = this.filter.getNodesListWithoutMatchingFilter(gr.nodes);
-        this.graph.links = this.filter.getLinksListWithoutMatchingFilter(gr.links);
-
-        if(this.apiFilter.filtersList.length!== 0){
-            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.nodes);
-            console.log(this.nodesList);
-            //.nodesList.forEach(element );
-
-
-        }
-
+        this.graph.allnodes = this.filter.getNodesListWithoutMatchingFilter(gr.allnodes);
+        this.graph.linkscompose = this.filter.getLinksListWithoutMatchingFilter(gr.linkscompose);
 
         if (this.filterVariants) {
-            var variantsFilter = new VariantsFilter(this.graph.nodes, this.graph.links);
-            this.graph.nodes = variantsFilter.getFilteredNodesList();
-            this.graph.links = variantsFilter.getFilteredLinksList();
+            var variantsFilter = new VariantsFilter(this.graph.allnodes, this.graph.linkscompose);
+            this.graph.allnodes = variantsFilter.getFilteredNodesList();
+            this.graph.linkscompose = variantsFilter.getFilteredLinksList();
         }
 
         if (this.filterIsolated) {
-            var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
-            this.graph.nodes = isolatedFilter.getFilteredNodesList();
+            var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.linkscompose);
+            this.graph.allnodes = isolatedFilter.getFilteredNodesList();
         }
 
 
@@ -185,7 +174,7 @@ class Graph {
     update() {
 
         //	UPDATE
-        this.node = this.node.data(this.graph.nodes, function (d) {
+        this.node = this.node.data(this.graph.allnodes, function (d) {
             return d.name;
         });
         //	EXIT
@@ -210,9 +199,6 @@ class Graph {
                     return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
                 }
             })
-            //.style("stroke", function (d) {
-            //  return this.nodesList.contains(d) ? d3.rgb(255, 255, 255): d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants)) ;
-            //})
             .attr("r", function (d) {
                 return d.radius
             })
@@ -237,14 +223,14 @@ class Graph {
         this.node = this.node.merge(newNode);
 
         //	UPDATE
-        this.link = this.link.data(this.graph.links, function (d) {
+        this.link = this.link.data(this.graph.linkscompose, function (d) {
             return d.name;
         });
         //	EXIT
         this.link.exit().remove();
         //	ENTER
         var newLink = this.link.enter().append("line")
-            .attr("stroke-width", 1)
+            .attr("stroke-dasharray", 10)
             .attr("class", "link")
             .attr("source", d => d.source)
             .attr("target", d => d.target)
@@ -259,7 +245,7 @@ class Graph {
         this.link = this.link.merge(newLink);
 
         //  UPDATE
-        this.label = this.label.data(this.graph.nodes, function (d) {
+        this.label = this.label.data(this.graph.allnodes, function (d) {
             return d.name;
         });
         //	EXIT
@@ -310,7 +296,7 @@ class Graph {
 
         //	update simulation nodes, links, and alpha
         simulation
-            .nodes(this.graph.nodes)
+            .nodes(this.graph.allnodes)
             //	tick event handler with bounded box
             .on("tick", () => {
                 this.node
@@ -347,7 +333,7 @@ class Graph {
             });
 
         simulation.force("link")
-            .links(this.graph.links);
+            .links(this.graph.linkscompose);
 
         simulation.alpha(1).alphaTarget(0).restart();
 

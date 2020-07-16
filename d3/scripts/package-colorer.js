@@ -56,7 +56,7 @@ class PackageColorer extends NodesFilter {
         return "hsl(" + 360 * Math.random() + ',' + 100 + '%,' + 50 + '%)'
     }
 
-    getColorForName(name, types) {
+    getColorForName(name) {
         var colorFromMap = "";
         var colorFilter = "";
         this.packagesMap.forEach((value, key) => {
@@ -66,7 +66,7 @@ class PackageColorer extends NodesFilter {
             }
         });
         if (colorFromMap === "") {
-            return types.includes('PUBLIC') ? "#2FFF00" : "#FF0000";
+            return "#FF0000";
         } else {
             return colorFromMap.toString();
         }
