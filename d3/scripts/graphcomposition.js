@@ -33,7 +33,7 @@ class Graph {
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        this.apiFilter = new ApiFilter("add-filter-name-button", "#package-to-color","#color-tab", [],async () => await this.displayGraph());
+        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter","#list-tab", [],async () => await this.displayGraph());
         if(sessionStorage.getItem("firstTime") === null){
             sessionStorage.setItem("firstTime", "true");
         }
@@ -165,6 +165,7 @@ class Graph {
 
         }
 
+
         if (this.filterVariants) {
             var variantsFilter = new VariantsFilter(this.graph.allnodes, this.graph.linkscompose);
             this.graph.allnodes = variantsFilter.getFilteredNodesList();
@@ -172,7 +173,7 @@ class Graph {
         }
 
         if (this.filterIsolated) {
-            var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.linkscompose);
+            var isolatedFilter = new IsolatedFilter(this.graph.allnodes, this.graph.linkscompose);
             this.graph.allnodes = isolatedFilter.getFilteredNodesList();
         }
 
@@ -181,10 +182,11 @@ class Graph {
 
 
     //	general update pattern for updating the graph
+
     update() {
 
         //	UPDATE
-        this.node = this.node.data(this.graph.allnodes, function (d) {
+        this.node = this.node.data(this.graph.allnodes, function (d, nodeList) {
             return d.name;
         });
         //	EXIT
@@ -200,7 +202,6 @@ class Graph {
             .style("stroke",  (d) => {
                 return  this.nodesList.includes(d) ? d3.rgb(2, 254, 0) : "black";
             })
-
             .style("stroke-width", function (d) {
                 if(d.types.includes('PUBLIC')){
                     //return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
@@ -211,6 +212,9 @@ class Graph {
                     return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
                 }
             })
+            //.style("stroke", function (d) {
+            //  return this.nodesList.contains(d) ? d3.rgb(255, 255, 255): d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants)) ;
+            //})
             .attr("r", function (d) {
                 return d.radius
             })
@@ -242,7 +246,7 @@ class Graph {
         this.link.exit().remove();
         //	ENTER
         var newLink = this.link.enter().append("line")
-            .attr("stroke-dasharray", 10)
+            .attr("stroke-width", 1)
             .attr("class", "link")
             .attr("source", d => d.source)
             .attr("target", d => d.target)
@@ -283,7 +287,11 @@ class Graph {
             await this.filter.addFilterAndRefresh(d3.select(node).node().name);
         });
 
+        //this.nodesList.forEach()
+
         this.addAdvancedBehaviour(newNode, this.width, this.height);
+
+
     }
 
     addAdvancedBehaviour(newNode, width, height) {

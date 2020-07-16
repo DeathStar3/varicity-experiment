@@ -182,7 +182,7 @@ class Graph {
 
 
     //	general update pattern for updating the graph
-    nodesList;
+
     update() {
 
         //	UPDATE
