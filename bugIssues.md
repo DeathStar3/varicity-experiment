@@ -1,4 +1,4 @@
-
+#1
 ### Description du problème
 La solution serait d'augmenter la valeur de `maxTries` qui arrête d'essayer de se connecter après un certain nombre d'essais. 
 
@@ -6,9 +6,7 @@ La solution serait d'augmenter la valeur de `maxTries` qui arrête d'essayer de 
 Lien vers la variable: 
 https://github.com/DeathStar3-projects/symfinder-internal-api/blob/5aca58b6bd3a465ce9b825b38ad97e94e3d20114/src/main/java/neograph/NeoGraph.java#L562
 
-
-
-
+#2
 ### Description du problème
 Le problème survient quand on essaie de stopper (avec un Ctrl+C) le container docker faisant tourner neo4j ou celui de la visualisation.
 La seule solution jusqu'ici est de redémarrer complètement linux, ce qui n'est pas envisageable pour la moindre modification dans le fichier graph.js de d3
@@ -25,8 +23,11 @@ option 3 : Une autre solution que j'ai trouvée si le problème persiste:
 `docker exec -it imageId bash` then issuing `kill 1` command.
 https://github.com/docker/for-linux/issues/254#issuecomment-460070172
 
+option 4:
+Supprimer apparmor, toutes les images, volumes et conteneurs après avoir relancé le service docker.
+Source : https://github.com/opencv/cvat/issues/536
 
-
+#3
 ### Description du problème
 Problème de stockage volume
 

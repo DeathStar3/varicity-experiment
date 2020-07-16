@@ -108,16 +108,61 @@ Modification du code pour détecter et visualiser les classes et méthodes publi
 
 * **07 Juillet 2020**
 
-        - 
+        - Daily meeting (30min environ)
+        - Définition des user stories
         
 * **08 Juillet 2020**
 
-        - 
+        - Daily meeting (37min environ)
+        - Création du fichier d'historique des bugs
+        - Début de l'instanciation du filtre des classes de l'api
+        - Début de l'implémentation de la composition
         
 * **09 Juillet 2020**
 
-        - 
+        - Démo (1h environ)
+        - Présentation d'une nouvelle visu 
+        - Redéfinition des implémentations du sprint en cours :
+            ° Le contour doit être proportionnel aux métriques (nombre de méthodes publiques)
+            ° Nouvelle visualisation: avec toutes les classes:
+                * Les points de variations gardent leurs couleurs
+                * les autres classes en bleu
+                * Les classes étant de l'API gardent un pourtour vert
+                * Les flèches de composition seront réalisées en pointillés dans le sens A->B = A utilise B
+            ° Un filtre qui permet d'avoir une visualisation de certaines classes uniquement et de celles qui leur sont liées (classes spécifiées depuis le  .yaml)
+            ° Faire des tests sur un grand de projets dont il faudra spécifier les classes ou packages représentant l'api
         
 * **10 Juillet 2020**
+
+        - Daily meeting (20min environ)
+        - Redéfinition des user stories
+        - Mise à jour du graphe de visualisation par rapport à la couleur du pourtour
+        
+### Semaine 3
+Rajout d'un nouveau filtre pour distinguer des classes de l'api passées en entrée.
+Implémentation de la composition (Détection de l'utilisation d'une classe de l'api par d'autres classes)
+* **13 Juillet 2020**
+
+        - Daily meeting (15 min environ)
+        - Fix de bugs sur la visualisation
+
+* **14 Juillet 2020** 
+
+        - Day off
+        
+* **15 Juillet 2020**
+
+        - Daily meeting (36 min environ)
+        - Implémentation des flèches en pointillées pour représenter la composition
+        - Finalisation du filtre des classes de l'api
+        
+* **16 Juillet 2020**
+
+        - Daily meeting (30min environ)
+        - Changement du pourtour des classes de l'api en vert
+        - Implémentation de la deuxième visualisation (composition)
+        - 
+        
+* **17 Juillet 2020**
 
         - 
