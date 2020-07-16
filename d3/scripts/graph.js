@@ -28,12 +28,14 @@ import {ApiFilter} from "./api-filter.js";
 
 class Graph {
 
+    nodesList;
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.jsonFile = jsonFile;
+        let node;
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        this.apiFilter = new ApiFilter("add-filter-name-button", "#package-to-color","#color-tab", [],async () => await this.displayGraph());
+        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter","#list-tab", [],async () => await this.displayGraph());
         if(sessionStorage.getItem("firstTime") === null){
             sessionStorage.setItem("firstTime", "true");
         }
@@ -155,6 +157,15 @@ class Graph {
         this.graph.nodes = this.filter.getNodesListWithoutMatchingFilter(gr.nodes);
         this.graph.links = this.filter.getLinksListWithoutMatchingFilter(gr.links);
 
+        if(this.apiFilter.filtersList.length!== 0){
+            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.nodes);
+            console.log(this.nodesList);
+            //.nodesList.forEach(element );
+
+
+        }
+
+
         if (this.filterVariants) {
             var variantsFilter = new VariantsFilter(this.graph.nodes, this.graph.links);
             this.graph.nodes = variantsFilter.getFilteredNodesList();
@@ -199,6 +210,9 @@ class Graph {
                     return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
                 }
             })
+            //.style("stroke", function (d) {
+            //  return this.nodesList.contains(d) ? d3.rgb(255, 255, 255): d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants)) ;
+            //})
             .attr("r", function (d) {
                 return d.radius
             })
