@@ -155,6 +155,16 @@ class Graph {
         this.graph.allnodes = this.filter.getNodesListWithoutMatchingFilter(gr.allnodes);
         this.graph.linkscompose = this.filter.getLinksListWithoutMatchingFilter(gr.linkscompose);
 
+        this.nodesList = [];
+
+        if(this.apiFilter.filtersList.length!== 0){
+            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
+            console.log(this.nodesList);
+            //.nodesList.forEach(element );
+
+
+        }
+
         if (this.filterVariants) {
             var variantsFilter = new VariantsFilter(this.graph.allnodes, this.graph.linkscompose);
             this.graph.allnodes = variantsFilter.getFilteredNodesList();
@@ -186,9 +196,11 @@ class Graph {
                 return d.types.includes("ABSTRACT") ? "3,3" : "3,0"
             })
             //.style("stroke", "black")
-            .style("stroke", function (d) {
-                return d.types.includes("PUBLIC") ? "green" : "black";
+            //On api classes
+            .style("stroke",  (d) => {
+                return  this.nodesList.includes(d) ? d3.rgb(2, 254, 0) : "black";
             })
+
             .style("stroke-width", function (d) {
                 if(d.types.includes('PUBLIC')){
                     //return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
