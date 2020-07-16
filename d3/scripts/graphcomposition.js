@@ -219,7 +219,7 @@ class Graph {
                 return d.radius
             })
             .attr("fill", (d) => {
-                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
+                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : ( d.types.includes("METHOD_LEVEL_VP") || d.types.includes("VARIANT") || d.types.includes("VP") ) ? d3.rgb(this.getNodeColor(d.name, d.constructorVariants)) : d3.rgb(0,0,255);
             })
             .attr("name", function (d) {
                 return d.name
