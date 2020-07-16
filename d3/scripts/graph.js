@@ -28,10 +28,8 @@ import {ApiFilter} from "./api-filter.js";
 
 class Graph {
 
-    nodesList;
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.jsonFile = jsonFile;
-        let node;
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
@@ -157,6 +155,8 @@ class Graph {
         this.graph.nodes = this.filter.getNodesListWithoutMatchingFilter(gr.nodes);
         this.graph.links = this.filter.getLinksListWithoutMatchingFilter(gr.links);
 
+        this.nodesList = [];
+
         if(this.apiFilter.filtersList.length!== 0){
             this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.nodes);
             console.log(this.nodesList);
@@ -182,10 +182,11 @@ class Graph {
 
 
     //	general update pattern for updating the graph
+    nodesList;
     update() {
 
         //	UPDATE
-        this.node = this.node.data(this.graph.nodes, function (d) {
+        this.node = this.node.data(this.graph.nodes, function (d, nodeList) {
             return d.name;
         });
         //	EXIT
@@ -197,8 +198,9 @@ class Graph {
                 return d.types.includes("ABSTRACT") ? "3,3" : "3,0"
             })
             //.style("stroke", "black")
-            .style("stroke", function (d) {
-                return d.types.includes("PUBLIC") ? "green" : "black";
+            //On api classes
+            .style("stroke",  (d) => {
+                return  this.nodesList.includes(d) ? d3.rgb(2, 254, 0) : "black";
             })
             .style("stroke-width", function (d) {
                 if(d.types.includes('PUBLIC')){
@@ -285,7 +287,11 @@ class Graph {
             await this.filter.addFilterAndRefresh(d3.select(node).node().name);
         });
 
+        //this.nodesList.forEach()
+
         this.addAdvancedBehaviour(newNode, this.width, this.height);
+
+
     }
 
     addAdvancedBehaviour(newNode, width, height) {
