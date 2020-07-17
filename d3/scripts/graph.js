@@ -200,14 +200,17 @@ class Graph {
             //.style("stroke", "black")
             //On api classes
             .style("stroke",  (d) => {
-                return  this.nodesList.includes(d) ? d3.rgb(2, 254, 0) : "black";
+                var color =  this.nodesList.includes(d) ? d3.rgb(2, 254, 0) : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
+                //return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
+                return color;
             })
             .style("stroke-width", function (d) {
                 if(d.types.includes('PUBLIC')){
                     //return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
                     //return d.methodPublics;
                     var temp = d.methodPublics;
-                    return temp < 20 ? 2 : 5;
+                    return temp < 5 ? 1 : temp * 0.2;
+                    //return temp * 0.2;
                 }else{
                     return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
                 }
@@ -384,6 +387,14 @@ class Graph {
 
     getNodeColor(nodeName, valueOnScale){
         var upperRangeColor = this.packageColorer.getColorForName(nodeName);
+        return this.color
+            .range(["#FFFFFF", upperRangeColor])
+            .interpolate(d3.interpolateRgb)(valueOnScale);
+    }
+
+    getPerimeterColor(valueOnScale){
+        var upperRangeColor = "#40E0D0";
+        if (valueOnScale === undefined) return upperRangeColor;
         return this.color
             .range(["#FFFFFF", upperRangeColor])
             .interpolate(d3.interpolateRgb)(valueOnScale);
