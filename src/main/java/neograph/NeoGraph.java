@@ -190,6 +190,7 @@ public class NeoGraph {
         setVariantsLabels();
         setMethodPublics();
         setConstructorPublics();
+        setNbComposition();
     }
 
     /**
@@ -291,6 +292,10 @@ public class NeoGraph {
     public void setNbVariantsProperty() {
         submitRequest("MATCH (c)-[:EXTENDS|IMPLEMENTS]->(sc:CLASS) WITH count(sc) AS nbVar, c SET c.classVariants = nbVar");
         submitRequest("MATCH (c) WHERE ((c:CLASS OR c:INTERFACE) AND NOT EXISTS (c.classVariants)) SET c.classVariants = 0");
+    }
+
+    public void setNbComposition(){
+        submitRequest("MATCH (c)-[:INSTANCIATE]->(a) WITH count(a) AS nbComp, c SET c.attributecompose = nbComp");
     }
 
     /**
@@ -489,6 +494,11 @@ public class NeoGraph {
                 .get(0).get(0).asInt();
     }
 
+    public int getNbAttributeComposeClass(){
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.attributecompose))")
+                .get(0).get(0).asInt();
+    }
+
     /**
      * Checks whether two nodes have a direct relationship.
      *
@@ -587,6 +597,9 @@ public class NeoGraph {
 
     public int getNbInheritanceRelationships() {
         return submitRequest("MATCH (n)-[r:EXTENDS|IMPLEMENTS]->() RETURN COUNT(r)").get(0).get(0).asInt();
+    }
+    public int getNbCompositionRelationship(){
+        return submitRequest("MATCH (n) - [r:INSTANCIATE]-> () RETURN COUNT(r)").get(0).get(0).asInt();
     }
 
     public void createClassesIndex() {
