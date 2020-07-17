@@ -36,8 +36,8 @@ public class ComposeTypeVisitor extends ImportsVisitor {
 
                 Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, fieldDeclaringClassBinding.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
                 typeNode.ifPresent(node -> {
-                    if(!node.get("name").asString().contains("java") || !node.get("name").asString().equals("double") || !node.get("name").asString().equals("int")
-                        || !node.get("name").asString().equals("long") || !node.get("name").asString().equals("float") || !node.get("name").asString().equals("boolean")){
+                    if(!(node.get("name").asString().contains("java") || node.get("name").asString().equals("double") || node.get("name").asString().equals("int")
+                        || node.get("name").asString().equals("long") || node.get("name").asString().equals("float") || node.get("name").asString().equals("boolean"))){
                         neoGraph.linkTwoNodes(parentClassNode, node, RelationType.INSTANCIATE);
                         logger.log(Level.getLevel("MY_LEVEL"),"\n ************* Attribute "+ node.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n"  );
                     }
