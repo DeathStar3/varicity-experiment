@@ -249,7 +249,7 @@ class Graph {
         this.link.exit().remove();
         //	ENTER
         var newLink = this.link.enter().append("line")
-            .attr("stroke-width", 1)
+            .attr("stroke-dasharray", 10)
             .attr("class", "link")
             .attr("source", d => d.source)
             .attr("target", d => d.target)
