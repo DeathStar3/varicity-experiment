@@ -161,8 +161,11 @@ Implémentation de la composition (Détection de l'utilisation d'une classe de l
         - Daily meeting (30min environ)
         - Changement du pourtour des classes de l'api en vert
         - Implémentation de la deuxième visualisation (composition)
-        - 
+        - Implémentation des métriques
         
 * **17 Juillet 2020**
 
-        - 
+        - Démo(1h environ)
+        - Mise en sommun des modifications sur la vsualisation
+        - Tests unitaires des fonctionnalités implémentées
+        - Etude de la composition avec JfreeChart
