@@ -48,18 +48,14 @@ PS: La taille du noeud varie en fonction du nombre de méthodes surchargées.
 
 PS: La visibilité publique s'illustre par la couleur Turquoise qui garde sa saturation de base lorsque le pourcentage de méthodes publiques dans la classe est faible.
 Mais qusnd ce pourcentage est élevé, la saturation passe de la turquoise au vert.
-Plus ce pourcentage est élevé, plus le vert devient foncé et ceci, quelque soit la nature de la classe ou même d'une interface (Abstract, ...), du moment qu'elle est publique et contient des méthodes publiques. 
+Plus ce pourcentage est élevé, plus le vert devient foncé et ceci, quelque soit la nature de la classe ou même d'une interface (Abstract, ...), du moment qu'elle est publique et contient des méthodes publiques.
 
-## Point de variation
-* **Non publique**
+* **de l'API**
 <p align="center">
-    <img src="./readme_files/variant_non_public.png"/>
-</p>
+    <img src="./readme_files/class_api.png"/>
+</p> 
 
-* **Publique**
-<p align="center">
-    <img src="./readme_files/variant_public.png"/>
-</p>
+PS: Une classe de l'API est représentée par un noeud dont le pourtour est de couleur vert clair vive pour la distinguer des autres classes. 
 
 ## Interface
 * **Non publique**
@@ -70,6 +66,17 @@ Plus ce pourcentage est élevé, plus le vert devient foncé et ceci, quelque so
 * **Publique**
 <p align="center">
     <img src="./readme_files/interface_public.png"/>
+</p>
+
+## Autres noeuds (ni des points de variation, ni des classes de l'API)
+* **Non publiques**
+<p align="center">
+    <img src="./readme_files/variant_non_public.png"/>
+</p>
+
+* **Publiques**
+<p align="center">
+    <img src="./readme_files/variant_public.png"/>
 </p>
        
 ## Pattern
