@@ -1,14 +1,15 @@
 # Légende actualisée du graphe
 
-### Classe
+## Classe
 * **Sans surcharge de méthodes et/ou constructeurs**
-
+<p align="center">
     <img src="./readme_files/class.png"/>
-
+</p>
 * **Avec surcharge de méthodes**
 <p align="center">
     <img src="./readme_files/class_method_overload.png"/>
 </p>
+PS: La taille du noeud varie en fonction du nombre de méthodes surchargées. 
 
 * **Avec surcharge de constructeurs**
 <p align="center">
@@ -47,7 +48,7 @@ PS: La visibilité publique s'illustre par la couleur Turquoise qui garde sa sat
 Mais qusnd ce pourcentage est élevé, la saturation passe de la turquoise au vert.
 Plus ce pourcentage est élevé, plus le vert devient foncé et ceci, quelque soit la nature de la classe ou même d'une interface (Abstract, ...), du moment qu'elle est publique et contient des méthodes publiques. 
 
-### Point de variation
+## Point de variation
 * **Non publique**
 <p align="center">
     <img src="./readme_files/variant_non_public.png"/>
@@ -58,7 +59,7 @@ Plus ce pourcentage est élevé, plus le vert devient foncé et ceci, quelque so
     <img src="./readme_files/variant_public.png"/>
 </p>
 
-### Interface
+## Interface
 * **Non publique**
 <p align="center">
     <img src="./readme_files/interface.png"/>
@@ -69,7 +70,7 @@ Plus ce pourcentage est élevé, plus le vert devient foncé et ceci, quelque so
     <img src="./readme_files/interface_public.png"/>
 </p>
        
-### Pattern
+## Pattern
 * **Stratey**
 <p align="center">
     <img src="./readme_files/strategy.png"/>
@@ -80,16 +81,16 @@ Plus ce pourcentage est élevé, plus le vert devient foncé et ceci, quelque so
     <img src="./readme_files/factory.png"/>
 </p>
 
-### Héritage
+## Héritage
 * **Symbole**
 <p align="center">
     <img src="./readme_files/inheritance.png"/>
 </p>
-La classe représentée par le noeud rouge foncé hérite la classe représentée par le noeud rouge clair.
+PS: La classe représentée par le noeud rouge foncé hérite la classe représentée par le noeud rouge clair.
 
-### Composition
+## Composition
 * **Symbole**
 <p align="center">
     <img src="./readme_files/composition.png"/>
 </p>
-La classe représentée par le noeud bleu utilise la classe représentée par le noeud rouge. 
+PS: La classe représentée par le noeud bleu utilise la classe représentée par le noeud rouge. 
