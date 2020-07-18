@@ -34,6 +34,7 @@
 
     <modules>
         <module>abstract_decorator</module>
+        <module>attribute_composition</module>
         <module>decorator</module>
         <module>factory</module>
         <module>generics</module>
