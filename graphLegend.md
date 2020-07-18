@@ -5,10 +5,12 @@
 <p align="center">
     <img src="./readme_files/class.png"/>
 </p>
+
 * **Avec surcharge de méthodes**
 <p align="center">
     <img src="./readme_files/class_method_overload.png"/>
 </p>
+
 PS: La taille du noeud varie en fonction du nombre de méthodes surchargées. 
 
 * **Avec surcharge de constructeurs**
