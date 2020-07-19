@@ -10,6 +10,9 @@ factory:
 generic_decorator:
   localDirectory: generic_decorator
   sourcePackage: .
+attribute-composition:
+  localDirectory: attribute-composition
+  sourcePackage: .
 generics:
   localDirectory: generics
   sourcePackage: .
