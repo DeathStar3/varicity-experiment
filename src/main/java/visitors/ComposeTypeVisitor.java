@@ -59,16 +59,19 @@ public class ComposeTypeVisitor extends ImportsVisitor {
                 for (ITypeBinding typeparameter : typeparameters) {
                     logger.log(Level.getLevel("MY_LEVEL"), "\nJE SUIS DANS MA BOUCLE\n");
                     //logger.log(Level.getLevel("MY_LEVEL"), "\n******************* type parameter : " + typeparameter.getQualifiedName() + "***************\n");
-                    Optional <Node> typeNode = neoGraph.getNode(typeparameter.getQualifiedName());
-                    typeNode.ifPresent(node -> {
-                        if(!(node.get("name").asString().contains("java") || node.get("name").asString().equals("double") || node.get("name").asString().equals("int")
-                                || node.get("name").asString().equals("long") || node.get("name").asString().equals("float") || node.get("name").asString().equals("boolean")
-                                || node.get("name").asString().contains("int[]") || node.get("name").asString().contains("double[]") || node.get("name").asString().contains("float[]")
-                                || node.get("name").asString().contains("long[]") || node.get("name").asString().contains("bytes[]") || node.get("name").asString().equals("bytes") || node.get("name").asString().equals("byte"))){
-                            neoGraph.linkTwoNodes(parentClassNode, node, RelationType.INSTANCIATE);
-                            logger.log(Level.getLevel("MY_LEVEL"),"\n ************* Attribute "+ node.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n"  );
-                        }
-                    });
+                    Optional<String> classFullName = getClassFullName(typeparameter);
+                    if (classFullName.isPresent()) {
+                        Optional<Node> typeNode = neoGraph.getNode(classFullName.get());
+                        typeNode.ifPresent(node -> {
+                            if(!(node.get("name").asString().contains("java") || node.get("name").asString().equals("double") || node.get("name").asString().equals("int")
+                                    || node.get("name").asString().equals("long") || node.get("name").asString().equals("float") || node.get("name").asString().equals("boolean")
+                                    || node.get("name").asString().contains("int[]") || node.get("name").asString().contains("double[]") || node.get("name").asString().contains("float[]")
+                                    || node.get("name").asString().contains("long[]") || node.get("name").asString().contains("bytes[]") || node.get("name").asString().equals("bytes") || node.get("name").asString().equals("byte"))){
+                                neoGraph.linkTwoNodes(parentClassNode, node, RelationType.INSTANCIATE);
+                                logger.log(Level.getLevel("MY_LEVEL"),"\n ************* Attribute "+ node.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n"  );
+                            }
+                        });
+                    }
                 }
             }
         }
