@@ -208,6 +208,7 @@ class Graph {
                 if(d.types.includes('PUBLIC')){
                     //return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
                     //return d.methodPublics;
+                    //console.log(d.allMethods);
                     var temp = d.methodPublics;
                     return temp < 5 ? 1 : temp * 0.2;
                     //return temp * 0.2;
@@ -229,7 +230,7 @@ class Graph {
             });
 
         newNode.append("title").text(function (d) {
-            return "types: " + d.types + "\n" + "name: " + d.name + "\n" + "number of public methods: " + d.methodPublics;
+            return d.types.includes('PUBLIC') && d.methodPublics !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.methodPublics/d.allMethods)*100)) + "% of public methods." : "types: " + d.types + "\n" + "name: " + d.name;
         });
         newNode.on("mouseover", function(d) {
             d3.select(this).style("cursor", "pointer");

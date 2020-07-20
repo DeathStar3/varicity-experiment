@@ -191,6 +191,7 @@ public class NeoGraph {
         setMethodPublics();
         setConstructorPublics();
         setNbComposition();
+        setAllMethods();
     }
 
     /**
@@ -217,6 +218,9 @@ public class NeoGraph {
                 "SET c.methodVPs = 0");
     }
 
+    /**
+     * Sets the number of public methods in a public class
+     */
     public void setMethodPublics() {
         submitRequest("MATCH (c:CLASS:PUBLIC)-->(a:METHOD:PUBLIC)\n" +
                 "WITH count( a.name ) AS cnt, c\n" +
@@ -224,6 +228,18 @@ public class NeoGraph {
         submitRequest("MATCH (c:CLASS)\n" +
                 "WHERE NOT EXISTS(c.methodPublics)\n" +
                 "SET c.methodPublics = 0");
+    }
+
+    /**
+     * Sets the number of all methods in a class
+     */
+    public void setAllMethods() {
+        submitRequest("MATCH (c:CLASS)-->(a:METHOD)\n" +
+                "WITH count( a.name ) AS cnt, c\n" +
+                "SET c.allMethods = cnt");
+        submitRequest("MATCH (c:CLASS)\n" +
+                "WHERE NOT EXISTS(c.allMethods)\n" +
+                "SET c.allMethods = 0");
     }
 
     /**
@@ -436,6 +452,11 @@ public class NeoGraph {
                 .get(0).get(0).asInt();
     }
 
+    /**
+     * Get total number of public constructors.
+     *
+     * @return Number of public constructors
+     */
     public int getNbPublicConstructors(){
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constrcutorPublics))")
                 .get(0).get(0).asInt();
@@ -451,8 +472,23 @@ public class NeoGraph {
                 .get(0).get(0).asInt();
     }
 
+    /**
+     * Get total number of public methods.
+     *
+     * @return Number of public methods
+     */
     public int getNbPublicMethods(){
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodPublics))")
+                .get(0).get(0).asInt();
+    }
+
+    /**
+     * Get total number of all methods.
+     *
+     * @return Number of all methods
+     */
+    public int getNbAllMethods(){
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.allMethods))")
                 .get(0).get(0).asInt();
     }
 
@@ -523,7 +559,7 @@ public class NeoGraph {
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "CALL symfinder.count(ID(c), \"CLASS\") YIELD result as attributes " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, methods, constructors, attributes})";
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
@@ -539,7 +575,7 @@ public class NeoGraph {
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "CALL symfinder.count(ID(c), \"CLASS\") YIELD result as attributes " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, methods, constructors, attributes})";
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
@@ -584,6 +620,7 @@ public class NeoGraph {
                 .put("methodLevelVariants", getNbMethodLevelVariants())
                 .put("classLevelVariants", getNbClassLevelVariants())
                 .put("publicsMethods", getNbPublicMethods())
+                .put("allMethods",getNbAllMethods())
                 .put("publicsConstructors",getNbPublicConstructors()).toString();
     }
 

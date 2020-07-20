@@ -229,7 +229,7 @@ class Graph {
             });
 
         newNode.append("title").text(function (d) {
-            return "types: " + d.types + "\n" + "name: " + d.name + "\n" + "number of public methods: " + d.methodPublics;
+            return d.types.includes('PUBLIC') && d.methodPublics !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.methodPublics/d.allMethods)*100)) + "% of public methods." : "types: " + d.types + "\n" + "name: " + d.name;
         });
         newNode.on("mouseover", function(d) {
             d3.select(this).style("cursor", "pointer");
