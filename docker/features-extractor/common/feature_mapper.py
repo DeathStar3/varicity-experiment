@@ -1,4 +1,5 @@
-from functools import reduce
+import json
+import os
 
 from utils import JSONSerializable
 
@@ -82,16 +83,6 @@ class Mapper:
             self.map_class(node)
         print(self.calculate_measures())
 
-    def make_mapping_with_method_level(self):
-        for node in self.json_output["nodes"]:
-            node_name = self.map_class_with_method_level(node)
-            if node["constructors"]:
-                constructor = node["constructors"][0]
-                self.map_method(constructor, node_name)
-            if node["methods"]:
-                for method in node["methods"]:
-                    self.map_method(method, node_name)
-
     def map_class(self, class_object):
         node_name = class_object["name"]
         new_file = SourceFile(node_name)
@@ -102,25 +93,13 @@ class Mapper:
         source_file.variant = "VARIANT" in class_object["types"]
         return node_name
 
-    def map_class_with_method_level(self, class_object):
-        node_name = class_object["name"]
-        new_file = SourceFile(node_name)
-        if new_file not in self.classes_list:
-            self.classes_list.append(new_file)
-        source_file = self.classes_list[self.classes_list.index(new_file)]
-        source_file.vp = "VP" in class_object["types"]
-        source_file.variant = "VARIANT" in class_object["types"]
-        return node_name
-
-    def map_method(self, method, parent_name):
-        if method["number"] > 1:
-            new_method = Method(method["name"], parent_name)
-            if new_method not in self.methods_list:
-                self.methods_list.append(new_method)
-            self.methods_list[self.methods_list.index(new_method)].vp = True
-
     def calculate_measures(self):
         return MappingResults(self.classes_list + self.methods_list)
+
+    def write_traces_file(self):
+        traces_dict = {f.name: list(set(f.features)) for f in self.classes_list}
+        with open("generated_visualizations/data/" + os.environ['PROJECT_DIR'] + "-traces.json", 'w') as fil:
+            fil.write(json.dumps(traces_dict))
 
 
 class MappingResults:

@@ -65,3 +65,4 @@ if "hotspots" in argv:
     mapper.make_mapping(hotspots=True)
 else:
     mapper.make_mapping(hotspots=False)
+mapper.write_traces_file()
