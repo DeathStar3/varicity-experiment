@@ -86,6 +86,13 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                         <ul class="list-group" id="list-tab" role="tablist">
                         </ul>
                     </div>
+
+                    <div class="col-auto mr-auto">
+                        <!--<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>-->
+                        <ul class="list-group" id="list-tab-api" role="tablist">
+                        </ul>
+                    </div>
+
                     <div class="col-4">
                         <p id="statistics"></p>
                     </div>
@@ -141,8 +148,10 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
     var visualization;
 
     async function display(jsonFile, jsonStatsFile) {
-        let filters = [${filters}]
-        visualization = new Graph(jsonFile, jsonStatsFile, filters);
+        let filters = [${filters}];
+        let apiFilters = [${apiFilters}];
+        console.log(apiFilters);
+        visualization = new Graph(jsonFile, jsonStatsFile, filters, apiFilters);
         return await visualization.displayGraph();
     }
 

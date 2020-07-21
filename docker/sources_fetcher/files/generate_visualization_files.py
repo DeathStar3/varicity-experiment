@@ -66,6 +66,7 @@ def generate_visualization_file(xp_codename, xp_config):
                                                                      os.getenv("SYMFINDER_VERSION")),
             jsScriptFile=os.path.join("symfinder.js"),
             filters=",".join(['"' + f + '"' for f in xp_config.get("filters", [])]),
+            apiFilters=",".join(['"' + f + '"' for f in xp_config.get("apiFilters", [])]),
             jsonFile=os.path.join("data", "%s.json" % xp_codename),
             jsonStatsFile=os.path.join("data", "%s-stats.json" % xp_codename),
             jsonMetricsFile=os.path.join("data", "%s-metrics.json" % xp_codename))
@@ -80,6 +81,7 @@ def generate_visualization_file_composition(xp_codename, xp_config):
                                                                      os.getenv("SYMFINDER_VERSION")),
             jsScriptFile=os.path.join("symfinder.js"),
             filters=",".join(['"' + f + '"' for f in xp_config.get("filters", [])]),
+            apiFilters=",".join(['"' + f + '"' for f in xp_config.get("apiFilters", [])]),
             jsonFile=os.path.join("data", "%s.json" % xp_codename),
             jsonStatsFile=os.path.join("data", "%s-stats.json" % xp_codename),
             jsonMetricsFile=os.path.join("data", "%s-metrics.json" % xp_codename))
