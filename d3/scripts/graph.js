@@ -97,24 +97,19 @@ class Graph {
             d3.queue()
                 .defer(d3.json, graph.jsonFile)
                 .defer(d3.json, graph.jsonStatsFile)
-                .defer(d3.json, graph.jsonTracesFile)
-                .await((err, gr, stats, traces) => {
-                    if (err) {
-                        return new Promise((resolve, reject) => {
-                            d3.queue()
-                                .defer(d3.json, graph.jsonFile)
-                                .defer(d3.json, graph.jsonStatsFile)
-                                .await((err, gr, stats) => {
-                                    if (err) throw err;
-                                    graph.displayData(gr, stats);
-                                    graph.update();
-                                    resolve();
-                                });
+                .await((err, gr, stats) => {
+                    if (err) throw err;
+                    d3.queue()
+                        .defer(d3.json, graph.jsonTracesFile)
+                        .await((err, traces) => {
+                            if (err) {
+                                graph.displayData(gr, stats);
+                            } else {
+                                graph.displayData(gr, stats, traces);
+                            }
+                            graph.update();
+                            resolve();
                         });
-                    }
-                    graph.displayData(gr, stats, traces);
-                    graph.update();
-                    resolve();
                 });
         });
 
