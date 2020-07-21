@@ -9,7 +9,13 @@ class ApiFilter extends NodesFilter {
 
     constructor(filterButtonSelector, filterInputSelector, filtersListSelector, nodeFilters, displayGraphFunction) {
         super(filterButtonSelector, filterInputSelector, filtersListSelector, nodeFilters, displayGraphFunction);
+    }
 
+    addFilterTitle(){
+        console.log(this.filtersList);
+        if(this.filtersList.length === 0) {
+            $(this.filtersListSelector).append('<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>');
+        }
     }
 
     addFilteringToButton() {

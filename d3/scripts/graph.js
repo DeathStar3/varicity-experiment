@@ -28,12 +28,14 @@ import {ApiFilter} from "./api-filter.js";
 
 class Graph {
 
-    constructor(jsonFile, jsonStatsFile, nodeFilters) {
+    constructor(jsonFile, jsonStatsFile, nodeFilters, apiFilters) {
+        apiFilters = ["test-1","test-2","test-3","test-4"];
+        //apiFilters = []
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter","#list-tab", [],async () => await this.displayGraph());
+        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter","#list-tab-api", apiFilters,async () => await this.displayGraph());
         if(sessionStorage.getItem("firstTime") === null){
             sessionStorage.setItem("firstTime", "true");
         }
