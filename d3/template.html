@@ -25,7 +25,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
     <meta charset="UTF-8"/>
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-	<link rel="icon" type="image/png" href="symfinder-icon.png">
+    <link rel="icon" type="image/png" href="symfinder-icon.png">
     <title>${title}</title>
 </head>
 <body id="index-body">
@@ -149,8 +149,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
     async function display(jsonFile, jsonStatsFile) {
         let filters = [${filters}]
         let apiFilters = [${apiFilters}]
-        console.log(apiFilters);
-        visualization = new Graph(jsonFile, jsonStatsFile, filters);
+        visualization = new Graph(jsonFile, jsonStatsFile, filters, apiFilters);
         return await visualization.displayGraph();
     }
 

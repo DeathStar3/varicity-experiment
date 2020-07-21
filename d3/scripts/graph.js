@@ -29,7 +29,7 @@ import {ApiFilter} from "./api-filter.js";
 class Graph {
 
     constructor(jsonFile, jsonStatsFile, nodeFilters, apiFilters) {
-        apiFilters = ["test-1","test-2","test-3","test-4"];
+        //apiFilters = ["test-1","test-2","test-3","test-4"];
         //apiFilters = []
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
