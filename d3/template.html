@@ -142,6 +142,8 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 
     async function display(jsonFile, jsonStatsFile) {
         let filters = [${filters}]
+        let apiFilters = [${apiFilters}]
+        console.log(apiFilters);
         visualization = new Graph(jsonFile, jsonStatsFile, filters);
         return await visualization.displayGraph();
     }
