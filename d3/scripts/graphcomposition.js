@@ -156,16 +156,18 @@ class Graph {
         this.graph.linkscompose = this.filter.getLinksListWithoutMatchingFilter(gr.linkscompose);
 
         this.nodesList = [];
+        this.apiList = [];
 
         if(this.apiFilter.filtersList.length!== 0){
             //Filter to found all nodes which are in the api list
             this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
+            this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
             //Found all the links which contains one of the api class as target or sources
             this.hs= this.apiFilter.getLinksListWithMatchingFilter(gr.linkscompose);
             //Found all the nodes which are linked to one of those nodes
             this.hs.forEach(
                 d=>    gr.allnodes.forEach(node =>{ if((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node) ) this.nodesList.push(node) })
-            )
+            );
             console.log(this.nodesList);
             this.graph.allnodes =this.nodesList;
             this.graph.linkscompose =this.hs;
@@ -211,7 +213,7 @@ class Graph {
 
             //On api classes
             .style("stroke",  (d) => {
-                var color =  d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
+                var color =  this.apiList.includes(d) ? d3.rgb(2, 254, 0) : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
                 //return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
                 return color;
             })

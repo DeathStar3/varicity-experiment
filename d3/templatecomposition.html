@@ -84,7 +84,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 
                 <div style="display: flex; justify-content: space-between;">
                     <div>
-                        <button type="button" class="collapsible">Packages filtered ( ? packages)</button>
+                        <button type="button" class="collapsible">Packages filtered ( <b id="output-p"></b> classes packages)</button>
                         <div class="content">
                             <div class="col-auto mr-auto">
                                 <ul class="list-group" id="list-tab" role="tablist">
@@ -93,7 +93,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                         </div>
                     </div>
                     <div>
-                        <button type="button" class="collapsible">Api classes filtered ( ? classes)</button>
+                        <button type="button" class="collapsible">Api classes filtered ( <b id="output"></b> classes api)</button>
                         <div class="content">
                             <div class="col-auto mr-auto">
                                 <!--<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>-->
@@ -193,6 +193,10 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
     async function display(jsonFile, jsonStatsFile) {
         let filters = [${filters}];
         let apiFilters = [${apiFilters}];
+        let lengthOfApiFilters = apiFilters.length;
+        let lengthOfPackage = filters.length;
+        document.getElementById('output-p').innerHTML = lengthOfPackage.toString();
+        document.getElementById('output').innerHTML = lengthOfApiFilters.toString();
         visualization = new Graph(jsonFile, jsonStatsFile, filters, apiFilters);
         return await visualization.displayGraph();
     }
