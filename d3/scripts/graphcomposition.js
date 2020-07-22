@@ -27,6 +27,7 @@ import {ApiFilter} from "./api-filter.js";
 
 
 class Graph {
+    hs;
 
     constructor(jsonFile, jsonStatsFile, nodeFilters, apiFilters) {
         this.jsonFile = jsonFile;
@@ -159,7 +160,8 @@ class Graph {
 
         if(this.apiFilter.filtersList.length!== 0){
             this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
-            console.log(this.nodesList);
+            this.hs= this.apiFilter.getLinksListWithoutMatchingFilter(gr.linkscompose);
+            console.log(this.hs);
             //.nodesList.forEach(element );
 
 

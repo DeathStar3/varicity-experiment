@@ -35,14 +35,14 @@ class NodesFilter {
     }
 
     addFilterTitle(){
-        console.log(this.filtersList);
+        //console.log(this.filtersList);
         if(this.filtersList.length === 0) {
             $(this.filtersListSelector).append('<h5 id="filterTitle" style="text-align: center; font-weight: bold">Packages filtered</h5>');
         }
     }
 
     removeFilterTitle(){
-        console.log(this.filtersList);
+        //console.log(this.filtersList);
         if(this.filtersList.length === 0) {
             $(this.filtersListSelector).empty();
         }
@@ -63,7 +63,7 @@ class NodesFilter {
         $(document).on('click', ".close", async e => {
             e.preventDefault();
             let removedFilter = $(e.target.parentElement.parentElement).attr("id");
-            console.log(removedFilter);
+            //console.log(removedFilter);
             $(e.target.parentElement.parentElement).remove();
             this.removeValue(removedFilter);
             this.removeFilterTitle();
@@ -73,7 +73,7 @@ class NodesFilter {
 
     addFilter(value) {
         if (value) {
-            this.addFilterTitle();
+            //this.addFilterTitle();
             this.addValue(value);
             $(this.filtersListSelector).append(this.getFilterItem(value));
         }
