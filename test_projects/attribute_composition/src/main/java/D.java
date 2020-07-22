@@ -9,4 +9,7 @@ public class D {
 
     }
 
+    public void dclass (A a, B b){
+        System.out.println("je suis dans D");
+    }
 }

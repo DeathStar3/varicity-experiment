@@ -277,6 +277,25 @@ describe("Tests on visibilityTest", () => {
 
 });
 
+describe("Tests on attribute_composition", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async (done) => {
+        const [graph, stats] = await getJsonData("tests/data/attribute_composition.json", "tests/data/attribute_composition-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+        done();
+    });
+
+    it('there 5 composition links', () => {
+        expect(jsonStatsData.nBcompositionClass).toBe(5);
+    });
+
+    afterAll(() => sessionStorage.clear())
+
+});
+
 
 function getJsonData(file, statsFile) {
     return new Promise(((resolve, reject) => {

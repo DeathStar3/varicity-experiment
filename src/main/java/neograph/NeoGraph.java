@@ -559,7 +559,7 @@ public class NeoGraph {
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "CALL symfinder.count(ID(c), \"CLASS\") YIELD result as attributes " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes})";
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes, .attributecompose})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
@@ -575,7 +575,7 @@ public class NeoGraph {
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "CALL symfinder.count(ID(c), \"CLASS\") YIELD result as attributes " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes})";
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes, .attributecompose})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
@@ -621,7 +621,8 @@ public class NeoGraph {
                 .put("classLevelVariants", getNbClassLevelVariants())
                 .put("publicsMethods", getNbPublicMethods())
                 .put("allMethods",getNbAllMethods())
-                .put("publicsConstructors",getNbPublicConstructors()).toString();
+                .put("publicsConstructors",getNbPublicConstructors())
+                .put("nBcompositionClass",getNbAttributeComposeClass()).toString();
     }
 
     public int getNbNodes() {
