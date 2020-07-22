@@ -38,7 +38,7 @@ public class ComposeTypeVisitor extends ImportsVisitor {
                         || node.get("name").asString().contains("int[]") || node.get("name").asString().contains("double[]") || node.get("name").asString().contains("float[]")
                         || node.get("name").asString().contains("long[]") || node.get("name").asString().contains("bytes[]") || node.get("name").asString().equals("bytes") || node.get("name").asString().equals("byte"))){
                         neoGraph.linkTwoNodes(parentClassNode, node, RelationType.INSTANCIATE);
-                        logger.log(Level.getLevel("MY_LEVEL"),"\n ************* Attribute "+ node.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n"  );
+                        //logger.log(Level.getLevel("MY_LEVEL"),"\n ************* Attribute "+ node.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n"  );
                     }
                 });
             }
@@ -56,34 +56,6 @@ public class ComposeTypeVisitor extends ImportsVisitor {
             Node parentClassNode = neoGraph.getOrCreateNode(parentClassName, declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
             int size = typeparameters.length;
 
-            if(method.getBody() != null){
-                List statementList = method.getBody().statements();
-                int sizestatementList = statementList.size();
-                if(sizestatementList != 0){
-                    for (Object o : statementList) {
-                        //logger.log(Level.getLevel("MY_LEVEL"), "\n***********\n" + o.getClass().getName() + " -------\n");
-                        if(o instanceof VariableDeclarationStatement){
-                            VariableDeclarationStatement v = (VariableDeclarationStatement) o ;
-                            ITypeBinding typeBinding = v.getType().resolveBinding();
-                            Optional<String> classFullName = getClassFullName(typeBinding);
-                            //logger.log(Level.getLevel("MY_LEVEL"), "\n***********\n" + v.getType().resolveBinding() + " -------\n");
-                            if (classFullName.isPresent()) {
-                                Optional<Node> typeNode = neoGraph.getNode(classFullName.get());
-                                typeNode.ifPresent(node -> {
-                                    logger.log(Level.getLevel("MY_LEVEL"),"\n ************* Local variable "+ node.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n"  );
-                                    if(!(node.get("name").asString().contains("java") || node.get("name").asString().equals("double") || node.get("name").asString().equals("int")
-                                            || node.get("name").asString().equals("long") || node.get("name").asString().equals("float") || node.get("name").asString().equals("boolean")
-                                            || node.get("name").asString().contains("int[]") || node.get("name").asString().contains("double[]") || node.get("name").asString().contains("float[]")
-                                            || node.get("name").asString().contains("long[]") || node.get("name").asString().contains("bytes[]") || node.get("name").asString().equals("bytes") || node.get("name").asString().equals("byte"))){
-                                        neoGraph.linkTwoNodes(parentClassNode, node, RelationType.INSTANCIATE);
-                                        //logger.log(Level.getLevel("MY_LEVEL"),"\n ************* Local variable "+ node.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n"  );
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-            }
             //logger.log(Level.getLevel("MY_LEVEL"),"\nJE SUIS DANS MA FONCTION\n"+method.getBody().toString()+" -------\n");
             if(size != 0){
                 for (ITypeBinding typeparameter : typeparameters) {
@@ -108,4 +80,6 @@ public class ComposeTypeVisitor extends ImportsVisitor {
         return false;
     }
 
+
 }
+
