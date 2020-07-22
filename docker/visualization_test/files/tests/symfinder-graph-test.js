@@ -122,6 +122,28 @@ describe("Generating different types of nodes", () => {
 
 });
 
+describe("Generating graph with traces", () => {
+
+    beforeAll(async () => {
+        await display("tests/data/project_with_traces.json", "tests/data/project_with_traces-stats.json", []);
+    });
+
+    it('svg should exist', () => {
+        var svg = document.getElementsByTagName('svg');
+        expect(svg).not.toBe(null);
+    });
+    it('Shape, Ellipse and Circle nodes shall have a blue border', () => {
+        expect(d3.select('circle[name = "Shape"]').style("stroke")).toBe("blue");
+        expect(d3.select('circle[name = "Ellipse"]').style("stroke")).toBe("blue");
+        expect(d3.select('circle[name = "Circle"]').style("stroke")).toBe("blue");
+    });
+    it('Square and Triangle nodes shall have a black border', () => {
+        expect(d3.select('circle[name = "Square"]').style("stroke")).toBe("black");
+        expect(d3.select('circle[name = "Triangle"]').style("stroke")).toBe("black");
+    });
+
+});
+
 describe("Testing utils functions : distanceToRed", () => {
 
     it('distance from red to red is 0', () => {
