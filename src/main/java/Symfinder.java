@@ -92,8 +92,10 @@ public class Symfinder {
         visitPackage(classpathPath, files, new StrategyTemplateDecoratorVisitor(neoGraph));
         logger.log(Level.getLevel("MY_LEVEL"), "FactoryVisitor");
         visitPackage(classpathPath, files, new FactoryVisitor(neoGraph));
-        logger.log(Level.getLevel("MY_LEVEL"), "FactoryVisitor");
+        logger.log(Level.getLevel("MY_LEVEL"), "ComposeTypeVisitor");
         visitPackage(classpathPath, files, new ComposeTypeVisitor(neoGraph));
+        /*logger.log(Level.getLevel("MY_LEVEL"), "LocalVariablesVisitor");
+        visitPackage(classpathPath, files, new LocalVariablesVisitor(neoGraph));*/
 
         neoGraph.detectVPsAndVariants();
         logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());
