@@ -14,7 +14,7 @@ class ApiFilter extends NodesFilter {
     addFilterTitle(){
         console.log(this.filtersList);
         if(this.filtersList.length === 0) {
-            $(this.filtersListSelector).append('<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>');
+            $(this.filtersListSelector).append('<h5 id="apiFilterTitle" style="text-align: center; font-weight: bold">Api classes filtered</h5>');
         }
     }
 
@@ -30,6 +30,19 @@ class ApiFilter extends NodesFilter {
         });
 
     }
+
+    getFilterItem(filter) {
+        return '' +
+            '<li class="list-group-item-api d-flex justify-content-between align-items-center" id="' + filter + '" data-toggle="list-tab-api"\n' +
+            '               role="list-tab-api" aria-controls="profile">'
+            + filter +
+            '<button type="button btn-dark" class="close" aria-label="Close">\n' +
+            '  <span aria-hidden="true">&times;</span>\n' +
+            '</button>' +
+            '</li>';
+    }
+
+
 
     getLinksListWithMatchingFilter(listToFilter){
         return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)) || this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter)))

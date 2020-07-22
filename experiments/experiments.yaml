@@ -13,8 +13,6 @@ junit:
   sourcePackage: .
   tagIds:
     - r4.12
-  filters:
-    - org.junit.Assert
   apiFilters:
     - org.junit.Assert
     - org.junit.Assume
