@@ -53,7 +53,7 @@ def generate_visualization_files_for_project(xp_name, xp_config):
             generate_visualization_file_composition(xp_codename, xp_config)
     else:
         generate_visualization_file(xp_name, xp_config)
-        generate_visualization_file_composition(xp_codename, xp_config)
+        generate_visualization_file_composition(xp_name, xp_config)
     generate_index()
 
 
