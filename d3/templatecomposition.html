@@ -81,14 +81,38 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                         <button type="button" class="btn btn-outline-dark" data-toggle="button" aria-pressed="false" id="filter-isolated" value="filter-isolated">Filter isolated nodes</button>
                     </div>
                 </div>
+
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <button type="button" class="collapsible">Packages filtered ( ? packages)</button>
+                        <div class="content">
+                            <div class="col-auto mr-auto">
+                                <ul class="list-group" id="list-tab" role="tablist">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" class="collapsible">Api classes filtered ( ? classes)</button>
+                        <div class="content">
+                            <div class="col-auto mr-auto">
+                                <!--<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>-->
+                                <ul class="list-group" id="list-tab-api" role="tablist">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <p id="statistics"></p>
+                    </div>
+                </div>
+                <!--
                 <div class="row py-4 pl-4 justify-content-between">
                     <div class="col-auto mr-auto">
                         <ul class="list-group" id="list-tab" role="tablist">
                         </ul>
                     </div>
-
                     <div class="col-auto mr-auto">
-                        <!--<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>-->
                         <ul class="list-group" id="list-tab-api" role="tablist">
                         </ul>
                     </div>
@@ -97,6 +121,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                         <p id="statistics"></p>
                     </div>
                 </div>
+                -->
             </div>
         </div>
         <div id="collapseTwo" class="collapse multi-collapse border-white" aria-labelledby="headingTwo">
@@ -140,6 +165,22 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight){
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+</script>
 <script src="scripts/nodes-filter.js" type="module"></script>
 <script src="scripts/api-filter.js" type="module"></script>
 <script type="module">

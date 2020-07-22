@@ -73,7 +73,7 @@ class NodesFilter {
 
     addFilter(value) {
         if (value) {
-            this.addFilterTitle();
+            //this.addFilterTitle();
             this.addValue(value);
             $(this.filtersListSelector).append(this.getFilterItem(value));
         }
