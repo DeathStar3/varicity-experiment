@@ -288,8 +288,8 @@ describe("Tests on attribute_composition", () => {
         done();
     });
 
-    it('there 5 composition links', () => {
-        expect(jsonStatsData.nBcompositionClass).toBe(5);
+    it('there are 6 composition links', () => {
+        expect(jsonStatsData.nBcompositionClass).toBe(6);
     });
 
     afterAll(() => sessionStorage.clear())

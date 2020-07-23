@@ -1,5 +1,7 @@
 package visitors;
 
+import neo4j_types.DesignPatternType;
+import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
 import neograph.NeoGraph;
@@ -76,10 +78,28 @@ public class ComposeTypeVisitor extends ImportsVisitor {
                     }
                 }
             }
+            ananlyzeReturnedTypeOfMethod(method,parentClassNode);
         }
         return false;
     }
 
+    private void ananlyzeReturnedTypeOfMethod(MethodDeclaration methodDeclaration, Node parentClassNode) {
+        if (methodDeclaration != null && !methodDeclaration.isConstructor() && methodDeclaration.getReturnType2().resolveBinding() != null && methodDeclaration.resolveBinding() != null) {
+            String returnedType = methodDeclaration.getReturnType2().resolveBinding().getQualifiedName();
+            Node returnedTypeNode = neoGraph.getOrCreateNode(returnedType, methodDeclaration.getReturnType2().resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
 
+            if (!(returnedTypeNode.get("name").asString().contains("java") || returnedTypeNode.get("name").asString().equals("double") || returnedTypeNode.get("name").asString().equals("int")
+                    || returnedTypeNode.get("name").asString().equals("long") || returnedTypeNode.get("name").asString().equals("float") || returnedTypeNode.get("name").asString().equals("boolean")
+                    || returnedTypeNode.get("name").asString().contains("int[]") || returnedTypeNode.get("name").asString().contains("double[]") || returnedTypeNode.get("name").asString().contains("float[]")
+                    || returnedTypeNode.get("name").asString().contains("long[]") || returnedTypeNode.get("name").asString().contains("bytes[]") || returnedTypeNode.get("name").asString().equals("bytes")
+                    || returnedTypeNode.get("name").asString().equals("byte") || returnedTypeNode.get("name").asString().equals("void"))) {
+                if (!returnedTypeNode.get("name").asString().equals(parentClassNode.get("name").asString())) {
+                    neoGraph.linkTwoNodes(parentClassNode, returnedTypeNode, RelationType.INSTANCIATE);
+                    logger.log(Level.getLevel("MY_LEVEL"), "\n ************* ReturnefType " + returnedTypeNode.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n");
+                }
+
+            }
+        }
+    }
 }
 

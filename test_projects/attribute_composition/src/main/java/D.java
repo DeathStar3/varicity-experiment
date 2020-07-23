@@ -10,4 +10,9 @@ public class D {
     public void dclass (A a, B b){
         System.out.println("je suis dans D");
     }
+
+    public A printA (){
+        System.out.println("je retourne A");
+        return new A();
+    }
 }
