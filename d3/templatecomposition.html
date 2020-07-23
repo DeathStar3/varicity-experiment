@@ -82,22 +82,22 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between;">
+                <div class="row py-4 pl-4 justify-content-between"> <!--style="display: flex; justify-content: space-between;"-->
                     <div>
-                        <button type="button" class="collapsible">Packages filtered ( <b id="output-p"></b> classes packages)</button>
+                        <button type="button" class="collapsible">Packages filtered (<b id="output-p"></b> packages)</button>
                         <div class="content">
-                            <div class="col-auto mr-auto">
+                            <div class="col-auto mr-auto" style="padding: 1em">
                                 <ul class="list-group" id="list-tab" role="tablist">
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div>
-                        <button type="button" class="collapsible">Api classes filtered ( <b id="output"></b> classes api)</button>
+                        <button type="button" class="collapsible">Api classes filtered (<b id="output"></b> classes)</button>
                         <div class="content">
-                            <div class="col-auto mr-auto">
+                            <div class="col-auto mr-auto" style="padding: 1em">
                                 <!--<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>-->
-                                <ul class="list-group-api" id="list-tab-api" role="tablist">
+                                <ul class="list-group" id="list-tab-api" role="tablist">
                                 </ul>
                             </div>
                         </div>

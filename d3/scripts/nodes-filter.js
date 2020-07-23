@@ -41,6 +41,10 @@ class NodesFilter {
         }
     }
 
+    updateFiltersNumber(){
+        document.getElementById('output-p').innerHTML = this.filtersList.length.toString();
+    }
+
     removeFilterTitle(){
         //console.log(this.filtersList);
         if(this.filtersList.length === 0) {
@@ -60,13 +64,13 @@ class NodesFilter {
     }
 
     addCapacityToRemoveFilter(){
-        $(document).on('click', ".close", async e => {
+        $(document).on('click', "#close-package", async e => {
             e.preventDefault();
             let removedFilter = $(e.target.parentElement.parentElement).attr("id");
             //console.log(removedFilter);
             $(e.target.parentElement.parentElement).remove();
             this.removeValue(removedFilter);
-            this.removeFilterTitle();
+            //this.removeFilterTitle();
             await this.displayGraphFunction();
         });
     }
@@ -81,10 +85,14 @@ class NodesFilter {
 
     addValue(value) {
         this.filtersList.push(value);
+        //console.log(this.filtersList.length.toString());
+        this.updateFiltersNumber();
     }
 
     removeValue(value) {
         this.filtersList.splice(this.filtersList.indexOf(value), 1);
+        //console.log(this.filtersList.length.toString());
+        this.updateFiltersNumber();
     }
 
     getFilterItem(filter) {
@@ -92,7 +100,7 @@ class NodesFilter {
             '<li class="list-group-item d-flex justify-content-between align-items-center" id="' + filter + '" data-toggle="list"\n' +
             '               role="tab" aria-controls="profile">'
             + filter +
-            '<button type="button btn-dark" class="close" aria-label="Close">\n' +
+            '<button id="close-package" type="button btn-dark" class="close" aria-label="Close">\n' +
             '  <span aria-hidden="true">&times;</span>\n' +
             '</button>' +
             '</li>';

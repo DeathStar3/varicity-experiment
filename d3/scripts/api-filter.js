@@ -38,6 +38,10 @@ class ApiFilter extends NodesFilter {
         }
     }
 
+    updateFiltersNumber(){
+        document.getElementById('output').innerHTML = this.filtersList.length.toString();
+    }
+
     addFilteringToButton() {
         $(this.filterButtonSelector).on('click', async e => {
             e.preventDefault();
@@ -48,15 +52,26 @@ class ApiFilter extends NodesFilter {
             as.forEach(element=> this.addFilter(element.trim()));
             await this.displayGraphFunction();
         });
+    }
 
+    addCapacityToRemoveFilter(){
+        $(document).on('click', "#close-api", async e => {
+            e.preventDefault();
+            let removedFilter = $(e.target.parentElement.parentElement).attr("id");
+            //console.log(removedFilter);
+            $(e.target.parentElement.parentElement).remove();
+            this.removeValue(removedFilter);
+            //this.removeFilterTitle();
+            await this.displayGraphFunction();
+        });
     }
 
     getFilterItem(filter) {
         return '' +
-            '<li class="list-group-item-api d-flex justify-content-between align-items-center" id="' + filter + '" data-toggle="list-tab-api"\n' +
-            '               role="list-tab-api" aria-controls="profile">'
+            '<li class="list-group-item d-flex justify-content-between align-items-center" id="' + filter + '" data-toggle="list"\n' +
+            '               role="tab" aria-controls="profile">'
             + filter +
-            '<button type="button btn-dark" class="close" aria-label="Close">\n' +
+            '<button id="close-api" type="button btn-dark" class="close" aria-label="Close">\n' +
             '  <span aria-hidden="true">&times;</span>\n' +
             '</button>' +
             '</li>';

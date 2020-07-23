@@ -419,11 +419,6 @@ class Graph {
             $('.active').removeClass('active');
         });
 
-        $(document).on('click', ".list-group-item-api", e => {
-            e.preventDefault();
-            $('.active').removeClass('active');
-        });
-
         $("#filter-isolated").on('click', async e => {
             e.preventDefault();
             var previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
