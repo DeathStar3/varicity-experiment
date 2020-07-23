@@ -277,7 +277,7 @@ describe("Tests on visibilityTest", () => {
 
 });
 
-/*describe("Tests on attribute_composition", () => {
+describe("Tests on attribute_composition", () => {
 
     var jsonData, jsonStatsData;
 
@@ -294,7 +294,7 @@ describe("Tests on visibilityTest", () => {
 
     afterAll(() => sessionStorage.clear())
 
-});*/
+});
 
 
 function getJsonData(file, statsFile) {
