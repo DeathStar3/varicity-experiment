@@ -47,6 +47,11 @@ jfreechart:
     - org.jfree.chart.util.PublicCloneable
     - org.jfree.chart.event
     - org.jfree.data.general
+  apiFilters:
+    - org.jfree.chart.ChartFactory
+    - org.jfree.chart.plot.CategoryPlot
+    - org.jfree.chart.plot.XYPlot
+    - org.jfree.chart.renderer.AbstractRenderer
 javaGeom:
   repositoryUrl: https://github.com/dlegland/javaGeom
   sourcePackage: .

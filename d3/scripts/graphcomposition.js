@@ -213,7 +213,7 @@ class Graph {
 
             //On api classes
             .style("stroke",  (d) => {
-                var color =  this.apiList.includes(d) ? d3.rgb(2, 254, 0) : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
+                var color =  this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
                 //return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
                 return color;
             })
@@ -235,7 +235,7 @@ class Graph {
                 return d.radius
             })
             .attr("fill", (d) => {
-                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : ( d.types.includes("METHOD_LEVEL_VP") || d.types.includes("VARIANT") || d.types.includes("VP") ) ? d3.rgb(this.getNodeColor(d.name, d.constructorVariants)) : d3.rgb(0,0,255);
+                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : ( d.types.includes("METHOD_LEVEL_VP") || d.types.includes("VARIANT") || d.types.includes("VP") ) ? d3.rgb(this.getNodeColor(d.name, d.constructorVariants)) : '#dddddd';
             })
             .attr("name", function (d) {
                 return d.name

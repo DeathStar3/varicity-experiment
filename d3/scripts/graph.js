@@ -160,17 +160,17 @@ class Graph {
 
         if(this.apiFilter.filtersList.length!== 0){
             //Filter to found all nodes which are in the api list
-            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
-            this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
+            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.nodes);
+            this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.nodes);
             //Found all the links which contains one of the api class as target or sources
-            this.hs= this.apiFilter.getLinksListWithMatchingFilter(gr.linkscompose);
+            this.hs= this.apiFilter.getLinksListWithMatchingFilter(gr.links);
             //Found all the nodes which are linked to one of those nodes
             this.hs.forEach(
-                d=>    gr.allnodes.forEach(node =>{ if((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node) ) this.nodesList.push(node) })
+                d=>    gr.nodes.forEach(node =>{ if((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node) ) this.nodesList.push(node) })
             );
             console.log(this.nodesList);
-            this.graph.allnodes =this.nodesList;
-            this.graph.linkscompose =this.hs;
+            this.graph.nodes =this.nodesList;
+            this.graph.links =this.hs;
 
             //.nodesList.forEach(element );
 
@@ -212,7 +212,7 @@ class Graph {
             //.style("stroke", "black")
             //On api classes
             .style("stroke",  (d) => {
-                var color =  this.nodesList.includes(d) ? d3.rgb(2, 254, 0) : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
+                var color =  this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
                 //return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
                 return color;
             })
@@ -235,7 +235,7 @@ class Graph {
                 return d.radius
             })
             .attr("fill", (d) => {
-                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : ( d.types.includes("METHOD_LEVEL_VP") || d.types.includes("VARIANT") || d.types.includes("VP") ) ? d3.rgb(this.getNodeColor(d.name, d.constructorVariants)) : d3.rgb(0,0,255);
+                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : ( d.types.includes("METHOD_LEVEL_VP") || d.types.includes("VARIANT") || d.types.includes("VP") ) ? d3.rgb(this.getNodeColor(d.name, d.constructorVariants)) : '#dddddd';
             })
             .attr("name", function (d) {
                 return d.name
