@@ -78,15 +78,24 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                     </div>
                 </div>
                 <div class="row py-4 pl-4 justify-content-between">
-                    <div class="col-auto mr-auto">
-                        <!--<h5 style="text-align: center; font-weight: bold">Packages filtered</h5>-->
-                        <ul class="list-group" id="list-tab" role="tablist">
-                        </ul>
+                    <div>
+                        <button type="button" class="collapsible">Packages filtered <b style="color: darkgoldenrod">out</b> (<b id="output-p"></b> packages)</button>
+                        <div class="content">
+                            <div class="col-auto mr-auto" style="padding: 1em">
+                                <ul class="list-group" id="list-tab" role="tablist">
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-auto mr-auto">
-                        <!--<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>-->
-                        <ul class="list-group" id="list-tab-api" role="tablist">
-                        </ul>
+                    <div>
+                        <button type="button" class="collapsible">Api classes filtered <b style="color: #0e90d2">in</b> (<b id="output"></b> classes)</button>
+                        <div class="content-api">
+                            <div class="col-auto mr-auto" style="padding: 1em">
+                                <!--<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>-->
+                                <ul class="list-group" id="list-tab-api" role="tablist">
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-4">
                         <p id="statistics"></p>
@@ -135,6 +144,22 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight){
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+</script>
 <script src="scripts/nodes-filter.js" type="module"></script>
 <script src="scripts/api-filter.js" type="module"></script>
 <script type="module">
@@ -144,7 +169,12 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 
     async function display(jsonFile, jsonStatsFile) {
         let filters = [${filters}];
-        visualization = new Graph(jsonFile, jsonStatsFile, filters);
+        let apiFilters = [${apiFilters}];
+        let lengthOfApiFilters = apiFilters.length;
+        let lengthOfPackage = filters.length;
+        document.getElementById('output-p').innerHTML = lengthOfPackage.toString();
+        document.getElementById('output').innerHTML = lengthOfApiFilters.toString();
+        visualization = new Graph(jsonFile, jsonStatsFile, filters, apiFilters);
         return await visualization.displayGraph();
     }
 

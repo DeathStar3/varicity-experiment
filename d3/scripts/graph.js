@@ -28,12 +28,12 @@ import {ApiFilter} from "./api-filter.js";
 
 class Graph {
 
-    constructor(jsonFile, jsonStatsFile, nodeFilters) {
+    constructor(jsonFile, jsonStatsFile, nodeFilters, apiFilters) {
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter","#list-tab-api", [],async () => await this.displayGraph());
+        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter","#list-tab-api", apiFilters,async () => await this.displayGraph());
         if(sessionStorage.getItem("firstTime") === null){
             sessionStorage.setItem("firstTime", "true");
         }
@@ -156,10 +156,22 @@ class Graph {
         this.graph.links = this.filter.getLinksListWithoutMatchingFilter(gr.links);
 
         this.nodesList = [];
+        this.apiList = [];
 
         if(this.apiFilter.filtersList.length!== 0){
-            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.nodes);
+            //Filter to found all nodes which are in the api list
+            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
+            this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
+            //Found all the links which contains one of the api class as target or sources
+            this.hs= this.apiFilter.getLinksListWithMatchingFilter(gr.linkscompose);
+            //Found all the nodes which are linked to one of those nodes
+            this.hs.forEach(
+                d=>    gr.allnodes.forEach(node =>{ if((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node) ) this.nodesList.push(node) })
+            );
             console.log(this.nodesList);
+            this.graph.allnodes =this.nodesList;
+            this.graph.linkscompose =this.hs;
+
             //.nodesList.forEach(element );
 
 
