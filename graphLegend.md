@@ -55,7 +55,8 @@ Plus ce pourcentage est élevé, plus le vert devient foncé et ceci, quelque so
     <img src="./readme_files/class_api.png"/>
 </p> 
 
-PS: Une classe de l'API est représentée par un noeud dont le pourtour est de couleur vert clair vive pour la distinguer des autres classes. 
+PS: Une classe de l'API est représentée par un noeud dont le pourtour est de couleur bleu clair pâle pour la distinguer des autres classes.
+Sur l'image ci-dessus, le noeud au centre est une classe de l'API. 
 
 ## Interface
 * **Non publique**
@@ -102,4 +103,4 @@ PS: La classe représentée par le noeud rouge foncé hérite la classe représe
 <p align="center">
     <img src="./readme_files/composition.png"/>
 </p>
-PS: La classe représentée par le noeud bleu utilise la classe représentée par le noeud rouge. 
+PS: La classe représentée par le noeud gris utilise la classe représentée par le noeud rouge. 
