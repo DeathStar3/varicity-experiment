@@ -95,6 +95,7 @@ Reloaded before every execution run.
                                aria-label="Package/class to filter" aria-describedby="add-package-button">
                         <div class="input-group-append">
                             <button class="btn btn-outline-dark" type="button" id="add-package-button">Add new package</button>
+                            <b id="output-p">  </b> <b id="output"></b>
                         </div>
                     </div>
                 </div>
@@ -134,8 +135,10 @@ Reloaded before every execution run.
 
     window.display = display;
 
-    async function display(jsonFile, jsonStatsFile, filters) {
-        var visualization = new Graph(jsonFile, jsonStatsFile, filters);
+    async function display(jsonFile, jsonStatsFile, nodeFilters) {
+        document.getElementById('output-p').innerHTML = "0";
+        document.getElementById('output').innerHTML = "0";
+        var visualization = new Graph(jsonFile, jsonStatsFile, nodeFilters, []);
         await visualization.displayGraph();
         return visualization;
     }

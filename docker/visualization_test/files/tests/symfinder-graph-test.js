@@ -31,6 +31,7 @@ describe("Generating graph with one node", () => {
     });
     it('generated graph should contain one node', async () => {
         expect(d3.selectAll('circle').size()).toBe(1);
+        console.log(d3.selectAll('circle').size());
     });
 
 });

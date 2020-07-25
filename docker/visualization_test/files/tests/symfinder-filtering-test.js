@@ -110,7 +110,7 @@ describe("Unfiltering a linked node", () => {
 
     beforeAll(async (done) => {
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar.Circle"]);
-        $(".close > span").first().trigger("click");
+        $("#close-package > span").first().trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
 
