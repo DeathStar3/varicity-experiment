@@ -83,12 +83,17 @@ class ApiFilter extends NodesFilter {
         return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)) || this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter)))
     }
 
+    getLinksListWithMatchingFilters(listToFilter, filters){
+        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.source, filter)) || filters.some(filter => NodesFilter.matchesFilter(l.target, filter)))
+    }
+
     getNodesListWithMatchingFilter(listToFilter){
         return listToFilter.filter(n => this.filtersList.some(filter => NodesFilter.matchesFilter(n.name, filter)))
     }
 
-
-
+    /*getNodesListWithMatchingFilter(listToFilter, filters){
+        return listToFilter.filter(n => filters.some(filter => NodesFilter.matchesFilter(n.name, filter)))
+    }*/
 }
 
 export {ApiFilter};
