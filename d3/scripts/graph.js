@@ -242,14 +242,19 @@ class Graph {
             });
 
         newNode.append("title").text(function (d) {
-            return d.types.includes('PUBLIC') && d.methodPublics !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.methodPublics/d.allMethods)*100)) + "% of public methods." : "types: " + d.types + "\n" + "name: " + d.name;
+            return d.types.includes('PUBLIC') && d.methodPublics !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.methodPublics/d.allMethods)*100))
+                + "% of public methods." + "\n" +  d.allMethods + " methods " + "\n" + d.methodPublics + " public methods" : "types: " + d.types + "\n" + "name: " + d.name  ;
         });
         newNode.on("mouseover", function(d) {
             d3.select(this).style("cursor", "pointer");
         });
-        /*newNode.on("click", function(){
-            display
-        });*/
+        newNode.on("click", function(d){
+            navigator.clipboard.writeText(d.name).then(function() {
+                console.log("COPY OK");
+            }, function() {
+                console.log("COPY NOT OK");
+            });
+        });
 
         //	ENTER + UPDATE
         this.node = this.node.merge(newNode);
