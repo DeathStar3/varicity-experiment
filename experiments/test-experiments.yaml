@@ -13,6 +13,9 @@ generic_decorator:
 attribute_composition:
   localDirectory: attribute_composition
   sourcePackage: .
+attribute_composition_factory:
+  localDirectory: attribute_composition_factory
+  sourcePackage: .
 generics:
   localDirectory: generics
   sourcePackage: .

@@ -57,13 +57,16 @@ public class FactoryVisitor extends SymfinderVisitor {
                 logger.debug("typeOfReturnedObject : " + typeOfReturnedObject);
                 logger.debug("methodReturnType : " + methodReturnType);
                 // TODO: 4/30/19 if does not exist already, add label to filter on visualization
-                Node methodReturnTypeNode = neoGraph.getOrCreateNode(methodReturnType, methodDeclaration.getReturnType2().resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
+                Node methodReturnTypeNode = neoGraph.getNode(methodReturnType).orElse(null);
                 Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, methodDeclaration.resolveBinding().getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
-                Node returnedObjectTypeNode = neoGraph.getOrCreateNode(typeOfReturnedObject, EntityType.CLASS);
+                Node returnedObjectTypeNode = neoGraph.getNode(typeOfReturnedObject).orElse(null);
                 // TODO: 3/27/19 functional test case with method returning Object → not direct link
-                if (neoGraph.relatedTo(methodReturnTypeNode, returnedObjectTypeNode) && neoGraph.getNbVariants(methodReturnTypeNode) >= 2) {
-                    neoGraph.addLabelToNode(parsedClassNode, DesignPatternType.FACTORY.toString());
+                if(methodReturnTypeNode != null && returnedObjectTypeNode != null){
+                    if (neoGraph.relatedTo(methodReturnTypeNode, returnedObjectTypeNode) && neoGraph.getNbVariants(methodReturnTypeNode) >= 2) {
+                        neoGraph.addLabelToNode(parsedClassNode, DesignPatternType.FACTORY.toString());
+                    }
                 }
+
             }
         }
         return false;

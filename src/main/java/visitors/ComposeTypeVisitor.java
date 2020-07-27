@@ -86,9 +86,21 @@ public class ComposeTypeVisitor extends ImportsVisitor {
     private void ananlyzeReturnedTypeOfMethod(MethodDeclaration methodDeclaration, Node parentClassNode) {
         if (methodDeclaration != null && !methodDeclaration.isConstructor() && methodDeclaration.getReturnType2().resolveBinding() != null && methodDeclaration.resolveBinding() != null) {
             String returnedType = methodDeclaration.getReturnType2().resolveBinding().getQualifiedName();
-            Node returnedTypeNode = neoGraph.getOrCreateNode(returnedType, methodDeclaration.getReturnType2().resolveBinding().isInterface() ? EntityType.INTERFACE : EntityType.CLASS);
 
-            if (!(returnedTypeNode.get("name").asString().contains("java") || returnedTypeNode.get("name").asString().equals("double") || returnedTypeNode.get("name").asString().equals("int")
+            if (!(returnedType.contains("java") || returnedType.equals("double") || returnedType.equals("int")
+                    || returnedType.equals("long") || returnedType.equals("float") || returnedType.equals("boolean")
+                    || returnedType.contains("int[]") || returnedType.contains("double[]") || returnedType.contains("float[]")
+                    || returnedType.contains("long[]") || returnedType.contains("bytes[]") || returnedType.equals("bytes")
+                    || returnedType.equals("byte") || returnedType.equals("void"))) {
+                Node returnedTypeNode = neoGraph.getNode(returnedType).orElse(null);
+
+                if (returnedTypeNode != null && !returnedTypeNode.get("name").asString().equals(parentClassNode.get("name").asString())) {
+                    neoGraph.linkTwoNodes(parentClassNode, returnedTypeNode, RelationType.INSTANCIATE);
+                    logger.log(Level.getLevel("MY_LEVEL"), "\n ************* ReturnefType " + returnedTypeNode.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n");
+                }
+            }
+
+            /*if (!(returnedTypeNode.get("name").asString().contains("java") || returnedTypeNode.get("name").asString().equals("double") || returnedTypeNode.get("name").asString().equals("int")
                     || returnedTypeNode.get("name").asString().equals("long") || returnedTypeNode.get("name").asString().equals("float") || returnedTypeNode.get("name").asString().equals("boolean")
                     || returnedTypeNode.get("name").asString().contains("int[]") || returnedTypeNode.get("name").asString().contains("double[]") || returnedTypeNode.get("name").asString().contains("float[]")
                     || returnedTypeNode.get("name").asString().contains("long[]") || returnedTypeNode.get("name").asString().contains("bytes[]") || returnedTypeNode.get("name").asString().equals("bytes")
@@ -97,8 +109,7 @@ public class ComposeTypeVisitor extends ImportsVisitor {
                     neoGraph.linkTwoNodes(parentClassNode, returnedTypeNode, RelationType.INSTANCIATE);
                     logger.log(Level.getLevel("MY_LEVEL"), "\n ************* ReturnefType " + returnedTypeNode.get("name") + " ----- " + parentClassNode.get("name") + " ******** \n");
                 }
-
-            }
+            }*/
         }
     }
 }
