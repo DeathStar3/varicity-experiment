@@ -31,15 +31,23 @@ class Graph {
     constructor(jsonFile, jsonStatsFile, nodeFilters, apiFilters) {
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
-        this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
+        this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => {
+            this.firstLevelComposition = true;
+            await this.displayGraph();
+        });
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter","#list-tab-api", apiFilters,async () => await this.displayGraph());
-        if(sessionStorage.getItem("firstTime") === null){
+        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter", "#list-tab-api", apiFilters, async () => {
+            this.firstLevelComposition = true;
+            await this.displayGraph();
+        });
+        if (sessionStorage.getItem("firstTime") === null) {
             sessionStorage.setItem("firstTime", "true");
         }
         this.color = d3.scaleLinear();
         this.setButtonsClickActions();
-
+        this.nodes_dict = {};
+        this.links_dict = {};
+        this.firstLevelComposition = true;
     }
 
 
@@ -155,29 +163,10 @@ class Graph {
 
         this.graph.allnodes = this.filter.getNodesListWithoutMatchingFilter(gr.allnodes);
         this.graph.linkscompose = this.filter.getLinksListWithoutMatchingFilter(gr.linkscompose);
+        //console.log(this.firstLevelComposition);
 
         this.nodesList = [];
         this.apiList = [];
-
-        if(this.apiFilter.filtersList.length!== 0){
-            //Filter to found all nodes which are in the api list
-            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
-            this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
-            //Found all the links which contains one of the api class as target or sources
-            this.hs= this.apiFilter.getLinksListWithMatchingFilter(gr.linkscompose);
-            //Found all the nodes which are linked to one of those nodes
-            this.hs.forEach(
-                d=>    gr.allnodes.forEach(node =>{ if((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node) ) this.nodesList.push(node) })
-            );
-            console.log(this.nodesList);
-            this.graph.allnodes =this.nodesList;
-            this.graph.linkscompose =this.hs;
-
-            //.nodesList.forEach(element );
-
-
-        }
-
 
         if (this.filterVariants) {
             var variantsFilter = new VariantsFilter(this.graph.allnodes, this.graph.linkscompose);
@@ -190,7 +179,115 @@ class Graph {
             this.graph.allnodes = isolatedFilter.getFilteredNodesList();
         }
 
+        if (this.apiFilter.filtersList.length !== 0) {
+            if (document.getElementById("compositionLevel").style.display === "none") document.getElementById("compositionLevel").style.display = "block";
+            //Filter to found all nodes which are in the api list
+            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
+            this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
+            //Found all the links which contains one of the api class as target or sources
+            //console.log('taille totale des noeuds:');
+            //console.log(gr.allnodes.length);
+            //console.log('taille totale des liens:');
+            //console.log(gr.linkscompose.length);
+            //console.log('taille classes api:');
+            //console.log(this.apiList.length);
+            if (this.apiList.length !== 0) {
+                this.apiList.forEach(node => node.compositionLevel = 0);
+                //console.log(this.nodesList);
+                this.hs = this.apiFilter.getLinksListWithMatchingFilter(gr.linkscompose);
+                //Found all the nodes which are linked to one of those nodes
+                //console.log('taille des links:');
+                //console.log(this.hs.length);
+                var current = [];
+                this.hs.forEach(
+                    d => gr.allnodes.forEach(node => {
+                        if ((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node)) {
+                            node.compositionLevel = 1;
+                            this.nodesList.push(node);
+                            current.push(node.name);
+                        }
+                    })
+                );
+                this.nodes_dict[1] = this.nodesList.length;
+                this.links_dict[1] = this.hs.length;
+                //console.log('taille nodelist:');
+                //console.log(this.nodesList.length);
+                //console.log('taille next api:');
+                //console.log(current.length);
+                var next = [];
+                var links = []
+                var compositionLevel = 2;
+                while (current.length !== 0) {
+                    links = this.apiFilter.getLinksListWithMatchingFilters(gr.linkscompose, current);
+                    links.forEach(
+                        d => gr.allnodes.forEach(node => {
+                            if ((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node)) {
+                                node.compositionLevel = compositionLevel;
+                                this.nodesList.push(node);
+                                this.hs.push(d);
+                                next.push(node.name);
+                            }
+                        })
+                    );
+                    //console.log()
+                    //console.log('taille nodelist:');
+                    //console.log(this.nodesList.length);
+                    //console.log('taille next api:');
+                    //console.log(next.length);
+                    //console.log('taille des links:');
+                    //console.log(this.hs.length);
+                    //console.log('composition level:');
+                    //console.log(compositionLevel);
+                    this.nodes_dict[compositionLevel] = this.nodesList.length;
+                    this.links_dict[compositionLevel] = this.hs.length;
+                    //this.hs.push.apply(this.hs, links)
+                    current = next;
+                    next = [];
+                    compositionLevel++;
+                }
+                this.setMaxCompositionLevel(this);
+                this.firstLevelComposition = false;
+                //var nodes_graph = this.nodesList;
+                //var links_graph = this.hs;
+                //this.setDataToDisplay(nodes_graph, links_graph, 1);
+                //console.log(this.nodesList);
+                //console.log(nodes_dict);
+                //console.log(links_dict);
+                //this.nodesList.forEach(d=> console.log(d.compositionLevel));
+                //console.log(this.nodesList);
+                //this.graph.allnodes = this.nodesList;
+                //this.graph.linkscompose = this.hs;
+            }
+        } else {
+            document.getElementById("compositionLevel").style.display = "none";
+        }
+    }
 
+    setDataToDisplay(nodesList, linkscompose, compositionLevel) {
+        this.graph.allnodes = nodesList.splice(0, this.nodes_dict[compositionLevel]);
+        this.graph.linkscompose = linkscompose.splice(0, this.links_dict[compositionLevel]);
+    }
+
+    setMaxCompositionLevel(graphcomposition) {
+        var options = {
+            minimum: 1,
+            maximize: this.nodesList[this.nodesList.length - 1].compositionLevel,
+            onChange: async function (e) {
+                var nodes_graph = [...graphcomposition.nodesList];
+                var links_graph = [...graphcomposition.hs];
+                graphcomposition.setDataToDisplay(nodes_graph, links_graph, e);
+                //console.log('current value: ' + e);
+                //console.log(graphcomposition.nodesList);
+                if (!graphcomposition.firstLevelComposition) graphcomposition.update();
+            },
+            onMinimum: function (e) {
+                //console.log('reached minimum: '+e)
+            },
+            onMaximize: function (e) {
+                //console.log('reached maximize'+e)
+            }
+        }
+        $('#handleCounter').handleCounter(options);
     }
 
 
@@ -213,23 +310,21 @@ class Graph {
             //.style("stroke", "black")
 
             //On api classes
-            .style("stroke",  (d) => {
-                var color =  this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
+            .style("stroke", (d) => {
+                return this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
                 //return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
-                return color;
             })
             .style("stroke-width", function (d) {
-                if(d.types.includes('PUBLIC')){
+                if (d.types.includes('PUBLIC')) {
                     //return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
                     //return d.methodPublics;
                     var temp = d.methodPublics;
                     return temp < 5 ? 1 : temp * 0.2;
                     //return temp * 0.2;
-                }else{
+                } else {
                     return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
                 }
             })
-
             //.style("stroke", function (d) {
             //  return this.nodesList.contains(d) ? d3.rgb(255, 255, 255): d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants)) ;
             //})
@@ -237,23 +332,23 @@ class Graph {
                 return d.radius
             })
             .attr("fill", (d) => {
-                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : ( d.types.includes("METHOD_LEVEL_VP") || d.types.includes("VARIANT") || d.types.includes("VP") ) ? d3.rgb(this.getNodeColor(d.name, d.constructorVariants)) : '#dddddd';
+                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : (d.types.includes("METHOD_LEVEL_VP") || d.types.includes("VARIANT") || d.types.includes("VP")) ? d3.rgb(this.getNodeColor(d.name, d.constructorVariants)) : '#dddddd';
             })
             .attr("name", function (d) {
                 return d.name
             });
 
         newNode.append("title").text(function (d) {
-            return d.types.includes('PUBLIC') && d.methodPublics !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.methodPublics/d.allMethods)*100))
-                + "% of public methods." + "\n" +  d.allMethods + " methods " + "\n" + d.methodPublics + " public methods" : "types: " + d.types + "\n" + "name: " + d.name  ;
+            return d.types.includes('PUBLIC') && d.methodPublics !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.methodPublics / d.allMethods) * 100))
+                + "% of public methods." + "\n" + d.allMethods + " methods " + "\n" + d.methodPublics + " public methods" : "types: " + d.types + "\n" + "name: " + d.name;
         });
-        newNode.on("mouseover", function() {
+        newNode.on("mouseover", function () {
             d3.select(this).style("cursor", "pointer");
         });
-        newNode.on("click", function(d){
-            navigator.clipboard.writeText(d.name).then(function() {
+        newNode.on("click", function (d) {
+            navigator.clipboard.writeText(d.name).then(function () {
                 console.log("COPY OK");
-            }, function() {
+            }, function () {
                 console.log("COPY NOT OK");
             });
         });
@@ -405,14 +500,14 @@ class Graph {
         }
     }
 
-    getNodeColor(nodeName, valueOnScale){
+    getNodeColor(nodeName, valueOnScale) {
         var upperRangeColor = this.packageColorer.getColorForName(nodeName);
         return this.color
             .range(["#FFFFFF", upperRangeColor])
             .interpolate(d3.interpolateRgb)(valueOnScale);
     }
 
-    getPerimeterColor(valueOnScale){
+    getPerimeterColor(valueOnScale) {
         var upperRangeColor = "#40E0D0";
         if (valueOnScale === undefined) return upperRangeColor;
         return this.color
@@ -420,7 +515,7 @@ class Graph {
             .interpolate(d3.interpolateRgb)(valueOnScale);
     }
 
-    setButtonsClickActions(){
+    setButtonsClickActions() {
         $(document).on('click', ".list-group-item", e => {
             e.preventDefault();
             $('.active').removeClass('active');
@@ -472,4 +567,4 @@ function contrastColor(color) {
     return d3.rgb(d, d, d);
 }
 
-export { Graph };
+export {Graph};
