@@ -52,7 +52,7 @@ jfreechart:
     - org.jfree.chart.plot.CategoryPlot
     - org.jfree.chart.plot.XYPlot
     - org.jfree.chart.renderer.AbstractRenderer
-  compositionLevel: 2
+  compositionLevel: 4
   compositionType: IN
 javaGeom:
   repositoryUrl: https://github.com/dlegland/javaGeom

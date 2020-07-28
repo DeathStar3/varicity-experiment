@@ -61,6 +61,6 @@ vps_in_different_packages:
 visibilityTest:
   localDirectory: visibilityTest
   sourcePackage: .
-  compositionLevel: 2
+  compositionLevel: 4
   compositionType: IN
 

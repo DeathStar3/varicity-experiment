@@ -31,6 +31,8 @@ class Graph {
     constructor(jsonFile, jsonStatsFile, nodeFilters, apiFilters, defaultCompositionLevel, defaultCompositionType) {
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
+        this.defaultCompositionType= defaultCompositionType;
+        this.defaultCompositionLevel= defaultCompositionLevel;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => {
             this.firstLevelComposition = true;
             await this.displayGraph();
@@ -119,13 +121,14 @@ class Graph {
     }
 
     displayData(gr, stats) {
-        //	data read and store
-        const compositionType = {
+
+        const compositionTypeEnum = {
             IN: 'IN',
             OUT: 'OUT',
             IN_OUT: 'IN-OUT'
         }
 
+        //	data read and store
         document.getElementById("statistics").innerHTML =
             // "Number of VPs: " + stats["VPs"] + "<br>" +
             // "Number of methods VPs: " + stats["methodVPs"] + "<br>" +
@@ -221,18 +224,38 @@ class Graph {
                 //console.log(current.length);
                 var next = [];
                 var links = []
-                var compositionLevel = 2;
+                var compositionLevel = this.defaultCompositionLevel;
                 while (current.length !== 0) {
                     links = this.apiFilter.getLinksListWithMatchingFilters(gr.linkscompose, current);
                     links.forEach(
                         d => gr.allnodes.forEach(node => {
-                            if ((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node)) {
-                                node.compositionLevel = compositionLevel;
-                                this.nodesList.push(node);
-                                this.hs.push(d);
-                                next.push(node.name);
+                            switch(this.defaultCompositionType){
+                                case compositionTypeEnum.IN:
+                                    if ((ApiFilter.matchesFilter(node.name, d.target) && !this.nodesList.includes(node))) {
+                                        node.compositionLevel = compositionLevel;
+                                        this.nodesList.push(node);
+                                        this.hs.push(d);
+                                        next.push(node.name);
+                                    }
+                                    break;
+                                case compositionTypeEnum.OUT:
+                                    if ((ApiFilter.matchesFilter(node.name, d.source) && !this.nodesList.includes(node))) {
+                                        node.compositionLevel = compositionLevel;
+                                        this.nodesList.push(node);
+                                        this.hs.push(d);
+                                        next.push(node.name);
+                                    }
+                                    break;
+                                case compositionTypeEnum.IN_OUT:
+                                    if ((ApiFilter.matchesFilter(node.name, d.source)||(ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
+                                        node.compositionLevel = compositionLevel;
+                                        this.nodesList.push(node);
+                                        this.hs.push(d);
+                                        next.push(node.name);
+                                    }
                             }
-                        })
+
+                            })
                     );
                     //console.log()
                     //console.log('taille nodelist:');
