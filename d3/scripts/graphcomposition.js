@@ -28,7 +28,7 @@ import {ApiFilter} from "./api-filter.js";
 
 class Graph {
 
-    constructor(jsonFile, jsonStatsFile, nodeFilters, apiFilters) {
+    constructor(jsonFile, jsonStatsFile, nodeFilters, apiFilters, defaultCompositionLevel, defaultCompositionType) {
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => {
@@ -120,6 +120,11 @@ class Graph {
 
     displayData(gr, stats) {
         //	data read and store
+        const compositionType = {
+            IN: 'IN',
+            OUT: 'OUT',
+            IN_OUT: 'IN-OUT'
+        }
 
         document.getElementById("statistics").innerHTML =
             // "Number of VPs: " + stats["VPs"] + "<br>" +
