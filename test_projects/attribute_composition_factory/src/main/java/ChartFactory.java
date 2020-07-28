@@ -17,7 +17,7 @@ public abstract class ChartFactory {
 
     }
 
-    public void createChart(boolean data){
+    public void createChart(XYDataset data){
 
     }
 }
