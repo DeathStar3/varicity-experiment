@@ -79,12 +79,38 @@ class ApiFilter extends NodesFilter {
 
 
 
-    getLinksListWithMatchingFilter(listToFilter){
-        return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)) || this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter)))
+    // getLinksListWithMatchingFilter(listToFilter){
+    //     return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)))
+    // }
+
+    getLinksListWithMatchingFilterIn(listToFilter){
+        return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)))
     }
 
+    getLinksListWithMatchingFilterOut(listToFilter){
+        return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter)))
+    }
+
+    getLinksListWithMatchingFilterInOut(listToFilter){
+        return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter) || NodesFilter.matchesFilter(l.source, filter)) )
+    }
+
+
+
     getLinksListWithMatchingFilters(listToFilter, filters){
-        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.source, filter)) || filters.some(filter => NodesFilter.matchesFilter(l.target, filter)))
+        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.source, filter)))
+    }
+
+    // getLinksListWithMatchingFilters_in(listToFilter, filters){
+    //     return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.source, filter)))
+    // }
+
+    getLinksListWithMatchingFiltersOut(listToFilter, filters){
+        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.target, filter)))
+    }
+
+    getLinksListWithMatchingFiltersInOut(listToFilter, filters){
+        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.target, filter) || NodesFilter.matchesFilter(l.source, filter)) )
     }
 
     getNodesListWithMatchingFilter(listToFilter){

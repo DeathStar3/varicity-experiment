@@ -63,7 +63,7 @@ def generate_visualization_file(xp_codename, xp_config):
         compositionLevel2=1
         compositionType2="IN"
         if("compositionLevel" in xp_config):
-            compositionLevel1=int(float(xp_config.get("compositionLevel")))
+            compositionLevel2=int(float(xp_config.get("compositionLevel")))
         if("compositionType" in xp_config):
             compositionType2=str(xp_config.get("compositionType"))
 
