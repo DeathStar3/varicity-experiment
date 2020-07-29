@@ -575,7 +575,8 @@ public class NeoGraph {
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "CALL symfinder.count(ID(c), \"CLASS\") YIELD result as attributes " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes, .attributecompose})";
+                        "CALL symfinder.count(ID(c), \"INTERFACE\") YIELD result as interfaceAttributes " +
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes, .attributecompose, interfaceAttributes})";
         return submitRequest(request)
                 .get(0)
                 .get(0)

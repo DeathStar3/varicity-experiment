@@ -289,7 +289,7 @@ describe("Tests on attribute_composition", () => {
     });
 
     it('there are 6 composition links', () => {
-        expect(jsonStatsData.nBcompositionClass).toBe(6);
+        expect(jsonStatsData.nBcompositionClass).toBe(4);
     });
 
     afterAll(() => sessionStorage.clear())
