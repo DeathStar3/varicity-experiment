@@ -13,8 +13,8 @@ public abstract class ChartFactory {
 
     }
 
-    public void createChart(String data){
-
+    public void createChart(PieDataset data){
+        DefaultPieDataset defaultPieDataset = new DefaultPieDataset();
     }
 
     public void createChart(XYDataset data){
