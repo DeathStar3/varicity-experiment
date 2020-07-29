@@ -77,12 +77,22 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                             <button class="btn btn-outline-dark" type="button" id="add-api-class-button">Add a class from the api</button>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <!--
+                    <div style="margin-right: 1em">
                         <button type="button" class="btn btn-outline-dark" data-toggle="button" aria-pressed="false" id="filter-isolated" value="filter-isolated">Filter isolated nodes</button>
+                    </div>
+                    -->
+                    <div class="col-2" style="text-align: center; display: inline-grid;">
+                        <b style="margin-top: -10px"><label for="composition-type">Composition-type</label></b>
+                        <select name="composition-type" id="composition-type" style="margin-top: -15px;">
+                            <option value="IN">IN</option>
+                            <option value="OUT">OUT</option>
+                            <option value="IN-OUT">IN-OUT</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="row py-4 pl-4 justify-content-between">
+                <div class="row pl-4 justify-content-between">
                     <!--style="display: flex; justify-content: space-between;"-->
                     <div>
                         <button type="button" class="collapsible">Packages <b style="color: darkgoldenrod">filtered
@@ -108,11 +118,11 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                         </div>
                     </div>
                     <div id="compositionLevel">
-                        <b>Level of composition</b>
+                        <b>Composition-level</b>
                         <div class="handle-counter" id="handleCounter">
                             <button class="counter-minus btn btn-primary">-</button>
-                            <label>
-                                <input type="text" value="1">
+                            <label id="labelCompositionLevel">
+                                <input id="compositionLevelValue" type="text" value="1">
                             </label>
                             <button class="counter-plus btn btn-primary">+</button>
                         </div>
