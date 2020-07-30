@@ -192,39 +192,44 @@ class Graph {
 
 
         if (this.apiFilter.filtersList.length !== 0) {
-            if (document.getElementById("compositionLevel").style.display === "none") document.getElementById("compositionLevel").style.display = "block";
+            if (document.getElementById("compositionLevel").style.display === "none"){
+                document.getElementById("compositionLevel").style.display = "block";
+                document.getElementById("compositionType").style.display = "inline-grid";
+                document.getElementById("hybridView").style.display = "inline-grid";
+            }
             //Filter to found all nodes which are in the api list
             this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
             this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
-            //Found all the links which contains one of the api class as target or sources
-            var current = [];
-            if (this.apiList.length !== 0) {
-                this.apiList.forEach(node => node.compositionLevel = 0);
-                switch (this.defaultCompositionType) {
-                    case compositionTypeEnum.IN:
-                        this.hs = this.apiFilter.getLinksListWithMatchingFilterIn(gr.alllinks);
-                        break;
-                    case compositionTypeEnum.OUT:
-                        this.hs = this.apiFilter.getLinksListWithMatchingFilterOut(gr.alllinks);
-                        break;
-                    case compositionTypeEnum.IN_OUT:
-                        this.hs = this.apiFilter.getLinksListWithMatchingFilterInOut(gr.alllinks);
-                        break;
-                }
-                //Found all the nodes which are linked to one of those nodes
-                this.hs.forEach(
-                    d => gr.allnodes.forEach(node => {
-                            if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
-                                node.compositionLevel = 1;
-                                this.nodesList.push(node);
-                                current.push(node.name);
+            if(this.nodesList.length !== 0){
+                //Found all the links which contains one of the api class as target or sources
+                var current = [];
+                if (this.apiList.length !== 0) {
+                    this.apiList.forEach(node => node.compositionLevel = 0);
+                    switch (this.defaultCompositionType) {
+                        case compositionTypeEnum.IN:
+                            this.hs = this.apiFilter.getLinksListWithMatchingFilterIn(gr.alllinks);
+                            break;
+                        case compositionTypeEnum.OUT:
+                            this.hs = this.apiFilter.getLinksListWithMatchingFilterOut(gr.alllinks);
+                            break;
+                        case compositionTypeEnum.IN_OUT:
+                            this.hs = this.apiFilter.getLinksListWithMatchingFilterInOut(gr.alllinks);
+                            break;
+                    }
+                    //Found all the nodes which are linked to one of those nodes
+                    this.hs.forEach(
+                        d => gr.allnodes.forEach(node => {
+                                if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
+                                    node.compositionLevel = 1;
+                                    this.nodesList.push(node);
+                                    current.push(node.name);
+                                }
                             }
-                        }
-                    )
-                );
-            }
-            this.nodes_dict[1] = this.nodesList.length;
-            this.links_dict[1] = this.hs.length;
+                        )
+                    );
+                }
+                this.nodes_dict[1] = this.nodesList.length;
+                this.links_dict[1] = this.hs.length;
 
             var next = [];
             var links = []
@@ -246,25 +251,28 @@ class Graph {
                 links.forEach(
                     d => gr.allnodes.forEach(node => {
 
-                        if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
-                            node.compositionLevel = compositionLevel;
-                            this.nodesList.push(node);
-                            this.hs.push(d);
-                            next.push(node.name);
-                        }
-                    })
-                );
-                this.nodes_dict[compositionLevel] = this.nodesList.length;
-                this.links_dict[compositionLevel] = this.hs.length;
-                //this.hs.push.apply(this.hs, links)
-                current = next;
-                next = [];
-                compositionLevel++;
+                            if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
+                                node.compositionLevel = compositionLevel;
+                                this.nodesList.push(node);
+                                this.hs.push(d);
+                                next.push(node.name);
+                            }
+                        })
+                    );
+                    this.nodes_dict[compositionLevel] = this.nodesList.length;
+                    this.links_dict[compositionLevel] = this.hs.length;
+                    //this.hs.push.apply(this.hs, links)
+                    current = next;
+                    next = [];
+                    compositionLevel++;
+                }
+                this.setMaxCompositionLevel(this);
+                this.firstLevelComposition = false;
             }
-            this.setMaxCompositionLevel(this);
-            this.firstLevelComposition = false;
         }else{
             document.getElementById("compositionLevel").style.display = "none";
+            document.getElementById("compositionType").style.display = "none";
+            document.getElementById("hybridView").style.display = "none";
         }
     }
 
