@@ -230,8 +230,6 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
         let compositionType = `${compositionType}`;
         let lengthOfApiFilters = apiFilters.length;
         let lengthOfPackage = filters.length;
-        console.log(compositionLevel);
-        console.log(compositionType);
         document.getElementById('output-p').innerHTML = lengthOfPackage.toString();
         document.getElementById('output').innerHTML = lengthOfApiFilters.toString();
         visualization = new Graph(jsonFile, jsonStatsFile, filters, apiFilters, compositionLevel, compositionType);

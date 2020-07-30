@@ -101,6 +101,7 @@ class Graph {
             .attr("class", "everything");
 
         this.link = this.g.append("g").selectAll(".link");
+        this.linkvp = this.g.append("g").selectAll(".linkvp");
         this.node = this.g.append("g").selectAll(".node");
         this.label = this.g.append("g").selectAll(".label");
     }
@@ -363,9 +364,10 @@ class Graph {
         this.node = this.node.merge(newNode);
 
         //	UPDATE
-        this.link = this.link.data(this.graph.alllinks, function (d) {
+        this.link = this.link.data(this.graph.alllinks.filter(l =>l.type.includes("INSTANCIATE")), function (d) {
             return d.name;
         });
+        //         var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
         //	EXIT
         this.link.exit().remove();
         //	ENTER
@@ -381,8 +383,32 @@ class Graph {
             .text(function (d) {
                 return "source: " + d.source + "\n" + "target: " + d.target;
             });
+
         //	ENTER + UPDATE
         this.link = this.link.merge(newLink);
+
+        //	UPDATE
+        this.linkvp = this.linkvp.data(this.graph.alllinks.filter(l => !l.type.includes("INSTANCIATE")), function (d) {
+            return d.name;
+        });
+        //         var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
+        //	EXIT
+        this.linkvp.exit().remove();
+        //	ENTER
+        var newLinkvp = this.linkvp.enter().append("line")
+            .attr("stroke-with", 1)
+            .attr("class", "link")
+            .attr("source", d => d.source)
+            .attr("target", d => d.target)
+            .attr('marker-start', "url(#arrowhead)")
+            .style("pointer-events", "none");
+
+        newLinkvp.append("title")
+            .text(function (d) {
+                return "source: " + d.source + "\n" + "target: " + d.target;
+            });
+        //	ENTER + UPDATE
+        this.linkvp = this.linkvp.merge(newLinkvp);
 
         //  UPDATE
         this.label = this.label.data(this.graph.allnodes, function (d) {
@@ -454,6 +480,36 @@ class Graph {
                     });
 
                 this.link
+                    .attr("x1", function (d) {
+                        if(d.type.includes("INSTANCIATE")){
+                            return d.target.x;
+                        }else{
+                            return d.source.x
+                        }
+                    })
+                    .attr("y1", function (d) {
+                        if(d.type.includes("INSTANCIATE")){
+                            return d.target.y
+                        }else{
+                            return d.source.y
+                        }
+                    })
+                    .attr("x2", function (d) {
+                        if(d.type.includes("INSTANCIATE")){
+                            return d.source.x
+                        }else{
+                            return d.target.x
+                        }
+                    })
+                    .attr("y2", function (d) {
+                        if(d.type.includes("INSTANCIATE")){
+                            return d.source.y
+                        }else{
+                            return d.target.y
+                        }
+                    });
+
+                this.linkvp
                     .attr("x1", function (d) {
                         if(d.type.includes("INSTANCIATE")){
                             return d.target.x;
