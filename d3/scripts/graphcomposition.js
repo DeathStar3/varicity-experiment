@@ -50,6 +50,7 @@ class Graph {
         this.nodes_dict = {};
         this.links_dict = {};
         this.firstLevelComposition = true;
+        this.hybridView = false;
     }
 
 
@@ -101,7 +102,7 @@ class Graph {
             .attr("class", "everything");
 
         this.link = this.g.append("g").selectAll(".link");
-        this.linkvp = this.g.append("g").selectAll(".linkvp");
+        if(this.hybridView) this.linkvp = this.g.append("g").selectAll(".linkvp");
         this.node = this.g.append("g").selectAll(".node");
         this.label = this.g.append("g").selectAll(".label");
     }
@@ -154,6 +155,10 @@ class Graph {
             n.radius = n.types.includes("CLASS") ? 10 + n.methodVPs : 10;
             nodeByID[n.name] = n;
         });
+
+        if(!this.hybridView){
+            this.graph.alllinks = this.graph.linkscompose;
+        }
 
         this.graph.alllinks.forEach(function (l) {
             l.sourceTypes = nodeByID[l.source].types;
@@ -232,25 +237,25 @@ class Graph {
                 this.nodes_dict[1] = this.nodesList.length;
                 this.links_dict[1] = this.hs.length;
 
-            var next = [];
-            var links = []
-            var compositionLevel = 2;
-            while (current.length !== 0) {
-                switch (this.defaultCompositionType) {
-                    case compositionTypeEnum.IN:
-                        links = this.apiFilter.getLinksListWithMatchingFiltersIn(gr.alllinks, current);
-                        break;
-                    case compositionTypeEnum.OUT:
-                        links = this.apiFilter.getLinksListWithMatchingFiltersOut(gr.alllinks, current);
-                        break;
-                    case compositionTypeEnum.IN_OUT:
-                        links = this.apiFilter.getLinksListWithMatchingFiltersInOut(gr.alllinks, current);
-                        break;
-                }
+                var next = [];
+                var links = []
+                var compositionLevel = 2;
+                while (current.length !== 0) {
+                    switch (this.defaultCompositionType) {
+                        case compositionTypeEnum.IN:
+                            links = this.apiFilter.getLinksListWithMatchingFiltersIn(gr.alllinks, current);
+                            break;
+                        case compositionTypeEnum.OUT:
+                            links = this.apiFilter.getLinksListWithMatchingFiltersOut(gr.alllinks, current);
+                            break;
+                        case compositionTypeEnum.IN_OUT:
+                            links = this.apiFilter.getLinksListWithMatchingFiltersInOut(gr.alllinks, current);
+                            break;
+                    }
 
-                //links = this.apiFilter.getLinksListWithMatchingFilters(gr.alllinks, current);
-                links.forEach(
-                    d => gr.allnodes.forEach(node => {
+                    //links = this.apiFilter.getLinksListWithMatchingFilters(gr.alllinks, current);
+                    links.forEach(
+                        d => gr.allnodes.forEach(node => {
 
                             if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
                                 node.compositionLevel = compositionLevel;
@@ -395,28 +400,30 @@ class Graph {
         //	ENTER + UPDATE
         this.link = this.link.merge(newLink);
 
-        //	UPDATE
-        this.linkvp = this.linkvp.data(this.graph.alllinks.filter(l => !l.type.includes("INSTANCIATE")), function (d) {
-            return d.name;
-        });
-        //         var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
-        //	EXIT
-        this.linkvp.exit().remove();
-        //	ENTER
-        var newLinkvp = this.linkvp.enter().append("line")
-            .attr("stroke-with", 1)
-            .attr("class", "link")
-            .attr("source", d => d.source)
-            .attr("target", d => d.target)
-            .attr('marker-start', "url(#arrowhead)")
-            .style("pointer-events", "none");
-
-        newLinkvp.append("title")
-            .text(function (d) {
-                return "source: " + d.source + "\n" + "target: " + d.target;
+        if(this.hybridView){
+            //	UPDATE
+            this.linkvp = this.linkvp.data(this.graph.alllinks.filter(l => !l.type.includes("INSTANCIATE")), function (d) {
+                return d.name;
             });
-        //	ENTER + UPDATE
-        this.linkvp = this.linkvp.merge(newLinkvp);
+            //         var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
+            //	EXIT
+            this.linkvp.exit().remove();
+            //	ENTER
+            var newLinkvp = this.linkvp.enter().append("line")
+                .attr("stroke-with", 1)
+                .attr("class", "link")
+                .attr("source", d => d.source)
+                .attr("target", d => d.target)
+                .attr('marker-start', "url(#arrowhead)")
+                .style("pointer-events", "none");
+
+            newLinkvp.append("title")
+                .text(function (d) {
+                    return "source: " + d.source + "\n" + "target: " + d.target;
+                });
+            //	ENTER + UPDATE
+            this.linkvp = this.linkvp.merge(newLinkvp);
+        }
 
         //  UPDATE
         this.label = this.label.data(this.graph.allnodes, function (d) {
@@ -517,35 +524,37 @@ class Graph {
                         }
                     });
 
-                this.linkvp
-                    .attr("x1", function (d) {
-                        if(d.type.includes("INSTANCIATE")){
-                            return d.target.x;
-                        }else{
-                            return d.source.x
-                        }
-                    })
-                    .attr("y1", function (d) {
-                        if(d.type.includes("INSTANCIATE")){
-                            return d.target.y
-                        }else{
-                            return d.source.y
-                        }
-                    })
-                    .attr("x2", function (d) {
-                        if(d.type.includes("INSTANCIATE")){
-                            return d.source.x
-                        }else{
-                            return d.target.x
-                        }
-                    })
-                    .attr("y2", function (d) {
-                        if(d.type.includes("INSTANCIATE")){
-                            return d.source.y
-                        }else{
-                            return d.target.y
-                        }
-                    });
+                if(this.hybridView){
+                    this.linkvp
+                        .attr("x1", function (d) {
+                            if(d.type.includes("INSTANCIATE")){
+                                return d.target.x;
+                            }else{
+                                return d.source.x
+                            }
+                        })
+                        .attr("y1", function (d) {
+                            if(d.type.includes("INSTANCIATE")){
+                                return d.target.y
+                            }else{
+                                return d.source.y
+                            }
+                        })
+                        .attr("x2", function (d) {
+                            if(d.type.includes("INSTANCIATE")){
+                                return d.source.x
+                            }else{
+                                return d.target.x
+                            }
+                        })
+                        .attr("y2", function (d) {
+                            if(d.type.includes("INSTANCIATE")){
+                                return d.source.y
+                            }else{
+                                return d.target.y
+                            }
+                        });
+                }
 
                 this.label
                     .attr("x", function (d) {
@@ -610,6 +619,7 @@ class Graph {
         $(document).on('change', "#composition-type", async e => {
             e.preventDefault();
             this.defaultCompositionType = $(e.target).val();
+            this.firstLevelComposition = true;
             await this.displayGraph();
         });
 
@@ -624,7 +634,8 @@ class Graph {
                 $(e.target).val('off');
                 this.hybridView = false;
             }
-            console.log($(e.target).val());
+            //console.log($(e.target).val());
+            this.firstLevelComposition = true;
             await this.displayGraph();
         });
 
@@ -633,6 +644,7 @@ class Graph {
             var previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
             sessionStorage.setItem("filteredIsolated", previouslyFiltered ? "false" : "true");
             $("#filter-isolated").text(previouslyFiltered ? "Unfilter isolated nodes" : "Filter isolated nodes");
+            this.firstLevelComposition = true;
             await this.displayGraph();
         });
 
@@ -642,6 +654,7 @@ class Graph {
             var previouslyFiltered = sessionStorage.getItem("filteredVariants") === "true";
             sessionStorage.setItem("filteredVariants", previouslyFiltered ? "false" : "true");
             $("#filter-variants-button").text(previouslyFiltered ? "Hide variants" : "Show variants");
+            this.firstLevelComposition = true;
             await this.displayGraph();
         });
 

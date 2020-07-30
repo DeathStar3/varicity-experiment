@@ -550,7 +550,7 @@ public class NeoGraph {
     }
 
     private String generateVPJsonGraph() {
-        return String.format("{\"nodes\":[%s],\"links\":[%s],\"allnodes\":[%s],\"alllinks\":[%s]}", getNodesAsJson(), getLinksAsJson(), getAllClassesOrInterfaceNodes(), getAllLinksAsJson());
+        return String.format("{\"nodes\":[%s],\"links\":[%s],\"allnodes\":[%s],\"linkscompose\":[%s],\"alllinks\":[%s]}", getNodesAsJson(), getLinksAsJson(), getAllClassesOrInterfaceNodes(), getLinksCompositeAsJson(), getAllLinksAsJson());
     }
 
     private String getNodesAsJson() {
