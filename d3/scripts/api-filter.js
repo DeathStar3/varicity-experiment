@@ -84,11 +84,11 @@ class ApiFilter extends NodesFilter {
     // }
 
     getLinksListWithMatchingFilterIn(listToFilter){
-        return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)))
+        return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter)))
     }
 
     getLinksListWithMatchingFilterOut(listToFilter){
-        return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter)))
+        return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)))
     }
 
     getLinksListWithMatchingFilterInOut(listToFilter){
@@ -97,16 +97,16 @@ class ApiFilter extends NodesFilter {
 
 
 
-    getLinksListWithMatchingFilters(listToFilter, filters){
-        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.source, filter)))
+    /*getLinksListWithMatchingFilters(listToFilter, filters){
+        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.target, filter)))
+    }*/
+
+    getLinksListWithMatchingFiltersIn(listToFilter, filters){
+        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.target, filter)))
     }
 
-    // getLinksListWithMatchingFilters_in(listToFilter, filters){
-    //     return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.source, filter)))
-    // }
-
     getLinksListWithMatchingFiltersOut(listToFilter, filters){
-        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.target, filter)))
+        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.source, filter)))
     }
 
     getLinksListWithMatchingFiltersInOut(listToFilter, filters){

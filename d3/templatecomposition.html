@@ -82,13 +82,20 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                         <button type="button" class="btn btn-outline-dark" data-toggle="button" aria-pressed="false" id="filter-isolated" value="filter-isolated">Filter isolated nodes</button>
                     </div>
                     -->
-                    <div class="col-2" style="text-align: center; display: inline-grid;">
-                        <b style="margin-top: -10px"><label for="composition-type">Composition-type</label></b>
+                    <div class="col-2" style="text-align: center; display: inline-grid; padding-right: 3em;">
+                        <b style="margin-top: -2em"><label for="composition-type">Composition-type</label></b>
                         <select name="composition-type" id="composition-type" style="margin-top: -15px;">
                             <option value="IN">IN</option>
                             <option value="OUT">OUT</option>
                             <option value="IN-OUT">IN-OUT</option>
                         </select>
+                    </div>
+                    <div class="col-1" style="text-align: center; display: inline-grid;">
+                        <b style="margin-top: -2em"><label>Hybrid view</label></b>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
                     </div>
                 </div>
 
@@ -122,7 +129,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                         <div class="handle-counter" id="handleCounter">
                             <button class="counter-minus btn btn-primary">-</button>
                             <label id="labelCompositionLevel">
-                                <input id="compositionLevelValue" type="text" value="1">
+                                <input id="compositionLevelValue" type="text" value="${compositionLevel}">
                             </label>
                             <button class="counter-plus btn btn-primary">+</button>
                         </div>

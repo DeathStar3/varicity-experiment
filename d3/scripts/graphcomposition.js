@@ -197,6 +197,7 @@ class Graph {
             this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
             this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
             //Found all the links which contains one of the api class as target or sources
+            var current = [];
             if (this.apiList.length !== 0) {
                 this.apiList.forEach(node => node.compositionLevel = 0);
                 switch (this.defaultCompositionType) {
@@ -210,21 +211,18 @@ class Graph {
                         this.hs = this.apiFilter.getLinksListWithMatchingFilterInOut(gr.linkscompose);
                         break;
                 }
-
-
-            }
-            //Found all the nodes which are linked to one of those nodes
-            var current = [];
-            this.hs.forEach(
-                d => gr.allnodes.forEach(node => {
-                        if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
-                            node.compositionLevel = 1;
-                            this.nodesList.push(node);
-                            current.push(node.name);
+                //Found all the nodes which are linked to one of those nodes
+                this.hs.forEach(
+                    d => gr.allnodes.forEach(node => {
+                            if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
+                                node.compositionLevel = 1;
+                                this.nodesList.push(node);
+                                current.push(node.name);
+                            }
                         }
-                    }
-                )
-            );
+                    )
+                );
+            }
             this.nodes_dict[1] = this.nodesList.length;
             this.links_dict[1] = this.hs.length;
 
@@ -234,7 +232,7 @@ class Graph {
             while (current.length !== 0) {
                 switch (this.defaultCompositionType) {
                     case compositionTypeEnum.IN:
-                        links = this.apiFilter.getLinksListWithMatchingFilters(gr.linkscompose, current);
+                        links = this.apiFilter.getLinksListWithMatchingFiltersIn(gr.linkscompose, current);
                         break;
                     case compositionTypeEnum.OUT:
                         links = this.apiFilter.getLinksListWithMatchingFiltersOut(gr.linkscompose, current);
@@ -265,82 +263,9 @@ class Graph {
             }
             this.setMaxCompositionLevel(this);
             this.firstLevelComposition = false;
-            console.log('ici');
-            //var nodes_graph = this.nodesList;
-            //var links_graph = this.hs;
-            //this.setDataToDisplay(nodes_graph, links_graph, 1);
-            //console.log(this.nodesList);
-            //console.log(nodes_dict);
-            //console.log(links_dict);
-            //this.nodesList.forEach(d=> console.log(d.compositionLevel));
-            //console.log(this.nodesList);
-            //this.graph.allnodes = this.nodesList;
-            //this.graph.linkscompose = this.hs;
         }else{
             document.getElementById("compositionLevel").style.display = "none";
         }
-
-        /*if (this.apiFilter.filtersList.length !== 0) {
-            if (document.getElementById("compositionLevel").style.display === "none") document.getElementById("compositionLevel").style.display = "block";
-            //Filter to found all nodes which are in the api list
-            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
-            this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
-            //Found all the links which contains one of the api class as target or sources
-            if (this.apiList.length !== 0) {
-                this.apiList.forEach(node => node.compositionLevel = 0);
-                this.hs = this.apiFilter.getLinksListWithMatchingFilter(gr.linkscompose);
-                //Found all the nodes which are linked to one of those nodes
-                var current = [];
-                this.hs.forEach(
-                    d => gr.allnodes.forEach(node => {
-                        if ((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node)) {
-                            node.compositionLevel = 1;
-                            this.nodesList.push(node);
-                            current.push(node.name);
-                        }
-                    })
-                );
-                this.nodes_dict[1] = this.nodesList.length;
-                this.links_dict[1] = this.hs.length;
-
-                var next = [];
-                var links = []
-                var compositionLevel = 2;
-                while (current.length !== 0) {
-                    links = this.apiFilter.getLinksListWithMatchingFilters(gr.linkscompose, current);
-                    links.forEach(
-                        d => gr.allnodes.forEach(node => {
-                            if ((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node)) {
-                                node.compositionLevel = compositionLevel;
-                                this.nodesList.push(node);
-                                this.hs.push(d);
-                                next.push(node.name);
-                            }
-                        })
-                    );
-                    this.nodes_dict[compositionLevel] = this.nodesList.length;
-                    this.links_dict[compositionLevel] = this.hs.length;
-                    //this.hs.push.apply(this.hs, links)
-                    current = next;
-                    next = [];
-                    compositionLevel++;
-                }
-                this.setMaxCompositionLevel(this);
-                this.firstLevelComposition = false;
-                //var nodes_graph = this.nodesList;
-                //var links_graph = this.hs;
-                //this.setDataToDisplay(nodes_graph, links_graph, 1);
-                //console.log(this.nodesList);
-                //console.log(nodes_dict);
-                //console.log(links_dict);
-                //this.nodesList.forEach(d=> console.log(d.compositionLevel));
-                //console.log(this.nodesList);
-                //this.graph.allnodes = this.nodesList;
-                //this.graph.linkscompose = this.hs;
-            }
-        } else {
-            document.getElementById("compositionLevel").style.display = "none";
-        }*/
     }
 
     setDataToDisplay(nodesList, linkscompose, compositionLevel) {
@@ -349,6 +274,7 @@ class Graph {
     }
 
     setMaxCompositionLevel(graphcomposition) {
+        console.log(this.nodesList);
         var options = {
             minimum: 1,
             maximize: this.nodesList[this.nodesList.length - 1].compositionLevel,
@@ -356,16 +282,6 @@ class Graph {
                 var nodes_graph = [...graphcomposition.nodesList];
                 var links_graph = [...graphcomposition.hs];
                 if(graphcomposition.firstLevelComposition) {
-                    //document.getElementById('compositionLevelValue').innerHTML = graphcomposition.defaultCompositionLevel;
-                    //$("#compositionLevelValue").val(graphcomposition.defaultCompositionLevel.toString());
-                    //$("#compositionLevelValue").data('num', graphcomposition.defaultCompositionLevel);
-                    //$('#handleCounter').find('input').val(graphcomposition.defaultCompositionLevel);
-                    //$('#handleCounter').find('input').data('num', graphcomposition.defaultCompositionLevel);
-                    var input = $('#handleCounter').find('input');
-                    input.val(graphcomposition.defaultCompositionLevel);
-                    //document.getElementById('labelCompositionLevel').innerHTML = '<input id="compositionLevelValue" type="text" value="' + graphcomposition.defaultCompositionLevel + '">'
-                    //console.log(input.parent().val());
-                    console.log($("#compositionLevelValue").val());
                     graphcomposition.setDataToDisplay(nodes_graph, links_graph, graphcomposition.defaultCompositionLevel);
                 }
                 else graphcomposition.setDataToDisplay(nodes_graph, links_graph, e);
@@ -617,6 +533,21 @@ class Graph {
         $(document).on('change', "#composition-type", async e => {
             e.preventDefault();
             this.defaultCompositionType = $(e.target).val();
+            await this.displayGraph();
+        });
+
+        $(document).on('change', "#hybridSwitch", async e => {
+            e.preventDefault();
+            //this.defaultCompositionType = $(e.target).val();
+            if($(e.target).val() === 'off') {
+                $(e.target).val('on');
+                this.hybridView = true;
+            }
+            else {
+                $(e.target).val('off');
+                this.hybridView = false;
+            }
+            console.log($(e.target).val());
             await this.displayGraph();
         });
 
