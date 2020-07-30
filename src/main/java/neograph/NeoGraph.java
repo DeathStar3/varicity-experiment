@@ -550,7 +550,7 @@ public class NeoGraph {
     }
 
     private String generateVPJsonGraph() {
-        return String.format("{\"nodes\":[%s],\"links\":[%s],\"allnodes\":[%s],\"linkscompose\":[%s]}", getNodesAsJson(), getLinksAsJson(), getAllClassesOrInterfaceNodes(), getLinksCompositeAsJson());
+        return String.format("{\"nodes\":[%s],\"links\":[%s],\"allnodes\":[%s],\"alllinks\":[%s]}", getNodesAsJson(), getLinksAsJson(), getAllClassesOrInterfaceNodes(), getAllLinksAsJson());
     }
 
     private String getNodesAsJson() {
@@ -599,6 +599,17 @@ public class NeoGraph {
 
     private String getLinksCompositeAsJson() {
         String request = "MATCH path = (c1:CLASS)-[r:INSTANCIATE]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+        return submitRequest(request)
+                .get(0)
+                .get(0)
+                .asList(MapAccessor::asMap)
+                .stream()
+                .map(o -> new JSONObject(o).toString())
+                .collect(Collectors.joining(","));
+    }
+
+    private String getAllLinksAsJson() {
+        String request = "MATCH path = (c1)-[r:INSTANCIATE|EXTENDS|IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .get(0)
                 .get(0)

@@ -154,7 +154,7 @@ class Graph {
             nodeByID[n.name] = n;
         });
 
-        this.graph.linkscompose.forEach(function (l) {
+        this.graph.alllinks.forEach(function (l) {
             l.sourceTypes = nodeByID[l.source].types;
             l.targetTypes = nodeByID[l.target].types;
         });
@@ -163,26 +163,26 @@ class Graph {
             n.radius = n.types.includes("CLASS") ? 10 + n.methodVPs : 10;
         });
 
-        this.store.linkscompose.forEach(function (l) {
+        this.store.alllinks.forEach(function (l) {
             l.sourceTypes = nodeByID[l.source].types;
             l.targetTypes = nodeByID[l.target].types;
         });
 
 
         this.graph.allnodes = this.filter.getNodesListWithoutMatchingFilter(gr.allnodes);
-        this.graph.linkscompose = this.filter.getLinksListWithoutMatchingFilter(gr.linkscompose);
+        this.graph.alllinks = this.filter.getLinksListWithoutMatchingFilter(gr.alllinks);
 
         this.nodesList = [];
         this.apiList = [];
 
         if (this.filterVariants) {
-            var variantsFilter = new VariantsFilter(this.graph.allnodes, this.graph.linkscompose);
+            var variantsFilter = new VariantsFilter(this.graph.allnodes, this.graph.alllinks);
             this.graph.allnodes = variantsFilter.getFilteredNodesList();
-            this.graph.linkscompose = variantsFilter.getFilteredLinksList();
+            this.graph.alllinks = variantsFilter.getFilteredLinksList();
         }
 
         if (this.filterIsolated) {
-            var isolatedFilter = new IsolatedFilter(this.graph.allnodes, this.graph.linkscompose);
+            var isolatedFilter = new IsolatedFilter(this.graph.allnodes, this.graph.alllinks);
             this.graph.allnodes = isolatedFilter.getFilteredNodesList();
         }
 
@@ -202,13 +202,13 @@ class Graph {
                 this.apiList.forEach(node => node.compositionLevel = 0);
                 switch (this.defaultCompositionType) {
                     case compositionTypeEnum.IN:
-                        this.hs = this.apiFilter.getLinksListWithMatchingFilterIn(gr.linkscompose);
+                        this.hs = this.apiFilter.getLinksListWithMatchingFilterIn(gr.alllinks);
                         break;
                     case compositionTypeEnum.OUT:
-                        this.hs = this.apiFilter.getLinksListWithMatchingFilterOut(gr.linkscompose);
+                        this.hs = this.apiFilter.getLinksListWithMatchingFilterOut(gr.alllinks);
                         break;
                     case compositionTypeEnum.IN_OUT:
-                        this.hs = this.apiFilter.getLinksListWithMatchingFilterInOut(gr.linkscompose);
+                        this.hs = this.apiFilter.getLinksListWithMatchingFilterInOut(gr.alllinks);
                         break;
                 }
                 //Found all the nodes which are linked to one of those nodes
@@ -232,17 +232,17 @@ class Graph {
             while (current.length !== 0) {
                 switch (this.defaultCompositionType) {
                     case compositionTypeEnum.IN:
-                        links = this.apiFilter.getLinksListWithMatchingFiltersIn(gr.linkscompose, current);
+                        links = this.apiFilter.getLinksListWithMatchingFiltersIn(gr.alllinks, current);
                         break;
                     case compositionTypeEnum.OUT:
-                        links = this.apiFilter.getLinksListWithMatchingFiltersOut(gr.linkscompose, current);
+                        links = this.apiFilter.getLinksListWithMatchingFiltersOut(gr.alllinks, current);
                         break;
                     case compositionTypeEnum.IN_OUT:
-                        links = this.apiFilter.getLinksListWithMatchingFiltersInOut(gr.linkscompose, current);
+                        links = this.apiFilter.getLinksListWithMatchingFiltersInOut(gr.alllinks, current);
                         break;
                 }
 
-                //links = this.apiFilter.getLinksListWithMatchingFilters(gr.linkscompose, current);
+                //links = this.apiFilter.getLinksListWithMatchingFilters(gr.alllinks, current);
                 links.forEach(
                     d => gr.allnodes.forEach(node => {
 
@@ -268,9 +268,9 @@ class Graph {
         }
     }
 
-    setDataToDisplay(nodesList, linkscompose, compositionLevel) {
+    setDataToDisplay(nodesList, alllinks, compositionLevel) {
         this.graph.allnodes = nodesList.splice(0, this.nodes_dict[compositionLevel]);
-        this.graph.linkscompose = linkscompose.splice(0, this.links_dict[compositionLevel]);
+        this.graph.alllinks = alllinks.splice(0, this.links_dict[compositionLevel]);
     }
 
     setMaxCompositionLevel(graphcomposition) {
@@ -363,7 +363,7 @@ class Graph {
         this.node = this.node.merge(newNode);
 
         //	UPDATE
-        this.link = this.link.data(this.graph.linkscompose, function (d) {
+        this.link = this.link.data(this.graph.alllinks, function (d) {
             return d.name;
         });
         //	EXIT
@@ -455,16 +455,32 @@ class Graph {
 
                 this.link
                     .attr("x1", function (d) {
-                        return d.target.x;
+                        if(d.type.includes("INSTANCIATE")){
+                            return d.target.x;
+                        }else{
+                            return d.source.x
+                        }
                     })
                     .attr("y1", function (d) {
-                        return d.target.y;
+                        if(d.type.includes("INSTANCIATE")){
+                            return d.target.y
+                        }else{
+                            return d.source.y
+                        }
                     })
                     .attr("x2", function (d) {
-                        return d.source.x;
+                        if(d.type.includes("INSTANCIATE")){
+                            return d.source.x
+                        }else{
+                            return d.target.x
+                        }
                     })
                     .attr("y2", function (d) {
-                        return d.source.y;
+                        if(d.type.includes("INSTANCIATE")){
+                            return d.source.y
+                        }else{
+                            return d.target.y
+                        }
                     });
 
                 this.label
@@ -477,7 +493,7 @@ class Graph {
             });
 
         simulation.force("link")
-            .links(this.graph.linkscompose);
+            .links(this.graph.alllinks);
 
         simulation.alpha(1).alphaTarget(0).restart();
 
