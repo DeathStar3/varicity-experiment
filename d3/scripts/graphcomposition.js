@@ -246,7 +246,7 @@ class Graph {
                 links.forEach(
                     d => gr.allnodes.forEach(node => {
 
-                        if ((ApiFilter.matchesFilter(node.name, d.target) && !this.nodesList.includes(node))) {
+                        if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
                             node.compositionLevel = compositionLevel;
                             this.nodesList.push(node);
                             this.hs.push(d);
@@ -274,7 +274,6 @@ class Graph {
     }
 
     setMaxCompositionLevel(graphcomposition) {
-        console.log(this.nodesList);
         var options = {
             minimum: 1,
             maximize: this.nodesList[this.nodesList.length - 1].compositionLevel,
@@ -285,8 +284,6 @@ class Graph {
                     graphcomposition.setDataToDisplay(nodes_graph, links_graph, graphcomposition.defaultCompositionLevel);
                 }
                 else graphcomposition.setDataToDisplay(nodes_graph, links_graph, e);
-                //console.log('current value: ' + e);
-                //console.log(graphcomposition.nodesList);
                 if (!graphcomposition.firstLevelComposition) graphcomposition.update();
             },
             onMinimum: function (e) {
