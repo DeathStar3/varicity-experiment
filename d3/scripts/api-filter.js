@@ -42,6 +42,7 @@ class ApiFilter extends NodesFilter {
         document.getElementById('output').innerHTML = this.filtersList.length.toString();
     }
 
+    //You can actually add in the api filters input field some nodes names separated by ',' to get them added to the apiFilter's list
     addFilteringToButton() {
         $(this.filterButtonSelector).on('click', async e => {
             e.preventDefault();
@@ -54,14 +55,13 @@ class ApiFilter extends NodesFilter {
         });
     }
 
+    //This method from nodeFilter have been override to separate the two list apiFilter's list and packageFilter 's list
     addCapacityToRemoveFilter(){
         $(document).on('click', "#close-api", async e => {
             e.preventDefault();
             let removedFilter = $(e.target.parentElement.parentElement).attr("id");
-            //console.log(removedFilter);
             $(e.target.parentElement.parentElement).remove();
             this.removeValue(removedFilter);
-            //this.removeFilterTitle();
             await this.displayGraphFunction();
         });
     }
@@ -79,9 +79,7 @@ class ApiFilter extends NodesFilter {
 
 
 
-    // getLinksListWithMatchingFilter(listToFilter){
-    //     return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.source, filter)))
-    // }
+    //Find links whose target or sources match with nodes in the initial list
 
     getLinksListWithMatchingFilterIn(listToFilter){
         return listToFilter.filter(l => this.filtersList.some(filter => NodesFilter.matchesFilter(l.target, filter)))
@@ -97,9 +95,7 @@ class ApiFilter extends NodesFilter {
 
 
 
-    /*getLinksListWithMatchingFilters(listToFilter, filters){
-        return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.target, filter)))
-    }*/
+    //Find links whose target or sources match with nodes in a given list
 
     getLinksListWithMatchingFiltersIn(listToFilter, filters){
         return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.target, filter)))
@@ -113,13 +109,11 @@ class ApiFilter extends NodesFilter {
         return listToFilter.filter(l => filters.some(filter => NodesFilter.matchesFilter(l.target, filter) || NodesFilter.matchesFilter(l.source, filter)) )
     }
 
+    //Find nodes matching with the nodes in the list to filter
     getNodesListWithMatchingFilter(listToFilter){
         return listToFilter.filter(n => this.filtersList.some(filter => NodesFilter.matchesFilter(n.name, filter)))
     }
 
-    /*getNodesListWithMatchingFilter(listToFilter, filters){
-        return listToFilter.filter(n => filters.some(filter => NodesFilter.matchesFilter(n.name, filter)))
-    }*/
 }
 
 export {ApiFilter};
