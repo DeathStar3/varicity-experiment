@@ -50,6 +50,7 @@ class Graph {
         this.nodes_dict = {};
         this.links_dict = {};
         this.firstLevelComposition = true;
+        this.hybridView = false;
     }
 
 
@@ -101,6 +102,7 @@ class Graph {
             .attr("class", "everything");
 
         this.link = this.g.append("g").selectAll(".link");
+        if(this.hybridView) this.linkvp = this.g.append("g").selectAll(".linkvp");
         this.node = this.g.append("g").selectAll(".node");
         this.label = this.g.append("g").selectAll(".label");
     }
@@ -154,6 +156,10 @@ class Graph {
             nodeByID[n.name] = n;
         });
 
+        if(!this.hybridView){
+            this.graph.alllinks = this.graph.linkscompose;
+        }
+
         this.graph.alllinks.forEach(function (l) {
             l.sourceTypes = nodeByID[l.source].types;
             l.targetTypes = nodeByID[l.target].types;
@@ -192,79 +198,87 @@ class Graph {
 
 
         if (this.apiFilter.filtersList.length !== 0) {
-            if (document.getElementById("compositionLevel").style.display === "none") document.getElementById("compositionLevel").style.display = "block";
+            if (document.getElementById("compositionLevel").style.display === "none"){
+                document.getElementById("compositionLevel").style.display = "block";
+                document.getElementById("compositionType").style.display = "inline-grid";
+                document.getElementById("hybridView").style.display = "inline-grid";
+            }
             //Filter to found all nodes which are in the api list
             this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
             this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.allnodes);
-            //Found all the links which contains one of the api class as target or sources
-            var current = [];
-            if (this.apiList.length !== 0) {
-                this.apiList.forEach(node => node.compositionLevel = 0);
-                switch (this.defaultCompositionType) {
-                    case compositionTypeEnum.IN:
-                        this.hs = this.apiFilter.getLinksListWithMatchingFilterIn(gr.alllinks);
-                        break;
-                    case compositionTypeEnum.OUT:
-                        this.hs = this.apiFilter.getLinksListWithMatchingFilterOut(gr.alllinks);
-                        break;
-                    case compositionTypeEnum.IN_OUT:
-                        this.hs = this.apiFilter.getLinksListWithMatchingFilterInOut(gr.alllinks);
-                        break;
-                }
-                //Found all the nodes which are linked to one of those nodes
-                this.hs.forEach(
-                    d => gr.allnodes.forEach(node => {
-                            if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
-                                node.compositionLevel = 1;
-                                this.nodesList.push(node);
-                                current.push(node.name);
+            if(this.nodesList.length !== 0){
+                //Found all the links which contains one of the api class as target or sources
+                var current = [];
+                if (this.apiList.length !== 0) {
+                    this.apiList.forEach(node => node.compositionLevel = 0);
+                    switch (this.defaultCompositionType) {
+                        case compositionTypeEnum.IN:
+                            this.hs = this.apiFilter.getLinksListWithMatchingFilterIn(gr.alllinks);
+                            break;
+                        case compositionTypeEnum.OUT:
+                            this.hs = this.apiFilter.getLinksListWithMatchingFilterOut(gr.alllinks);
+                            break;
+                        case compositionTypeEnum.IN_OUT:
+                            this.hs = this.apiFilter.getLinksListWithMatchingFilterInOut(gr.alllinks);
+                            break;
+                    }
+                    //Found all the nodes which are linked to one of those nodes
+                    this.hs.forEach(
+                        d => gr.allnodes.forEach(node => {
+                                if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
+                                    node.compositionLevel = 1;
+                                    this.nodesList.push(node);
+                                    current.push(node.name);
+                                }
                             }
-                        }
-                    )
-                );
-            }
-            this.nodes_dict[1] = this.nodesList.length;
-            this.links_dict[1] = this.hs.length;
-
-            var next = [];
-            var links = []
-            var compositionLevel = 2;
-            while (current.length !== 0) {
-                switch (this.defaultCompositionType) {
-                    case compositionTypeEnum.IN:
-                        links = this.apiFilter.getLinksListWithMatchingFiltersIn(gr.alllinks, current);
-                        break;
-                    case compositionTypeEnum.OUT:
-                        links = this.apiFilter.getLinksListWithMatchingFiltersOut(gr.alllinks, current);
-                        break;
-                    case compositionTypeEnum.IN_OUT:
-                        links = this.apiFilter.getLinksListWithMatchingFiltersInOut(gr.alllinks, current);
-                        break;
+                        )
+                    );
                 }
+                this.nodes_dict[1] = this.nodesList.length;
+                this.links_dict[1] = this.hs.length;
 
-                //links = this.apiFilter.getLinksListWithMatchingFilters(gr.alllinks, current);
-                links.forEach(
-                    d => gr.allnodes.forEach(node => {
+                var next = [];
+                var links = []
+                var compositionLevel = 2;
+                while (current.length !== 0) {
+                    switch (this.defaultCompositionType) {
+                        case compositionTypeEnum.IN:
+                            links = this.apiFilter.getLinksListWithMatchingFiltersIn(gr.alllinks, current);
+                            break;
+                        case compositionTypeEnum.OUT:
+                            links = this.apiFilter.getLinksListWithMatchingFiltersOut(gr.alllinks, current);
+                            break;
+                        case compositionTypeEnum.IN_OUT:
+                            links = this.apiFilter.getLinksListWithMatchingFiltersInOut(gr.alllinks, current);
+                            break;
+                    }
 
-                        if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
-                            node.compositionLevel = compositionLevel;
-                            this.nodesList.push(node);
-                            this.hs.push(d);
-                            next.push(node.name);
-                        }
-                    })
-                );
-                this.nodes_dict[compositionLevel] = this.nodesList.length;
-                this.links_dict[compositionLevel] = this.hs.length;
-                //this.hs.push.apply(this.hs, links)
-                current = next;
-                next = [];
-                compositionLevel++;
+                    //links = this.apiFilter.getLinksListWithMatchingFilters(gr.alllinks, current);
+                    links.forEach(
+                        d => gr.allnodes.forEach(node => {
+
+                            if ((ApiFilter.matchesFilter(node.name, d.source) || (ApiFilter.matchesFilter(node.name, d.target))) && !this.nodesList.includes(node)) {
+                                node.compositionLevel = compositionLevel;
+                                this.nodesList.push(node);
+                                this.hs.push(d);
+                                next.push(node.name);
+                            }
+                        })
+                    );
+                    this.nodes_dict[compositionLevel] = this.nodesList.length;
+                    this.links_dict[compositionLevel] = this.hs.length;
+                    //this.hs.push.apply(this.hs, links)
+                    current = next;
+                    next = [];
+                    compositionLevel++;
+                }
+                this.setMaxCompositionLevel(this);
+                this.firstLevelComposition = false;
             }
-            this.setMaxCompositionLevel(this);
-            this.firstLevelComposition = false;
         }else{
             document.getElementById("compositionLevel").style.display = "none";
+            document.getElementById("compositionType").style.display = "none";
+            document.getElementById("hybridView").style.display = "none";
         }
     }
 
@@ -363,9 +377,10 @@ class Graph {
         this.node = this.node.merge(newNode);
 
         //	UPDATE
-        this.link = this.link.data(this.graph.alllinks, function (d) {
+        this.link = this.link.data(this.graph.alllinks.filter(l =>l.type.includes("INSTANCIATE")), function (d) {
             return d.name;
         });
+        //         var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
         //	EXIT
         this.link.exit().remove();
         //	ENTER
@@ -381,8 +396,34 @@ class Graph {
             .text(function (d) {
                 return "source: " + d.source + "\n" + "target: " + d.target;
             });
+
         //	ENTER + UPDATE
         this.link = this.link.merge(newLink);
+
+        if(this.hybridView){
+            //	UPDATE
+            this.linkvp = this.linkvp.data(this.graph.alllinks.filter(l => !l.type.includes("INSTANCIATE")), function (d) {
+                return d.name;
+            });
+            //         var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
+            //	EXIT
+            this.linkvp.exit().remove();
+            //	ENTER
+            var newLinkvp = this.linkvp.enter().append("line")
+                .attr("stroke-with", 1)
+                .attr("class", "link")
+                .attr("source", d => d.source)
+                .attr("target", d => d.target)
+                .attr('marker-start', "url(#arrowhead)")
+                .style("pointer-events", "none");
+
+            newLinkvp.append("title")
+                .text(function (d) {
+                    return "source: " + d.source + "\n" + "target: " + d.target;
+                });
+            //	ENTER + UPDATE
+            this.linkvp = this.linkvp.merge(newLinkvp);
+        }
 
         //  UPDATE
         this.label = this.label.data(this.graph.allnodes, function (d) {
@@ -483,6 +524,38 @@ class Graph {
                         }
                     });
 
+                if(this.hybridView){
+                    this.linkvp
+                        .attr("x1", function (d) {
+                            if(d.type.includes("INSTANCIATE")){
+                                return d.target.x;
+                            }else{
+                                return d.source.x
+                            }
+                        })
+                        .attr("y1", function (d) {
+                            if(d.type.includes("INSTANCIATE")){
+                                return d.target.y
+                            }else{
+                                return d.source.y
+                            }
+                        })
+                        .attr("x2", function (d) {
+                            if(d.type.includes("INSTANCIATE")){
+                                return d.source.x
+                            }else{
+                                return d.target.x
+                            }
+                        })
+                        .attr("y2", function (d) {
+                            if(d.type.includes("INSTANCIATE")){
+                                return d.source.y
+                            }else{
+                                return d.target.y
+                            }
+                        });
+                }
+
                 this.label
                     .attr("x", function (d) {
                         return d.x;
@@ -546,6 +619,7 @@ class Graph {
         $(document).on('change', "#composition-type", async e => {
             e.preventDefault();
             this.defaultCompositionType = $(e.target).val();
+            this.firstLevelComposition = true;
             await this.displayGraph();
         });
 
@@ -560,7 +634,8 @@ class Graph {
                 $(e.target).val('off');
                 this.hybridView = false;
             }
-            console.log($(e.target).val());
+            //console.log($(e.target).val());
+            this.firstLevelComposition = true;
             await this.displayGraph();
         });
 
@@ -569,6 +644,7 @@ class Graph {
             var previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
             sessionStorage.setItem("filteredIsolated", previouslyFiltered ? "false" : "true");
             $("#filter-isolated").text(previouslyFiltered ? "Unfilter isolated nodes" : "Filter isolated nodes");
+            this.firstLevelComposition = true;
             await this.displayGraph();
         });
 
@@ -578,6 +654,7 @@ class Graph {
             var previouslyFiltered = sessionStorage.getItem("filteredVariants") === "true";
             sessionStorage.setItem("filteredVariants", previouslyFiltered ? "false" : "true");
             $("#filter-variants-button").text(previouslyFiltered ? "Hide variants" : "Show variants");
+            this.firstLevelComposition = true;
             await this.displayGraph();
         });
 
