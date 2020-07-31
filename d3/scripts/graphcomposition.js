@@ -193,7 +193,7 @@ class Graph {
         }
 
         if (this.firstLevelComposition) {
-            $("#composition-type").val(this.defaultCompositionType);
+            $("#compositiontypes").val(this.defaultCompositionType);
         }
 
 
@@ -253,7 +253,6 @@ class Graph {
                             break;
                     }
 
-                    //links = this.apiFilter.getLinksListWithMatchingFilters(gr.alllinks, current);
                     links.forEach(
                         d => gr.allnodes.forEach(node => {
 
@@ -267,12 +266,11 @@ class Graph {
                     );
                     this.nodes_dict[compositionLevel] = this.nodesList.length;
                     this.links_dict[compositionLevel] = this.hs.length;
-                    //this.hs.push.apply(this.hs, links)
                     current = next;
                     next = [];
                     compositionLevel++;
                 }
-                this.setMaxCompositionLevel(this);
+                this.updateCompositionLevelView(this);
                 this.firstLevelComposition = false;
             }
         }else{
@@ -287,27 +285,24 @@ class Graph {
         this.graph.alllinks = alllinks.splice(0, this.links_dict[compositionLevel]);
     }
 
-    setMaxCompositionLevel(graphcomposition) {
-        var options = {
-            minimum: 1,
-            maximize: this.nodesList[this.nodesList.length - 1].compositionLevel,
-            onChange: async function (e) {
-                var nodes_graph = [...graphcomposition.nodesList];
-                var links_graph = [...graphcomposition.hs];
-                if(graphcomposition.firstLevelComposition) {
-                    graphcomposition.setDataToDisplay(nodes_graph, links_graph, graphcomposition.defaultCompositionLevel);
-                }
-                else graphcomposition.setDataToDisplay(nodes_graph, links_graph, e);
-                if (!graphcomposition.firstLevelComposition) graphcomposition.update();
-            },
-            onMinimum: function (e) {
-                //console.log('reached minimum: '+e)
-            },
-            onMaximize: function (e) {
-                //console.log('reached maximize'+e)
+    updateCompositionLevelView(graphcomposition) {
+        var x = document.getElementById("composition-level");
+        var length = x.options.length;
+        if (length !== 0) {
+            for (i = length-1; i >= 0; i--) {
+                x.options[i] = null;
             }
         }
-        $('#handleCounter').handleCounter(options);
+        for(var i = 0; i < this.nodesList[this.nodesList.length - 1].compositionLevel; i++) {
+            var option = document.createElement("option");
+            option.text = (i + 1).toString();
+            option.value = (i + 1).toString();
+            if( (i+1) === graphcomposition.defaultCompositionLevel) option.selected = true;
+            x.add(option);
+        }
+        var nodes_graph = [...graphcomposition.nodesList];
+        var links_graph = [...graphcomposition.hs];
+        graphcomposition.setDataToDisplay(nodes_graph, links_graph, graphcomposition.defaultCompositionLevel);
     }
 
 
@@ -332,22 +327,15 @@ class Graph {
             //On api classes
             .style("stroke", (d) => {
                 return this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
-                //return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
             })
             .style("stroke-width", function (d) {
                 if (d.types.includes('PUBLIC')) {
-                    //return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
-                    //return d.methodPublics;
                     var temp = d.methodPublics;
                     return temp < 5 ? 1 : temp * 0.2;
-                    //return temp * 0.2;
                 } else {
                     return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
                 }
             })
-            //.style("stroke", function (d) {
-            //  return this.nodesList.contains(d) ? d3.rgb(255, 255, 255): d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants)) ;
-            //})
             .attr("r", function (d) {
                 return d.radius
             })
@@ -380,7 +368,7 @@ class Graph {
         this.link = this.link.data(this.graph.alllinks.filter(l =>l.type.includes("INSTANCIATE")), function (d) {
             return d.name;
         });
-        //         var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
+
         //	EXIT
         this.link.exit().remove();
         //	ENTER
@@ -405,7 +393,6 @@ class Graph {
             this.linkvp = this.linkvp.data(this.graph.alllinks.filter(l => !l.type.includes("INSTANCIATE")), function (d) {
                 return d.name;
             });
-            //         var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
             //	EXIT
             this.linkvp.exit().remove();
             //	ENTER
@@ -485,8 +472,6 @@ class Graph {
             //	tick event handler with bounded box
             .on("tick", () => {
                 this.node
-                    // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-                    // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
                     .attr("cx", function (d) {
                         return d.x;
                     })
@@ -616,25 +601,34 @@ class Graph {
             $('.active').removeClass('active');
         });
 
-        $(document).on('change', "#composition-type", async e => {
+        $(document).on('change', "#compositiontypes", async e => {
             e.preventDefault();
             this.defaultCompositionType = $(e.target).val();
             this.firstLevelComposition = true;
             await this.displayGraph();
         });
 
+        $(document).on('change', "#composition-level", async e => {
+            e.preventDefault();
+            this.defaultCompositionLevel = $(e.target).val();
+            var nodes_graph = [...this.nodesList];
+            var links_graph = [...this.hs];
+            this.setDataToDisplay(nodes_graph, links_graph, $(e.target).val());
+            this.update();
+        });
+
         $(document).on('change', "#hybridSwitch", async e => {
             e.preventDefault();
-            //this.defaultCompositionType = $(e.target).val();
             if($(e.target).val() === 'off') {
                 $(e.target).val('on');
                 this.hybridView = true;
+                document.getElementById("compositiontypes").disabled = true;
             }
             else {
                 $(e.target).val('off');
                 this.hybridView = false;
+                document.getElementById("compositiontypes").disabled = false;
             }
-            //console.log($(e.target).val());
             this.firstLevelComposition = true;
             await this.displayGraph();
         });

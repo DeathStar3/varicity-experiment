@@ -28,12 +28,11 @@ import {ApiFilter} from "./api-filter.js";
 
 class Graph {
 
-    constructor(jsonFile, jsonStatsFile, nodeFilters, apiFilters) {
+    constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        this.apiFilter = new ApiFilter("#add-api-class-button", "#api-class-to-filter","#list-tab-api", apiFilters,async () => await this.displayGraph());
         if(sessionStorage.getItem("firstTime") === null){
             sessionStorage.setItem("firstTime", "true");
         }
@@ -158,25 +157,6 @@ class Graph {
         this.nodesList = [];
         this.apiList = [];
 
-        if(this.apiFilter.filtersList.length!== 0){
-            //Filter to found all nodes which are in the api list
-            this.nodesList = this.apiFilter.getNodesListWithMatchingFilter(gr.nodes);
-            this.apiList = this.apiFilter.getNodesListWithMatchingFilter(gr.nodes);
-            //Found all the links which contains one of the api class as target or sources
-            this.hs= this.apiFilter.getLinksListWithMatchingFilter(gr.links);
-            //Found all the nodes which are linked to one of those nodes
-            this.hs.forEach(
-                d=>    gr.nodes.forEach(node =>{ if((ApiFilter.matchesFilter(node.name, d.target) || ApiFilter.matchesFilter(node.name, d.source)) && !this.nodesList.includes(node) ) this.nodesList.push(node) })
-            );
-            console.log(this.nodesList);
-            this.graph.nodes =this.nodesList;
-            this.graph.links =this.hs;
-
-            //.nodesList.forEach(element );
-
-
-        }
-
 
         if (this.filterVariants) {
             var variantsFilter = new VariantsFilter(this.graph.nodes, this.graph.links);
@@ -188,8 +168,6 @@ class Graph {
             var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
             this.graph.nodes = isolatedFilter.getFilteredNodesList();
         }
-
-
     }
 
 
@@ -341,8 +319,6 @@ class Graph {
             //	tick event handler with bounded box
             .on("tick", () => {
                 this.node
-                    // .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-                    // .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
                     .attr("cx", function (d) {
                         return d.x;
                     })

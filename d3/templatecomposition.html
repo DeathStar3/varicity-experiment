@@ -26,7 +26,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="icon" type="image/png" href="symfinder-icon.png">
-    <title>${title} - Conposition graph</title>
+    <title>${title} - Composition graph</title>
 </head>
 <body id="index-body">
 
@@ -77,14 +77,9 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                             <button class="btn btn-outline-dark" type="button" id="add-api-class-button">Add a class from the api</button>
                         </div>
                     </div>
-                    <!--
-                    <div style="margin-right: 1em">
-                        <button type="button" class="btn btn-outline-dark" data-toggle="button" aria-pressed="false" id="filter-isolated" value="filter-isolated">Filter isolated nodes</button>
-                    </div>
-                    -->
                     <div id="compositionType" class="col-2" style="text-align: center; display: inline-grid; padding-right: 3em;">
-                        <b style="margin-top: -2em"><label for="composition-type">Composition-type</label></b>
-                        <select name="composition-type" id="composition-type" style="margin-top: -15px;">
+                        <b style="margin-top: -2em"><label for="compositiontypes">Composition-type</label></b>
+                        <select name="composition-type" id="compositiontypes" style="margin-top: -15px;">
                             <option value="IN">IN</option>
                             <option value="OUT">OUT</option>
                             <option value="IN-OUT">IN-OUT</option>
@@ -99,8 +94,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                     </div>
                 </div>
 
-                <div class="row pl-4 justify-content-between">
-                    <!--style="display: flex; justify-content: space-between;"-->
+                <div class="row py-2 pl-4 justify-content-between">
                     <div>
                         <button type="button" class="collapsible">Packages <b style="color: darkgoldenrod">filtered
                             out</b> (<b style="color: darkgoldenrod"><b id="output-p"></b> packages</b>)
@@ -118,44 +112,20 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                         </button>
                         <div class="content-api">
                             <div class="col-auto mr-auto" style="padding: 1em">
-                                <!--<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>-->
                                 <ul class="list-group" id="list-tab-api" role="tablist">
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div id="compositionLevel">
-                        <b>Composition-level</b>
-                        <div class="handle-counter" id="handleCounter">
-                            <button class="counter-minus btn btn-primary">-</button>
-                            <label id="labelCompositionLevel">
-                                <input id="compositionLevelValue" type="text" value="${compositionLevel}">
-                            </label>
-                            <button class="counter-plus btn btn-primary">+</button>
-                        </div>
+                    <div id="compositionLevel" class="col-2" style="text-align: center; display: inline-grid; padding-left: 2em; height: 40px;">
+                        <b style="margin-top: -20px"><label for="composition-level">Composition-level</label></b>
+                        <select id="composition-level" style="margin-top: -20px;">
+                        </select>
                     </div>
                     <div>
                         <p id="statistics"></p>
                     </div>
                 </div>
-                <!--
-                <div class="row py-4 pl-4 justify-content-between">
-                    <div class="col-auto mr-auto">
-                        <ul class="list-group" id="list-tab" role="tablist">
-                        </ul>
-                    </div>
-                    <div class="col-auto mr-auto">
-
-                        <ul class="list-group-api" id="list-tab-api" role="tablist">
-
-                        </ul>
-                    </div>
-
-                    <div class="col-4">
-                        <p id="statistics"></p>
-                    </div>
-                </div>
-                -->
             </div>
         </div>
         <div id="collapseTwo" class="collapse multi-collapse border-white" aria-labelledby="headingTwo">
@@ -199,7 +169,6 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-<script src="scripts/handleCounter.js"></script>
 <script type="module">
     var coll = document.getElementsByClassName("collapsible");
     var i;
