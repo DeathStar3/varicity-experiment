@@ -2,9 +2,9 @@
   "name": "karma-conf",
   "version": "1.0.0",
   "description": "",
-  "main": "karma.conf.js",
   "scripts": {
-    "test": "karma start"
+    "test composition": "karma start karmaComposition.conf.js",
+    "test": "karma start karma.conf.js"
   },
   "keywords": [],
   "author": "",
@@ -19,3 +19,4 @@
     "karma-spec-reporter": "^0.0.32"
   }
 }
+
