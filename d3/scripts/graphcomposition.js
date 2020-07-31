@@ -390,7 +390,8 @@ class Graph {
             .attr("target", d => d.target)
             .attr('marker-start', "url(#arrowhead)")
             .style("pointer-events", "none")
-            .style("stroke","#0e90d2");
+            .style("stroke","#0E90D2")
+            .style("stroke-width",3);
 
         newLink.append("title")
             .text(function (d) {
@@ -405,7 +406,6 @@ class Graph {
             this.linkvp = this.linkvp.data(this.graph.alllinks.filter(l => !l.type.includes("INSTANCIATE")), function (d) {
                 return d.name;
             });
-            //         var sort = gr.allnodes.filter(a => a.types.includes("CLASS")).map(a => parseInt(a.constructorVariants)).sort((a, b) => a - b);
             //	EXIT
             this.linkvp.exit().remove();
             //	ENTER
@@ -415,7 +415,8 @@ class Graph {
                 .attr("source", d => d.source)
                 .attr("target", d => d.target)
                 .attr('marker-start', "url(#arrowhead)")
-                .style("pointer-events", "none");
+                .style("pointer-events", "none")
+                .style("stroke-width",5);
 
             newLinkvp.append("title")
                 .text(function (d) {
