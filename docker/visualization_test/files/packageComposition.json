@@ -1,10 +1,10 @@
 {
-  "name": "karma-conf",
+  "name": "karma-conf-composition",
   "version": "1.0.0",
   "description": "",
+  "main": "karmaComposition.conf.js",
   "scripts": {
-    "test composition": "karma start karmaComposition.conf.js",
-    "test": "karma start karma.conf.js"
+    "test": "karma start"
   },
   "keywords": [],
   "author": "",
@@ -19,4 +19,6 @@
     "karma-spec-reporter": "^0.0.32"
   }
 }
+  
+
 

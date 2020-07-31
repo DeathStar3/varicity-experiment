@@ -368,17 +368,18 @@ class Graph {
         this.link = this.link.data(this.graph.alllinks.filter(l =>l.type.includes("INSTANCIATE")), function (d) {
             return d.name;
         });
-
         //	EXIT
         this.link.exit().remove();
         //	ENTER
         var newLink = this.link.enter().append("line")
-            .attr("stroke-dasharray", 10)
+            .attr("stroke-dasharray", 5)
             .attr("class", "link")
             .attr("source", d => d.source)
             .attr("target", d => d.target)
             .attr('marker-start', "url(#arrowhead)")
-            .style("pointer-events", "none");
+            .style("pointer-events", "none")
+            .style("stroke","#0E90D2")
+            .style("stroke-width",3);
 
         newLink.append("title")
             .text(function (d) {
@@ -402,7 +403,8 @@ class Graph {
                 .attr("source", d => d.source)
                 .attr("target", d => d.target)
                 .attr('marker-start', "url(#arrowhead)")
-                .style("pointer-events", "none");
+                .style("pointer-events", "none")
+                .style("stroke-width",5);
 
             newLinkvp.append("title")
                 .text(function (d) {

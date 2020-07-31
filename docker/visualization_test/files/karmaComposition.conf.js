@@ -39,13 +39,12 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'tests/symfinder-filtering-test.js',
-            'tests/symfinder-graph-test.js',
+            'tests/symphinder-composition-test.js',
             {pattern: 'tests/data/*.json', watched: false, served: true, included: false},
             {pattern: 'scripts/*.js', type: "module", watched: false, served: true, included: false}
         ],
 
-        customContextFile: "pages/context.html",
+        customContextFile: "pages/contextComposition.html",
 
         proxies: {
             '/tests/': '/base/tests/',
@@ -61,7 +60,7 @@ module.exports = function (config) {
         reporters: ['spec'],
 
         // web server port
-        port: 9876,
+        port: 9877,
 
         // enable / disable colors in the output (reporters and logs)
         colors: true,
