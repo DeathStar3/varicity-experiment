@@ -58,6 +58,8 @@ public class FactoryVisitor extends SymfinderVisitor {
                 logger.debug("methodReturnType : " + methodReturnType);
                 // TODO: 4/30/19 if does not exist already, add label to filter on visualization
                 Node methodReturnTypeNode = neoGraph.getNode(methodReturnType).orElse(null);
+                // If a node is created now, it means that it has not been created during the ClassesVisitor, hence that the type is not defined in the project.
+                // Therefore, it is considered as out of scope.
                 Node parsedClassNode = neoGraph.getOrCreateNode(parsedClassType, methodDeclaration.resolveBinding().getDeclaringClass().isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
                 Node returnedObjectTypeNode = neoGraph.getNode(typeOfReturnedObject).orElse(null);
                 // TODO: 3/27/19 functional test case with method returning Object → not direct link

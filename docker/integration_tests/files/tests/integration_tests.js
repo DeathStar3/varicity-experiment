@@ -270,7 +270,7 @@ describe("Tests on visibilityTest", () => {
     });
 
     it('there should be 1 public method ', () => {
-        expect(jsonStatsData.publicsMethods).toBe(1);
+        expect(jsonStatsData.publicMethods).toBe(1);
     });
 
     afterAll(() => sessionStorage.clear())
@@ -288,8 +288,8 @@ describe("Tests on attribute_composition", () => {
         done();
     });
 
-    it('there are 6 composition links', () => {
-        expect(jsonStatsData.nBcompositionClass).toBe(4);
+    it('there are 4 composition links', () => {
+        expect(jsonStatsData.nbCompositionClasses).toBe(4);
     });
 
     afterAll(() => sessionStorage.clear())

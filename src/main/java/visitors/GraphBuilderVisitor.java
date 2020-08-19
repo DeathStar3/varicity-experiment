@@ -63,6 +63,8 @@ public class GraphBuilderVisitor extends ImportsVisitor {
                     "Manually resolved name: %s\n" +
                     "Getting manually resolved name.", name, getClassBaseName(thisClassName), qualifiedName, myImportedClass.get()));
         }
+        // If a node is created now, it means that it has not been created during the ClassesVisitor, hence that the type is not defined in the project.
+        // Therefore, it is considered as out of scope.
         Node superclassNode = neoGraph.getOrCreateNode(myImportedClass.orElse(qualifiedName), entityType, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
         neoGraph.linkTwoNodes(superclassNode, thisNode, relationType);
     }

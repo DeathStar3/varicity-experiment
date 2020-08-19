@@ -190,16 +190,16 @@ class Graph {
             //.style("stroke", "black")
             //On api classes
             .style("stroke",  (d) => {
-                var color =  this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
+                var color =  this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.publicMethods)) : "black";
                 //return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
                 return color;
             })
             .style("stroke-width", function (d) {
                 if(d.types.includes('PUBLIC')){
                     //return d.types.includes('PUBLIC') ? d3.rgb(0,0,255) : d3.rgb(0,0,0)
-                    //return d.methodPublics;
+                    //return d.publicMethods;
                     //console.log(d.allMethods);
-                    var temp = d.methodPublics;
+                    var temp = d.publicMethods;
                     return temp < 5 ? 1 : temp * 0.2;
                     //return temp * 0.2;
                 }else{
@@ -220,8 +220,8 @@ class Graph {
             });
 
         newNode.append("title").text(function (d) {
-            return d.types.includes('PUBLIC') && d.methodPublics !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.methodPublics/d.allMethods)*100))
-                + "% of public methods." + "\n" +  d.allMethods + " methods " + "\n" + d.methodPublics + " public methods" : "types: " + d.types + "\n" + "name: " + d.name  ;
+            return d.types.includes('PUBLIC') && d.publicMethods !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.publicMethods/d.allMethods)*100))
+                + "% of public methods." + "\n" +  d.allMethods + " methods " + "\n" + d.publicMethods + " public methods" : "types: " + d.types + "\n" + "name: " + d.name  ;
         });
         newNode.on("mouseover", function(d) {
             d3.select(this).style("cursor", "pointer");

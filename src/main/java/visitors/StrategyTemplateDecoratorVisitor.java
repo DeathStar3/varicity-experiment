@@ -85,6 +85,8 @@ public class StrategyTemplateDecoratorVisitor extends ImportsVisitor {
         IMethodBinding methodBinding = node.resolveMethodBinding();
         if (methodBinding != null) { // TODO: 4/10/19 check why null in JavaGeom, math.geom3d.Box3D, p1.getX()
             ITypeBinding declaringClass = methodBinding.getDeclaringClass();
+            // If a node is created now, it means that it has not been created during the ClassesVisitor, hence that the type is not defined in the project.
+            // Therefore, it is considered as out of scope.
             Node declaringClassNode = neoGraph.getOrCreateNode(declaringClass.getQualifiedName(), declaringClass.isInterface() ? EntityType.INTERFACE : EntityType.CLASS, new EntityAttribute[]{EntityAttribute.OUT_OF_SCOPE}, new EntityAttribute[]{});
             if (neoGraph.getNbVariants(declaringClassNode) > 0 && (declaringClass.getName().contains("Template") || (declaringClass.equals(this.thisClassBinding) && Modifier.isAbstract(methodBinding.getModifiers())))) {
                 neoGraph.addLabelToNode(declaringClassNode, DesignPatternType.TEMPLATE.toString());

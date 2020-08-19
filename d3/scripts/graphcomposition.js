@@ -326,11 +326,11 @@ class Graph {
 
             //On api classes
             .style("stroke", (d) => {
-                return this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.methodPublics)) : "black";
+                return this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.publicMethods)) : "black";
             })
             .style("stroke-width", function (d) {
                 if (d.types.includes('PUBLIC')) {
-                    var temp = d.methodPublics;
+                    var temp = d.publicMethods;
                     return temp < 5 ? 1 : temp * 0.2;
                 } else {
                     return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
@@ -347,8 +347,8 @@ class Graph {
             });
 
         newNode.append("title").text(function (d) {
-            return d.types.includes('PUBLIC') && d.methodPublics !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.methodPublics / d.allMethods) * 100))
-                + "% of public methods." + "\n" + d.allMethods + " methods " + "\n" + d.methodPublics + " public methods" : "types: " + d.types + "\n" + "name: " + d.name;
+            return d.types.includes('PUBLIC') && d.publicMethods !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.publicMethods / d.allMethods) * 100))
+                + "% of public methods." + "\n" + d.allMethods + " methods " + "\n" + d.publicMethods + " public methods" : "types: " + d.types + "\n" + "name: " + d.name;
         });
         newNode.on("mouseover", function () {
             d3.select(this).style("cursor", "pointer");
@@ -365,7 +365,7 @@ class Graph {
         this.node = this.node.merge(newNode);
 
         //	UPDATE
-        this.link = this.link.data(this.graph.alllinks.filter(l =>l.type.includes("INSTANCIATE")), function (d) {
+        this.link = this.link.data(this.graph.alllinks.filter(l =>l.type.includes("INSTANTIATE")), function (d) {
             return d.name;
         });
         //	EXIT
@@ -391,7 +391,7 @@ class Graph {
 
         if(this.hybridView){
             //	UPDATE
-            this.linkvp = this.linkvp.data(this.graph.alllinks.filter(l => !l.type.includes("INSTANCIATE")), function (d) {
+            this.linkvp = this.linkvp.data(this.graph.alllinks.filter(l => !l.type.includes("INSTANTIATE")), function (d) {
                 return d.name;
             });
             //	EXIT
@@ -483,28 +483,28 @@ class Graph {
 
                 this.link
                     .attr("x1", function (d) {
-                        if(d.type.includes("INSTANCIATE")){
+                        if(d.type.includes("INSTANTIATE")){
                             return d.target.x;
                         }else{
                             return d.source.x
                         }
                     })
                     .attr("y1", function (d) {
-                        if(d.type.includes("INSTANCIATE")){
+                        if(d.type.includes("INSTANTIATE")){
                             return d.target.y
                         }else{
                             return d.source.y
                         }
                     })
                     .attr("x2", function (d) {
-                        if(d.type.includes("INSTANCIATE")){
+                        if(d.type.includes("INSTANTIATE")){
                             return d.source.x
                         }else{
                             return d.target.x
                         }
                     })
                     .attr("y2", function (d) {
-                        if(d.type.includes("INSTANCIATE")){
+                        if(d.type.includes("INSTANTIATE")){
                             return d.source.y
                         }else{
                             return d.target.y
@@ -514,28 +514,28 @@ class Graph {
                 if(this.hybridView){
                     this.linkvp
                         .attr("x1", function (d) {
-                            if(d.type.includes("INSTANCIATE")){
+                            if(d.type.includes("INSTANTIATE")){
                                 return d.target.x;
                             }else{
                                 return d.source.x
                             }
                         })
                         .attr("y1", function (d) {
-                            if(d.type.includes("INSTANCIATE")){
+                            if(d.type.includes("INSTANTIATE")){
                                 return d.target.y
                             }else{
                                 return d.source.y
                             }
                         })
                         .attr("x2", function (d) {
-                            if(d.type.includes("INSTANCIATE")){
+                            if(d.type.includes("INSTANTIATE")){
                                 return d.source.x
                             }else{
                                 return d.target.x
                             }
                         })
                         .attr("y2", function (d) {
-                            if(d.type.includes("INSTANCIATE")){
+                            if(d.type.includes("INSTANTIATE")){
                                 return d.source.y
                             }else{
                                 return d.target.y

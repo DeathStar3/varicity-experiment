@@ -224,10 +224,10 @@ public class NeoGraph {
     public void setMethodPublics() {
         submitRequest("MATCH (c:CLASS:PUBLIC)-->(a:METHOD:PUBLIC)\n" +
                 "WITH count( a.name ) AS cnt, c\n" +
-                "SET c.methodPublics = cnt");
+                "SET c.publicMethods = cnt");
         submitRequest("MATCH (c:CLASS)\n" +
-                "WHERE NOT EXISTS(c.methodPublics)\n" +
-                "SET c.methodPublics = 0");
+                "WHERE NOT EXISTS(c.publicMethods)\n" +
+                "SET c.publicMethods = 0");
     }
 
     /**
@@ -283,10 +283,10 @@ public class NeoGraph {
         submitRequest("MATCH (c)-->(a) \n" +
                 "WHERE c:PUBLIC AND c:CLASS AND  a:CONSTRUCTOR AND a:PUBLIC\n" +
                 "WITH count( a.name ) AS cnt, c\n" +
-                "SET c.constrcutorPublics = cnt");
+                "SET c.publicConstructors = cnt");
         submitRequest("MATCH (c:CLASS)\n" +
-                "WHERE NOT EXISTS(c.constrcutorPublics)\n" +
-                "SET c.constrcutorPublics = 0");
+                "WHERE NOT EXISTS(c.publicConstructors)\n" +
+                "SET c.publicConstructors = 0");
     }
 
     /**
@@ -311,7 +311,7 @@ public class NeoGraph {
     }
 
     public void setNbComposition(){
-        submitRequest("MATCH (c)-[:INSTANCIATE]->(a) WITH count(a) AS nbComp, c SET c.attributecompose = nbComp");
+        submitRequest("MATCH (c)-[:INSTANTIATE]->(a) WITH count(a) AS nbComp, c SET c.nbCompositions = nbComp");
     }
 
     /**
@@ -458,7 +458,7 @@ public class NeoGraph {
      * @return Number of public constructors
      */
     public int getNbPublicConstructors(){
-        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.constrcutorPublics))")
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.publicConstructors))")
                 .get(0).get(0).asInt();
     }
 
@@ -478,7 +478,7 @@ public class NeoGraph {
      * @return Number of public methods
      */
     public int getNbPublicMethods(){
-        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.methodPublics))")
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.publicMethods))")
                 .get(0).get(0).asInt();
     }
 
@@ -531,7 +531,7 @@ public class NeoGraph {
     }
 
     public int getNbAttributeComposeClass(){
-        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.attributecompose))")
+        return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.nbCompositions))")
                 .get(0).get(0).asInt();
     }
 
@@ -559,7 +559,7 @@ public class NeoGraph {
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "CALL symfinder.count(ID(c), \"CLASS\") YIELD result as attributes " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes, .attributecompose})";
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .publicMethods, .publicConstructors, .allMethods, methods, constructors, attributes, .nbCompositions})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
@@ -576,7 +576,7 @@ public class NeoGraph {
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "CALL symfinder.count(ID(c), \"CLASS\") YIELD result as attributes " +
                         "CALL symfinder.count(ID(c), \"INTERFACE\") YIELD result as interfaceAttributes " +
-                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .methodPublics, .constrcutorPublics, .allMethods, methods, constructors, attributes, .attributecompose, interfaceAttributes})";
+                        "RETURN collect(c {types:labels(c), .name, .methodVPs, .constructorVPs, .methodVariants, .constructorVariants, .publicMethods, .publicConstructors, .allMethods, methods, constructors, attributes, .nbCompositions, interfaceAttributes})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
@@ -598,7 +598,7 @@ public class NeoGraph {
     }
 
     private String getLinksCompositeAsJson() {
-        String request = "MATCH path = (c1:CLASS)-[r:INSTANCIATE]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+        String request = "MATCH path = (c1:CLASS)-[r:INSTANTIATE]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
@@ -609,7 +609,7 @@ public class NeoGraph {
     }
 
     private String getAllLinksAsJson() {
-        String request = "MATCH path = (c1)-[r:INSTANCIATE|EXTENDS|IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
+        String request = "MATCH path = (c1)-[r:INSTANTIATE|EXTENDS|IMPLEMENTS]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .get(0)
                 .get(0)
@@ -631,10 +631,10 @@ public class NeoGraph {
                 .put("constructorsVariants", getNbConstructorVariants())
                 .put("methodLevelVariants", getNbMethodLevelVariants())
                 .put("classLevelVariants", getNbClassLevelVariants())
-                .put("publicsMethods", getNbPublicMethods())
+                .put("publicMethods", getNbPublicMethods())
                 .put("allMethods",getNbAllMethods())
                 .put("publicsConstructors",getNbPublicConstructors())
-                .put("nBcompositionClass",getNbAttributeComposeClass()).toString();
+                .put("nbCompositionClasses",getNbAttributeComposeClass()).toString();
     }
 
     public int getNbNodes() {
@@ -649,7 +649,7 @@ public class NeoGraph {
         return submitRequest("MATCH (n)-[r:EXTENDS|IMPLEMENTS]->() RETURN COUNT(r)").get(0).get(0).asInt();
     }
     public int getNbCompositionRelationship(){
-        return submitRequest("MATCH (n) - [r:INSTANCIATE]-> () RETURN COUNT(r)").get(0).get(0).asInt();
+        return submitRequest("MATCH (n) - [r:INSTANTIATE]-> () RETURN COUNT(r)").get(0).get(0).asInt();
     }
 
     public void createClassesIndex() {

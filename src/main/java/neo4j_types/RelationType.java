@@ -22,7 +22,7 @@
 package neo4j_types;
 
 public enum RelationType implements NodeType {
-    METHOD, INNER, IMPLEMENTS, EXTENDS, INSTANCIATE;
+    METHOD, INNER, IMPLEMENTS, EXTENDS, INSTANTIATE;
 
     @Override
     public String getString() {

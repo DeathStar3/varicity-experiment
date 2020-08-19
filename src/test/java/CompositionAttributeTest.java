@@ -6,14 +6,14 @@ import org.neo4j.driver.types.Node;
 
 import static org.junit.Assert.assertEquals;
 
-public class ClassAttributeComposition extends Neo4jTest{
+public class CompositionAttributeTest extends Neo4jTest{
 
     @Test
     public void OneAttribute() {
         runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityVisibility.PUBLIC);
             Node drawClass = graph.createNode("draw", EntityType.CLASS, EntityVisibility.PUBLIC);
-            graph.linkTwoNodes(rectangleClass, drawClass, RelationType.INSTANCIATE);
+            graph.linkTwoNodes(rectangleClass, drawClass, RelationType.INSTANTIATE);
             graph.setNbComposition();
 
             assertEquals(1,graph.getNbAttributeComposeClass());
@@ -25,10 +25,10 @@ public class ClassAttributeComposition extends Neo4jTest{
         runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityVisibility.PUBLIC);
             Node drawClass = graph.createNode("draw", EntityType.CLASS, EntityVisibility.PUBLIC);
-            graph.linkTwoNodes(rectangleClass, drawClass, RelationType.INSTANCIATE);
+            graph.linkTwoNodes(rectangleClass, drawClass, RelationType.INSTANTIATE);
 
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityVisibility.PUBLIC);
-            graph.linkTwoNodes(rectangleClass, shapeClass, RelationType.INSTANCIATE);
+            graph.linkTwoNodes(rectangleClass, shapeClass, RelationType.INSTANTIATE);
             graph.setNbComposition();
 
             assertEquals(2,graph.getNbAttributeComposeClass());
@@ -41,8 +41,8 @@ public class ClassAttributeComposition extends Neo4jTest{
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityVisibility.PUBLIC);
             Node drawClass = graph.createNode("draw", EntityType.CLASS, EntityVisibility.PUBLIC);
             Node fillClass = graph.createNode("draw", EntityType.CLASS, EntityVisibility.PUBLIC);
-            graph.linkTwoNodes(rectangleClass, drawClass, RelationType.INSTANCIATE);
-            graph.linkTwoNodes(rectangleClass,fillClass,RelationType.INSTANCIATE);
+            graph.linkTwoNodes(rectangleClass, drawClass, RelationType.INSTANTIATE);
+            graph.linkTwoNodes(rectangleClass,fillClass,RelationType.INSTANTIATE);
 
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityVisibility.PUBLIC);
             graph.linkTwoNodes(rectangleClass, shapeClass, RelationType.EXTENDS);
@@ -57,10 +57,10 @@ public class ClassAttributeComposition extends Neo4jTest{
         runTest(graph -> {
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityVisibility.PUBLIC);
             Node drawClass = graph.createNode("draw", EntityType.CLASS, EntityVisibility.PUBLIC);
-            graph.linkTwoNodes(rectangleClass, drawClass, RelationType.INSTANCIATE);
+            graph.linkTwoNodes(rectangleClass, drawClass, RelationType.INSTANTIATE);
 
             Node shapeClass = graph.createNode("Shape", EntityType.INTERFACE, EntityVisibility.PUBLIC);
-            graph.linkTwoNodes(rectangleClass, shapeClass, RelationType.INSTANCIATE);
+            graph.linkTwoNodes(rectangleClass, shapeClass, RelationType.INSTANTIATE);
             graph.setNbComposition();
 
             assertEquals(2,graph.getNbAttributeComposeClass());
