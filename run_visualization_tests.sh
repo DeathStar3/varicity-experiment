@@ -20,8 +20,24 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
+function run_tests() {
+  export CONTEXT_FILE="$1"
+  export TESTS_DIR="$2"
+  docker-compose -f visualization-tests-compose.yaml up --abort-on-container-exit --exit-code-from karma
+  RETURN_CODE=$?
+  docker-compose -f visualization-tests-compose.yaml down
+}
+
 docker-compose -f visualization-tests-compose.yaml build
-docker-compose -f visualization-tests-compose.yaml up --abort-on-container-exit --exit-code-from karma
-RETURN_CODE=$?
-docker-compose -f visualization-tests-compose.yaml down
+
+echo "Running tests on standard visualization"
+run_tests "pages/context.html" "tests"
+
+if [ $RETURN_CODE != 0 ]; then
+    exit $RETURN_CODE
+fi
+
+echo "Running tests on composition visualization"
+run_tests "pages/context_composition.html" "composition_tests"
+
 exit $RETURN_CODE

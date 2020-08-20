@@ -23,10 +23,8 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="icon" type="image/png" href="symfinder-icon.png">
-    <title>${title} - Conposition graph</title>
+    <title>${title} - Composition graph</title>
 </head>
 <body id="index-body">
 
@@ -37,7 +35,6 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
     <div class="card">
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" id="headingOne">
             <a class="navbar-brand" href="#">
-                <img src="symfinder-icon.png" width="35" height="35" class="d-inline-block" alt="">
                 Symfinder
             </a>
             <h2 class="mb-0">
@@ -58,7 +55,7 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
             <h2 class="mb-0">
                 <button type="button" class="btn btn-dark btn-block" data-toggle="button" aria-pressed="false" id="filter-variants-button" value="filter-variants-button">Show variants</button>
             </h2>
-            <p class="badge-dark ml-auto mr-1 my-lg-0" style="font-size: 1em" id="xp-identifier">${identifier} - Conposition graph</p>
+            <p class="badge-dark ml-auto mr-1 my-lg-0" style="font-size: 1em" id="xp-identifier">${identifier} - Composition graph</p>
         </nav>
         <div id="collapseOne" class="collapse multi-collapse show border-white" aria-labelledby="headingOne">
             <div class="card-body">
@@ -77,30 +74,24 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                             <button class="btn btn-outline-dark" type="button" id="add-api-class-button">Add a class from the api</button>
                         </div>
                     </div>
-                    <!--
-                    <div style="margin-right: 1em">
-                        <button type="button" class="btn btn-outline-dark" data-toggle="button" aria-pressed="false" id="filter-isolated" value="filter-isolated">Filter isolated nodes</button>
-                    </div>
-                    -->
-                    <div class="col-2" style="text-align: center; display: inline-grid; padding-right: 3em;">
-                        <b style="margin-top: -2em"><label for="composition-type">Composition-type</label></b>
-                        <select name="composition-type" id="composition-type" style="margin-top: -15px;">
+                    <div id="compositionType" class="col-2" style="text-align: center; display: inline-grid; padding-right: 3em;">
+                        <b style="margin-top: -2em"><label for="compositiontypes">Composition-type</label></b>
+                        <select name="composition-type" id="compositiontypes" style="margin-top: -15px;">
                             <option value="IN">IN</option>
                             <option value="OUT">OUT</option>
                             <option value="IN-OUT">IN-OUT</option>
                         </select>
                     </div>
-                    <div class="col-1" style="text-align: center; display: inline-grid;">
+                    <div id="hybridView" class="col-1" style="text-align: center; display: inline-grid;">
                         <b style="margin-top: -2em"><label>Hybrid view</label></b>
                         <label class="switch">
-                            <input type="checkbox">
+                            <input id="hybridSwitch" type="checkbox" value="off">
                             <span class="slider round"></span>
                         </label>
                     </div>
                 </div>
 
-                <div class="row pl-4 justify-content-between">
-                    <!--style="display: flex; justify-content: space-between;"-->
+                <div class="row py-2 pl-4 justify-content-between">
                     <div>
                         <button type="button" class="collapsible">Packages <b style="color: darkgoldenrod">filtered
                             out</b> (<b style="color: darkgoldenrod"><b id="output-p"></b> packages</b>)
@@ -118,44 +109,20 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
                         </button>
                         <div class="content-api">
                             <div class="col-auto mr-auto" style="padding: 1em">
-                                <!--<h5 style="text-align: center; font-weight: bold">Api classes filtered</h5>-->
                                 <ul class="list-group" id="list-tab-api" role="tablist">
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div id="compositionLevel">
-                        <b>Composition-level</b>
-                        <div class="handle-counter" id="handleCounter">
-                            <button class="counter-minus btn btn-primary">-</button>
-                            <label id="labelCompositionLevel">
-                                <input id="compositionLevelValue" type="text" value="${compositionLevel}">
-                            </label>
-                            <button class="counter-plus btn btn-primary">+</button>
-                        </div>
+                    <div id="compositionLevel" class="col-2" style="text-align: center; display: inline-grid; padding-left: 2em; height: 40px;">
+                        <b style="margin-top: -20px"><label for="composition-level">Composition-level</label></b>
+                        <select id="composition-level" style="margin-top: -20px;">
+                        </select>
                     </div>
                     <div>
                         <p id="statistics"></p>
                     </div>
                 </div>
-                <!--
-                <div class="row py-4 pl-4 justify-content-between">
-                    <div class="col-auto mr-auto">
-                        <ul class="list-group" id="list-tab" role="tablist">
-                        </ul>
-                    </div>
-                    <div class="col-auto mr-auto">
-
-                        <ul class="list-group-api" id="list-tab-api" role="tablist">
-
-                        </ul>
-                    </div>
-
-                    <div class="col-4">
-                        <p id="statistics"></p>
-                    </div>
-                </div>
-                -->
             </div>
         </div>
         <div id="collapseTwo" class="collapse multi-collapse border-white" aria-labelledby="headingTwo">
@@ -180,7 +147,6 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
         <div id="collapseThree" class="collapse multi-collapse border-white" aria-labelledby="headingThree">
             <div class="card-body">
                 <div class="text-center">
-                    <img width="900" src="symfinder-legend.svg">
                 </div>
             </div>
         </div>
@@ -199,41 +165,26 @@ Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-<script src="scripts/handleCounter.js"></script>
-<script type="module">
-    var coll = document.getElementsByClassName("collapsible");
-    var i;
-
-    for (i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var content = this.nextElementSibling;
-            if (content.style.maxHeight){
-                content.style.maxHeight = null;
-            } else {
-                content.style.maxHeight = content.scrollHeight + "px";
-            }
-        });
-    }
-</script>
 <script src="scripts/nodes-filter.js" type="module"></script>
 <script src="scripts/api-filter.js" type="module"></script>
 <script type="module">
     import {Graph} from "./scripts/graphcomposition.js";
 
-    window.display = displayComposition;
+    window.display = display;
 
-    async function displayComposition(jsonFile, jsonStatsFile, nodeFilters) {
-        document.getElementById('output-p').innerHTML = "0";
-        document.getElementById('output').innerHTML = "0";
-        var visualization = new Graph(jsonFile, jsonStatsFile, nodeFilters, [], 0, "IN-OUT");
+    async function display(jsonFile, jsonStatsFile) {
+        let filters = [];
+        let apiFilters = [];
+        let compositionLevel = 1;
+        let compositionType = "IN";
+        let lengthOfApiFilters = apiFilters.length;
+        let lengthOfPackage = filters.length;
+        document.getElementById('output-p').innerHTML = lengthOfPackage.toString();
+        document.getElementById('output').innerHTML = lengthOfApiFilters.toString();
+        var visualization = new Graph(jsonFile, jsonStatsFile, filters, apiFilters, compositionLevel, compositionType);
         await visualization.displayGraph();
         return visualization;
     }
-
-    window.onload = async () => {
-        window.graph = await display("${jsonFile}", "${jsonStatsFile}");
-    };
 
 </script>
 <script src="./context.js"></script>

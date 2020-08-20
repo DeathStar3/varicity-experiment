@@ -19,14 +19,19 @@
 * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 */
 
-describe("Tests on composition's data added on", () => {
+describe("Sample test", () => {
 
     beforeAll(async () => {
-        await displayComposition("tests/data/compositionType.json", "tests/data/compositionTypeStats.json", []);
+        await display("tests/data/compositionType.json", "tests/data/compositionTypeStats.json");
+        setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
 
-    it('generated graph should contain two nodes', () => {
-
-
+    it('svg should exist', () => {
+        var svg = document.getElementsByTagName('svg');
+        expect(svg).not.toBe(null);
     });
+    it('the generated graph should contain one node', async () => {
+        expect(d3.selectAll('circle').size()).toBe(1);
+    });
+
 });

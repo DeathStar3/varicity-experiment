@@ -24,6 +24,6 @@ RUN mkdir -p /opt/karma
 WORKDIR /opt/karma
 RUN apk update && apk upgrade && apk add --no-cache chromium
 # RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && apk update && apk upgrade && apk add --no-cache chromium firefox-esr
-COPY docker/visualization_test/files/ /opt/karma/
+COPY docker/visualization_tests/files/ /opt/karma/
 COPY d3/scripts/ /opt/karma/scripts
-CMD npm install && npm test
+CMD npm install && npm run test -- --contextFile=$CONTEXT_FILE --testsDir=$TESTS_DIR
