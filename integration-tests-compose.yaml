@@ -28,3 +28,6 @@ services:
       dockerfile: docker/integration_tests/Dockerfile
     image: symfinder-integration-tests
     container_name: symfinder-integration-tests
+    environment:
+      CONTEXT_FILE: $CONTEXT_FILE
+      TESTS_DIR: $TESTS_DIR

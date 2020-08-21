@@ -19,10 +19,10 @@
 * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 */
 
-describe("Sample test", () => {
+describe("Composition IN, 1 level", () => {
 
     beforeAll(async () => {
-        await display("tests/data/composition_levels_inheritance.json", "tests/data/composition_levels_inheritance-stats.json", [], [], 1, "IN");
+        await display("tests/data/composition_levels_inheritance.json", "tests/data/composition_levels_inheritance-stats.json", [], ["Composed2"], 1, "IN");
         setTimeout(() => done(), 500); // wait for onclick event to execute totally
     });
 
@@ -31,7 +31,8 @@ describe("Sample test", () => {
         expect(svg).not.toBe(null);
     });
     it('the generated graph should contain one node', async () => {
-        expect(d3.select('circle[name = "Composed2"]').empty()).toBeFalsy();
+        console.log($('circle').length);
+        expect(d3.selectAll('circle').size()).toBe(1);
     });
 
 });

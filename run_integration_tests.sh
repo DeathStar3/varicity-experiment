@@ -20,6 +20,8 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
+set -e
+
 create_directory(){
     if [[ ! -d "$1" ]]; then
         echo "Creating $1 directory"
@@ -38,10 +40,25 @@ docker run -it --rm --name test_projects_builder -v "$(pwd)/resources":/usr/src/
 ./build.sh -DskipTests
 ./run.sh --local
 
+function run_tests() {
+  export CONTEXT_FILE="$1"
+  export TESTS_DIR="$2"
+  docker-compose -f integration-tests-compose.yaml up --abort-on-container-exit --exit-code-from integration
+  RETURN_CODE=$?
+  docker-compose -f integration-tests-compose.yaml down
+}
+
 docker-compose -f integration-tests-compose.yaml build
-docker-compose -f integration-tests-compose.yaml up --abort-on-container-exit --exit-code-from integration
-RETURN_CODE=$?
-docker-compose -f integration-tests-compose.yaml down
+
+echo "Running integration tests on standard visualization"
+run_tests "pages/context.html" "tests"
+
+if [ $RETURN_CODE != 0 ]; then
+    exit $RETURN_CODE
+fi
+
+echo "Running integration tests on composition visualization"
+run_tests "pages/context_composition.html" "composition_tests"
 
 sed -i -e 's/test-experiments.yaml/experiments.yaml/g' symfinder.yaml
 

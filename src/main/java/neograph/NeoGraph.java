@@ -178,6 +178,12 @@ public class NeoGraph {
                 "CREATE (a)-[r:%s]->(b)", type), "aId", node1.id(), "bId", node2.id());
     }
 
+    public Object getPropertyValue(Node node, String property) {
+        return submitRequest(String.format("MATCH(a)\n" +
+                "WHERE ID(a)=$aId\n" +
+                "RETURN a.%s", property), "aId", node.id())
+                .get(0).get(0).asObject();
+    }
 
     public void detectVPsAndVariants() {
         setMethodVPs();
@@ -188,9 +194,9 @@ public class NeoGraph {
         setVPLabels();
         setMethodLevelVPLabels();
         setVariantsLabels();
-        setMethodPublics();
-        setConstructorPublics();
-        setNbComposition();
+        setPublicMethods();
+        setPublicConstructors();
+        setNbCompositions();
         setAllMethods();
     }
 
@@ -221,7 +227,7 @@ public class NeoGraph {
     /**
      * Sets the number of public methods in a public class
      */
-    public void setMethodPublics() {
+    public void setPublicMethods() {
         submitRequest("MATCH (c:CLASS:PUBLIC)-->(a:METHOD:PUBLIC)\n" +
                 "WITH count( a.name ) AS cnt, c\n" +
                 "SET c.publicMethods = cnt");
@@ -279,7 +285,7 @@ public class NeoGraph {
                 "SET c.constructorVPs = 0");
     }
 
-    public void setConstructorPublics() {
+    public void setPublicConstructors() {
         submitRequest("MATCH (c)-->(a) \n" +
                 "WHERE c:PUBLIC AND c:CLASS AND  a:CONSTRUCTOR AND a:PUBLIC\n" +
                 "WITH count( a.name ) AS cnt, c\n" +
@@ -310,7 +316,7 @@ public class NeoGraph {
         submitRequest("MATCH (c) WHERE ((c:CLASS OR c:INTERFACE) AND NOT EXISTS (c.classVariants)) SET c.classVariants = 0");
     }
 
-    public void setNbComposition(){
+    public void setNbCompositions(){
         submitRequest("MATCH (c)-[:INSTANTIATE]->(a) WITH count(a) AS nbComp, c SET c.nbCompositions = nbComp");
     }
 
@@ -550,7 +556,7 @@ public class NeoGraph {
     }
 
     private String generateVPJsonGraph() {
-        return String.format("{\"nodes\":[%s],\"links\":[%s],\"allnodes\":[%s],\"linkscompose\":[%s],\"alllinks\":[%s]}", getNodesAsJson(), getLinksAsJson(), getAllClassesOrInterfaceNodes(), getLinksCompositeAsJson(), getAllLinksAsJson());
+        return String.format("{\"nodes\":[%s],\"links\":[%s],\"allnodes\":[%s],\"linkscompose\":[%s],\"alllinks\":[%s]}", getNodesAsJson(), getLinksAsJson(), getAllClassesOrInterfaceNodes(), getCompositionLinksAsJson(), getAllLinksAsJson());
     }
 
     private String getNodesAsJson() {
@@ -571,7 +577,7 @@ public class NeoGraph {
 
     private String getAllClassesOrInterfaceNodes() {
         String request =
-                "MATCH (c) WHERE c:CLASS OR c:INTERFACE " +
+                "MATCH (c) WHERE (c:CLASS OR c:INTERFACE) AND NOT c:OUT_OF_SCOPE " +
                         "CALL symfinder.count(ID(c), \"METHOD\") YIELD result as methods " +
                         "CALL symfinder.count(ID(c), \"CONSTRUCTOR\") YIELD result as constructors " +
                         "CALL symfinder.count(ID(c), \"CLASS\") YIELD result as attributes " +
@@ -597,7 +603,7 @@ public class NeoGraph {
                 .collect(Collectors.joining(","));
     }
 
-    private String getLinksCompositeAsJson() {
+    private String getCompositionLinksAsJson() {
         String request = "MATCH path = (c1:CLASS)-[r:INSTANTIATE]->(c2) WHERE NONE(n IN nodes(path) WHERE n:OUT_OF_SCOPE) RETURN collect({source:c1.name, target:c2.name, type:TYPE(r)})";
         return submitRequest(request)
                 .get(0)

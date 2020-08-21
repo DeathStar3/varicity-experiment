@@ -39,12 +39,12 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'tests/*.js',
+            config.testsDir + '/*.js',
             {pattern: 'tests/data/*.json', watched: false, served: true, included: false},
             {pattern: 'scripts/*.js', type: "module", watched: false, served: true, included: false}
         ],
 
-        customContextFile: "pages/context.html",
+        customContextFile: config.contextFile,
 
         proxies: {
             '/tests/': '/base/tests/',

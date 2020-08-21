@@ -15,7 +15,7 @@ public class MethodConstructorPublicTest extends Neo4jTest{
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityVisibility.PUBLIC);
             Node drawMethod = graph.createNode("draw", EntityType.METHOD, EntityVisibility.PUBLIC);
             graph.linkTwoNodes(rectangleClass, drawMethod, RelationType.METHOD);
-            graph.setMethodPublics();
+            graph.setPublicMethods();
 
             assertEquals(1,graph.getNbPublicMethods());
         });
@@ -31,7 +31,7 @@ public class MethodConstructorPublicTest extends Neo4jTest{
             graph.linkTwoNodes(rectangleClass, drawMethod2, RelationType.METHOD);
             Node drawMethod3 = graph.createNode("draw", EntityType.METHOD, EntityVisibility.PRIVATE);
             graph.linkTwoNodes(rectangleClass, drawMethod3, RelationType.METHOD);
-            graph.setMethodPublics();
+            graph.setPublicMethods();
 
             assertEquals(2,graph.getNbPublicMethods());
         });
@@ -43,7 +43,7 @@ public class MethodConstructorPublicTest extends Neo4jTest{
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityVisibility.PRIVATE);
             Node drawMethod = graph.createNode("draw", EntityType.METHOD, EntityVisibility.PUBLIC);
             graph.linkTwoNodes(rectangleClass, drawMethod, RelationType.METHOD);
-            graph.setMethodPublics();
+            graph.setPublicMethods();
 
             assertEquals(0,graph.getNbPublicMethods());
         });

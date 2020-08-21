@@ -36,6 +36,8 @@
         <module>abstract_decorator</module>
         <module>attribute_composition</module>
         <module>attribute_composition_factory</module>
+        <module>composition_levels_inheritance</module>
+        <module>composition_levels_mixed</module>
         <module>decorator</module>
         <module>factory</module>
         <module>generics</module>

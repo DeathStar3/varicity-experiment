@@ -27,4 +27,4 @@ RUN apk update && apk upgrade && apk add --no-cache chromium
 COPY docker/integration_tests/files/ /opt/karma/
 COPY d3/scripts/ /opt/karma/scripts
 COPY generated_visualizations/data /opt/karma/tests/data
-CMD npm install && npm test
+CMD npm install && npm run test -- --contextFile=$CONTEXT_FILE --testsDir=$TESTS_DIR

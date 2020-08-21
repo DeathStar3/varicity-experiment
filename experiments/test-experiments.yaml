@@ -1,6 +1,12 @@
 abstract_decorator:
   localDirectory: abstract_decorator
   sourcePackage: .
+composition_levels_inheritance:
+  localDirectory: composition_levels_inheritance
+  sourcePackage: .
+composition_levels_mixed:
+  localDirectory: composition_levels_mixed
+  sourcePackage: .
 decorator:
   localDirectory: decorator
   sourcePackage: .

@@ -14,7 +14,7 @@ public class CompositionAttributeTest extends Neo4jTest{
             Node rectangleClass = graph.createNode("Rectangle", EntityType.CLASS, EntityVisibility.PUBLIC);
             Node drawClass = graph.createNode("draw", EntityType.CLASS, EntityVisibility.PUBLIC);
             graph.linkTwoNodes(rectangleClass, drawClass, RelationType.INSTANTIATE);
-            graph.setNbComposition();
+            graph.setNbCompositions();
 
             assertEquals(1,graph.getNbAttributeComposeClass());
         });
@@ -29,7 +29,7 @@ public class CompositionAttributeTest extends Neo4jTest{
 
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityVisibility.PUBLIC);
             graph.linkTwoNodes(rectangleClass, shapeClass, RelationType.INSTANTIATE);
-            graph.setNbComposition();
+            graph.setNbCompositions();
 
             assertEquals(2,graph.getNbAttributeComposeClass());
         });
@@ -46,7 +46,7 @@ public class CompositionAttributeTest extends Neo4jTest{
 
             Node shapeClass = graph.createNode("Shape", EntityType.CLASS, EntityVisibility.PUBLIC);
             graph.linkTwoNodes(rectangleClass, shapeClass, RelationType.EXTENDS);
-            graph.setNbComposition();
+            graph.setNbCompositions();
 
             assertEquals(2,graph.getNbAttributeComposeClass());
         });
@@ -61,7 +61,7 @@ public class CompositionAttributeTest extends Neo4jTest{
 
             Node shapeClass = graph.createNode("Shape", EntityType.INTERFACE, EntityVisibility.PUBLIC);
             graph.linkTwoNodes(rectangleClass, shapeClass, RelationType.INSTANTIATE);
-            graph.setNbComposition();
+            graph.setNbCompositions();
 
             assertEquals(2,graph.getNbAttributeComposeClass());
         });
