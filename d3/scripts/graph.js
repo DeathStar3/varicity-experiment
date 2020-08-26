@@ -275,7 +275,13 @@ class Graph {
                 return contrastColor(nodeColor);
             })
             .text(function (d) {
-                return ["STRATEGY", "FACTORY", "TEMPLATE", "DECORATOR"].filter(p => d.types.includes(p)).map(p => p[0]).join(", ");
+                return ["STRATEGY", "FACTORY", "TEMPLATE", "DECORATOR", "COMPOSITION_STRATEGY"]
+                    .filter(p => {
+                        if (p === "COMPOSITION_STRATEGY") {
+                            return d.types.includes(p) && ! d.types.includes("STRATEGY")
+                        }
+                        return d.types.includes(p);
+                    }).map(p => p[0]).join(", ");
             });
 
         //	ENTER + UPDATE

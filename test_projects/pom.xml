@@ -39,6 +39,7 @@
         <module>composition_levels_inheritance</module>
         <module>composition_levels_mixed</module>
         <module>decorator</module>
+        <module>density</module>
         <module>factory</module>
         <module>generics</module>
         <module>generic_decorator</module>
@@ -51,6 +52,7 @@
         <module>multiple_patterns</module>
         <module>multiple_vp</module>
         <module>strategy</module>
+        <module>strategy_with_method_parameter</module>
         <module>structures</module>
         <module>template</module>
         <module>visibilityTest</module>

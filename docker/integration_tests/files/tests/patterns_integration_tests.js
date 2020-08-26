@@ -92,6 +92,74 @@ describe("Strategy pattern", () => {
     });
 
 });
+describe("Strategy pattern using a method parameter", () => {
+
+    describe("Checking visualization without variants", () => {
+
+        beforeAll(async (done) => {
+            await display("tests/data/strategy_with_method_parameter.json", "tests/data/strategy_with_method_parameter-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the graph should contain one node without variants', () => {
+            expect(d3.selectAll('circle').size()).toBe(1);
+        });
+        it('the node should have a C on it', () => {
+            expect(d3.select('text[name = "Strategy"]').html()).toBe("C");
+        });
+
+        afterAll(() => sessionStorage.clear())
+
+    });
+
+    describe("Checking visualization with variants", () => {
+
+        beforeAll(async (done) => {
+            setStorageValuestoMockVariantsDisplaying();
+            await display("tests/data/strategy.json", "tests/data/strategy-stats.json", []);
+            setTimeout(() => done(), timeout); // wait
+        });
+
+        it('the graph should contain three nodes with variants', () => {
+            expect(d3.selectAll('circle').size()).toBe(3);
+        });
+
+        afterAll(() => sessionStorage.clear())
+
+    });
+
+    describe("Checking JSON output", () => {
+
+        var jsonData, jsonStatsData;
+
+        beforeAll(async (done) => {
+            const [graph, stats] = await getJsonData("tests/data/strategy.json", "tests/data/strategy-stats.json");
+            jsonData = graph;
+            jsonStatsData = stats;
+            done();
+        });
+
+        it('The JSON nodes list should contain three nodes', () => {
+            expect(jsonData.nodes.length).toBe(3);
+        });
+        it('The JSON allnodes list should contain four nodes', () => {
+            expect(jsonData.allnodes.length).toBe(4);
+        });
+        it('Strategy is a composition strategy', () => {
+            expect(getNodeWithName(jsonData, "Strategy").types.includes("COMPOSITION_STRATEGY")).toBeTruthy();
+        });
+        it('Strategy is a VP', () => {
+            expect(getNodeWithName(jsonData, "Strategy").types.includes("VP")).toBeTruthy();
+        });
+        it('Strategy is the only VP', () => {
+            expect(jsonStatsData.classLevelVPs).toBe(1);
+        });
+
+        afterAll(() => sessionStorage.clear())
+
+    });
+
+});
 
 describe("Factory pattern", () => {
 

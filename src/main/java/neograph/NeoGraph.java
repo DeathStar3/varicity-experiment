@@ -198,6 +198,8 @@ public class NeoGraph {
         setPublicConstructors();
         setNbCompositions();
         setAllMethods();
+        detectStrategiesWithComposition();
+        detectDensity();
     }
 
     /**
@@ -539,6 +541,17 @@ public class NeoGraph {
     public int getNbAttributeComposeClass(){
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.nbCompositions))")
                 .get(0).get(0).asInt();
+    }
+
+    public void detectDensity() {
+        submitRequest("MATCH (v1:VARIANT)-[:INSTANTIATE]->(v2:VARIANT) " +
+                "SET v1:DENSE SET v2:DENSE");
+    }
+
+    public void detectStrategiesWithComposition() {
+        submitRequest(String.format("MATCH (c)-[:INSTANTIATE]->(c1) " +
+                "WHERE (c:CLASS OR c:INTERFACE) AND (EXISTS(c1.classVariants) AND c1.classVariants > 1) " +
+                "SET c1:%s", DesignPatternType.COMPOSITION_STRATEGY));
     }
 
     /**

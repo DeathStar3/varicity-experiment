@@ -19,13 +19,23 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-package neo4j_types;
+public class Circle extends Shape {
 
-public enum DesignPatternType implements NodeType {
-    STRATEGY, FACTORY, TEMPLATE, DECORATOR, COMPOSITION_STRATEGY;
+    private double radius;
 
-    @Override
-    public String getString() {
-        return this.toString();
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    public Circle() {
+        this.radius = 1;
+    }
+
+    public double area() {
+        return Math.PI * radius * radius;
+    }
+
+    public double perimeter() {
+        return 2 * Math.PI * radius;
     }
 }

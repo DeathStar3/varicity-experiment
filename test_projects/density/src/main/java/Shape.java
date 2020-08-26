@@ -19,13 +19,9 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-package neo4j_types;
+public abstract class Shape {
 
-public enum DesignPatternType implements NodeType {
-    STRATEGY, FACTORY, TEMPLATE, DECORATOR, COMPOSITION_STRATEGY;
+    public abstract double area();
 
-    @Override
-    public String getString() {
-        return this.toString();
-    }
+    public abstract double perimeter();
 }

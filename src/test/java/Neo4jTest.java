@@ -19,9 +19,12 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
+import configuration.Configuration;
 import neograph.NeoGraph;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Config;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -47,7 +50,14 @@ public class Neo4jTest {
         graphDatabaseService.executeTransactionally("MATCH (n) DETACH DELETE (n)");
     }
 
+    @AfterAll
+    public static void tearAll() {
+        embeddedDatabaseServer.close();
+    }
+
     protected void runTest(Consumer<NeoGraph> consumer){
+//        try (Driver driver = GraphDatabase.driver(Configuration.getNeo4JBoltAddress(), AuthTokens.basic(Configuration.getNeo4JUser(),
+//                Configuration.getNeo4JPassword()))) {
         try (Driver driver = GraphDatabase.driver(embeddedDatabaseServer.boltURI(), Config.defaultConfig())) {
             NeoGraph graph = new NeoGraph(driver);
             consumer.accept(graph);

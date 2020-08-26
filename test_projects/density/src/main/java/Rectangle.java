@@ -19,13 +19,35 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-package neo4j_types;
+import java.awt.Point;
 
-public enum DesignPatternType implements NodeType {
-    STRATEGY, FACTORY, TEMPLATE, DECORATOR, COMPOSITION_STRATEGY;
+public class Rectangle extends Shape {
 
-    @Override
-    public String getString() {
-        return this.toString();
+    private double width, length;
+
+    public Rectangle(double width, double length) {
+        this.width = width;
+        this.length = length;
+    }
+
+    public Rectangle() {
+        this.width = 1;
+        this.length = 1;
+    }
+
+    public double area() {
+        return width * length;
+    }
+
+    public double perimeter() {
+        return 2 * (width + length);
+    }
+
+    public void draw(int x, int y) {
+        // rectangle at (x, y, width, length)
+    }
+
+    public void draw(Point p) {
+        // rectangle at (p.x, p.y, width, length)
     }
 }

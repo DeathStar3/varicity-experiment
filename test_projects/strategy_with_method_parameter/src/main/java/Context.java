@@ -19,13 +19,10 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-package neo4j_types;
+public class Context {
 
-public enum DesignPatternType implements NodeType {
-    STRATEGY, FACTORY, TEMPLATE, DECORATOR, COMPOSITION_STRATEGY;
-
-    @Override
-    public String getString() {
-        return this.toString();
+    public void printStrategy(Strategy strategy) {
+        System.out.println(strategy);
     }
+
 }

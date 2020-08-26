@@ -348,6 +348,40 @@ describe("Inner class defined before fields", () => {
 
 });
 
+describe("Density", () => {
+
+    var jsonData, jsonStatsData;
+
+    beforeAll(async (done) => {
+        const [graph, stats] = await getJsonData("tests/data/density.json", "tests/data/density-stats.json");
+        jsonData = graph;
+        jsonStatsData = stats;
+        done();
+    });
+
+    it('there should be 6 nodes in the allnodes list', () => {
+        expect(jsonData.allnodes.length).toBe(6);
+    });
+    it('there should be 2 VPs', () => {
+        expect(jsonData.allnodes.filter(n => n.types.includes("VP")).length).toBe(2);
+    });
+    it('there should be 2 composition links', () => {
+        expect(jsonData.alllinks.filter(l => l.type === "INSTANTIATE").length).toBe(2);
+    });
+    it('there are 4 DENSE nodes', () => {
+        expect(jsonData.allnodes.filter(n => n.types.includes("DENSE")).length).toBe(4);
+    });
+    it('the Renderer subclasses should be DENSE', () => {
+        expect(getNodeWithName(jsonData, "RectangleRenderer").types).toContain("DENSE");
+        expect(getNodeWithName(jsonData, "CircleRenderer").types).toContain("DENSE");
+    });
+    it('the Shape subclasses should be DENSE', () => {
+        expect(getNodeWithName(jsonData, "Rectangle").types).toContain("DENSE");
+        expect(getNodeWithName(jsonData, "Circle").types).toContain("DENSE");
+    });
+
+});
+
 function getJsonData(file, statsFile) {
     return new Promise(((resolve, reject) => {
         d3.queue()

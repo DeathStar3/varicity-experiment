@@ -19,13 +19,10 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
-package neo4j_types;
+public class RectangleRenderer extends Renderer {
 
-public enum DesignPatternType implements NodeType {
-    STRATEGY, FACTORY, TEMPLATE, DECORATOR, COMPOSITION_STRATEGY;
-
-    @Override
-    public String getString() {
-        return this.toString();
+    public void render(Rectangle rectangle) {
+        System.out.println("Rendering rectangle.");
     }
+
 }

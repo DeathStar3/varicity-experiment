@@ -135,6 +135,10 @@ describe("Acceptance tests for all projects", () => {
                     expect(jsonData.nodes.every(n => n.constructors.length < 2)).toBeTruthy();
                 });
 
+                it('Every strategy detected with the standard method is also detected by composition', () => {
+                    expect(graph.nodes.filter(n => n.types.includes("STRATEGY") && !n.types.includes("COMPOSITION_STRATEGY")).length).toBe(0);
+                });
+
             });
 
             describe("Checking visualization without variants", () => {

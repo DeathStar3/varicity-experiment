@@ -10,6 +10,9 @@ composition_levels_mixed:
 decorator:
   localDirectory: decorator
   sourcePackage: .
+density:
+  localDirectory: density
+  sourcePackage: .
 factory:
   localDirectory: factory
   sourcePackage: .
@@ -51,6 +54,9 @@ multiple_vp:
   sourcePackage: .
 strategy:
   localDirectory: strategy
+  sourcePackage: .
+strategy_with_method_parameter:
+  localDirectory: strategy_with_method_parameter
   sourcePackage: .
 structures:
   localDirectory: structures
