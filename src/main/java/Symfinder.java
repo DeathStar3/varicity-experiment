@@ -38,8 +38,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -98,6 +96,9 @@ public class Symfinder {
         visitPackage(classpathPath, files, new LocalVariablesVisitor(neoGraph));*/
 
         neoGraph.detectVPsAndVariants();
+        neoGraph.detectSingularHotspotsInSubtyping(Configuration.getSingularityThreshold());
+        neoGraph.detectSingularHotspotsInOverloading(Configuration.getSingularityThreshold());
+        neoGraph.setHotspotLabels();
         logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods VPs: " + neoGraph.getNbMethodVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors VPs: " + neoGraph.getNbConstructorVPs());
@@ -150,7 +151,8 @@ public class Symfinder {
 
     private boolean isTestPath(Path path) {
         for (int i = 0 ; i < path.getNameCount() ; i++) {
-            if (path.getName(i).toString().equals("test")) {
+            int finalI = i;
+            if (List.of("test", "tests").stream().anyMatch(s -> path.getName(finalI).toString().equals(s))) {
                 return true;
             }
         }

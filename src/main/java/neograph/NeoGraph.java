@@ -178,6 +178,43 @@ public class NeoGraph {
                 "CREATE (a)-[r:%s]->(b)", type), "aId", node1.id(), "bId", node2.id());
     }
 
+    public void setNodeAttribute(Node node, String attributeName, Object value) {
+        submitRequest(String.format("MATCH (n) WHERE ID(n) = $idNode SET n.%s = $value", attributeName),
+                "idNode", node.id(), "value", value);
+    }
+
+    public void detectSingularHotspotsInSubtyping(int threshold) {
+        detectHotspotsInSubtyping(  "singular", threshold);
+    }
+
+    public void detectSingularHotspotsInOverloading(int threshold) {
+        detectHotspotsInOverloading("singular", threshold);
+    }
+
+    void detectHotspotsInSubtyping(String property, int threshold) {
+        submitRequest(String.format("MATCH (vp:VP)-->(v:VARIANT) " +
+                "WITH count(v) as cnt, [vp] + collect(v) AS collected " +
+                "WHERE cnt >= $threshold " +
+                "FOREACH (v1 IN collected | SET v1.%s = TRUE)", property), "threshold", threshold);
+    }
+
+    void detectHotspotsInOverloading(String property, int threshold) {
+        submitRequest(String.format("MATCH (n) " +
+                "WHERE n.methodVariants + n.constructorVariants >= $threshold " +
+                "SET n.%s = TRUE", property), "threshold", threshold);
+    }
+
+    public void setHotspotLabels() {
+        submitRequest(String.format("MATCH (n) " +
+                "WHERE n.singular = TRUE OR n.aggregated = TRUE " +
+                "SET n:%s", EntityAttribute.HOTSPOT));
+    public Object getPropertyValue(Node node, String property) {
+        return submitRequest(String.format("MATCH(a)\n" +
+                "WHERE ID(a)=$aId\n" +
+                "RETURN a.%s", property), "aId", node.id())
+                .get(0).get(0).asObject();
+    }
+
     public Object getPropertyValue(Node node, String property) {
         return submitRequest(String.format("MATCH(a)\n" +
                 "WHERE ID(a)=$aId\n" +
@@ -414,7 +451,7 @@ public class NeoGraph {
      * @return Number of class level variants
      */
     public int getNbClassLevelVariants() {
-        return submitRequest("MATCH (c:VARIANT) RETURN (COUNT(DISTINCT c))")
+        return submitRequest("MATCH (c:VARIANT) WHERE NOT c:VP RETURN (COUNT(DISTINCT c))")
                 .get(0).get(0).asInt();
     }
 
@@ -688,7 +725,7 @@ public class NeoGraph {
 
     private List <Record> submitRequest(String request, Object... parameters) {
         int count = 0;
-        int maxTries = 50;
+        int maxTries = 20;
         while (true) {
             try (Session session = driver.session()) {
                 try (Transaction tx = session.beginTransaction()) {

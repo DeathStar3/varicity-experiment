@@ -85,6 +85,7 @@ describe("Unfiltering an isolated node", () => {
     afterAll(resetPage);
 
 });
+
 describe("Filtering a linked node", () => {
 
     beforeAll(async (done) => {
@@ -132,8 +133,6 @@ describe("Filtering a package", () => {
 
     beforeAll(async (done) => {
         await display("tests/data/graph-to-filter.json", "tests/data/stats.json", ["foo.bar"]);
-        // $("#package-to-filter").val("foo.bar");
-        // $("#add-filter-button").trigger("click");
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
 
@@ -181,20 +180,36 @@ xdescribe("Filtering isolated nodes", () => {
         setTimeout(() => done(), 700); // wait for onclick event to execute totally
     });
 
-    it('two nodes remain', async () => {
-        expect(d3.selectAll('circle').size()).toBe(2);
-    });
-    it('the two nodes are linked', async () => {
+    it('two nodes remain and they are linked', async () => {
+        this.remainingNodes = $("circle").toArray();
+        expect(this.remainingNodes.length).toBe(2);
+
         var linkedNodes = new Set();
         d3.selectAll('line').nodes().forEach(n => {
             linkedNodes.add(n.getAttribute("source"));
             linkedNodes.add(n.getAttribute("target"));
         });
-        expect(d3.selectAll('circle').nodes().every(n => linkedNodes.has(n.getAttribute("name")))).toBe(true);
+        expect(this.remainingNodes.every(n => linkedNodes.has(n.getAttribute("name")))).toBe(true);
     });
 
     afterAll(resetPage);
 
 });
 
+xdescribe("Filtering nodes that are not hotspots", () => {
 
+    beforeAll(async (done) => {
+        await this.display("tests/data/hotspots.json", "tests/data/stats.json", []);
+        await $("#hotspots-only-button").click();
+        setTimeout(() => done(), 2000); // wait for onclick event to execute totally
+    });
+
+    it('five nodes remain and they all have the HOTSPOT type', () => {
+        this.remainingNodes = $("circle").toArray();
+        expect(this.remainingNodes.length).toBe(5);
+        expect(this.remainingNodes.every(n => n.__data__.types.includes("HOTSPOT"))).toBe(true);
+    });
+
+    afterAll(resetPage);
+
+});

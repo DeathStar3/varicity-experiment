@@ -10,7 +10,7 @@ cxf:
     - cxf-3.2.7
 junit:
   repositoryUrl: https://github.com/junit-team/junit4
-  sourcePackage: .
+  sourcePackage: src/main/java/org/junit
   tagIds:
     - r4.12
   apiFilters:
@@ -63,7 +63,7 @@ argoUML:
   repositoryUrl: https://github.com/marcusvnac/argouml-spl/
   sourcePackage: src/argouml-app
   commitIds:
-    - bcae37308b13b7ee62da0867a77d21a0141a0f18
+    - bcae373
   filters:
     - org.argouml.ui.targetmanager
     - org.argouml.kernel.DelayedVChangeListener

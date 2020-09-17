@@ -52,6 +52,13 @@
             <artifactId>neo4j-java-driver</artifactId>
             <version>4.0.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.neo4j.procedure/apoc -->
+        <dependency>
+            <groupId>org.neo4j.procedure</groupId>
+            <artifactId>apoc</artifactId>
+            <version>4.0.0.15</version>
+            <scope>test</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
             <groupId>org.json</groupId>

@@ -106,12 +106,6 @@ class NodesFilter {
             '</li>';
     }
 
-    appendFiltersToTab() {
-        this.filtersList.forEach(filter => {
-            $(this.filtersListSelector).append(this.getFilterItem(filter));
-        });
-    }
-
     /**
      * If the filter is a class filter (distinguished by the fact that it contains at least an uppercase letter),
      * we check that the class name matches the filter exactly.

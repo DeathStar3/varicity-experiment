@@ -19,6 +19,7 @@
  * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
+import apoc.path.PathExplorer;
 import configuration.Configuration;
 import neograph.NeoGraph;
 import org.junit.jupiter.api.AfterAll;
@@ -41,17 +42,17 @@ public class Neo4jTest {
 
     @BeforeAll
     static void setUp() {
-        embeddedDatabaseServer = new InProcessNeo4jBuilder().build();
+        embeddedDatabaseServer = new InProcessNeo4jBuilder().withProcedure(PathExplorer.class).build();
         graphDatabaseService = embeddedDatabaseServer.defaultDatabaseService();
     }
-    	
+
     @AfterEach
     public void tearDown() {
         graphDatabaseService.executeTransactionally("MATCH (n) DETACH DELETE (n)");
     }
 
     @AfterAll
-    public static void tearAll() {
+    static void tearAll() {
         embeddedDatabaseServer.close();
     }
 

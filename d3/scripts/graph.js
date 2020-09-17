@@ -31,26 +31,28 @@ class Graph {
     constructor(jsonFile, jsonStatsFile, nodeFilters) {
         this.jsonFile = jsonFile;
         this.jsonStatsFile = jsonStatsFile;
+        this.jsonTracesFile = jsonStatsFile.split("-stats.json")[0] + "-traces.json";
         this.filter = new NodesFilter("#add-filter-button", "#package-to-filter", "#list-tab", nodeFilters, async () => await this.displayGraph());
         this.packageColorer = new PackageColorer("#add-package-button", "#package-to-color", "#color-tab", [], async () => await this.displayGraph());
-        if(sessionStorage.getItem("firstTime") === null){
+        if (sessionStorage.getItem("firstTime") === null) {
             sessionStorage.setItem("firstTime", "true");
         }
         this.color = d3.scaleLinear();
         this.setButtonsClickActions();
     }
 
-
     async displayGraph() {
         if (sessionStorage.getItem("firstTime") === "true") {
             sessionStorage.setItem("filteredIsolated", "false");
             sessionStorage.setItem("filteredVariants", "true");
+            sessionStorage.setItem("onlyHotspots", "false");
             sessionStorage.setItem("firstTime", "false");
             sessionStorage.setItem("filterApi", "false");
         }
         d3.selectAll("svg > *").remove();
         this.filterIsolated = sessionStorage.getItem("filteredIsolated") === "true";
         this.filterVariants = sessionStorage.getItem("filteredVariants") === "true";
+        this.onlyHotspots = sessionStorage.getItem("onlyHotspots") === "true";
         await this.generateGraph();
         return this.graph;
     }
@@ -100,15 +102,24 @@ class Graph {
                 .defer(d3.json, graph.jsonStatsFile)
                 .await((err, gr, stats) => {
                     if (err) throw err;
-                    graph.displayData(gr, stats);
-                    graph.update();
-                    resolve();
+                    d3.queue()
+                        .defer(d3.json, graph.jsonTracesFile)
+                        .await((err, traces) => {
+                            if (err) {
+                                graph.displayData(gr, stats);
+                            } else {
+                                graph.displayData(gr, stats, traces);
+                            }
+                            graph.update();
+                            resolve();
+                        });
                 });
         });
 
+
     }
 
-    displayData(gr, stats) {
+    displayData(gr, stats, traces = {}) {
         //	data read and store
 
         document.getElementById("statistics").innerHTML =
@@ -133,6 +144,7 @@ class Graph {
 
         this.graph.nodes.forEach(function (n) {
             n.radius = n.types.includes("CLASS") ? 10 + n.methodVPs : 10;
+            n.traces = traces[n.name] || []
             nodeByID[n.name] = n;
         });
 
@@ -167,6 +179,7 @@ class Graph {
         if (this.filterIsolated) {
             var isolatedFilter = new IsolatedFilter(this.graph.nodes, this.graph.links);
             this.graph.nodes = isolatedFilter.getFilteredNodesList();
+            this.graph.links = isolatedFilter.getFilteredLinksList();
         }
     }
 
@@ -187,7 +200,6 @@ class Graph {
             .style("stroke-dasharray", function (d) {
                 return d.types.includes("ABSTRACT") ? "3,3" : "3,0"
             })
-            //.style("stroke", "black")
             //On api classes
             .style("stroke",  (d) => {
                 var color =  this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.publicMethods)) : "black";
@@ -206,22 +218,31 @@ class Graph {
                     return d.types.includes("ABSTRACT") ? d.classVariants + 1 : d.classVariants;
                 }
             })
-            //.style("stroke", function (d) {
-            //  return this.nodesList.contains(d) ? d3.rgb(255, 255, 255): d3.rgb(this.getNodeColor(d.name, d.types, d.constructorVariants)) ;
-            //})
+            // .style("stroke", (d) => d.traces.length > 0 ? "blue" : "black")
+            // .style("stroke-width", 2)
             .attr("r", function (d) {
                 return d.radius
             })
             .attr("fill", (d) => {
-                return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : ( d.types.includes("METHOD_LEVEL_VP") || d.types.includes("VARIANT") || d.types.includes("VP") ) ? d3.rgb(this.getNodeColor(d.name, d.constructorVariants)) : '#dddddd';
+                let nodeColor = d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : ( d.types.includes("METHOD_LEVEL_VP") || d.types.includes("VARIANT") || d.types.includes("VP") ) ? d3.rgb(this.getNodeColor(d.name, d.constructorVariants)) : '#dddddd';
+
+                if (this.onlyHotspots) {
+                    return d.types.includes("HOTSPOT") ? nodeColor : d3.rgb(220, 220, 220);
+                } else {
+                    return nodeColor;
+                }
             })
             .attr("name", function (d) {
                 return d.name
             });
 
         newNode.append("title").text(function (d) {
-            return d.types.includes('PUBLIC') && d.publicMethods !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.publicMethods/d.allMethods)*100))
+            var title = d.types.includes('PUBLIC') && d.publicMethods !== undefined && d.allMethods !== undefined ? "types: " + d.types + "\n" + "name: " + d.name + "\n" + "About " + Math.round(((d.publicMethods/d.allMethods)*100))
                 + "% of public methods." + "\n" +  d.allMethods + " methods " + "\n" + d.publicMethods + " public methods" : "types: " + d.types + "\n" + "name: " + d.name  ;
+            if (d.traces.length > 0) {
+                title += "\n" + "traces: " + d.traces.join(", ")
+            }
+            return title;
         });
         newNode.on("mouseover", function(d) {
             d3.select(this).style("cursor", "pointer");
@@ -292,11 +313,7 @@ class Graph {
             await this.filter.addFilterAndRefresh(d3.select(node).node().name);
         });
 
-        //this.nodesList.forEach()
-
         this.addAdvancedBehaviour(newNode, this.width, this.height);
-
-
     }
 
     addAdvancedBehaviour(newNode, width, height) {
@@ -401,12 +418,12 @@ class Graph {
     }
 
     setButtonsClickActions(){
-        $(document).on('click', ".list-group-item", e => {
+        $(document).on('click', ".list-group-item", async e => {
             e.preventDefault();
             $('.active').removeClass('active');
         });
 
-        $("#filter-isolated").on('click', async e => {
+        $(document).on('click', "#filter-isolated", async e => {
             e.preventDefault();
             var previouslyFiltered = sessionStorage.getItem("filteredIsolated") === "true";
             sessionStorage.setItem("filteredIsolated", previouslyFiltered ? "false" : "true");
@@ -414,12 +431,19 @@ class Graph {
             await this.displayGraph();
         });
 
-        $("#filter-variants-button").on('click', async e => {
+        $(document).on('click', "#filter-variants-button", async e => {
             e.preventDefault();
-            console.log(sessionStorage.getItem("filteredVariants"));
             var previouslyFiltered = sessionStorage.getItem("filteredVariants") === "true";
             sessionStorage.setItem("filteredVariants", previouslyFiltered ? "false" : "true");
             $("#filter-variants-button").text(previouslyFiltered ? "Hide variants" : "Show variants");
+            await this.displayGraph();
+        });
+
+        $(document).on('click', "#hotspots-only-button", async e => {
+            e.preventDefault();
+            const previouslyFiltered = sessionStorage.getItem("onlyHotspots") === "true";
+            sessionStorage.setItem("onlyHotspots", previouslyFiltered ? "false" : "true");
+            $("#hotspots-only-button").text(previouslyFiltered ? "Show hotspots only" : "Show all nodes");
             await this.displayGraph();
         });
 
@@ -452,4 +476,4 @@ function contrastColor(color) {
     return d3.rgb(d, d, d);
 }
 
-export { Graph };
+export {Graph};

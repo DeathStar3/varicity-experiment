@@ -24,10 +24,15 @@ package configuration;
 public class ParametersObject {
 
     public Neo4jParameters neo4j;
+    public HotspotsParameters hotspots;
     public String experimentsFile;
 
     public Neo4jParameters getNeo4j() {
         return neo4j;
+    }
+
+    public HotspotsParameters getHotspotsParameters() {
+        return hotspots;
     }
 
 }

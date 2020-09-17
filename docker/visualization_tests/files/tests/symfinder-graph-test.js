@@ -111,13 +111,35 @@ describe("Generating different types of nodes", () => {
         expect(distanceToRedFromString(d3.select('circle[name = "TenConstructorOverloads"]').attr("fill")))
             .toBeLessThan(distanceToRedFromString(d3.select('circle[name = "OneConstructorOverload"]').attr("fill")));
     });
-    it('node stroke-width increases with the number of variants', () => {
+    xit('node stroke-width increases with the number of variants', () => {
         expect(d3.select('circle[name = "NoVariant"]').style("stroke-width"))
             .toBeLessThan(d3.select('circle[name = "TenVariants"]').style("stroke-width"));
     });
     it('design pattern identifier should become light if the node gets dark', () => {
         expect(d3.select('text[name = "factoryClassNode"]').attr("fill")).toBe("rgb(0, 0, 0)");
         expect(d3.select('text[name = "factoryInterfaceNode"]').attr("fill")).toBe("rgb(255, 255, 255)");
+    });
+
+});
+
+describe("Generating graph with traces", () => {
+
+    beforeAll(async () => {
+        await display("tests/data/project_with_traces.json", "tests/data/project_with_traces-stats.json", []);
+    });
+
+    it('svg should exist', () => {
+        var svg = document.getElementsByTagName('svg');
+        expect(svg).not.toBe(null);
+    });
+    it('Shape, Ellipse and Circle nodes shall have a blue border', () => {
+        expect(d3.select('circle[name = "Shape"]').style("stroke")).toBe("blue");
+        expect(d3.select('circle[name = "Ellipse"]').style("stroke")).toBe("blue");
+        expect(d3.select('circle[name = "Circle"]').style("stroke")).toBe("blue");
+    });
+    it('Square and Triangle nodes shall have a black border', () => {
+        expect(d3.select('circle[name = "Square"]').style("stroke")).toBe("black");
+        expect(d3.select('circle[name = "Triangle"]').style("stroke")).toBe("black");
     });
 
 });
@@ -145,14 +167,14 @@ describe("Testing utils functions : distanceToRed", () => {
 xdescribe("Testing utils functions : matchesFilter", () => {
 
     it('package filtering', () => {
-        expect(matchesFilter("foo.bar.Clazz", "foo.bar")).toBeTruthy();
-        expect(matchesFilter("bar.Clazz", "foo.bar")).toBeFalsy();
-        expect(matchesFilter("foo.bar.Clazz", "bar")).toBeFalsy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazz", "foo.bar")).toBeTruthy();
+        expect(NodeFilter.matchesFilter("bar.Clazz", "foo.bar")).toBeFalsy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazz", "bar")).toBeFalsy();
     });
     it('class filtering', () => {
-        expect(matchesFilter("foo.bar.Clazz", "foo.bar.Clazz")).toBeTruthy();
-        expect(matchesFilter("foo.bar.Clazz", "foo.bar.Clazzz")).toBeFalsy();
-        expect(matchesFilter("foo.bar.Clazzz", "foo.bar.Clazz")).toBeFalsy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazz", "foo.bar.Clazz")).toBeTruthy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazz", "foo.bar.Clazzz")).toBeFalsy();
+        expect(NodeFilter.matchesFilter("foo.bar.Clazzz", "foo.bar.Clazz")).toBeFalsy();
     });
 
 });
