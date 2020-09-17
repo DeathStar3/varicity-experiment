@@ -204,7 +204,7 @@ class Graph {
             .style("stroke",  (d) => {
                 var color =  this.apiList.includes(d) ? '#0e90d2' : d.types.includes('PUBLIC') ? d3.rgb(this.getPerimeterColor(d.publicMethods)) : "black";
                 //return d.types.includes("INTERFACE") ? d3.rgb(0, 0, 0) : d3.rgb(this.getNodeColor(d.name, d.constructorVariants))
-                return color;
+                return d.traces.length > 0 ? "blue" : color;
             })
             .style("stroke-width", function (d) {
                 if(d.types.includes('PUBLIC')){
