@@ -184,7 +184,7 @@ public class NeoGraph {
     }
 
     public void detectSingularHotspotsInSubtyping(int threshold) {
-        detectHotspotsInSubtyping(  "singular", threshold);
+        detectHotspotsInSubtyping("singular", threshold);
     }
 
     public void detectSingularHotspotsInOverloading(int threshold) {
@@ -208,11 +208,6 @@ public class NeoGraph {
         submitRequest(String.format("MATCH (n) " +
                 "WHERE n.singular = TRUE OR n.aggregated = TRUE " +
                 "SET n:%s", EntityAttribute.HOTSPOT));
-    public Object getPropertyValue(Node node, String property) {
-        return submitRequest(String.format("MATCH(a)\n" +
-                "WHERE ID(a)=$aId\n" +
-                "RETURN a.%s", property), "aId", node.id())
-                .get(0).get(0).asObject();
     }
 
     public Object getPropertyValue(Node node, String property) {
@@ -355,7 +350,7 @@ public class NeoGraph {
         submitRequest("MATCH (c) WHERE ((c:CLASS OR c:INTERFACE) AND NOT EXISTS (c.classVariants)) SET c.classVariants = 0");
     }
 
-    public void setNbCompositions(){
+    public void setNbCompositions() {
         submitRequest("MATCH (c)-[:INSTANTIATE]->(a) WITH count(a) AS nbComp, c SET c.nbCompositions = nbComp");
     }
 
@@ -415,7 +410,7 @@ public class NeoGraph {
     }
 
 
-    public int getNbPublicClass(){
+    public int getNbPublicClass() {
         return submitRequest("MATCH (c:PUBLIC) RETURN (COUNT(DISTINCT c))")
                 .get(0).get(0).asInt();
     }
@@ -502,7 +497,7 @@ public class NeoGraph {
      *
      * @return Number of public constructors
      */
-    public int getNbPublicConstructors(){
+    public int getNbPublicConstructors() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.publicConstructors))")
                 .get(0).get(0).asInt();
     }
@@ -522,7 +517,7 @@ public class NeoGraph {
      *
      * @return Number of public methods
      */
-    public int getNbPublicMethods(){
+    public int getNbPublicMethods() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.publicMethods))")
                 .get(0).get(0).asInt();
     }
@@ -532,7 +527,7 @@ public class NeoGraph {
      *
      * @return Number of all methods
      */
-    public int getNbAllMethods(){
+    public int getNbAllMethods() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.allMethods))")
                 .get(0).get(0).asInt();
     }
@@ -575,7 +570,7 @@ public class NeoGraph {
                 .get(0).get(0).asInt();
     }
 
-    public int getNbAttributeComposeClass(){
+    public int getNbAttributeComposeClass() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.nbCompositions))")
                 .get(0).get(0).asInt();
     }
@@ -600,7 +595,7 @@ public class NeoGraph {
      */
     public boolean relatedTo(Node parentNode, Node childNode) {
         return submitRequest("MATCH(source) WHERE ID(source) = $idSource MATCH(dest) " +
-                "WHERE ID(dest) = $idDest RETURN EXISTS((source)-[]->(dest))",
+                        "WHERE ID(dest) = $idDest RETURN EXISTS((source)-[]->(dest))",
                 "idSource", parentNode.id(), "idDest", childNode.id())
                 .get(0).get(0).asBoolean();
     }
@@ -688,9 +683,9 @@ public class NeoGraph {
                 .put("methodLevelVariants", getNbMethodLevelVariants())
                 .put("classLevelVariants", getNbClassLevelVariants())
                 .put("publicMethods", getNbPublicMethods())
-                .put("allMethods",getNbAllMethods())
-                .put("publicsConstructors",getNbPublicConstructors())
-                .put("nbCompositionClasses",getNbAttributeComposeClass()).toString();
+                .put("allMethods", getNbAllMethods())
+                .put("publicsConstructors", getNbPublicConstructors())
+                .put("nbCompositionClasses", getNbAttributeComposeClass()).toString();
     }
 
     public int getNbNodes() {
@@ -704,7 +699,8 @@ public class NeoGraph {
     public int getNbInheritanceRelationships() {
         return submitRequest("MATCH (n)-[r:EXTENDS|IMPLEMENTS]->() RETURN COUNT(r)").get(0).get(0).asInt();
     }
-    public int getNbCompositionRelationship(){
+
+    public int getNbCompositionRelationship() {
         return submitRequest("MATCH (n) - [r:INSTANTIATE]-> () RETURN COUNT(r)").get(0).get(0).asInt();
     }
 
