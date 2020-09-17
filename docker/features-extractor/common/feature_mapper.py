@@ -81,7 +81,7 @@ class Mapper:
             if hotspots else self.json_output["nodes"]
         for node in nodes_list:
             self.map_class(node)
-        print(self.calculate_measures())
+        return self.calculate_measures()
 
     def map_class(self, class_object):
         node_name = class_object["name"]
@@ -100,6 +100,10 @@ class Mapper:
         traces_dict = {f.name: list(set(f.features)) for f in self.classes_list}
         with open("generated_visualizations/data/" + os.environ['PROJECT_DIR'] + "-traces.json", 'w') as fil:
             fil.write(json.dumps(traces_dict))
+
+    def write_mapping_file(self):
+        with open("generated_visualizations/data/" + os.environ['PROJECT_DIR'] + "-mapping.json", 'w') as fil:
+            json.dump(self.calculate_measures().as_json(), fil)
 
 
 class MappingResults:
@@ -136,6 +140,17 @@ class MappingResults:
         tp = self.get_true_positives()
         fn = self.get_false_negatives()
         return tp / (tp + fn)
+
+    def as_json(self):
+        return {
+            "true_positives": self.get_true_positives(),
+            "false_positives": self.get_false_positives(),
+            "false_negatives": self.get_false_negatives(),
+            "nb_traces": self.get_number_of_traces(),
+            "nb_vps_vs": self.get_number_of_vps_and_vs(),
+            "precision": self.get_precision(),
+            "recall": self.get_recall(),
+        }
 
     def __str__(self):
         return """Number of VPs and variants linked to features (TP): %s

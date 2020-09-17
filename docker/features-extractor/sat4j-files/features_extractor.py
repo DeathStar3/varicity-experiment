@@ -51,7 +51,9 @@ with open(symfinder_json_output, "r") as fil:
 
 mapper = Mapper(source_files, methods, symfinder_output)
 if "hotspots" in argv:
-    mapper.make_mapping(hotspots=True)
+    mapping = mapper.make_mapping(hotspots=True)
 else:
-    mapper.make_mapping(hotspots=False)
+    mapping = mapper.make_mapping(hotspots=False)
 mapper.write_traces_file()
+mapper.write_mapping_file()
+print(mapping)
