@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with symfinder. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2018-2019 Johann Mortara <johann.mortara@univ-cotedazur.fr>
- * Copyright 2018-2019 Xhevahire Tërnava <xhevahire.ternava@lip6.fr>
- * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
+ * Copyright 2018-2020 Johann Mortara <johann.mortara@univ-cotedazur.fr>
+ * Copyright 2018-2020 Xhevahire Tërnava <xhevahire.ternava@lip6.fr>
+ * Copyright 2018-2020 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
 package neograph;
 
+import configuration.Configuration;
 import neo4j_types.*;
 import org.json.JSONObject;
 import org.neo4j.driver.*;
-import org.neo4j.driver.Record;
 import org.neo4j.driver.exceptions.ServiceUnavailableException;
 import org.neo4j.driver.types.MapAccessor;
 import org.neo4j.driver.types.Node;
@@ -183,12 +183,33 @@ public class NeoGraph {
                 "idNode", node.id(), "value", value);
     }
 
+    public void detectHotspots() {
+        detectSingularHotspotsInSubtyping(Configuration.getSingularityThreshold());
+        detectSingularHotspotsInOverloading(Configuration.getSingularityThreshold());
+        detectHotspotsInAggregation(10);
+        setHotspotLabels();
+    }
+
+    public void detectHotspotsInAggregation(int threshold) {
+        submitRequest("MATCH (vp:VP) " +
+                "CALL apoc.path.subgraphAll(vp, {\n" +
+                "relationshipFilter: \"INSTANTIATE\",\n" +
+                "    minLevel: 0,\n" +
+                "    limit: $threshold\n" +
+                "}) " +
+                "YIELD nodes, relationships " +
+                "FOREACH (n IN nodes | SET n.aggregation = TRUE)", "threshold", threshold - 1);
+        submitRequest("MATCH (vp)-[:EXTENDS]->(v:VARIANT) " +
+                "WHERE vp.aggregation = TRUE " +
+                "SET v.aggregation = TRUE");
+    }
+
     public void detectSingularHotspotsInSubtyping(int threshold) {
-        detectHotspotsInSubtyping("singular", threshold);
+        detectHotspotsInSubtyping("hotspot", threshold);
     }
 
     public void detectSingularHotspotsInOverloading(int threshold) {
-        detectHotspotsInOverloading("singular", threshold);
+        detectHotspotsInOverloading("hotspot", threshold);
     }
 
     void detectHotspotsInSubtyping(String property, int threshold) {
@@ -206,7 +227,7 @@ public class NeoGraph {
 
     public void setHotspotLabels() {
         submitRequest(String.format("MATCH (n) " +
-                "WHERE n.singular = TRUE OR n.aggregated = TRUE " +
+                "WHERE n.hotspot = TRUE OR n.aggregation = TRUE " +
                 "SET n:%s", EntityAttribute.HOTSPOT));
     }
 

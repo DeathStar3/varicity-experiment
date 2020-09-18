@@ -96,9 +96,7 @@ public class Symfinder {
         visitPackage(classpathPath, files, new LocalVariablesVisitor(neoGraph));*/
 
         neoGraph.detectVPsAndVariants();
-        neoGraph.detectSingularHotspotsInSubtyping(Configuration.getSingularityThreshold());
-        neoGraph.detectSingularHotspotsInOverloading(Configuration.getSingularityThreshold());
-        neoGraph.setHotspotLabels();
+        neoGraph.detectHotspots();
         logger.log(Level.getLevel("MY_LEVEL"), "Number of VPs: " + neoGraph.getTotalNbVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of methods VPs: " + neoGraph.getNbMethodVPs());
         logger.log(Level.getLevel("MY_LEVEL"), "Number of constructors VPs: " + neoGraph.getNbConstructorVPs());
