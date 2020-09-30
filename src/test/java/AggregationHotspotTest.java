@@ -67,7 +67,7 @@ public class AggregationHotspotTest extends Neo4jTest {
             assertTrue((boolean) graph.getPropertyValue(graph.getNode("VP2").get(), "aggregation"));
             assertTrue((boolean) graph.getPropertyValue(graph.getNode("VP3").get(), "aggregation"));
             assertTrue((boolean) graph.getPropertyValue(graph.getNode("VP4").get(), "aggregation"));
-            assertNull(graph.getPropertyValue(graph.getNode("V1").get(), "aggregation"));
+            assertTrue((boolean) graph.getPropertyValue(graph.getNode("V1").get(), "aggregation"));
         });
     }
 

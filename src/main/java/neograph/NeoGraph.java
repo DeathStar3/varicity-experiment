@@ -186,19 +186,16 @@ public class NeoGraph {
     public void detectHotspots() {
         detectSingularHotspotsInSubtyping(Configuration.getSingularityThreshold());
         detectSingularHotspotsInOverloading(Configuration.getSingularityThreshold());
-        detectHotspotsInAggregation(10);
+        detectHotspotsInAggregation(Configuration.getAggregationThreshold());
         setHotspotLabels();
     }
 
     public void detectHotspotsInAggregation(int threshold) {
         submitRequest("MATCH (vp:VP) " +
-                "CALL apoc.path.subgraphAll(vp, {\n" +
-                "relationshipFilter: \"INSTANTIATE\",\n" +
-                "    minLevel: 0,\n" +
-                "    limit: $threshold\n" +
-                "}) " +
-                "YIELD nodes, relationships " +
-                "FOREACH (n IN nodes | SET n.aggregation = TRUE)", "threshold", threshold - 1);
+                "CALL apoc.path.subgraphAll(vp, {relationshipFilter: \"INSTANTIATE\", minLevel: 0}) " +
+                "YIELD nodes " +
+                "WITH collect(nodes)[0] AS nodesList, count(nodes) as cnt " +
+                "FOREACH (n IN CASE WHEN cnt >= $threshold THEN nodesList ELSE [] END | SET n.aggregation = TRUE)", "threshold", threshold);
         submitRequest("MATCH (vp)-[:EXTENDS]->(v:VARIANT) " +
                 "WHERE vp.aggregation = TRUE " +
                 "SET v.aggregation = TRUE");

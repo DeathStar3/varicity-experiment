@@ -67,4 +67,8 @@ public class Configuration {
         return properties.getHotspotsParameters().nbVariantsThreshold;
     }
 
+    public static int getAggregationThreshold() {
+        return properties.getHotspotsParameters().nbAggregationsThreshold;
+    }
+
 }

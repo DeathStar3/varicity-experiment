@@ -20,6 +20,7 @@
  */
 
 import apoc.path.PathExplorer;
+import apoc.cypher.Cypher;
 import configuration.Configuration;
 import neograph.NeoGraph;
 import org.junit.jupiter.api.AfterAll;
@@ -42,7 +43,7 @@ public class Neo4jTest {
 
     @BeforeAll
     static void setUp() {
-        embeddedDatabaseServer = new InProcessNeo4jBuilder().withProcedure(PathExplorer.class).build();
+        embeddedDatabaseServer = new InProcessNeo4jBuilder().withProcedure(PathExplorer.class).withProcedure(Cypher.class).build();
         graphDatabaseService = embeddedDatabaseServer.defaultDatabaseService();
     }
 
