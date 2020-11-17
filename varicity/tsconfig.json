@@ -1,15 +1,36 @@
 {
   "compilerOptions": {
-   "target": "es6",
-   "module": "commonjs",
-   "noResolve": false,
-   "noImplicitAny": false,
-   "sourceMap": true,
-   "preserveConstEnums":true,
-   "lib": [
-       "dom",
-       "es6"
-   ],
-   "rootDir": "src"
-  }
-  }
+    "target": "es6",
+    "module": "commonjs",
+    "noResolve": false,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "preserveConstEnums": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "dom",
+      "es6"
+    ],
+    "rootDir": "src"
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ],
+  "filesGlob": [
+    "./src/**/*.ts",
+    "./test/**/*.ts",
+    "./typings/index.d.ts",
+    "./custom_typings/**/*.d.ts",
+    "./node_modules/@types/**/*.d.ts"
+  ],
+}

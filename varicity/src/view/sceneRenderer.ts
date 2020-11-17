@@ -2,6 +2,7 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, Color3, Curve3, Color4, StandardMaterial } from "@babylonjs/core";
+import {Algo} from "../controller/parser/algo";
 
 class SceneRenderer {
     constructor() {
@@ -58,4 +59,5 @@ class SceneRenderer {
         });
     }
 }
+new Algo().parse("jfreechart-v1.5.0");
 new SceneRenderer();
