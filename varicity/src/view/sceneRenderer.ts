@@ -53,7 +53,8 @@ class SceneRenderer {
         // d3elem.render();
         // let d3elem2 = new District3D(scene, districtElement, 0);
         // d3elem2.render();
-        new Building3D(scene);
+        // let d3Building = new Building3D(scene, new ClassImplem("classBuilding",10,10),100,10,10);
+        // d3Building.render();
 
         // var quartier: Mesh = MeshBuilder.CreateBox("package", {height: 20, width: 20, depth: 20}, scene);
         // quartier.setPositionWithLocalVector(new Vector3(0, -20, 0));
