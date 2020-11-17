@@ -2,11 +2,11 @@ import { District } from '../entities/district.interface';
 import { ClassImplem } from './classImplem.model';
 
 export class PackageImplem implements District {
-    buildings: ClassImplem[];
-    districts: PackageImplem[];
+    buildings: ClassImplem[] = [];
+    districts: PackageImplem[] = [];
     name: string;
-    startX: number;
-    startY: number;
+    startX: number = 0;
+    startY: number = 0;
 
     constructor(name: string) {
         this.name = name;
@@ -45,6 +45,13 @@ export class PackageImplem implements District {
     }
 
     getTotalWidth(): number {
-        throw new Error('Method not implemented.');
+        let width = 0;
+        this.districts.forEach(d => {
+            width += d.getTotalWidth() + 25; // 25 = with padding
+        });
+        this.buildings.forEach(b => {
+            width += b.width + 10; // 10 = with padding
+        })
+        return width;
     }
 }
