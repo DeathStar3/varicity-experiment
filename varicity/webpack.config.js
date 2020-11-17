@@ -5,7 +5,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const appDirectory = fs.realpathSync(process.cwd());
 
 module.exports = {
-    entry: path.resolve(appDirectory, "view/sceneRenderer.ts"), //path to the main .ts file
+    entry: path.resolve(appDirectory, "src/view/sceneRenderer.ts"), //path to the main .ts file
     output: {
         filename: 'js/bundleName.js' //name for the js file that is created/compiled in memory
     },
