@@ -26,6 +26,9 @@ class SceneRenderer {
         camera.attachControl(canvas, true);
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         // var sphere: Mesh = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
+        // sphere.setPositionWithLocalVector(new Vector3(0, 0, 0));
+        // var sphere2: Mesh = MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
+        // sphere2.setPositionWithLocalVector(new Vector3(3, 0, 0));
 
         // let districtElement = new PackageImplem("com");
         // districtElement.addDistrict(new PackageImplem("com.polytech"));
@@ -46,8 +49,9 @@ class SceneRenderer {
         entitiesList.districts.forEach(d => {
             let d3elem = new District3D(scene, d, 0, nextX, 0);
             d3elem.render();
-            nextX += d3elem.elementModel.getTotalWidth() + 10; // 30 = padding between districts
+            nextX += d3elem.elementModel.getTotalWidth() + 10; // 10 = padding between districts
         });
+        console.log(nextX);
 
         // let d3elem = new District3D(scene, districtElement, 0);
         // d3elem.render();
@@ -57,7 +61,9 @@ class SceneRenderer {
         // d3Building.render();
 
         // var quartier: Mesh = MeshBuilder.CreateBox("package", {height: 20, width: 20, depth: 20}, scene);
-        // quartier.setPositionWithLocalVector(new Vector3(0, -20, 0));
+        // quartier.setAbsolutePosition(new Vector3(0, 0, 0));
+        // var quartier2: Mesh = MeshBuilder.CreateBox("package", {height: 20, width: 10, depth: 10}, scene);
+        // quartier2.setAbsolutePosition(new Vector3(0, 20, 0));
         // for(let i =0; i<10; i++) {
         //     var building: Mesh = MeshBuilder.CreateBox("buildin"+i, { height: 20, width: 10, depth: 10 }, scene);
         //     building.setPositionWithLocalVector(new Vector3(30* i, 0, 0));
