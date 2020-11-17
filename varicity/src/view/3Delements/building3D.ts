@@ -26,7 +26,7 @@ export class Building3D {
                 depth: this.elementModel.width
             }, 
             this.scene);
-        building.setPositionWithLocalVector(new Vector3(this.positionX, this.depth * 3 * 10 + 5 * this.elementModel.height / 2, this.positionZ));
+        building.setPositionWithLocalVector(new Vector3(this.positionX + (this.elementModel.width / 2), this.depth * 3 * 10 + 5 * this.elementModel.height / 2, this.positionZ));
         building.renderOutline = true;
         building.outlineColor = new Color3(0, 1, 0);
         building.outlineWidth = 0.1;
