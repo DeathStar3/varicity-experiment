@@ -22,7 +22,7 @@ export class Building3D {
             this.d3Element.name,
             {   
                 height: this.d3Element.height,
-                width: this.d3Element.height, 
+                width: this.d3Element.width, 
                 depth: 10 
             }, 
             this.scene);
