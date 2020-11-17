@@ -2,9 +2,9 @@ import { District } from '../entities/district.interface';
 import { ClassImplem } from './classImplem.model';
 
 export class PackageImplem implements District {
+    name: string;
     buildings: ClassImplem[] = [];
     districts: PackageImplem[] = [];
-    name: string;
     startX: number = 0;
     startY: number = 0;
 
