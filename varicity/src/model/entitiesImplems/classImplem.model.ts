@@ -7,5 +7,7 @@ export class ClassImplem implements Building {
 
     constructor(name: string, methodNumber: number, attributeNumber: number) {
         this.name = name;
+        this.height = methodNumber
+        this.width = attributeNumber;
     }
 }

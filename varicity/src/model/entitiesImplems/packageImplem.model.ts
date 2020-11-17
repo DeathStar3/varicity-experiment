@@ -8,35 +8,36 @@ export class PackageImplem implements District {
     startX: number;
     startY: number;
 
-    constructor() {
-        
+    constructor(name: string) {
+        this.name = name;
     }
 
     addDistrict(district: PackageImplem) {
-        // depending on district.name => com.polytech.unice
+        // depending on district.name => com.polytech.unice.*
         // find the corresponding district com.polytech
         // add district unice to the corresponding district com.polytech
-        throw new Error('Method not implemented.');
+        return this.districts.push(district);
     }
 
     addBuilding(building: ClassImplem) {
-        // depending on building.name => com.polytech.unice.object.java
+        // depending on building.name => com.polytech.unice.Object
         // find the corresponding district com.polytech.unice
-        // add building object.java to the corresponding district com.polytech.unice
-        throw new Error('Method not implemented.');
+        // add building Object to the corresponding district com.polytech.unice
+        return this.buildings.push(building);
     }
 
-    belongsTo(district: PackageImplem): boolean {
+    // returns if obj is a child of this
+    hasChild(obj: PackageImplem | ClassImplem): boolean {
 
-        let districtNameSplitted = district.name.split('.');
-        let thisNameSplitted = this.name.split('.');
+        const objNameSplitted = obj.name.split('.');
+        const thisNameSplitted = this.name.split('.');
 
         // Possible to optimize ?
-        // districtNameSplitted should always be > thisNameSplitted, since it will be recursive
+        // objNameSplitted should always be > thisNameSplitted, since it will be recursive
         // therefore, it should be possible to only compare thisNameSplitted[thisNameSplitted.length] with districtNameSplitted[thisNameSplitted.length]
         // since previous districts should have compared the others before
         for(let i = 0; i < thisNameSplitted.length; i++) {
-            if(thisNameSplitted[i] != districtNameSplitted[i]) {
+            if(thisNameSplitted[i] != objNameSplitted[i]) {
                 return false;
             }
         }

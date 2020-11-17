@@ -15,5 +15,5 @@ export interface District {
 
     getTotalWidth(): number;
 
-    belongsTo(district: District): boolean;
+    hasChild(obj: District | Building): boolean;
 }
