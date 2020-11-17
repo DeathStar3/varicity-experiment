@@ -9,14 +9,18 @@ export class District3D {
     depth: number;
 
     d3Model: Mesh;
+    x = 0;
+    z = 0;
 
     d3Buildings: Building3D[] = [];
     d3Districts: District3D[] = [];
 
-    constructor(scene: Scene, element: District, depth: number) {
+    constructor(scene: Scene, element: District, depth: number, x: number, z: number) {
         this.scene = scene;
         this.depth = depth;
         this.elementModel = element;
+        this.x = x;
+        this.z = z;
     }
 
     render() {
@@ -28,9 +32,9 @@ export class District3D {
                 depth: this.elementModel.getTotalWidth()
             }, 
             this.scene);
-        this.d3Model.setPositionWithLocalVector(new Vector3(0, 20 * this.depth, 0));
+        this.d3Model.setPositionWithLocalVector(new Vector3(this.x, 20 * this.depth, this.z));
         this.elementModel.districts.forEach(d => {
-            let d3District = new District3D(this.scene, d, this.depth+1)
+            let d3District = new District3D(this.scene, d, this.depth+1, this.x, this.z)
             this.d3Districts.push(d3District);
             d3District.render();
         });

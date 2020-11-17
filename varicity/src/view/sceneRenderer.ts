@@ -32,11 +32,29 @@ class SceneRenderer {
         districtElement.districts[0].addBuilding(new ClassImplem("class1", 10, 15));
         districtElement.districts[0].addBuilding(new ClassImplem("class2", 10, 15));
         districtElement.districts[0].addBuilding(new ClassImplem("class3", 10, 15));
-        let d3elem = new District3D(scene, districtElement, 0);
-        d3elem.render();
+        let districtElement2 = new PackageImplem("com");
+        districtElement2.addDistrict(new PackageImplem("com.polytech"));
+        districtElement2.districts[0].addBuilding(new ClassImplem("class1", 10, 15));
+        districtElement2.districts[0].addBuilding(new ClassImplem("class2", 10, 15));
+        districtElement2.districts[0].addBuilding(new ClassImplem("class3", 10, 15));
+
+        let arr: PackageImplem[] = [];
+        arr.push(districtElement, districtElement2);
+
+        let nextX = 0
+        arr.forEach(d => {
+            console.log(nextX);
+            let d3elem = new District3D(scene, d, 0, nextX, 0);
+            d3elem.render();
+            nextX += d3elem.elementModel.getTotalWidth() + 30; // 30 = padding between districts
+        })
+        // let d3elem = new District3D(scene, districtElement, 0);
+        // d3elem.render();
+        // let d3elem2 = new District3D(scene, districtElement, 0);
+        // d3elem2.render();
         new Building3D(scene);
 
-        // var quartier: Mesh = MeshBuilder.CreateBox("package", {height: 20, width: 300, depth: 300}, scene);
+        // var quartier: Mesh = MeshBuilder.CreateBox("package", {height: 20, width: 20, depth: 20}, scene);
         // quartier.setPositionWithLocalVector(new Vector3(0, -20, 0));
         // for(let i =0; i<10; i++) {
         //     var building: Mesh = MeshBuilder.CreateBox("buildin"+i, { height: 20, width: 10, depth: 10 }, scene);
