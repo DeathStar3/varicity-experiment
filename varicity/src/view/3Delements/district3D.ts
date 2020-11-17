@@ -27,12 +27,12 @@ export class District3D {
         this.d3Model = MeshBuilder.CreateBox(
             "package", 
             {
-                height: 20, 
+                height: 10, 
                 width: this.elementModel.getTotalWidth(), 
                 depth: this.elementModel.getTotalWidth()
             }, 
             this.scene);
-        this.d3Model.setPositionWithLocalVector(new Vector3(this.x, 20 * this.depth, this.z));
+        this.d3Model.setPositionWithLocalVector(new Vector3(this.x, 10 * this.depth, this.z));
         this.elementModel.districts.forEach(d => {
             let d3District = new District3D(this.scene, d, this.depth+1, this.x, this.z)
             this.d3Districts.push(d3District);

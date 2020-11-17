@@ -47,10 +47,10 @@ export class PackageImplem implements District {
     getTotalWidth(): number {
         let width = 0;
         this.districts.forEach(d => {
-            width += d.getTotalWidth() + 25; // 25 = with padding
+            width += d.getTotalWidth() + 10; // 25 = with padding
         });
         this.buildings.forEach(b => {
-            width += b.width + 10; // 10 = with padding
+            width += b.width + 5; // 10 = with padding
         })
         return width;
     }

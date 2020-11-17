@@ -10,7 +10,7 @@ import {Algo} from "../controller/parser/algo";
 import { ClassImplem } from '../model/entitiesImplems/classImplem.model';
 
 class SceneRenderer {
-    constructor(entities: EntitiesList) {
+    constructor(entitiesList: EntitiesList) {
         // create the canvas html element and attach it to the webpage
         var canvas = document.createElement("canvas");
         canvas.style.width = "100%";
@@ -27,27 +27,28 @@ class SceneRenderer {
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         // var sphere: Mesh = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
 
-        let districtElement = new PackageImplem("com");
-        districtElement.addDistrict(new PackageImplem("com.polytech"));
-        districtElement.districts[0].addBuilding(new ClassImplem("class1", 10, 15));
-        districtElement.districts[0].addBuilding(new ClassImplem("class2", 10, 15));
-        districtElement.districts[0].addBuilding(new ClassImplem("class3", 10, 15));
-        let districtElement2 = new PackageImplem("com");
-        districtElement2.addDistrict(new PackageImplem("com.polytech"));
-        districtElement2.districts[0].addBuilding(new ClassImplem("class1", 10, 15));
-        districtElement2.districts[0].addBuilding(new ClassImplem("class2", 10, 15));
-        districtElement2.districts[0].addBuilding(new ClassImplem("class3", 10, 15));
+        // let districtElement = new PackageImplem("com");
+        // districtElement.addDistrict(new PackageImplem("com.polytech"));
+        // districtElement.districts[0].addBuilding(new ClassImplem("class1", 10, 15));
+        // districtElement.districts[0].addBuilding(new ClassImplem("class2", 10, 15));
+        // districtElement.districts[0].addBuilding(new ClassImplem("class3", 10, 15));
+        // let districtElement2 = new PackageImplem("com");
+        // districtElement2.addDistrict(new PackageImplem("com.polytech"));
+        // districtElement2.districts[0].addBuilding(new ClassImplem("class1", 10, 15));
+        // districtElement2.districts[0].addBuilding(new ClassImplem("class2", 10, 15));
+        // districtElement2.districts[0].addBuilding(new ClassImplem("class3", 10, 15));
 
-        let arr: PackageImplem[] = [];
-        arr.push(districtElement, districtElement2);
+        // let entities: PackageImplem[] = [];
+        // entities.push(districtElement, districtElement2);
 
         let nextX = 0
-        arr.forEach(d => {
-            console.log(nextX);
+        // entities.forEach(d => {
+        entitiesList.districts.forEach(d => {
             let d3elem = new District3D(scene, d, 0, nextX, 0);
             d3elem.render();
-            nextX += d3elem.elementModel.getTotalWidth() + 30; // 30 = padding between districts
-        })
+            nextX += d3elem.elementModel.getTotalWidth() + 10; // 30 = padding between districts
+        });
+
         // let d3elem = new District3D(scene, districtElement, 0);
         // d3elem.render();
         // let d3elem2 = new District3D(scene, districtElement, 0);
