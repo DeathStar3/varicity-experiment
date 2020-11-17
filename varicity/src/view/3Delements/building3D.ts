@@ -21,12 +21,12 @@ export class Building3D {
         var building: Mesh = MeshBuilder.CreateBox(
             this.elementModel.name,
             {   
-                height: this.elementModel.height,
+                height: this.elementModel.height * 5,
                 width: this.elementModel.width, 
                 depth: this.elementModel.width
             }, 
             this.scene);
-        building.setPositionWithLocalVector(new Vector3(this.positionX, this.depth * 3 + this.elementModel.height / 2, this.positionZ));
+        building.setPositionWithLocalVector(new Vector3(this.positionX, this.depth * 3 * 10 + 5 * this.elementModel.height / 2, this.positionZ));
         building.renderOutline = true;
         building.outlineColor = new Color3(0, 1, 0);
         building.outlineWidth = 0.1;

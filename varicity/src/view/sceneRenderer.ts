@@ -22,7 +22,7 @@ class SceneRenderer {
         var engine: Engine = new Engine(canvas, true);
         var scene = new Scene(engine);
 
-        var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, Vector3.Zero(), scene);
+        var camera: ArcRotateCamera = new ArcRotateCamera("Camera", 2 * Math.PI / 3, Math.PI / 3, 2000, Vector3.Zero(), scene);
         camera.attachControl(canvas, true);
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         // var sphere: Mesh = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
@@ -47,11 +47,10 @@ class SceneRenderer {
         let nextX = 0
         // entities.forEach(d => {
         entitiesList.districts.forEach(d => {
-            let d3elem = new District3D(scene, d, 0, nextX, 0);
+            let d3elem = new District3D(scene, d, 0, nextX - (d.getTotalWidth() / 2), 0);
             d3elem.render();
-            nextX += d3elem.elementModel.getTotalWidth() + 10; // 10 = padding between districts
+            nextX += d3elem.elementModel.getTotalWidth() + 5; // 10 = padding between districts
         });
-        console.log(nextX);
 
         // let d3elem = new District3D(scene, districtElement, 0);
         // d3elem.render();
@@ -60,8 +59,8 @@ class SceneRenderer {
         // let d3Building = new Building3D(scene, new ClassImplem("classBuilding",10,10),100,10,10);
         // d3Building.render();
 
-        // var quartier: Mesh = MeshBuilder.CreateBox("package", {height: 20, width: 20, depth: 20}, scene);
-        // quartier.setAbsolutePosition(new Vector3(0, 0, 0));
+        // var quartier: Mesh = MeshBuilder.CreateBox("package", {height: 20, width: 270, depth: 200}, scene);
+        // quartier.setPositionWithLocalVector(new Vector3(0 + (270 /2), -20, 0));
         // var quartier2: Mesh = MeshBuilder.CreateBox("package", {height: 20, width: 10, depth: 10}, scene);
         // quartier2.setAbsolutePosition(new Vector3(0, 20, 0));
         // for(let i =0; i<10; i++) {

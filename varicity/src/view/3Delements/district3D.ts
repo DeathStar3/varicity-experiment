@@ -27,13 +27,13 @@ export class District3D {
         this.d3Model = MeshBuilder.CreateBox(
             "package", 
             {
-                height: 3, 
+                height: 30, 
                 width: this.elementModel.getTotalWidth(), 
                 depth: this.elementModel.getTotalWidth()
             }, 
             this.scene);
-        this.d3Model.setPositionWithLocalVector(new Vector3(this.x, 3 * this.depth, this.z));
-        let nextX = this.x //- (this.elementModel.getTotalWidth());
+        this.d3Model.setPositionWithLocalVector(new Vector3(this.x + (this.elementModel.getTotalWidth() / 2), 30 * this.depth - 15, this.z));
+        let nextX = this.x //- (this.elementModel.getTotalWidth() /2);
         this.elementModel.districts.forEach(d => {
             let d3District = new District3D(this.scene, d, this.depth+1, nextX, this.z)
             this.d3Districts.push(d3District);
@@ -45,7 +45,7 @@ export class District3D {
             
         });
         this.elementModel.buildings.forEach(b => {
-            let d3Building = new Building3D(this.scene, b, this.depth+1, nextX, this.z);
+            let d3Building = new Building3D(this.scene, b, this.depth, nextX, this.z);
             this.d3Buildings.push(d3Building);
             d3Building.render();
             nextX += d3Building.elementModel.width + 2; // 10 = padding between districts
