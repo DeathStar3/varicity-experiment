@@ -13,7 +13,8 @@ export class Algo {
         const nodesList: NodeElement[] = [];
         data.nodes.forEach(n => {
             let node = new NodeElement(n.name);
-            node.nbFunctions = n.allMethods;
+            node.nbFunctions = (n.allMethods === undefined) ? 0 : n.allMethods;
+
             const attr = n.attributes;
             let cpt = 0;
             attr.forEach(a => {
