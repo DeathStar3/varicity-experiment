@@ -1,3 +1,4 @@
+import { PackageImplem } from './../model/entitiesImplems/packageImplem.model';
 import { Building3D } from './3Delements/building3D';
 import { District3D } from './3Delements/district3D';
 import { EntitiesList } from './../model/entitiesList';
@@ -6,6 +7,7 @@ import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, Color3, Curve3, Color4, StandardMaterial } from "@babylonjs/core";
 import {Algo} from "../controller/parser/algo";
+import { ClassImplem } from '../model/entitiesImplems/classImplem.model';
 
 class SceneRenderer {
     constructor(entities: EntitiesList) {
@@ -25,7 +27,13 @@ class SceneRenderer {
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         // var sphere: Mesh = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
 
-        new District3D(scene);
+        let districtElement = new PackageImplem("com");
+        districtElement.addDistrict(new PackageImplem("com.polytech"));
+        districtElement.districts[0].addBuilding(new ClassImplem("class1", 10, 15));
+        districtElement.districts[0].addBuilding(new ClassImplem("class2", 10, 15));
+        districtElement.districts[0].addBuilding(new ClassImplem("class3", 10, 15));
+        let d3elem = new District3D(scene, districtElement, 0);
+        d3elem.render();
         new Building3D(scene);
 
         // var quartier: Mesh = MeshBuilder.CreateBox("package", {height: 20, width: 300, depth: 300}, scene);
