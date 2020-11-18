@@ -48,6 +48,7 @@ class SceneRenderer {
         // entities.forEach(d => {
         entitiesList.districts.forEach(d => {
             let d3elem = new District3D(scene, d, 0, nextX - (d.getTotalWidth() / 2), 0);
+            d3elem.build();
             d3elem.render();
             nextX += d3elem.elementModel.getTotalWidth() + 5; // 10 = padding between districts
         });
