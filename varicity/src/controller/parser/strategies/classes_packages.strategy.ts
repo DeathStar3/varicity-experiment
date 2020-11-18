@@ -1,9 +1,10 @@
 import { ConfigLoader } from './../configLoader';
 import {EntitiesList} from "../../../model/entitiesList";
-import {NodeElement} from "../symfinder_entities/nodes/node";
+import {NodeElement} from "../symfinder_elements/nodes/node.element";
 import {ClassImplem} from "../../../model/entitiesImplems/classImplem.model";
 import {PackageImplem} from "../../../model/entitiesImplems/packageImplem.model";
 import {FilesLoader} from "../filesLoader";
+import {LinkElement} from "../symfinder_elements/links/link.element";
 
 export class ClassesPackagesStrategy {
     public parse(fileName: string) : EntitiesList {
