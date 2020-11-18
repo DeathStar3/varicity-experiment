@@ -26,6 +26,12 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: "ts-loader",
                 exclude: /node_modules/
+            },
+            {
+                test: /\.ya?ml$/,
+                type: "json",
+                use: "yaml-loader",
+                exclude: /node_modules/
             }
         ]
     },

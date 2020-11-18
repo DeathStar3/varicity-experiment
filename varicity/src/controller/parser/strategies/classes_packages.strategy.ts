@@ -1,3 +1,4 @@
+import { ConfigLoader } from './../configLoader';
 import {EntitiesList} from "../../../model/entitiesList";
 import {NodeElement} from "../symfinder_entities/nodes/node";
 import {ClassImplem} from "../../../model/entitiesImplems/classImplem.model";
@@ -9,6 +10,9 @@ export class ClassesPackagesStrategy {
         const data = FilesLoader.loadDataFile(fileName);
 
         console.log('Analyzing with classes and packages strategy: ', data);
+
+        const config = ConfigLoader.loadDataFile("config");
+        console.log(config.buildings);
 
         const nodesList: NodeElement[] = [];
         data.nodes.forEach(n => {
