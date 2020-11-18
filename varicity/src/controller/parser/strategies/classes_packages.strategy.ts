@@ -38,6 +38,11 @@ export class ClassesPackagesStrategy {
             this.addToLists(n.name.split('.'), /*n.type,*/ n.nbFunctions, n.nbAttributes, packagesList, classesList);
         });
 
+        const linkElements : LinkElement[] = [];
+        data.links.forEach(l => {
+            linkElements.push(new LinkElement(l.source, l.target, l.type));
+        })
+
         let result = new EntitiesList();
         result.buildings = classesList;
         result.districts = packagesList;

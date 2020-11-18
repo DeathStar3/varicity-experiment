@@ -1,4 +1,4 @@
 export enum LinkType {
-    EXTENDS,
-    IMPLEMENTS
+    EXTENDS = "EXTENDS",
+    IMPLEMENTS = "IMPLEMENTS"
 }
