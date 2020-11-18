@@ -4,16 +4,18 @@ import { Building } from "../entities/building.interface";
 export class ClassImplem implements Building {
     width: number = 0.5;
     height: number = 0.5;
+    types: string[] = [];
     name: string;
     
     center: Vector3;
     bot: Vector3;
     top: Vector3;
 
-    constructor(name: string, methodNumber: number, attributeNumber: number) {
+    constructor(name: string, methodNumber: number, attributeNumber: number, types: string[]) {
         this.name = name;
         this.height += methodNumber * 0.5;
         this.width += attributeNumber * 0.5;
+        this.types = types;
     }
 
     locate(center: Vector3, bot: Vector3, top: Vector3) {

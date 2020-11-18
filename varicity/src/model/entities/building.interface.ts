@@ -2,6 +2,7 @@ import { Vector3 } from '@babylonjs/core';
 export interface Building {
     width: number;
     height: number;
+    types: string[];
 
     name: string;
 
