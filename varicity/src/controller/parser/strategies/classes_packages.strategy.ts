@@ -1,14 +1,13 @@
-import {EntitiesList} from "../../model/entitiesList";
-import * as data from '../../../symfinder_files/jfreechart-v1.5.0.json';
-import {NodeElement} from "./symfinder_entities/nodes/node";
-import {ClassImplem} from "../../model/entitiesImplems/classImplem.model";
-import {PackageImplem} from "../../model/entitiesImplems/packageImplem.model";
+import {EntitiesList} from "../../../model/entitiesList";
+import {NodeElement} from "../symfinder_entities/nodes/node";
+import {ClassImplem} from "../../../model/entitiesImplems/classImplem.model";
+import {PackageImplem} from "../../../model/entitiesImplems/packageImplem.model";
+import {FilesLoader} from "../filesLoader";
 
-export class Algo {
+export class ClassesPackagesStrategy {
     public parse(fileName: string) : EntitiesList {
-        // const rawData = fs.readFileSync("../../symfinder_files/"+fileName+".json");
-        // const jsonData = JSON.parse(rawData.toString());
-        console.log(JSON.stringify(data));
+        const data = FilesLoader.loadDataFile(fileName);
+        console.log(data);
 
         const nodesList: NodeElement[] = [];
         data.nodes.forEach(n => {
@@ -28,7 +27,7 @@ export class Algo {
         const classesList: ClassImplem[] = [];
 
         nodesList.forEach(n => {
-            Algo.addToLists(n.name.split('.'), /*n.type,*/ n.nbFunctions, n.nbAttributes, packagesList, classesList);
+            this.addToLists(n.name.split('.'), /*n.type,*/ n.nbFunctions, n.nbAttributes, packagesList, classesList);
         });
 
         let result = new EntitiesList();
@@ -40,14 +39,14 @@ export class Algo {
         return result;
     }
 
-    private static addToLists(splitName: string[], /*type: NodeType,*/ nbFunctions: number, nbAttributes: number, packagesList: PackageImplem[], classesList: ClassImplem[]) {
+    private addToLists(splitName: string[], /*type: NodeType,*/ nbFunctions: number, nbAttributes: number, packagesList: PackageImplem[], classesList: ClassImplem[]) {
         if (splitName.length >= 2) { // When there is a class found
-            const p = Algo.getPackageFromName(splitName[0], packagesList);
+            const p = this.getPackageFromName(splitName[0], packagesList);
             if (p !== undefined) { // if the package is found at this level we can add the class into it
                 if (splitName.length == 2) { // if the class is terminal then add it to the package
                     p.addBuilding(new ClassImplem(splitName[1], nbFunctions, nbAttributes));
                 } else { // else add it to the corresponding subPackage
-                    Algo.addToLists(splitName.slice(1), nbFunctions, nbAttributes, p.districts, classesList);
+                    this.addToLists(splitName.slice(1), nbFunctions, nbAttributes, p.districts, classesList);
                 }
             } else { // if not then we create the package and add the building to it
                 const newP = new PackageImplem(splitName[0]);
@@ -55,7 +54,7 @@ export class Algo {
                 if (splitName.length == 2) { // If the class is terminal then add it to the package
                     newP.addBuilding(new ClassImplem(splitName[1], nbFunctions, nbAttributes));
                 } else { // else add it to its packages list
-                    Algo.addToLists(splitName.slice(1), nbFunctions, nbAttributes, newP.districts, classesList);
+                    this.addToLists(splitName.slice(1), nbFunctions, nbAttributes, newP.districts, classesList);
                 }
             }
         } else { // if the depth is 0, then add it to the classesList
@@ -64,7 +63,7 @@ export class Algo {
         }
     }
 
-    private static getPackageFromName(name: string, packagesList: PackageImplem[]) : PackageImplem {
+    private getPackageFromName(name: string, packagesList: PackageImplem[]) : PackageImplem {
         let result : PackageImplem = undefined;
         packagesList.forEach(p => {
             if (p.name === name){
