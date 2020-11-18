@@ -58,8 +58,8 @@ export class City3D {
             b.build();
         });
         this.links.forEach(l => {
-            let src = this.findSrcLink(l.source.name);
-            let dest = this.findSrcLink(l.target.name);
+            let src = this.findSrcLink(l.source.fullName);
+            let dest = this.findSrcLink(l.target.fullName);
             let type = l.type;
             if(src != undefined && dest != undefined) {
                 src.link(dest, type);

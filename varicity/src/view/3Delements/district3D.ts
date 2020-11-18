@@ -28,6 +28,8 @@ export class District3D {
     get(name: string): Building3D {
         if(name.includes(this.elementModel.name)) {
             this.d3Buildings.forEach(b => {
+                // console.log(name);
+                // console.log(b.getName());
                 if(b.getName() == name) return b;
             });
             this.d3Districts.forEach(d => {

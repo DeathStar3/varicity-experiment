@@ -32,7 +32,7 @@ export class Building3D {
     }
 
     getName() {
-        return this.elementModel.name;
+        return this.elementModel.fullName;
     }
 
     link(dest: Building3D, type: string) {
