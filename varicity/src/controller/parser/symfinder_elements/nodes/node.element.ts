@@ -1,8 +1,7 @@
-import {NodeType} from "./nodeType";
 
 export class NodeElement {
     name: string;
-    types: NodeType[];
+    types: string[];
     nbAttributes: number;
     nbFunctions: number;
 
