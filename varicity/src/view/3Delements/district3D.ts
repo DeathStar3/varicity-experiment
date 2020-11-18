@@ -78,7 +78,7 @@ export class District3D {
             mat.ambientColor = Color3.FromHexString(config.district.colors.faces[0].color);
             mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[0].color);
             mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
-            mat.specularColor = Color3.FromHexString(config.district.colors.faces[0].color);
+            mat.specularColor = Color3.FromHexString("#000000");
         } else {
             console.log("faces not defined");
             // mat.ambientColor = new Color3(1, 0, 0);
