@@ -26,19 +26,27 @@ export class District3D {
     }
 
     get(name: string): Building3D {
+        let building: Building3D = undefined;
         if(name.includes(this.elementModel.name)) {
-            this.d3Buildings.forEach(b => {
-                // console.log(name);
-                // console.log(b.getName());
-                if(b.getName() == name) return b;
-            });
-            this.d3Districts.forEach(d => {
+            for(let b of this.d3Buildings) {
+            // this.d3Buildings.forEach(b => {
+                if(b.getName() == name) {
+                    return building = b;
+                }
+            // });
+            }
+            for(let d of this.d3Districts) {
+            // this.d3Districts.forEach(d => {
                 let b = d.get(name);
-                if(b != undefined) return b;
-            })
+                if(b != undefined) {
+                    return building = b;
+                };
+            // })
+            }
         } else {
-            return undefined;
+            return building;
         }
+        return building;
     }
 
     build() {

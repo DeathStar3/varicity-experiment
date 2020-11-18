@@ -40,14 +40,19 @@ export class City3D {
     }
 
     private findSrcLink(name: string): Building3D {
-        this.buildings.forEach(b => {
-            if(b.getName() == name) return b;
-        });
-        this.districts.forEach(d => {
+        let building: Building3D = undefined;
+        for(let b of this.buildings) {
+        // this.buildings.forEach(b => {
+            if(b.getName() == name) return building = b;
+        // });
+        }
+        for(let d of this.districts) {
+        // this.districts.forEach(d => {
             let b = d.get(name);
-            if(b != undefined) return b;
-        });
-        return undefined;
+            if(b != undefined) return building = b;
+        // });
+        }
+        return building;
     }
 
     build() {
