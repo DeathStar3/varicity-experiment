@@ -5,6 +5,7 @@ export interface Building {
     types: string[];
 
     name: string;
+    fullName: string;
 
     center: Vector3;
     bot: Vector3;
