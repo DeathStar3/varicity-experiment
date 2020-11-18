@@ -8,7 +8,8 @@ import {FilesLoader} from "../filesLoader";
 export class ClassesPackagesStrategy {
     public parse(fileName: string) : EntitiesList {
         const data = FilesLoader.loadDataFile(fileName);
-        console.log(data);
+
+        console.log('Analyzing with classes and packages strategy: ', data);
 
         const config = ConfigLoader.loadDataFile("config");
         console.log(config.buildings);
