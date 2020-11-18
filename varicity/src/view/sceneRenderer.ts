@@ -6,8 +6,8 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, Color3, Curve3, Color4, StandardMaterial } from "@babylonjs/core";
-import {Algo} from "../controller/parser/algo";
 import { ClassImplem } from '../model/entitiesImplems/classImplem.model';
+import {ClassesPackagesStrategy} from "../controller/parser/strategies/classes_packages.strategy";
 
 class SceneRenderer {
     constructor(entitiesList: EntitiesList) {
@@ -99,5 +99,5 @@ class SceneRenderer {
         });
     }
 }
-let entities = new Algo().parse("jfreechart-v1.5.0");
+let entities = new ClassesPackagesStrategy().parse("jfreechart-v1.5.0");
 new SceneRenderer(entities);
