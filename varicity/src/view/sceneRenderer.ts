@@ -8,6 +8,7 @@ import "@babylonjs/loaders/glTF";
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, Color3, Curve3, Color4, StandardMaterial } from "@babylonjs/core";
 import { ClassImplem } from '../model/entitiesImplems/classImplem.model';
 import {ClassesPackagesStrategy} from "../controller/parser/strategies/classes_packages.strategy";
+import { ConfigLoader } from '../controller/parser/configLoader';
 
 class SceneRenderer {
     constructor(entitiesList: EntitiesList) {
@@ -44,12 +45,18 @@ class SceneRenderer {
         // let entities: PackageImplem[] = [];
         // entities.push(districtElement, districtElement2);
 
+        const config = ConfigLoader.loadDataFile("config");
+        console.log(config.building);
+        console.log(config.building.colors);
+        console.log(config.building.colors.outline);
+        console.log(config.building.colors.edges);
+        
         let nextX = 0
         // entities.forEach(d => {
         entitiesList.districts.forEach(d => {
             let d3elem = new District3D(scene, d, 0, nextX - (d.getTotalWidth() / 2), 0);
             d3elem.build();
-            d3elem.render();
+            d3elem.render(config);
             nextX += d3elem.elementModel.getTotalWidth() + 5; // 10 = padding between districts
         });
 

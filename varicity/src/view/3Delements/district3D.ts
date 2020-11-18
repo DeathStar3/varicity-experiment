@@ -1,3 +1,4 @@
+import { Color3, Color4, StandardMaterial } from '@babylonjs/core';
 import { Building3D } from './building3D';
 import { Scene } from '@babylonjs/core';
 import { Mesh, MeshBuilder, Vector3 } from '@babylonjs/core';
@@ -44,7 +45,7 @@ export class District3D {
         });        
     }
 
-    render() {
+    render(config: any) {
         this.d3Model = MeshBuilder.CreateBox(
             "package", 
             {
@@ -54,6 +55,38 @@ export class District3D {
             }, 
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.vector);//new Vector3(this.x + (this.elementModel.getTotalWidth() / 2), 30 * this.depth - 15, this.z));
+
+        // if config -> district -> colors -> outline is defined
+        if(config.district.colors.outline) {
+            this.d3Model.renderOutline = true;
+            this.d3Model.outlineColor = Color3.FromHexString(config.district.colors.outline);
+        } else {
+            console.log("outline not defined");
+        }
+
+        // if config -> district -> colors -> edges is defined
+        if(config.district.colors.edges) {
+            this.d3Model.outlineWidth = 0.1;
+            this.d3Model.edgesColor = Color4.FromHexString(config.district.colors.edges);
+        } else {
+            console.log("edges not defined");
+        }
+
+        let mat = new StandardMaterial("District", this.scene);
+        // if config -> district -> colors -> faces is defined
+        if(config.district.colors.faces) {
+            mat.ambientColor = Color3.FromHexString(config.district.colors.faces[0].color);
+            mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[0].color);
+            mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
+            mat.specularColor = Color3.FromHexString(config.district.colors.faces[0].color);
+        } else {
+            console.log("faces not defined");
+            // mat.ambientColor = new Color3(1, 0, 0);
+            // mat.diffuseColor = new Color3(1, 0, 0);
+            // mat.emissiveColor = new Color3(1, 0, 0);
+            // mat.specularColor = new Color3(1, 0, 0);
+        }
+        this.d3Model.material = mat;
         
         // let nextX = this.x //- (this.elementModel.getTotalWidth() /2);
         this.d3Districts.forEach(d => {
@@ -61,7 +94,7 @@ export class District3D {
             // let d3District = new District3D(this.scene, d, this.depth+1, nextX, this.z)
             // this.d3Districts.push(d3District);
             // d3District.render();
-            d.render();
+            d.render(config);
             // nextX += d3District.elementModel.getTotalWidth() + 5; // 10 = padding between districts            
         });
 
@@ -70,7 +103,7 @@ export class District3D {
             // let d3Building = new Building3D(this.scene, b, this.depth, nextX, this.z);
             // this.d3Buildings.push(d3Building);
             // d3Building.render();
-            b.render();
+            b.render(config);
             // nextX += d3Building.elementModel.width + 2; // 10 = padding between districts
         });
     }
