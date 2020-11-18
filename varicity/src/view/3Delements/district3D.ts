@@ -25,6 +25,20 @@ export class District3D {
         this.z = z;
     }
 
+    get(name: string): Building3D {
+        if(name.includes(this.elementModel.name)) {
+            this.d3Buildings.forEach(b => {
+                if(b.getName() == name) return b;
+            });
+            this.d3Districts.forEach(d => {
+                let b = d.get(name);
+                if(b != undefined) return b;
+            })
+        } else {
+            return undefined;
+        }
+    }
+
     build() {
         this.vector = new Vector3(this.x + (this.elementModel.getTotalWidth() / 2), 30 * this.depth - 15, this.z);
 

@@ -15,6 +15,11 @@ export class Building3D {
 
     d3Model: Mesh;
 
+    links: {
+        dest: Building3D,
+        type: string,
+    }[] = [];
+
     curves: Curve3[] = [];
     lines: LinesMesh[] = [];
 
@@ -24,6 +29,14 @@ export class Building3D {
         this.depth = depth;
         this.positionX = x;
         this.positionZ = z;
+    }
+
+    getName() {
+        return this.elementModel.name;
+    }
+
+    link(dest: Building3D, type: string) {
+        this.links.push({dest, type});
     }
 
     build() {
@@ -71,7 +84,6 @@ export class Building3D {
         if (config.building.colors.faces) {
             let faces = config.building.colors.faces;
             let done = false;
-            console.log(faces);
             for (let face of faces) {
                 for (let type of this.elementModel.types) {
                     if (type == face.name) {
@@ -101,11 +113,11 @@ export class Building3D {
         this.d3Model.material = mat;
 
         // Display links to other buildings
-        // this.elementModel.links.forEach(l => {
-        //     let curve = Curve3.CreateQuadraticBezier(this.top, this.top.add(new Vector3(0, (this.top.y + l.top.y) / 2, 0)), l.top, 25);
-        //     this.curves.push(curve);
-        //     let line = MeshBuilder.CreateLines("curve", {points: curve.getPoints()}, this.scene);
-        //     this.lines.push(line);
-        // })
+        this.links.forEach(l => {
+            let curve = Curve3.CreateQuadraticBezier(this.top, this.top.add(new Vector3(0, (this.top.y + l.dest.top.y) / 2, 0)), l.dest.top, 25);
+            this.curves.push(curve);
+            let line = MeshBuilder.CreateLines("curve", {points: curve.getPoints()}, this.scene);
+            this.lines.push(line);
+        })
     }
 }

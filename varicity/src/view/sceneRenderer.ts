@@ -1,3 +1,4 @@
+import { City3D } from './3Delements/city3D';
 import { PackageImplem } from './../model/entitiesImplems/packageImplem.model';
 import { Building3D } from './3Delements/building3D';
 import { District3D } from './3Delements/district3D';
@@ -47,14 +48,17 @@ class SceneRenderer {
 
         const config = ConfigLoader.loadDataFile("config");
         
-        let nextX = 0
-        // entities.forEach(d => {
-        entitiesList.districts.forEach(d => {
-            let d3elem = new District3D(scene, d, 0, nextX - (d.getTotalWidth() / 2), 0);
-            d3elem.build();
-            d3elem.render(config);
-            nextX += d3elem.elementModel.getTotalWidth() + 5; // 10 = padding between districts
-        });
+        const city = new City3D(config, scene, entitiesList);
+        city.build();
+        city.render();
+        // let nextX = 0
+        // // entities.forEach(d => {
+        // entitiesList.districts.forEach(d => {
+        //     let d3elem = new District3D(scene, d, 0, nextX - (d.getTotalWidth() / 2), 0);
+        //     d3elem.build();
+        //     d3elem.render(config);
+        //     nextX += d3elem.elementModel.getTotalWidth() + 5; // 10 = padding between districts
+        // });
 
         // let d3elem = new District3D(scene, districtElement, 0);
         // d3elem.render();
