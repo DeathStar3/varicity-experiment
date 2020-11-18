@@ -46,10 +46,6 @@ class SceneRenderer {
         // entities.push(districtElement, districtElement2);
 
         const config = ConfigLoader.loadDataFile("config");
-        console.log(config.building);
-        console.log(config.building.colors);
-        console.log(config.building.colors.outline);
-        console.log(config.building.colors.edges);
         
         let nextX = 0
         // entities.forEach(d => {

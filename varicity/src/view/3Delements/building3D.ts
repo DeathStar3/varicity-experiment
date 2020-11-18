@@ -34,20 +34,20 @@ export class Building3D {
         this.elementModel.locate(this.center, this.bot, this.top);
     }
 
-    render(config: any){
+    render(config: any) {
         // Display building
         this.d3Model = MeshBuilder.CreateBox(
             this.elementModel.name,
-            {   
+            {
                 height: this.elementModel.height * 5,
-                width: this.elementModel.width, 
+                width: this.elementModel.width,
                 depth: this.elementModel.width
-            }, 
+            },
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.center);
 
         // if config -> building -> colors -> outline is defined
-        if(config.building.colors.outline) {
+        if (config.building.colors.outline) {
             this.d3Model.renderOutline = true;
             this.d3Model.outlineColor = Color3.FromHexString(config.building.colors.outline);
         } else {
@@ -57,7 +57,7 @@ export class Building3D {
         }
 
         // if config -> building -> colors -> edges is defined
-        if(config.building.colors.edges) {
+        if (config.building.colors.edges) {
             this.d3Model.outlineWidth = 0.1;
             this.d3Model.edgesColor = Color4.FromHexString(config.building.colors.edges);
         } else {
@@ -66,13 +66,31 @@ export class Building3D {
             this.d3Model.edgesColor = new Color4(1, 0, 0);
         }
 
-        var mat = new StandardMaterial(this.elementModel.name+"Mat", this.scene);
+        var mat = new StandardMaterial(this.elementModel.name + "Mat", this.scene);
         // if config -> building -> colors -> faces is defined
-        if(config.building.colors.faces) {
-            mat.ambientColor = Color3.FromHexString(config.building.colors.faces[0].color);
-            mat.diffuseColor = Color3.FromHexString(config.building.colors.faces[0].color);
-            mat.emissiveColor = Color3.FromHexString(config.building.colors.faces[0].color);
-            mat.specularColor = Color3.FromHexString(config.building.colors.faces[0].color);
+        if (config.building.colors.faces) {
+            let faces = config.building.colors.faces;
+            let done = false;
+            console.log(faces);
+            for (let face of faces) {
+                for (let type of this.elementModel.types) {
+                    if (type == face.name) {
+                        mat.ambientColor = Color3.FromHexString(face.color);
+                        mat.diffuseColor = Color3.FromHexString(face.color);
+                        mat.emissiveColor = Color3.FromHexString(face.color);
+                        mat.specularColor = Color3.FromHexString(face.color);
+                        done = true;
+                        break;
+                    }
+                }
+                if (done) break;
+            }
+            if (!done) {
+                mat.ambientColor = Color3.FromHexString(config.building.colors.faces[0].color);
+                mat.diffuseColor = Color3.FromHexString(config.building.colors.faces[0].color);
+                mat.emissiveColor = Color3.FromHexString(config.building.colors.faces[0].color);
+                mat.specularColor = Color3.FromHexString(config.building.colors.faces[0].color);
+            }
         } else {
             console.log("faces not defined");
             mat.ambientColor = new Color3(1, 0, 0);
