@@ -7,7 +7,8 @@ import {FilesLoader} from "../filesLoader";
 export class ClassesPackagesStrategy {
     public parse(fileName: string) : EntitiesList {
         const data = FilesLoader.loadDataFile(fileName);
-        console.log(data);
+
+        console.log('Analyzing with classes and packages strategy: ', data);
 
         const nodesList: NodeElement[] = [];
         data.nodes.forEach(n => {
