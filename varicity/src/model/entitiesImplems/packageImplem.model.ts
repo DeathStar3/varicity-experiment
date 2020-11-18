@@ -1,7 +1,7 @@
 import { District } from '../entities/district.interface';
 import { ClassImplem } from './classImplem.model';
 
-export class PackageImplem implements District {
+export class PackageImplem extends District {
     name: string;
     buildings: ClassImplem[] = [];
     districts: PackageImplem[] = [];
@@ -9,6 +9,7 @@ export class PackageImplem implements District {
     startY: number = 0;
 
     constructor(name: string) {
+        super();
         this.name = name;
     }
 

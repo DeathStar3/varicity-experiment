@@ -5,8 +5,6 @@ export class ClassImplem implements Building {
     width: number = 0.5;
     height: number = 0.5;
     name: string;
-
-    links: Building[] = [];
     
     center: Vector3;
     bot: Vector3;
@@ -17,9 +15,7 @@ export class ClassImplem implements Building {
         this.height += methodNumber * 0.5;
         this.width += attributeNumber * 0.5;
     }
-    linkTo(destination: Building) {
-        this.links.push(destination);
-    }
+
     locate(center: Vector3, bot: Vector3, top: Vector3) {
         this.center = center;
         this.bot = bot;
