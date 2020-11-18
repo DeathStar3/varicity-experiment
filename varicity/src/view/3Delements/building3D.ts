@@ -71,7 +71,6 @@ export class Building3D {
         if (config.building.colors.faces) {
             let faces = config.building.colors.faces;
             let done = false;
-            console.log(faces);
             for (let face of faces) {
                 for (let type of this.elementModel.types) {
                     if (type == face.name) {
