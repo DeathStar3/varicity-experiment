@@ -1,0 +1,9 @@
+buildings:
+  colors:
+    - name: "CLASS"
+      color: "class"
+    - name: "INTERFACE"
+      color: "interface"
+    - name: "STRATEGY"
+      color: "strategy"
+  
