@@ -13,14 +13,16 @@ export class ClassesPackagesStrategy {
         const nodesList: NodeElement[] = [];
         data.nodes.forEach(n => {
             let node = new NodeElement(n.name);
-            node.nbFunctions = (n.allMethods === undefined) ? 0 : n.allMethods;
+            node.nbFunctions = (n.methodVariants === undefined) ? 0 : n.methodVariants;
 
             const attr = n.attributes;
-            let cpt = 0;
+            let nbAttributes = 0;
             attr.forEach(a => {
-                cpt += a.number;
+                nbAttributes += a.number;
             })
-            node.nbAttributes = cpt;
+            const cVar = (n.constructorVariants === undefined) ? 0 : n.constructorVariants;
+            node.nbAttributes = nbAttributes;
+            // node.nbAttributes = cVar;
             nodesList.push(node);
         });
 
