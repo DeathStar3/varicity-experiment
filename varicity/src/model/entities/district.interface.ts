@@ -29,7 +29,7 @@ export abstract class District {
             return undefined;
         } else {
             for (let i = 0; i < this.districts.length; i++) {
-                const result = this.getBuildingFromName(namesList.slice(1));
+                const result = this.districts[i].getBuildingFromName(namesList.slice(1));
                 if (result !== undefined) {
                     return result;
                 }

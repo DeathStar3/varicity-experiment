@@ -57,11 +57,11 @@ export class Building3D {
         this.d3Model.material = mat;
 
         // Display links to other buildings
-        this.elementModel.links.forEach(l => {
-            let curve = Curve3.CreateQuadraticBezier(this.top, this.top.add(new Vector3(0, (this.top.y + l.top.y) / 2, 0)), l.top, 25);
-            this.curves.push(curve);
-            let line = MeshBuilder.CreateLines("curve", {points: curve.getPoints()}, this.scene);
-            this.lines.push(line);
-        })
+        // this.elementModel.links.forEach(l => {
+        //     let curve = Curve3.CreateQuadraticBezier(this.top, this.top.add(new Vector3(0, (this.top.y + l.top.y) / 2, 0)), l.top, 25);
+        //     this.curves.push(curve);
+        //     let line = MeshBuilder.CreateLines("curve", {points: curve.getPoints()}, this.scene);
+        //     this.lines.push(line);
+        // })
     }
 }

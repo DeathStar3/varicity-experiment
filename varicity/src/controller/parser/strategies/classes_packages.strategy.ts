@@ -5,6 +5,7 @@ import {ClassImplem} from "../../../model/entitiesImplems/classImplem.model";
 import {PackageImplem} from "../../../model/entitiesImplems/packageImplem.model";
 import {FilesLoader} from "../filesLoader";
 import {LinkElement} from "../symfinder_elements/links/link.element";
+import {InheritanceImplem} from "../../../model/entitiesImplems/inheritanceImplem.model";
 
 export class ClassesPackagesStrategy {
     public parse(fileName: string) : EntitiesList {
@@ -38,14 +39,22 @@ export class ClassesPackagesStrategy {
             this.addToLists(n.name.split('.'), /*n.type,*/ n.nbFunctions, n.nbAttributes, packagesList, classesList);
         });
 
+        let result = new EntitiesList();
+        result.buildings = classesList;
+        result.districts = packagesList;
+
         const linkElements : LinkElement[] = [];
         data.links.forEach(l => {
             linkElements.push(new LinkElement(l.source, l.target, l.type));
         })
 
-        let result = new EntitiesList();
-        result.buildings = classesList;
-        result.districts = packagesList;
+        const inheritancesList: InheritanceImplem[] = [];
+        linkElements.forEach(le => {
+            const source = result.getBuildingFromName(le.source.split('.'));
+            const target = result.getBuildingFromName(le.target.split('.'));
+            inheritancesList.push(new InheritanceImplem(source, target, le.type));
+        })
+        result.links = inheritancesList;
 
         console.log(result);
 
