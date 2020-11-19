@@ -1,4 +1,3 @@
-import { Vector3 } from "@babylonjs/core";
 import { Building } from "../entities/building.interface";
 
 export class ClassImplem implements Building {
@@ -7,10 +6,6 @@ export class ClassImplem implements Building {
     types: string[] = [];
     name: string;
     fullName: string;
-    
-    center: Vector3;
-    bot: Vector3;
-    top: Vector3;
 
     constructor(name: string, methodNumber: number, attributeNumber: number, types: string[], fullName: string) {
         this.name = name;
@@ -18,11 +13,5 @@ export class ClassImplem implements Building {
         this.width += attributeNumber * 0.5;
         this.types = types;
         this.fullName = fullName;
-    }
-
-    locate(center: Vector3, bot: Vector3, top: Vector3) {
-        this.center = center;
-        this.bot = bot;
-        this.top = top;
     }
 }

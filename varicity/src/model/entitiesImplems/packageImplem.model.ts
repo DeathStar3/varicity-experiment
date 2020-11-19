@@ -5,8 +5,6 @@ export class PackageImplem extends District {
     name: string;
     buildings: ClassImplem[] = [];
     districts: PackageImplem[] = [];
-    startX: number = 0;
-    startY: number = 0;
 
     constructor(name: string) {
         super();
