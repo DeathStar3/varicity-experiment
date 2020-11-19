@@ -64,6 +64,7 @@ export class City3D {
             let type = l.type;
             if(src != undefined && dest != undefined) {
                 src.link(dest, type);
+                dest.link(src, type);
             }
             else {
                 console.log("massive error help tasukete kudasai");
