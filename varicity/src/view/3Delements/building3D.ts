@@ -73,6 +73,16 @@ export class Building3D {
         this.d3Model.actionManager.registerAction(
             new ExecuteCodeAction(
                 {
+                    trigger: ActionManager.OnPickTrigger
+                },
+                function() {
+                    document.getElementById("ui_square").innerText = out;
+                }
+            )
+        );
+        this.d3Model.actionManager.registerAction(
+            new ExecuteCodeAction(
+                {
                 trigger: ActionManager.OnPointerOverTrigger
                 },
                 function() { 
