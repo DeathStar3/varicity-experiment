@@ -69,12 +69,27 @@ export class Building3D {
 
         this.d3Model.actionManager = new ActionManager(this.scene);
         const out = this.elementModel.fullName
+        const links = this.links;
         this.d3Model.actionManager.registerAction(
             new ExecuteCodeAction(
                 {
-                trigger: ActionManager.OnPickTrigger
+                trigger: ActionManager.OnPointerOverTrigger
                 },
-                function() { console.log(out) }
+                function() { 
+                    links.forEach(l => l.display());
+                    console.log(out);
+                }
+            )
+        );
+        this.d3Model.actionManager.registerAction(
+            new ExecuteCodeAction(
+                {
+                trigger: ActionManager.OnPointerOutTrigger
+                },
+                function() { 
+                    links.forEach(l => l.hide());
+                    console.log(out);
+                }
             )
         );
 
