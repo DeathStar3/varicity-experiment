@@ -5,4 +5,8 @@ export interface Building {
 
     name: string;
     fullName: string;
+
+    toString() : string;
+    getHeight() : number;
+    getWidth() : number;
 }

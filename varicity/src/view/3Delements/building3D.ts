@@ -48,8 +48,8 @@ export class Building3D {
     }
 
     build() {
-        let halfHeight = (5 * this.elementModel.height / 2);
-        this.center = new Vector3(this.positionX + (this.elementModel.width / 2), this.depth * 3 * 10 + halfHeight, this.positionZ);
+        let halfHeight = (5 * this.elementModel.getHeight() / 2);
+        this.center = new Vector3(this.positionX + (this.elementModel.getWidth() / 2), this.depth * 3 * 10 + halfHeight, this.positionZ);
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
     }
@@ -60,14 +60,14 @@ export class Building3D {
             this.elementModel.name,
             {
                 height: this.elementModel.height * 5,
-                width: this.elementModel.width,
-                depth: this.elementModel.width
+                width: this.elementModel.getWidth(),
+                depth: this.elementModel.getWidth()
             },
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.center);
 
         this.d3Model.actionManager = new ActionManager(this.scene);
-        const out = this.elementModel.fullName
+        const out = this.elementModel.toString();
         const links = this.links;
         this.d3Model.actionManager.registerAction(
             new ExecuteCodeAction(
@@ -87,7 +87,6 @@ export class Building3D {
                 },
                 function() { 
                     links.forEach(l => l.hide());
-                    console.log(out);
                 }
             )
         );
