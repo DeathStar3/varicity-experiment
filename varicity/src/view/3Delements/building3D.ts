@@ -52,7 +52,6 @@ export class Building3D {
         this.center = new Vector3(this.positionX + (this.elementModel.width / 2), this.depth * 3 * 10 + halfHeight, this.positionZ);
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
-        this.elementModel.locate(this.center, this.bot, this.top);
     }
 
     render(config: any) {
