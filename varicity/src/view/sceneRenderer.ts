@@ -26,6 +26,7 @@ class SceneRenderer {
 
         var camera: ArcRotateCamera = new ArcRotateCamera("Camera", 2 * Math.PI / 3, Math.PI / 3, 2000, Vector3.Zero(), scene);
         camera.attachControl(canvas, true);
+        camera.panningSensibility = 5;
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(0, 1, 0), scene);
         // var sphere: Mesh = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
         // sphere.setPositionWithLocalVector(new Vector3(0, 0, 0));
