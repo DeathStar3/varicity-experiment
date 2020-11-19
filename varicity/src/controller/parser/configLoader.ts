@@ -6,7 +6,7 @@ export class ConfigLoader {
     }
 
     private static loadJson() : void {
-        const requireContext = require.context('../../../config', false, /\.ya?ml$/);
+        const requireContext = require.context('/config', false, /\.ya?ml$/);
         ConfigLoader.json = {};
         requireContext.keys().forEach((key) => {
             const obj = requireContext(key);

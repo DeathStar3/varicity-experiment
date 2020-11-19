@@ -6,7 +6,7 @@ export class FilesLoader {
     }
 
     private static loadJson() : void {
-        const requireContext = require.context('../../../symfinder_files', false, /\.json$/);
+        const requireContext = require.context('/symfinder_files', false, /\.json$/);
         FilesLoader.json = {};
         requireContext.keys().forEach((key) => {
             const obj = requireContext(key);
