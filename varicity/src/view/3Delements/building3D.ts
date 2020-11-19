@@ -1,4 +1,17 @@
-import { Color3, Color4, Curve3, LinesMesh, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3 } from '@babylonjs/core';
+import {
+    Action,
+    ActionManager,
+    Color3,
+    Color4,
+    Curve3, ExecuteCodeAction,
+    InterpolateValueAction,
+    LinesMesh,
+    Mesh,
+    MeshBuilder,
+    Scene,
+    StandardMaterial,
+    Vector3
+} from '@babylonjs/core';
 import { Building } from '../../model/entities/building.interface';
 import { Link3D } from './link3D';
 
@@ -53,6 +66,17 @@ export class Building3D {
             },
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.center);
+
+        this.d3Model.actionManager = new ActionManager(this.scene);
+        const out = this.elementModel.fullName
+        this.d3Model.actionManager.registerAction(
+            new ExecuteCodeAction(
+                {
+                trigger: ActionManager.OnPickTrigger
+                },
+                function() { console.log(out) }
+            )
+        );
 
         // if config -> building -> colors -> outline is defined
         if (config.building.colors.outline) {
