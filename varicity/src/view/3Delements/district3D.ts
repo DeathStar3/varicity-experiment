@@ -61,7 +61,7 @@ export class District3D {
             let d3Building = new Building3D(this.scene, b, this.depth, nextX, this.z);
             this.d3Buildings.push(d3Building);
             d3Building.build();
-            nextX += d3Building.elementModel.width + 2; // 10 = padding between districts
+            nextX += d3Building.elementModel.getWidth() + 2; // 10 = padding between districts
         });        
     }
 

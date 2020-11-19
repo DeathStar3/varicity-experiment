@@ -49,7 +49,7 @@ export class PackageImplem extends District {
             width += d.getTotalWidth() + 5; // 25 = with padding
         });
         this.buildings.forEach(b => {
-            width += b.width + 2; // 10 = with padding
+            width += b.getWidth() + 2; // 10 = with padding
         })
         return width;
     }

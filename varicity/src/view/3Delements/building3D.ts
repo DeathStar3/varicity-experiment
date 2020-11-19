@@ -59,7 +59,7 @@ export class Building3D {
         this.d3Model = MeshBuilder.CreateBox(
             this.elementModel.name,
             {
-                height: this.elementModel.height * 5,
+                height: this.elementModel.getHeight() * 5,
                 width: this.elementModel.getWidth(),
                 depth: this.elementModel.getWidth()
             },

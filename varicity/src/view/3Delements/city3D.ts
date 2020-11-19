@@ -31,11 +31,11 @@ export class City3D {
         });
 
         entities.buildings.forEach(b => {
-            let d3elem = new Building3D(this.scene, b, 0, nextX - (b.width / 2), 0);
+            let d3elem = new Building3D(this.scene, b, 0, nextX - (b.getWidth() / 2), 0);
             this.buildings.push(d3elem);
             // d3elem.build();
             // d3elem.render(this.config);
-            nextX += d3elem.elementModel.width + 5; // 10 = padding between buildings
+            nextX += d3elem.elementModel.getWidth() + 5; // 10 = padding between buildings
         });
     }
 
