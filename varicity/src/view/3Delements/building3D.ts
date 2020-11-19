@@ -1,5 +1,6 @@
 import { Color3, Color4, Curve3, LinesMesh, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3 } from '@babylonjs/core';
 import { Building } from '../../model/entities/building.interface';
+import { Link3D } from './link3D';
 
 export class Building3D {
     elementModel: Building;
@@ -15,13 +16,7 @@ export class Building3D {
 
     d3Model: Mesh;
 
-    links: {
-        dest: Building3D,
-        type: string,
-    }[] = [];
-
-    curves: Curve3[] = [];
-    lines: LinesMesh[] = [];
+    links: Link3D[] = [];
 
     constructor(scene: Scene, buildingElement: Building, depth: number, x: number, z: number) {
         this.scene = scene;
@@ -36,7 +31,7 @@ export class Building3D {
     }
 
     link(dest: Building3D, type: string) {
-        this.links.push({dest, type});
+        this.links.push(new Link3D(this, dest, type, this.scene));
     }
 
     build() {
@@ -114,10 +109,7 @@ export class Building3D {
 
         // Display links to other buildings
         this.links.forEach(l => {
-            let curve = Curve3.CreateQuadraticBezier(this.top, this.top.add(new Vector3(0, (this.top.y + l.dest.top.y) / 2, 0)), l.dest.top, 25);
-            this.curves.push(curve);
-            let line = MeshBuilder.CreateLines("curve", {points: curve.getPoints()}, this.scene);
-            this.lines.push(line);
-        })
+            l.render(config);
+        });
     }
 }

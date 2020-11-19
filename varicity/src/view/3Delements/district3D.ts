@@ -29,19 +29,15 @@ export class District3D {
         let building: Building3D = undefined;
         if(name.includes(this.elementModel.name)) {
             for(let b of this.d3Buildings) {
-            // this.d3Buildings.forEach(b => {
                 if(b.getName() == name) {
                     return building = b;
                 }
-            // });
             }
             for(let d of this.d3Districts) {
-            // this.d3Districts.forEach(d => {
                 let b = d.get(name);
                 if(b != undefined) {
                     return building = b;
                 };
-            // })
             }
         } else {
             return building;
