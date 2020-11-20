@@ -1,11 +1,8 @@
+import { Element3D } from './element3D.interface';
 import {
-    Action,
-    ActionManager,
-    Color3,
+    ActionManager, Color3,
     Color4,
-    Curve3, ExecuteCodeAction,
-    InterpolateValueAction,
-    LinesMesh,
+    ExecuteCodeAction,
     Mesh,
     MeshBuilder,
     Scene,
@@ -15,13 +12,13 @@ import {
 import { Building } from '../../model/entities/building.interface';
 import { Link3D } from './link3D';
 
-export class Building3D {
+export class Building3D implements Element3D {
     elementModel: Building;
     scene: Scene;
 
     depth: number;
-    positionX: number;
-    positionZ: number;
+    // positionX: number;
+    // positionZ: number;
 
     center: Vector3;
     top: Vector3;
@@ -31,12 +28,19 @@ export class Building3D {
 
     links: Link3D[] = [];
 
-    constructor(scene: Scene, buildingElement: Building, depth: number, x: number, z: number) {
+    padding = 5;
+
+    constructor(scene: Scene, buildingElement: Building, depth: number) {
         this.scene = scene;
         this.elementModel = buildingElement;
         this.depth = depth;
-        this.positionX = x;
-        this.positionZ = z;
+        // this.positionX = x;
+        // this.positionZ = z;
+    }
+
+    getSize(): number {
+        return this.elementModel.getWidth() + this.padding; // 2.5 av 2.5 ap
+        // return this.elementModel.getWidth();// 2.5 av 2.5 ap
     }
 
     getName() {
@@ -48,8 +52,12 @@ export class Building3D {
     }
 
     build() {
+    }
+
+    place(x: number, z: number) {
         let halfHeight = (5 * this.elementModel.getHeight() / 2);
-        this.center = new Vector3(this.positionX + (this.elementModel.getWidth() / 2), this.depth * 3 * 10 + halfHeight, this.positionZ);
+        // this.center = new Vector3(x + (this.elementModel.getWidth() / 2), this.depth * 3 * 10 + halfHeight, z + (this.elementModel.getWidth() / 2));
+        this.center = new Vector3(x + this.padding / 2 + (this.elementModel.getWidth() / 2), this.depth * 3 * 10 + halfHeight, z + this.padding / 2 + (this.elementModel.getWidth() / 2));
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
     }
@@ -72,9 +80,9 @@ export class Building3D {
         this.d3Model.actionManager.registerAction(
             new ExecuteCodeAction(
                 {
-                trigger: ActionManager.OnPointerOverTrigger
+                    trigger: ActionManager.OnPointerOverTrigger
                 },
-                function() { 
+                function () {
                     links.forEach(l => l.display());
                     document.getElementById("ui_square").innerText = out;
                 }
@@ -83,9 +91,9 @@ export class Building3D {
         this.d3Model.actionManager.registerAction(
             new ExecuteCodeAction(
                 {
-                trigger: ActionManager.OnPointerOutTrigger
+                    trigger: ActionManager.OnPointerOutTrigger
                 },
-                function() { 
+                function () {
                     links.forEach(l => l.hide());
                 }
             )

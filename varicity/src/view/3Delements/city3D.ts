@@ -3,6 +3,8 @@ import { Scene } from '@babylonjs/core';
 import { Building3D } from './building3D';
 import { District3D } from './district3D';
 import { EntitiesList } from './../../model/entitiesList';
+import { Element3D } from './element3D.interface';
+
 export class City3D {
 
     config: any;
@@ -20,33 +22,30 @@ export class City3D {
     }
 
     private init(entities: EntitiesList) {
-        let nextX = 0
 
         entities.districts.forEach(d => {
-            let d3elem = new District3D(this.scene, d, 0, nextX - (d.getTotalWidth() / 2), 0);
+            let d3elem = new District3D(this.scene, d, 0);
             this.districts.push(d3elem);
             // d3elem.build();
             // d3elem.render(this.config);
-            nextX += d3elem.elementModel.getTotalWidth() + 5; // 10 = padding between districts
         });
 
         entities.buildings.forEach(b => {
-            let d3elem = new Building3D(this.scene, b, 0, nextX - (b.getWidth() / 2), 0);
+            let d3elem = new Building3D(this.scene, b, 0);
             this.buildings.push(d3elem);
             // d3elem.build();
             // d3elem.render(this.config);
-            nextX += d3elem.elementModel.getWidth() + 5; // 10 = padding between buildings
         });
     }
 
     private findSrcLink(name: string): Building3D {
         let building: Building3D = undefined;
-        for(let b of this.buildings) {
-            if(b.getName() == name) return building = b;
+        for (let b of this.buildings) {
+            if (b.getName() == name) return building = b;
         }
-        for(let d of this.districts) {
+        for (let d of this.districts) {
             let b = d.get(name);
-            if(b != undefined) return building = b;
+            if (b != undefined) return building = b;
         }
         return building;
     }
@@ -62,12 +61,38 @@ export class City3D {
             let src = this.findSrcLink(l.source.fullName);
             let dest = this.findSrcLink(l.target.fullName);
             let type = l.type;
-            if(src != undefined && dest != undefined) {
+            if (src != undefined && dest != undefined) {
                 src.link(dest, type);
                 dest.link(src, type);
             }
             else {
                 console.log("massive error help tasukete kudasai");
+            }
+        });
+
+        this.place();
+    }
+
+    getSize(): number {
+        return this.districts[0].getSize();
+    }
+
+    place() {
+        let d3elements: Element3D[] = [];
+        d3elements = d3elements.concat(this.buildings, this.districts);
+        d3elements = d3elements.sort((a, b) => a.getSize() - b.getSize());
+        let currentX: number = 0;
+        let currentZ: number = 0;
+        let nextZ = 0;
+        let size = this.getSize();
+        d3elements.forEach(e => {
+            e.place(currentX, currentZ);
+            currentX += size;
+            if (currentX === 0)
+                nextZ += e.getSize();
+            if (currentX >= size) {
+                currentX = 0;
+                currentZ = nextZ;
             }
         });
     }
