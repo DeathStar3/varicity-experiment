@@ -131,7 +131,6 @@ export class District3D implements Element3D {
         let currentZ: number = 0;
         let nextZ = 0;
         this.size = this.getSize();
-        console.log("name: " + this.elementModel.name + "\nsize: " + this.size + "\t\tx: " + x + "\t\tz: " + z);
         this.vector = new Vector3(x + this.size / 2 , 30 * this.depth - 15, z + this.size / 2);
         // this.vector = new Vector3(x + this.size / 2 + this.padding / 2, 30 * this.depth - 15, z + this.size / 2 + this.padding / 2);
 

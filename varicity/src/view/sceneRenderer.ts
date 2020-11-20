@@ -1,17 +1,12 @@
 import { City3D } from './3Delements/city3D';
-import { PackageImplem } from './../model/entitiesImplems/packageImplem.model';
-import { Building3D } from './3Delements/building3D';
-import { District3D } from './3Delements/district3D';
 import { EntitiesList } from './../model/entitiesList';
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, Color3, Curve3, Color4, StandardMaterial } from "@babylonjs/core";
-import { ClassImplem } from '../model/entitiesImplems/classImplem.model';
-import {ClassesPackagesStrategy} from "../controller/parser/strategies/classes_packages.strategy";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight } from "@babylonjs/core";
 import { ConfigLoader } from '../controller/parser/configLoader';
 
-class SceneRenderer {
+export class SceneRenderer {
     constructor(entitiesList: EntitiesList) {
         // create the canvas html element and attach it to the webpage
         var canvas = document.createElement("canvas");
@@ -108,5 +103,3 @@ class SceneRenderer {
         });
     }
 }
-let entities = new ClassesPackagesStrategy().parse("jfreechart-v1.5.0");
-new SceneRenderer(entities);
