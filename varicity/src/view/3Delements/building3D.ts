@@ -84,7 +84,7 @@ export class Building3D implements Element3D {
                 },
                 function () {
                     links.forEach(l => l.display());
-                    document.getElementById("ui_square").innerText = out;
+                    document.getElementById("nodes_details").innerText = out;
                 }
             )
         );

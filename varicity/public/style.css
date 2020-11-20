@@ -5,7 +5,15 @@
     width: 60%;
     height: 20%;
     background: rgba(0,50,80,0.7);
+}
+
+#reset_camera {
+    color: black;
+}
+
+#nodes_details {
     color: white;
+    font-family: "Roboto Light", serif;
 }
 
 body {
