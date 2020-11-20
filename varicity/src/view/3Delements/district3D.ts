@@ -78,7 +78,7 @@ export class District3D implements Element3D {
                 placements[currentRow].push(sizesArray[i]);
             }
         }
-        return currentWidth;
+        return currentWidth + placements.length * this.padding / 2;
     }
 
     getSize(): number {
@@ -134,20 +134,23 @@ export class District3D implements Element3D {
         console.log("name: " + this.elementModel.name + "\nsize: " + this.size + "\t\tx: " + x + "\t\tz: " + z);
         this.vector = new Vector3(x + this.size / 2 , 30 * this.depth - 15, z + this.size / 2);
         // this.vector = new Vector3(x + this.size / 2 + this.padding / 2, 30 * this.depth - 15, z + this.size / 2 + this.padding / 2);
+
+        const s = this.size;
+        const p = this.padding;
         d3elements.forEach(e => {
             let eSize = e.getSize();
-            if (currentX + eSize > this.size) {
+            if (currentX + eSize + p > s) {
                 currentX = 0;
                 currentZ = nextZ;
             }
             if (currentX === 0) {
                 // nextZ += eSize;
-                nextZ += eSize + this.padding / 2;
+                nextZ += eSize + p / 2;
             }
             // e.place(x + currentX, z + currentZ);
             // currentX += eSize;
-            e.place(x + currentX + this.padding / 2, z + currentZ + this.padding / 2);
-            currentX += eSize + this.padding / 2;
+            e.place(x + currentX + p / 2, z + currentZ + p / 2);
+            currentX += eSize + p / 2;
         });
     }
 
