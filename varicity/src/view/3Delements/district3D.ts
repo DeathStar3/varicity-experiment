@@ -1,5 +1,5 @@
 import { Element3D } from './element3D.interface';
-import { Color3, Color4, StandardMaterial } from '@babylonjs/core';
+import { ActionManager, Color3, Color4, ExecuteCodeAction, StandardMaterial } from '@babylonjs/core';
 import { Building3D } from './building3D';
 import { Scene } from '@babylonjs/core';
 import { Mesh, MeshBuilder, Vector3 } from '@babylonjs/core';
@@ -28,6 +28,15 @@ export class District3D implements Element3D {
         this.elementModel = element;
         // this.x = x;
         // this.z = z;
+    }
+
+    showAllLinks() {
+        this.d3Buildings.forEach(b =>
+            b.showAllLinks()
+        );
+        this.d3Districts.forEach(d => 
+            d.showAllLinks()
+        );
     }
 
     resize(placements: number[][], width: number): number[][] {
@@ -208,5 +217,15 @@ export class District3D implements Element3D {
         this.d3Buildings.forEach(b => {
             b.render(config);
         });
+
+        this.d3Model.actionManager = new ActionManager(this.scene);
+        this.d3Model.actionManager.registerAction(
+            new ExecuteCodeAction(
+                {
+                    trigger: ActionManager.OnLeftPickTrigger
+                },
+                () => this.showAllLinks()
+            )
+        );
     }
 }

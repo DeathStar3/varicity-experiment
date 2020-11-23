@@ -38,6 +38,10 @@ export class Building3D implements Element3D {
         // this.positionZ = z;
     }
 
+    showAllLinks() {
+        this.links.forEach(l => l.display(true));
+    }
+
     getSize(): number {
         return this.elementModel.getWidth() + this.padding; // 2.5 av 2.5 ap
         // return this.elementModel.getWidth();// 2.5 av 2.5 ap
@@ -94,7 +98,7 @@ export class Building3D implements Element3D {
                     trigger: ActionManager.OnPointerOutTrigger
                 },
                 function () {
-                    links.forEach(l => l.hide());
+                    links.forEach(l => l.display());
                 }
             )
         );

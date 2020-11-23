@@ -12,6 +12,8 @@ export class Link3D {
     curve: Curve3;
     line: LinesMesh;
 
+    force: boolean = false;
+
     constructor(src: Building3D, dest: Building3D, type: string, scene: Scene) {
         this.src = src;
         this.dest = dest;
@@ -21,7 +23,7 @@ export class Link3D {
     render(config: any) {
         this.curve = Curve3.CreateQuadraticBezier(this.src.top, this.src.top.add(new Vector3(0, (this.src.top.y + this.dest.top.y) / 2, 0)), this.dest.top, 25);
         this.line = MeshBuilder.CreateLines("curve", {points: this.curve.getPoints()}, this.scene);
-        this.hide() // defaults at hidden
+        this.line.visibility = 0; // defaults at hidden
         if(config.link.colors) {
             for(let c of config.link.colors) {
                 if(c.name == this.type) {
@@ -32,11 +34,18 @@ export class Link3D {
         }
     }
 
-    hide() {
-        this.line.visibility = 0;
-    }
+    // hide(force?: boolean) {
+    //     if(force) this.force = false;
+    //     if(!this.force) this.line.visibility = 0;
+    // }
 
-    display() {
-        this.line.visibility = 1;
+    display(force?: boolean) {
+        if(force) this.force = !this.force;
+        if(!this.force && this.line.visibility == 1) {
+            this.line.visibility = 0;
+        } else {
+            this.line.visibility = 1;
+        }
+        // this.line.visibility = 1;
     }
 }
