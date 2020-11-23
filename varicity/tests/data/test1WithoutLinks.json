@@ -1,0 +1,35 @@
+{
+    "nodes": [
+        {
+            "types": ["CLASS"],
+            "name":"fr.polytech.varicity.class1",
+            "methodVariants": 5,
+            "constructorVariants": 10,
+            "nbAttributes": 5
+        },
+        {
+            "types": ["CLASS"],
+            "name":"fr.polytech.varicity.class2",
+            "methodVariants": 5,
+            "constructorVariants": 10,
+            "nbAttributes": 5
+        },
+        {
+            "types": ["CLASS"],
+            "name":"fr.polytech.d3.class1",
+            "methodVariants": 5,
+            "constructorVariants": 10,
+            "nbAttributes": 5
+        },
+        {
+            "types": ["CLASS"],
+            "name":"fr.polytech.d3.class2",
+            "methodVariants": 5,
+            "constructorVariants": 10,
+            "nbAttributes": 5
+        }
+    ],
+    "links": [
+
+    ]
+}

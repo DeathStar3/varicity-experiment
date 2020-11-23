@@ -4,6 +4,7 @@ export class NodeElement {
     types: string[];
     nbAttributes: number;
     nbFunctions: number;
+    nbVariants: number;
 
     constructor(name: string) {
         this.name = name;

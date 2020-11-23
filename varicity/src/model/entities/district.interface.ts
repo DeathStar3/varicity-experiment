@@ -14,6 +14,11 @@ export abstract class District {
 
     abstract hasChild(obj: District | Building): boolean;
 
+    constructor() {
+        this.buildings = [];
+        this.districts = [];
+    }
+
     // Get a building from its full name
     // Parameter example ['org','jfree','chart','ClassName']
     public getBuildingFromName(namesList: string[]) : Building {

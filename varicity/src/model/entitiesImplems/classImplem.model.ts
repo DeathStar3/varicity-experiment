@@ -1,13 +1,9 @@
 import { Building } from "../entities/building.interface";
 
-export class ClassImplem implements Building {
-    width: number;
-    height: number;
-    types: string[];
-    name: string;
-    fullName: string;
+export class ClassImplem extends Building {
 
     constructor(name: string, methodNumber: number, attributeNumber: number, types: string[], fullName: string) {
+        super();
         this.name = name;
         this.height = methodNumber;
         this.width = attributeNumber;

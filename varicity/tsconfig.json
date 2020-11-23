@@ -14,7 +14,8 @@
     ],
     "types": [
       "node",
-      "webpack-env"
+      "webpack-env",
+      "mocha"
     ],
     "lib": [
       "dom",
@@ -25,7 +26,8 @@
   "exclude": [
     "node_modules",
     "dist",
-    "build"
+    "build",
+    "tests"
   ],
   "filesGlob": [
     "./src/**/*.ts",
