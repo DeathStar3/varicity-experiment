@@ -1,8 +1,8 @@
 import { Building } from './building.interface';
 
 export abstract class District {
-    buildings: Building[];
-    districts: District[];
+    buildings: Building[] = [];
+    districts: District[] = [];
 
     name: string;
     // width: number; // width will vary depending on number of districts and buildings, so maybe not declare it as attribute?

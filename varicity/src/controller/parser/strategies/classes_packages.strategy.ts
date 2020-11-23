@@ -13,9 +13,6 @@ export class ClassesPackagesStrategy {
 
         console.log('Analyzing with classes and packages strategy: ', data);
 
-        const config = ConfigLoader.loadDataFile("config");
-        console.log(config.buildings);
-
         const nodesList: NodeElement[] = [];
         data.nodes.forEach(n => {
             let node = new NodeElement(n.name);
