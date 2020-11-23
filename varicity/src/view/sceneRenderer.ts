@@ -85,6 +85,13 @@ export class SceneRenderer {
         //     MeshBuilder.CreateLines("curve"+i, {points: curve.getPoints()}, scene);
         // }
 
+        document.getElementById("reset_camera").addEventListener("click", (ev) => {
+            camera.position = Vector3.Zero();
+            camera.radius = 1000;
+            camera.alpha =  2 * Math.PI / 3;
+            camera.beta = Math.PI / 3;
+        });
+
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
             // Shift+Ctrl+Alt+I
