@@ -30,3 +30,6 @@ link:
       color: "#e67e22"
     - name: "EXTENDS"
       color: "#2e86c1"
+whitelist: #all classes that must not appear
+  - "org.jfree.chart.util.PublicCloneable"
+  # - "org.jfree.chart.renderer.AbstractRenderer"

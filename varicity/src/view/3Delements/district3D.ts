@@ -109,17 +109,26 @@ export class District3D implements Element3D {
         return building;
     }
 
-    build() {
+    build(config: any) {
         this.elementModel.districts.forEach(d => {
             let d3District = new District3D(this.scene, d, this.depth + 1)
             this.d3Districts.push(d3District);
-            d3District.build();
+            d3District.build(config);
         });
 
         this.elementModel.buildings.forEach(b => {
-            let d3Building = new Building3D(this.scene, b, this.depth);
-            this.d3Buildings.push(d3Building);
-            d3Building.build();
+            if(config.whitelist) {
+                if(!config.whitelist.includes(b.fullName)) {
+                    let d3Building = new Building3D(this.scene, b, this.depth);
+                    this.d3Buildings.push(d3Building);
+                    d3Building.build();
+                }
+            }
+            else {
+                let d3Building = new Building3D(this.scene, b, this.depth);
+                this.d3Buildings.push(d3Building);
+                d3Building.build();
+            }
         });
     }
 

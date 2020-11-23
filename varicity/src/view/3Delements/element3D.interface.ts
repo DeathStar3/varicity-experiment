@@ -8,7 +8,7 @@ export interface Element3D {
 
     getSize(): number;
 
-    build();
+    build(config?: any);
 
     place(x: number, z:number);
 

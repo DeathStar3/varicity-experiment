@@ -52,7 +52,7 @@ export class City3D {
 
     build() {
         this.districts.forEach(d => {
-            d.build();
+            d.build(this.config);
         });
         this.buildings.forEach(b => {
             b.build();
