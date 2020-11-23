@@ -1,7 +1,9 @@
 import {Building} from "./building.interface";
 
-export interface Link {
+export abstract class Link {
     target: Building;
     source: Building;
     type: string;
+
+    constructor(){}
 }
