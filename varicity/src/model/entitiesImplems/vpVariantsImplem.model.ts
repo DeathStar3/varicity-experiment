@@ -2,6 +2,18 @@ import {District} from "../entities/district.interface";
 import {ClassImplem} from "./classImplem.model";
 
 export class VPVariantsImplem extends District {
+    public vp : ClassImplem;
+
+    constructor(vp: ClassImplem = undefined) {
+        super();
+        this.vp = vp;
+        if (vp !== undefined) {
+            this.addBuilding(vp);
+            this.name = vp.fullName;
+        } else {
+            this.name = "src";
+        }
+    }
 
     addBuilding(building: ClassImplem) {
         return this.buildings.push(building);

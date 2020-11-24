@@ -2,11 +2,11 @@ import { Building } from "../entities/building.interface";
 
 export class ClassImplem extends Building {
 
-    constructor(name: string, methodNumber: number, attributeNumber: number, types: string[], fullName: string) {
+    constructor(name: string, height: number, width: number, types: string[], fullName: string) {
         super();
         this.name = name;
-        this.height = methodNumber;
-        this.width = attributeNumber;
+        this.height = height;
+        this.width = width;
         this.types = types;
         this.fullName = fullName;
     }

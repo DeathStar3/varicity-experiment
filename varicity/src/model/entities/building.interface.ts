@@ -3,6 +3,7 @@ export abstract class Building {
     height: number;
     types: string[];
 
+    // TODO: remove fullName to keep only building name
     name: string;
     fullName: string;
 

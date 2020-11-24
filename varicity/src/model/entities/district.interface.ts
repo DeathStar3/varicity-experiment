@@ -39,4 +39,13 @@ export abstract class District {
             return undefined;
         }
     }
+
+    public depth() : number {
+        if (this.districts.length > 0) {
+            const depths = this.districts.map(d => d.depth());
+            return depths.reduce((a, b) => Math.max(a, b)) + 1;
+        } else {
+            return 1;
+        }
+    }
 }

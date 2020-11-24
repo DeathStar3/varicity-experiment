@@ -4,13 +4,16 @@ import {Link} from "./entities/link.interface";
 
 export class EntitiesList {
 
-    buildings: Building[];
-    districts: District[]; // [com] => [polytech, utils] => **[unice]**
-    links: Link[];
+    // TODO: change implem to only have ONE root district
+
+    buildings: Building[] = [];
+    districts: District[] = []; // [com] => [polytech, utils] => **[unice]**
+    links: Link[] = [];
 
     constructor() {}
 
     addDistrict(district: District) {
+        this.districts.push(district);
     }
 
     addBuilding(building: Building) {
