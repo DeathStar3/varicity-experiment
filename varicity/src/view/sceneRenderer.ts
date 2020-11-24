@@ -1,7 +1,6 @@
 import { Scene, Engine, ArcRotateCamera, HemisphericLight, Vector3 } from "@babylonjs/core";
 import { ConfigLoader } from "../controller/parser/configLoader";
 import { EntitiesList } from "../model/entitiesList";
-import { City3D } from "./3Delements/city3D";
 
 export abstract class SceneRenderer {
 
@@ -57,11 +56,11 @@ export abstract class SceneRenderer {
         });
     }
 
-    dispose() {
+    dispose(): void {
         this.scene.dispose();
         this.engine.dispose();
         this.canvas.remove();
     }
 
-    abstract buildScene(entitiesList: EntitiesList);
+    abstract buildScene(entitiesList: EntitiesList): void;
 }

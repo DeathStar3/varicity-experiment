@@ -1,9 +1,9 @@
-import { Scene, ArcRotateCamera, HemisphericLight, Vector3 } from "@babylonjs/core";
-import { EntitiesList } from "../model/entitiesList";
+import { Scene, ArcRotateCamera, Vector3, HemisphericLight } from "@babylonjs/core";
+import { EntitiesList } from "../../model/entitiesList";
 import { City3D } from "./3Delements/city3D";
-import { SceneRenderer } from "./sceneRenderer";
+import { SceneRenderer } from "../sceneRenderer";
 
-export class MetricityImplem extends SceneRenderer {
+export class EvostreetImplem extends SceneRenderer {
 
     buildScene(entitiesList: EntitiesList) {
         this.scene = new Scene(this.engine);

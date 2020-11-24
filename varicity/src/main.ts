@@ -1,5 +1,5 @@
-import { EvostreetImplem } from './view/evostreetImplem';
-import { MetricityImplem } from './view/metricityImplem';
+import { EvostreetImplem } from './view/evostreet/evostreetImplem';
+import { MetricityImplem } from './view/metricity/metricityImplem';
 import { FilesLoader } from './controller/parser/filesLoader';
 import { ClassesPackagesStrategy } from "./controller/parser/strategies/classes_packages.strategy";
 import { initializeUiComponents } from "./controller/ui/ui";

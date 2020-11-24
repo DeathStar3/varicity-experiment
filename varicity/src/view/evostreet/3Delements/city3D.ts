@@ -1,9 +1,9 @@
-import { Link } from './../../model/entities/link.interface';
+import { Link } from '../../../model/entities/link.interface';
 import { Scene } from '@babylonjs/core';
-import { Building3D } from './building3D';
+import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
+import { Building3D } from '../../common/3Delements/building3D';
 import { District3D } from './district3D';
-import { EntitiesList } from './../../model/entitiesList';
-import { Element3D } from './element3D.interface';
+import { EntitiesList } from '../../../model/entitiesList';
 
 export class City3D {
 

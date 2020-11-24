@@ -1,9 +1,9 @@
-import { Element3D } from './element3D.interface';
+import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
+import { Building3D } from '../../common/3Delements/building3D';
+import { District } from '../../../model/entities/district.interface';
 import { ActionManager, Color3, Color4, ExecuteCodeAction, StandardMaterial } from '@babylonjs/core';
-import { Building3D } from './building3D';
 import { Scene } from '@babylonjs/core';
 import { Mesh, MeshBuilder, Vector3 } from '@babylonjs/core';
-import { District } from '../../model/entities/district.interface';
 
 export class District3D implements Element3D {
     elementModel: District;
