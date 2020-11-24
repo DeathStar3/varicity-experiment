@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack serve",
-    "test": "mocha -r ts-node/register tests/**/*.test.ts",
+    "test": "./node_modules/karma/bin/karma start",
     "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test"
   },
   "author": "",
@@ -21,6 +21,11 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
     "json-loader": "^0.5.7",
+    "karma": "^5.2.3",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-mocha": "^2.0.1",
+    "karma-typescript-preprocessor2": "^1.2.1",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
     "ts-loader": "^8.0.7",
