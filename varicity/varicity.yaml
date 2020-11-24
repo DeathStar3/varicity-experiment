@@ -26,7 +26,7 @@ services:
     image: deathstar3/varicity:local
     container_name: varicity
     ports:
-      - "127.0.0.1:8383:8080"
+      - 9090:9090
     volumes:
       - ../generated_visualizations/data:/symfinder_files
     command: npm run start
