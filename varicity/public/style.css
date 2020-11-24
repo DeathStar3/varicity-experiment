@@ -16,6 +16,17 @@
     background: rgba(0,50,80,0.7);
     color: white;
     font-family: "Roboto Light", serif;
+    display: flex;
+}
+
+#metricity {
+    float: left;
+    width: 50%;
+}
+
+#evostreet {
+    float: right;
+    width: 50%;
 }
 
 #reset_camera {
