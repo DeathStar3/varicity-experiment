@@ -22,4 +22,4 @@
 
 docker-compose -f varicity-unit-test.yaml build
 docker-compose -f varicity-unit-test.yaml up
-docker-compose -f varicity-unit-test.yaml down
+# docker-compose -f varicity-unit-test.yaml down

@@ -10,8 +10,8 @@ module.exports = {
       rules: [
         {
           test: /\.tsx?$/,
-          exclude: /node_modules/,
-          loader: 'ts-loader'
+          use: 'ts-loader',
+          exclude: /node_modules/
         },
         {
             test: /\.ya?ml$/,

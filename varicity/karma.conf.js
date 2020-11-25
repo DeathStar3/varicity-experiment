@@ -9,7 +9,7 @@ module.exports = function(config) {
       ],
       exclude: [
       ],
-      plugins: ['karma-chrome-launcher','karma-firefox-launcher','karma-chai', 'karma-mocha','karma-webpack','karma-typescript-preprocessor2'],
+      plugins: ['json-loader','karma-chrome-launcher','karma-firefox-launcher','karma-chai', 'karma-mocha','karma-webpack','karma-typescript-preprocessor2'],
       preprocessors: {
         'tests/*.test.ts': [ 'webpack' ]
       },
@@ -32,5 +32,6 @@ module.exports = function(config) {
       singleRun: true,
       concurrency: Infinity,
       captureTimeout: 60000,
+      failOnEmptyTestSuite: false
     });
   };
