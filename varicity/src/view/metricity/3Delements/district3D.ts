@@ -90,12 +90,16 @@ export class District3D implements Element3D {
         return currentWidth + placements.length * this.padding / 2;
     }
 
-    getSize(): number {
+    getWidth(): number {
         let modelsWithsSizes: number[] = [];
-        this.d3Districts.forEach(d => modelsWithsSizes.push(d.getSize()))
-        this.d3Buildings.forEach(b => modelsWithsSizes.push(b.getSize()))
+        this.d3Districts.forEach(d => modelsWithsSizes.push(d.getWidth()))
+        this.d3Buildings.forEach(b => modelsWithsSizes.push(b.getWidth()))
         // return (this.calculateSize(modelsWithsSizes.sort((a, b) => b - a))); // algo qui calcule size du district en fonction des éléments alain térieur
         return (this.calculateSize(modelsWithsSizes.sort((a, b) => b - a)) + this.padding); // algo qui calcule size du district en fonction des éléments alain térieur
+    }
+
+    getLength(): number {
+        return this.getWidth();
     }
 
     get(name: string): Building3D {
@@ -144,18 +148,18 @@ export class District3D implements Element3D {
     place(x: number, z: number): void {
         let d3elements: Element3D[] = []
         d3elements = d3elements.concat(this.d3Districts, this.d3Buildings);
-        d3elements = d3elements.sort((a, b) => b.getSize() - a.getSize());
+        d3elements = d3elements.sort((a, b) => b.getWidth() - a.getWidth());
         let currentX: number = 0;
         let currentZ: number = 0;
         let nextZ = 0;
-        this.size = this.getSize();
+        this.size = this.getWidth();
         this.vector = new Vector3(x + this.size / 2, 30 * this.depth - 15, z + this.size / 2);
         // this.vector = new Vector3(x + this.size / 2 + this.padding / 2, 30 * this.depth - 15, z + this.size / 2 + this.padding / 2);
 
         const s = this.size;
         const p = this.padding;
         d3elements.forEach(e => {
-            let eSize = e.getSize();
+            let eSize = e.getWidth();
             if (currentX + eSize + p > s) {
                 currentX = 0;
                 currentZ = nextZ;

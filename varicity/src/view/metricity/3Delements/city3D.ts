@@ -73,23 +73,27 @@ export class City3D {
         this.place();
     }
 
-    getSize(): number {
-        return this.districts[0].getSize();
+    getWidth(): number {
+        return this.districts[0].getWidth();
+    }
+
+    getLength(): number {
+        return this.getWidth();
     }
 
     place() {
         let d3elements: Element3D[] = [];
         d3elements = d3elements.concat(this.buildings, this.districts);
-        d3elements = d3elements.sort((a, b) => a.getSize() - b.getSize());
+        d3elements = d3elements.sort((a, b) => a.getWidth() - b.getWidth());
         let currentX: number = 0;
         let currentZ: number = 0;
         let nextZ = 0;
-        let size = this.getSize();
+        let size = this.getWidth();
         d3elements.forEach(e => {
             e.place(currentX, currentZ);
             currentX += size;
             if (currentX === 0)
-                nextZ += e.getSize();
+                nextZ += e.getWidth();
             if (currentX >= size) {
                 currentX = 0;
                 currentZ = nextZ;

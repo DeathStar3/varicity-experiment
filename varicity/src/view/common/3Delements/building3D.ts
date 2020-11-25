@@ -38,9 +38,13 @@ export class Building3D implements Element3D {
         this.links.forEach(l => l.display(true));
     }
 
-    getSize(): number {
+    getWidth(): number {
         return this.elementModel.getWidth() + this.padding; // 2.5 av 2.5 ap
         // return this.elementModel.getWidth();// 2.5 av 2.5 ap
+    }
+
+    getLength(): number {
+        return this.getWidth();
     }
 
     getName() {

@@ -6,7 +6,9 @@ export interface Element3D {
 
     padding: number;
 
-    getSize(): number;
+    getWidth(): number;
+
+    getLength(): number;
 
     build(config?: any);
 

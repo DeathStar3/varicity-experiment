@@ -4,6 +4,8 @@ import {ClassImplem} from "./classImplem.model";
 export class VPVariantsImplem extends District {
     public vp : ClassImplem;
 
+    districts : VPVariantsImplem[];
+
     constructor(vp: ClassImplem = undefined) {
         super();
         this.vp = vp;
