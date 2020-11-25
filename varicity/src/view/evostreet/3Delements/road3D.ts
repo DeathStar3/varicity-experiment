@@ -137,9 +137,9 @@ export class Road3D implements Element3D {
         this.leftVariants.forEach(e => {
             let vX =
                 /* horizontal case: */ ((width + e.getWidth() / 2) + offsetL) * orientationX +
-                /* vertical case:   */ e.getWidth() / 2 * orientationZ;
+                /* vertical case:   */ (e.getWidth() / 2) * orientationZ;
             let vZ =
-                /* horizontal case: */ e.getWidth() / 2 * orientationX +
+                /* horizontal case: */ (e.getWidth() / 2) * orientationX +
                 /* vertical case:   */ ((width + e.getWidth()) / 2 + offsetL) * orientationZ
             e.place(vX + x, vZ + z);
             offsetL += e.getWidth();
@@ -149,9 +149,9 @@ export class Road3D implements Element3D {
         this.rightVariants.forEach(e => {
             let vX =
                 /* horizontal case: */ ((width + e.getWidth() / 2) + offsetR) * orientationX -
-                /* vertical case:   */ e.getWidth() / 2 * orientationZ;
+                /* vertical case:   */ (e.getWidth() / 2) * orientationZ;
             let vZ =
-                /* horizontal case: */ - e.getWidth() / 2 * orientationX +
+                /* horizontal case: */ - (e.getWidth() / 2) * orientationX +
                 /* vertical case:   */ ((width + e.getWidth()) / 2 + offsetR) * orientationZ
             e.place(vX + x, vZ + z);
             offsetR += e.getWidth();
@@ -161,10 +161,10 @@ export class Road3D implements Element3D {
         let offsetVR = offsetVL;
         this.leftVPs.forEach(e => {
             let vX =
-                /* horizontal case: */ (width + e.getSideWidth(false) + offsetVL) * orientationX -
-                /* vertical case:   */ e.vp.getLength() / 2 * orientationZ;
+                /* horizontal case: */ (width + e.getSideWidth(false) + offsetVL) * orientationX +
+                /* vertical case:   */ (e.vp.getLength() / 2) * -orientationZ;
             let vZ =
-                /* horizontal case: */ - e.vp.getLength() / 2 * orientationX +
+                /* horizontal case: */ (e.vp.getLength() / 2) * orientationX +
                 /* vertical case:   */ (width + e.getSideWidth(false) + offsetVL) * orientationZ;
             e.place(vX + x, vZ + z, -orientationZ, orientationX);
             offsetVL += e.getWidth();
@@ -172,9 +172,9 @@ export class Road3D implements Element3D {
         this.rightVPs.forEach(e => {
             let vX =
                 /* horizontal case: */ (width + e.getSideWidth(true) + offsetVR) * orientationX -
-                /* vertical case:   */ e.vp.getLength() / 2 * orientationZ;
+                /* vertical case:   */ (e.vp.getLength() / 2) * -orientationZ;
             let vZ =
-                /* horizontal case: */ - e.vp.getLength() / 2 * orientationX +
+                /* horizontal case: */ - (e.vp.getLength() / 2) * orientationX +
                 /* vertical case:   */ (width + e.getSideWidth(true) + offsetVR) * orientationZ;
             e.place(vX + x, vZ + z, orientationZ, -orientationX);
             offsetVR += e.getWidth();
