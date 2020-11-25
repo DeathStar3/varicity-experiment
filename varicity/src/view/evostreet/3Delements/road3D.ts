@@ -6,7 +6,7 @@ import { Mesh } from '@babylonjs/core';
 import { VPVariantsImplem } from "../../../model/entitiesImplems/vpVariantsImplem.model";
 
 export class Road3D implements Element3D {
-    padding: number = 5;
+    padding: number = 0;
 
     elementModel: VPVariantsImplem;
 
@@ -67,7 +67,7 @@ export class Road3D implements Element3D {
      * @returns the width of the side
      */
     getSideWidth(side: boolean): number {
-        if(side) { // right
+        if (side) { // right
             return Math.max(
                 this.rightVPs.reduce(((a, b) => a > b.getLength() ? a : b.getLength()), 0),
                 this.rightVariants.reduce(((a, b) => a > b.getLength() ? a : b.getLength()), 0)
@@ -124,29 +124,35 @@ export class Road3D implements Element3D {
         this.orientationX = orientationX;
         this.orientationZ = orientationZ;
 
-        let width = this.getWidth();
-        let length = this.getLength();
-
-        this.vector = new Vector3(x , 0, z );
+        let width = 3;
 
         if (this.vp) this.vp.place(x, z);
 
+        this.vector = new Vector3(
+            x + orientationX * (this.getLength() / 2 + (this.vp ? this.vp.getWidth() : 0) / 2),
+            0,
+            z + orientationZ * (this.getLength() / 2 + (this.vp ? this.vp.getWidth() : 0) / 2));
+
         let offsetL = this.vp ? this.vp.getWidth() / 2 : 0;
         this.leftVariants.forEach(e => {
-            let vX = /* horizontal case: */ ((width + e.getWidth() / 2) + offsetL) * orientationX +
-                /* vertical case: */ e.getWidth() / 2 * orientationZ;
-            let vZ = /* horizontal case: */ e.getWidth() / 2 * orientationX +
-                /* vertical case: */ ((width + e.getWidth()) / 2 + offsetL) * orientationZ
+            let vX =
+                /* horizontal case: */ ((width + e.getWidth() / 2) + offsetL) * orientationX +
+                /* vertical case:   */ e.getWidth() / 2 * orientationZ;
+            let vZ =
+                /* horizontal case: */ e.getWidth() / 2 * orientationX +
+                /* vertical case:   */ ((width + e.getWidth()) / 2 + offsetL) * orientationZ
             e.place(vX + x, vZ + z);
             offsetL += e.getWidth();
         });
 
         let offsetR = this.vp ? this.vp.getWidth() / 2 : 0;
         this.rightVariants.forEach(e => {
-            let vX = /* horizontal case: */ ((width + e.getWidth() / 2) + offsetR) * orientationX -
-                /* vertical case: */ e.getWidth() / 2 * orientationZ;
-            let vZ = /* horizontal case: */ - e.getWidth() / 2 * orientationX +
-                /* vertical case: */ ((width + e.getWidth()) / 2 + offsetR) * orientationZ
+            let vX =
+                /* horizontal case: */ ((width + e.getWidth() / 2) + offsetR) * orientationX -
+                /* vertical case:   */ e.getWidth() / 2 * orientationZ;
+            let vZ =
+                /* horizontal case: */ - e.getWidth() / 2 * orientationX +
+                /* vertical case:   */ ((width + e.getWidth()) / 2 + offsetR) * orientationZ
             e.place(vX + x, vZ + z);
             offsetR += e.getWidth();
         });
@@ -154,18 +160,22 @@ export class Road3D implements Element3D {
         let offsetVL = Math.max(offsetL, offsetR); // to start drawing VPs
         let offsetVR = offsetVL;
         this.leftVPs.forEach(e => {
-            let vX = /* horizontal case: */ (width + e.getSideWidth(false) + offsetVL) * orientationX -
-                /* vertical case: */ e.vp.getLength() / 2 * orientationZ;
-            let vZ = /* horizontal case: */ - e.vp.getLength() / 2 * orientationX +
-                /* vertical case: */ (width + e.getSideWidth(false) + offsetVL) * orientationZ;
+            let vX =
+                /* horizontal case: */ (width + e.getSideWidth(false) + offsetVL) * orientationX -
+                /* vertical case:   */ e.vp.getLength() / 2 * orientationZ;
+            let vZ =
+                /* horizontal case: */ - e.vp.getLength() / 2 * orientationX +
+                /* vertical case:   */ (width + e.getSideWidth(false) + offsetVL) * orientationZ;
             e.place(vX + x, vZ + z, -orientationZ, orientationX);
             offsetVL += e.getWidth();
         });
         this.rightVPs.forEach(e => {
-            let vX = /* horizontal case: */ (width + e.getSideWidth(true) + offsetVR) * orientationX -
-                /* vertical case: */ e.vp.getLength() / 2 * orientationZ;
-            let vZ = /* horizontal case: */ - e.vp.getLength() / 2 * orientationX +
-                /* vertical case: */ (width + e.getSideWidth(true) + offsetVR) * orientationZ;
+            let vX =
+                /* horizontal case: */ (width + e.getSideWidth(true) + offsetVR) * orientationX -
+                /* vertical case:   */ e.vp.getLength() / 2 * orientationZ;
+            let vZ =
+                /* horizontal case: */ - e.vp.getLength() / 2 * orientationX +
+                /* vertical case:   */ (width + e.getSideWidth(true) + offsetVR) * orientationZ;
             e.place(vX + x, vZ + z, orientationZ, -orientationX);
             offsetVR += e.getWidth();
         });
@@ -176,12 +186,11 @@ export class Road3D implements Element3D {
             "package",
             {
                 height: 2,
-                width: this.getWidth() / 2 - this.padding,
-                depth: this.getLength() / 2 - this.padding
+                width: (this.orientationX == 0 ? 3 : this.getLength()) - this.padding,
+                depth: (this.orientationZ == 0 ? 3 : this.getLength())  - this.padding
             },
             this.scene);
-        console.log(this);
-        this.d3Model.setPositionWithLocalVector(this.vector);//new Vector3(this.x + (this.elementModel.getTotalWidth() / 2), 30 * this.depth - 15, this.z));
+        this.d3Model.setPositionWithLocalVector(this.vector);
 
         // if config -> district -> colors -> outline is defined
         if (config.district.colors.outline) {
@@ -204,16 +213,16 @@ export class Road3D implements Element3D {
         if (config.district.colors.faces) {
             let faces = config.district.colors.faces;
             let done = false;
-            if(this.vp) {
-                    mat.ambientColor = Color3.FromHexString(config.district.colors.faces[1].color);
-                    mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[1].color);
-                    mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[1].color);
-                    mat.specularColor = Color3.FromHexString("#000000");
+            if (this.vp) {
+                mat.ambientColor = Color3.FromHexString(config.district.colors.faces[1].color);
+                mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[1].color);
+                mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[1].color);
+                mat.specularColor = Color3.FromHexString("#000000");
             } else {
-                    mat.ambientColor = Color3.FromHexString(config.district.colors.faces[0].color);
-                    mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[0].color);
-                    mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
-                    mat.specularColor = Color3.FromHexString("#000000");
+                mat.ambientColor = Color3.FromHexString(config.district.colors.faces[0].color);
+                mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[0].color);
+                mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
+                mat.specularColor = Color3.FromHexString("#000000");
             }
             // for (let face of faces) {
             //     if(!this.vp) break;
@@ -240,7 +249,19 @@ export class Road3D implements Element3D {
         }
         this.d3Model.material = mat;
 
-        if(this.vp) this.vp.render(config);
+        if (this.vp) this.vp.render(config);
+        // testing purposes
+        // else {
+        //     let mesh = MeshBuilder.CreateBox(
+        //         "src",
+        //         {
+        //             height: 50,
+        //             width: 10,
+        //             depth: 10
+        //         },
+        //         this.scene);
+        //         mesh.setAbsolutePosition(new Vector3(this.getLength() / 2, 0, 0))
+        // }
 
         const variants = this.leftVariants.concat(this.rightVariants);
         variants.forEach(d => {

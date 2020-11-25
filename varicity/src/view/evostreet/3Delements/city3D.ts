@@ -82,16 +82,17 @@ export class City3D {
         let currentZ: number = 0;
         let nextZ = 0;
         let size = this.getSize();
-        d3elements.forEach(e => {
-            e.place(currentX, currentZ, 1, 0);
-            currentX += size;
-            if (currentX === 0)
-                nextZ += e.getWidth();
-            if (currentX >= size) {
-                currentX = 0;
-                currentZ = nextZ;
-            }
-        });
+        // d3elements.forEach(e => {
+        //     e.place(currentX, currentZ, 1, 0);
+        //     currentX += size;
+        //     if (currentX === 0)
+        //         nextZ += e.getWidth();
+        //     if (currentX >= size) {
+        //         currentX = 0;
+        //         currentZ = nextZ;
+        //     }
+        // });
+        this.roads[0].place(0, 0, 1, 0);
     }
 
     render() {
