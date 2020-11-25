@@ -12,7 +12,7 @@ export class VPVariantsStrategy {
     public parse(fileName: string) : EntitiesList {
         const data = FilesLoader.loadDataFile(fileName);
 
-        console.log('Analyzing with VP and variants strategy: ', data);
+        // console.log('Analyzing with VP and variants strategy: ', data);
 
         const nodesList: NodeElement[] = [];
         data.nodes.forEach(n => {
@@ -43,7 +43,7 @@ export class VPVariantsStrategy {
 
         const d = this.constructDistricts(nodesList, linkElements);
 
-        console.log(d);
+        // console.log(d);
 
         let result = new EntitiesList();
         result.addDistrict(d);
@@ -58,7 +58,7 @@ export class VPVariantsStrategy {
         result.links = inheritancesList;
 
 
-        console.log(result);
+        // console.log(result);
 
         return result;
     }
@@ -78,7 +78,7 @@ export class VPVariantsStrategy {
 
     private constructDistrict(nodeElement: NodeElement, trace: VPVariantsImplem[], nodes: NodeElement[], links: LinkElement[]) : VPVariantsImplem {
         if (nodeElement.types.includes("VP")) { // if n is a vp
-            console.log("constructing district from vp : ", nodeElement.name);
+            // console.log("constructing district from vp : ", nodeElement.name);
             if (!nodeElement.analyzed) { // if n has not been analyzed yet
                 // create a new district with n
                 const res = new VPVariantsImplem(new ClassImplem(

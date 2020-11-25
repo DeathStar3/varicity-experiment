@@ -102,7 +102,6 @@ export class City3D {
     }
 
     render() {
-        console.log("rendering");
         this.districts.forEach(d => {
             d.render(this.config);
         });

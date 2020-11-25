@@ -12,7 +12,7 @@ export interface Element3D {
 
     build(config?: any);
 
-    place(x: number, z:number);
+    place(x: number, z:number, orientationX?: number, orientationZ?: number);
 
     render(config: any);
 }

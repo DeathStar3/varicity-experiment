@@ -24,6 +24,8 @@ district:
     faces:
       - name: "PACKAGE"
         color: "#6e2c00" # light yellow
+      - name: "VP"
+        color: "#7d3c98" # purple
 link:
   colors:
     - name: "IMPLEMENTS"

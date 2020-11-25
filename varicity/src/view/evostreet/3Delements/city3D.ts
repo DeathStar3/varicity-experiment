@@ -1,3 +1,4 @@
+import { VPVariantsImplem } from './../../../model/entitiesImplems/vpVariantsImplem.model';
 import { Link } from '../../../model/entities/link.interface';
 import { Scene } from '@babylonjs/core';
 import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
@@ -24,17 +25,13 @@ export class City3D {
     private init(entities: EntitiesList) {
 
         entities.districts.forEach(d => {
-            let d3elem = new District3D(this.scene, d, 0);
-            this.districts.push(d3elem);
-            // d3elem.build();
-            // d3elem.render(this.config);
+            let d3elem = new Road3D(this.scene, d as VPVariantsImplem);
+            this.roads.push(d3elem);
         });
 
         entities.buildings.forEach(b => {
             let d3elem = new Building3D(this.scene, b, 0);
             this.buildings.push(d3elem);
-            // d3elem.build();
-            // d3elem.render(this.config);
         });
     }
 
@@ -43,7 +40,7 @@ export class City3D {
         for (let b of this.buildings) {
             if (b.getName() == name) return building = b;
         }
-        for (let d of this.districts) {
+        for (let d of this.roads) {
             let b = d.get(name);
             if (b != undefined) return building = b;
         }
@@ -51,7 +48,7 @@ export class City3D {
     }
 
     build() {
-        this.districts.forEach(d => {
+        this.roads.forEach(d => {
             d.build(this.config);
         });
         this.buildings.forEach(b => {
@@ -74,22 +71,22 @@ export class City3D {
     }
 
     getSize(): number {
-        return this.districts[0].getSize();
+        return this.roads[0].getWidth();
     }
 
     place() {
         let d3elements: Element3D[] = [];
-        d3elements = d3elements.concat(this.buildings, this.districts);
-        d3elements = d3elements.sort((a, b) => a.getSize() - b.getSize());
+        d3elements = d3elements.concat(this.buildings, this.roads);
+        d3elements = d3elements.sort((a, b) => a.getWidth() - b.getWidth());
         let currentX: number = 0;
         let currentZ: number = 0;
         let nextZ = 0;
         let size = this.getSize();
         d3elements.forEach(e => {
-            e.place(currentX, currentZ);
+            e.place(currentX, currentZ, 1, 0);
             currentX += size;
             if (currentX === 0)
-                nextZ += e.getSize();
+                nextZ += e.getWidth();
             if (currentX >= size) {
                 currentX = 0;
                 currentZ = nextZ;
@@ -98,8 +95,7 @@ export class City3D {
     }
 
     render() {
-        console.log("rendering");
-        this.districts.forEach(d => {
+        this.roads.forEach(d => {
             d.render(this.config);
         });
         this.buildings.forEach(b => {

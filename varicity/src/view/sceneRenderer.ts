@@ -24,7 +24,7 @@ export abstract class SceneRenderer {
         this.engine = new Engine(this.canvas, true);
         this.scene = new Scene(this.engine);
 
-        this.camera = new ArcRotateCamera("Camera", 2 * Math.PI / 3, Math.PI / 3, 1000, Vector3.Zero(), this.scene);
+        this.camera = new ArcRotateCamera("Camera", 2 * Math.PI / 3, Math.PI / 3, 500, Vector3.Zero(), this.scene);
         this.camera.attachControl(this.canvas, true);
         this.camera.panningSensibility = 10;
         this.light = new HemisphericLight("light1", new Vector3(0, 1, 0), this.scene);
@@ -33,7 +33,7 @@ export abstract class SceneRenderer {
 
         document.getElementById("reset_camera").addEventListener("click", () => {
             this.camera.position = Vector3.Zero();
-            this.camera.radius = 1000;
+            this.camera.radius = 500;
             this.camera.alpha = 2 * Math.PI / 3;
             this.camera.beta = Math.PI / 3;
         });
