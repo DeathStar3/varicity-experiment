@@ -1,5 +1,7 @@
 FROM node:14.14-alpine
-WORKDIR /usr/src/app
-COPY varicity/ .
-RUN npm install webpack@4.44.0 --save-dev
-CMD npm install && npm run test
+RUN mkdir -p /opt/karma
+WORKDIR /opt/karma
+RUN apk update && apk upgrade && apk add --no-cache chromium
+COPY docker/varicity_unit_tests/files/ /opt/karma/
+RUN npm install karma jasmine-core karma-jasmine karma-chrome-launcher karma-spec-reporter --save-dev
+CMD npm run test

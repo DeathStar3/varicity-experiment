@@ -20,6 +20,18 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
+function run_tests() {
+  export TESTS_DIR="$1"
+  docker-compose -f varicity-unit-test.yaml up
+  RETURN_CODE=$?
+#   docker-compose -f varicity-unit-test.yaml down
+}
+
 docker-compose -f varicity-unit-test.yaml build
-docker-compose -f varicity-unit-test.yaml up
+
+echo "Running varicity unit tests"
+run_tests "tests"
+
+exit $RETURN_CODE
+# docker-compose -f varicity-unit-test.yaml up
 # docker-compose -f varicity-unit-test.yaml down
