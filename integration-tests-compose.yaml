@@ -31,5 +31,3 @@ services:
     environment:
       CONTEXT_FILE: $CONTEXT_FILE
       TESTS_DIR: $TESTS_DIR
-    stdin_open: true
-    tty: true
