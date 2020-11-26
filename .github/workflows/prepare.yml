@@ -39,4 +39,4 @@ jobs:
       - name: Visualization unit tests
         run: ./run_visualization_tests.sh
       - name: Varicity unit tests
-        run: ./run_varicity_unit_tests.sh
+        run: chmod +x ./run_varicity_unit_tests.sh && ./run_varicity_unit_tests.sh
