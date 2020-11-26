@@ -28,6 +28,8 @@ export class Road3D implements Element3D {
     orientationX: number;
     orientationZ: number;
 
+    roadWidth = 0.3;
+
     constructor(scene: Scene, vpElmt: VPVariantsImplem) {
         this.scene = scene;
         if (vpElmt.vp) {
@@ -139,13 +141,11 @@ export class Road3D implements Element3D {
         this.orientationX = orientationX;
         this.orientationZ = orientationZ;
 
-        //let width = 3;
-
         if (this.vp) this.vp.place(x, z);
 
         this.vector = new Vector3(
             x + orientationX * (this.getRoadLength()/2 + this.getVpWidth()/2 - this.getVpPadding()/2),
-            -1,
+            -this.roadWidth/2,
             z + orientationZ * (this.getRoadLength()/2 + this.getVpWidth()/2 - this.getVpPadding()/2)
         );
 
@@ -153,9 +153,9 @@ export class Road3D implements Element3D {
         this.leftVariants.forEach(e => {
             let vX =
                 /* horizontal case: */ ((e.getWidth() / 2) + offsetL) * orientationX +
-                /* vertical case:   */ (e.getWidth() / 2) * -orientationZ;
+                /* vertical case:   */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * -orientationZ;
             let vZ =
-                /* horizontal case: */ (e.getWidth() / 2) * orientationX +
+                /* horizontal case: */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * orientationX +
                 /* vertical case:   */ (e.getWidth() / 2 + offsetL) * orientationZ
             e.place(vX + x, vZ + z);
             offsetL += e.getWidth();
@@ -165,9 +165,9 @@ export class Road3D implements Element3D {
         this.rightVariants.forEach(e => {
             let vX =
                 /* horizontal case: */ ((e.getWidth() / 2) + offsetR) * orientationX -
-                /* vertical case:   */ (e.getWidth() / 2) * -orientationZ;
+                /* vertical case:   */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * -orientationZ;
             let vZ =
-                /* horizontal case: */ - (e.getWidth() / 2) * orientationX +
+                /* horizontal case: */ - (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * orientationX +
                 /* vertical case:   */ ((e.getWidth()) / 2 + offsetR) * orientationZ
             e.place(vX + x, vZ + z);
             offsetR += e.getWidth();
@@ -187,7 +187,7 @@ export class Road3D implements Element3D {
         });
         this.rightVPs.forEach(e => {
             let vX =
-                /* horizontal case: */ (e.getSideWidth(true) + offsetVR) * orientationX -
+                /* horizontal case: */ (e.getSideWidth(true) + offsetVR) * orientationX +
                 /* vertical case:   */ (e.getVpWidth() / 2) * orientationZ;
             let vZ =
                 /* horizontal case: */ - (e.getVpWidth() / 2) * orientationX +
@@ -201,9 +201,9 @@ export class Road3D implements Element3D {
         this.d3Model = MeshBuilder.CreateBox(
             "package",
             {
-                height: 2,
-                width: (this.orientationX == 0 ? 0.01 : this.getRoadLength()) /*- this.padding*/,
-                depth: (this.orientationZ == 0 ? 0.01 : this.getRoadLength())  /*- this.padding*/
+                height: 0.001,
+                width: (this.orientationX == 0 ? this.roadWidth : this.getRoadLength()),
+                depth: (this.orientationZ == 0 ? this.roadWidth : this.getRoadLength())
             },
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.vector);

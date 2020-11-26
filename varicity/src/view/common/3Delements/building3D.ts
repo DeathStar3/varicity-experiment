@@ -26,7 +26,7 @@ export class Building3D implements Element3D {
 
     links: Link3D[] = [];
 
-    padding = 1;
+    padding = 0.2;
 
     constructor(scene: Scene, buildingElement: Building, depth: number) {
         this.scene = scene;
