@@ -31,3 +31,4 @@ services:
     environment:
       CONTEXT_FILE: $CONTEXT_FILE
       TESTS_DIR: $TESTS_DIR
+    tty: true
