@@ -4,6 +4,7 @@ import { Building3D } from '../../common/3Delements/building3D';
 import { Scene } from '@babylonjs/core';
 import { Mesh } from '@babylonjs/core';
 import { VPVariantsImplem } from "../../../model/entitiesImplems/vpVariantsImplem.model";
+import {ClassImplem} from "../../../model/entitiesImplems/classImplem.model";
 
 export class Road3D implements Element3D {
     padding: number = 0;
@@ -62,22 +63,32 @@ export class Road3D implements Element3D {
 
     /**
      * 
-     * @param side right side = true, left side = false
+     * @param right right side = true, left side = false
      * 
      * @returns the width of the side
      */
-    getSideWidth(side: boolean): number {
-        if (side) { // right
+    getSideWidth(right: boolean): number {
+        if (right) { // right
             return Math.max(
-                this.rightVPs.reduce(((a, b) => a > b.getLength() ? a : b.getLength()), 0),
-                this.rightVariants.reduce(((a, b) => a > b.getLength() ? a : b.getLength()), 0)
+                this.rightVPs.reduce(((a, b) => Math.max(a, b.getLength())), 0),
+                this.rightVariants.reduce(((a, b) => Math.max(a, b.getLength())), 0),
+                this.getVpWidth() / 2
             );
         } else { // left
             return Math.max(
-                this.leftVPs.reduce(((a, b) => a > b.getLength() ? a : b.getLength()), 0),
-                this.leftVariants.reduce(((a, b) => a > b.getLength() ? a : b.getLength()), 0)
+                this.leftVPs.reduce(((a, b) => Math.max(a, b.getLength())), 0),
+                this.leftVariants.reduce(((a, b) => Math.max(a, b.getLength())), 0),
+                this.getVpWidth() / 2
             );
         }
+    }
+
+    getVpWidth() : number {
+        return this.vp === undefined ? 0 : this.vp.getWidth();
+    }
+
+    getVpPadding() : number {
+        return this.vp === undefined ? 0 : this.vp.padding;
     }
 
     getWidth(): number {
@@ -91,7 +102,7 @@ export class Road3D implements Element3D {
         ) + Math.max(
             this.leftVPs.reduce(((a, b) => a + b.getWidth()), 0),
             this.rightVPs.reduce(((a, b) => a + b.getWidth()), 0)
-        );
+        ) + (this.getVpWidth());
     }
 
     get(name: string): Building3D {
@@ -120,62 +131,67 @@ export class Road3D implements Element3D {
 
     }
 
+    getRoadLength() : number {
+        return this.getLength() - this.getVpWidth();
+    }
+
     place(x: number, z: number, orientationX: number, orientationZ: number) {
         this.orientationX = orientationX;
         this.orientationZ = orientationZ;
 
-        let width = 3;
+        //let width = 3;
 
         if (this.vp) this.vp.place(x, z);
 
         this.vector = new Vector3(
-            x + orientationX * (this.getLength() / 2 + (this.vp ? this.vp.getWidth() : 0) / 2),
-            0,
-            z + orientationZ * (this.getLength() / 2 + (this.vp ? this.vp.getWidth() : 0) / 2));
+            x + orientationX * (this.getRoadLength()/2 + this.getVpWidth()/2 - this.getVpPadding()/2),
+            -1,
+            z + orientationZ * (this.getRoadLength()/2 + this.getVpWidth()/2 - this.getVpPadding()/2)
+        );
 
-        let offsetL = this.vp ? this.vp.getWidth() / 2 : 0;
+        let offsetL = this.getVpWidth() / 2;
         this.leftVariants.forEach(e => {
             let vX =
-                /* horizontal case: */ ((width + e.getWidth() / 2) + offsetL) * orientationX +
-                /* vertical case:   */ (e.getWidth() / 2) * orientationZ;
+                /* horizontal case: */ ((e.getWidth() / 2) + offsetL) * orientationX +
+                /* vertical case:   */ (e.getWidth() / 2) * -orientationZ;
             let vZ =
                 /* horizontal case: */ (e.getWidth() / 2) * orientationX +
-                /* vertical case:   */ ((width + e.getWidth()) / 2 + offsetL) * orientationZ
+                /* vertical case:   */ (e.getWidth() / 2 + offsetL) * orientationZ
             e.place(vX + x, vZ + z);
             offsetL += e.getWidth();
         });
 
-        let offsetR = this.vp ? this.vp.getWidth() / 2 : 0;
+        let offsetR = this.getVpWidth() / 2;
         this.rightVariants.forEach(e => {
             let vX =
-                /* horizontal case: */ ((width + e.getWidth() / 2) + offsetR) * orientationX -
-                /* vertical case:   */ (e.getWidth() / 2) * orientationZ;
+                /* horizontal case: */ ((e.getWidth() / 2) + offsetR) * orientationX -
+                /* vertical case:   */ (e.getWidth() / 2) * -orientationZ;
             let vZ =
                 /* horizontal case: */ - (e.getWidth() / 2) * orientationX +
-                /* vertical case:   */ ((width + e.getWidth()) / 2 + offsetR) * orientationZ
+                /* vertical case:   */ ((e.getWidth()) / 2 + offsetR) * orientationZ
             e.place(vX + x, vZ + z);
             offsetR += e.getWidth();
         });
 
         let offsetVL = Math.max(offsetL, offsetR); // to start drawing VPs
-        let offsetVR = offsetVL;
+        let offsetVR = Math.max(offsetL, offsetR);
         this.leftVPs.forEach(e => {
             let vX =
-                /* horizontal case: */ (width + e.getSideWidth(false) + offsetVL) * orientationX +
-                /* vertical case:   */ (e.vp.getLength() / 2) * -orientationZ;
+                /* horizontal case: */ (e.getSideWidth(false) + offsetVL) * orientationX +
+                /* vertical case:   */ (e.getVpWidth()/2) * -orientationZ;
             let vZ =
-                /* horizontal case: */ (e.vp.getLength() / 2) * orientationX +
-                /* vertical case:   */ (width + e.getSideWidth(false) + offsetVL) * orientationZ;
+                /* horizontal case: */ (e.getVpWidth() / 2) * orientationX +
+                /* vertical case:   */ (e.getSideWidth(false) + offsetVL) * orientationZ;
             e.place(vX + x, vZ + z, -orientationZ, orientationX);
             offsetVL += e.getWidth();
         });
         this.rightVPs.forEach(e => {
             let vX =
-                /* horizontal case: */ (width + e.getSideWidth(true) + offsetVR) * orientationX -
-                /* vertical case:   */ (e.vp.getLength() / 2) * -orientationZ;
+                /* horizontal case: */ (e.getSideWidth(true) + offsetVR) * orientationX -
+                /* vertical case:   */ (e.getVpWidth() / 2) * orientationZ;
             let vZ =
-                /* horizontal case: */ - (e.vp.getLength() / 2) * orientationX +
-                /* vertical case:   */ (width + e.getSideWidth(true) + offsetVR) * orientationZ;
+                /* horizontal case: */ - (e.getVpWidth() / 2) * orientationX +
+                /* vertical case:   */ (e.getSideWidth(true) + offsetVR) * orientationZ;
             e.place(vX + x, vZ + z, orientationZ, -orientationX);
             offsetVR += e.getWidth();
         });
@@ -186,8 +202,8 @@ export class Road3D implements Element3D {
             "package",
             {
                 height: 2,
-                width: (this.orientationX == 0 ? 3 : this.getLength()) - this.padding,
-                depth: (this.orientationZ == 0 ? 3 : this.getLength())  - this.padding
+                width: (this.orientationX == 0 ? 0.01 : this.getRoadLength()) /*- this.padding*/,
+                depth: (this.orientationZ == 0 ? 0.01 : this.getRoadLength())  /*- this.padding*/
             },
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.vector);
@@ -247,7 +263,6 @@ export class Road3D implements Element3D {
         } else {
             console.log("faces not defined");
         }
-        this.d3Model.material = mat;
 
         if (this.vp) this.vp.render(config);
         // testing purposes
@@ -279,7 +294,9 @@ export class Road3D implements Element3D {
                 {
                     trigger: ActionManager.OnLeftPickTrigger
                 },
-                () => this.showAllLinks()
+                () => {
+                    this.showAllLinks();
+                }
             )
         );
     }
