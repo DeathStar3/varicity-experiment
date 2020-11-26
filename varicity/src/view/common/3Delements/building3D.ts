@@ -26,7 +26,7 @@ export class Building3D implements Element3D {
 
     links: Link3D[] = [];
 
-    padding = 5;
+    padding = 0.2;
 
     constructor(scene: Scene, buildingElement: Building, depth: number) {
         this.scene = scene;
@@ -59,8 +59,8 @@ export class Building3D implements Element3D {
     }
 
     place(x: number, z: number) {
-        let halfHeight = (5 * this.elementModel.getHeight() / 2);
-        this.center = new Vector3(x + this.padding / 2 + (this.elementModel.getWidth() / 2), this.depth * 3 * 10 + halfHeight, z + this.padding / 2 + (this.elementModel.getWidth() / 2));
+        let halfHeight = (this.elementModel.getHeight() / 2);
+        this.center = new Vector3(x, this.depth + halfHeight, z);
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
     }
@@ -70,7 +70,7 @@ export class Building3D implements Element3D {
         this.d3Model = MeshBuilder.CreateBox(
             this.elementModel.name,
             {
-                height: this.elementModel.getHeight() * 5,
+                height: this.elementModel.getHeight(),
                 width: this.elementModel.getWidth(),
                 depth: this.elementModel.getWidth()
             },
@@ -108,8 +108,7 @@ export class Building3D implements Element3D {
             this.d3Model.outlineColor = Color3.FromHexString(config.building.colors.outline);
         } else {
             console.log("outline not defined");
-            this.d3Model.renderOutline = true;
-            this.d3Model.outlineColor = new Color3(0, 1, 0);
+            this.d3Model.renderOutline = false;
         }
 
         // if config -> building -> colors -> edges is defined

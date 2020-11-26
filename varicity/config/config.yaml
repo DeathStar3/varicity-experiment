@@ -4,8 +4,8 @@
 
 building:
   colors:
-    outline: "#145a32" # dark green
-    edges: "#a569bd" # light purple
+    # outline: "#145a32" # dark green
+    # edges: "#a569bd" # light purple
     faces: # ordered by importance, descending : in case of conflict, the first color to match will be displayed
       - name: "VP"
         color: "#0b5345" # green
@@ -21,8 +21,8 @@ building:
         color: "#2e86c1" # light blue
 district:
   colors:
-    outline: "#145a32" # dark green
-    edges: "#a569bd" # light purple
+    # outline: "#145a32" # dark green
+    # edges: "#a569bd" # light purple
     faces:
       - name: "PACKAGE"
         color: "#6e2c00" # light yellow
@@ -34,6 +34,6 @@ link:
       color: "#e67e22"
     - name: "EXTENDS"
       color: "#2e86c1"
-whitelist: #all classes that must not appear
+whitelist: #all classes that must not appear #TODO: rename to blacklist
   - "org.jfree.chart.util.PublicCloneable"
   # - "org.jfree.chart.renderer.AbstractRenderer"
