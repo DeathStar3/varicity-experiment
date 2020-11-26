@@ -29,14 +29,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Building symfinder engine
-      - run: docker build -f docker/symfinder/Dockerfile -t deathstar3/symfinder-engine:local .
+        run: docker build -f docker/symfinder/Dockerfile -t deathstar3/symfinder-engine:local .
       - name: Building sources fetcher
-      - run: docker build -f docker/sources_fetcher/Dockerfile -t deathstar3/symfinder-fetcher:local .
+        run: docker build -f docker/sources_fetcher/Dockerfile -t deathstar3/symfinder-fetcher:local .
       - name: Building symfinder runner
-      - run: docker build -f docker/runner/Dockerfile -t deathstar3/symfinder-runner:local .
+        run: docker build -f docker/runner/Dockerfile -t deathstar3/symfinder-runner:local .
       - name: Building Neo4j procedures
-      - run: docker build -f docker/neo4j/Dockerfile -t deathstar3/symfinder-neo4j:local .
+        run: docker build -f docker/neo4j/Dockerfile -t deathstar3/symfinder-neo4j:local .
       - name: Visualization unit tests
-      - run: sh ./run_visualization_tests.sh
+        run: ./run_visualization_tests.sh
       - name: Varicity unit tests
-      - run: sh ./run_varicity_unit_tests.sh
+        run: ./run_varicity_unit_tests.sh
