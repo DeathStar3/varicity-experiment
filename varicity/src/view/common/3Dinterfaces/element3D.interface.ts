@@ -10,9 +10,9 @@ export interface Element3D {
 
     getLength(): number;
 
-    build(config?: any);
+    build(config?: any): void;
 
-    place(x: number, z:number, orientationX?: number, orientationZ?: number);
+    place(x: number, z:number, orientationX?: number, orientationZ?: number): void;
 
-    render(config: any);
+    render(config: any): void;
 }

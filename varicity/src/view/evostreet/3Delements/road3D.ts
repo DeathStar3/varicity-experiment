@@ -29,20 +29,14 @@ export class Road3D implements Element3D {
 
     constructor(scene: Scene, vpElmt: VPVariantsImplem) {
         this.scene = scene;
+
+        this.elementModel = vpElmt;
         if (vpElmt.vp) {
             this.vp = new Building3D(scene, vpElmt.vp, 0);
         }
-
-        this.elementModel = vpElmt;
-
-        const buildings3D: Building3D[] = vpElmt.buildings.map(b => new Building3D(scene, b, 0));
-        const roads3D: Road3D[] = vpElmt.districts.map(v => new Road3D(scene, v));
-
-        this.spreadElements(buildings3D, this.leftVariants, this.rightVariants);
-        this.spreadElements(roads3D, this.leftVPs, this.rightVPs);
     }
 
-    spreadElements(elements: Element3D[], left: Element3D[], right: Element3D[]): void {
+    private spreadElements(elements: Element3D[], left: Element3D[], right: Element3D[]): void {
         if (elements.length > 0) {
             const sorted = elements.sort((a, b) => b.getWidth() - a.getWidth());
             let i = 0;
@@ -56,7 +50,7 @@ export class Road3D implements Element3D {
         }
     }
 
-    sumOfWidths(list: Element3D[]): number {
+    private sumOfWidths(list: Element3D[]): number {
         return list.reduce<number>((prev, cur) => prev += cur.getWidth(), 0);
     }
 
@@ -100,7 +94,7 @@ export class Road3D implements Element3D {
         if (name.includes(this.elementModel.name)) {
             for (let b of arrConcat) {
                 if (b.getName() == name) {
-                    return building = b;
+                    return building = this.vp;
                 }
             }
             const roadsConcat = this.leftVPs.concat(this.rightVPs);
@@ -117,7 +111,33 @@ export class Road3D implements Element3D {
     }
 
     build(config?: any) {
+        const buildings3D: Building3D[] = [];
+        this.elementModel.buildings.forEach(b => {
+            if (config.clones) {
+                if (config.clones.objects.includes(b)) {
+                    config.clones.map.get(b).clones.push(this.vp);
+                } else {
+                    let d3 = new Building3D(this.scene, b, 0);
+                    config.clones.objects.push(b);
+                    config.clones.map.set(b, { original: d3, clones: [] });
+                    d3.build();
+                    buildings3D.push(d3);
+                }
+            } else {
+                let d3 = new Building3D(this.scene, b, 0);
+                d3.build();
+                buildings3D.push(d3);
+            }
+        });
+        const roads3D: Road3D[] = [];
+        this.elementModel.districts.forEach(v => {
+            let d3 = new Road3D(this.scene, v);
+            d3.build(config);
+            roads3D.push(d3);
+        });
 
+        this.spreadElements(buildings3D, this.leftVariants, this.rightVariants);
+        this.spreadElements(roads3D, this.leftVPs, this.rightVPs);
     }
 
     place(x: number, z: number, orientationX: number, orientationZ: number) {
@@ -187,7 +207,7 @@ export class Road3D implements Element3D {
             {
                 height: 2,
                 width: (this.orientationX == 0 ? 3 : this.getLength()) - this.padding,
-                depth: (this.orientationZ == 0 ? 3 : this.getLength())  - this.padding
+                depth: (this.orientationZ == 0 ? 3 : this.getLength()) - this.padding
             },
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.vector);

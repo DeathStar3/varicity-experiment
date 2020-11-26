@@ -48,12 +48,20 @@ export class City3D {
     }
 
     build() {
-        this.roads.forEach(d => {
-            d.build(this.config);
-        });
-        this.buildings.forEach(b => {
-            b.build();
-        });
+        this.config.clones = {};
+        this.config.clones.objects = [];
+        this.config.clones.map = new Map<Building3D, {
+            original: Building3D
+            clones: Building3D[]
+        }>();
+
+        this.roads[0].build(this.config);
+        // this.roads.forEach(d => {
+        //     d.build(this.config);
+        // });
+        // this.buildings.forEach(b => {
+        //     b.build();
+        // });
         this.links.forEach(l => {
             let src = this.findSrcLink(l.source.fullName);
             let dest = this.findSrcLink(l.target.fullName);
@@ -67,7 +75,12 @@ export class City3D {
             }
         });
 
-        this.place();
+        for (let [, value] of this.config.clones.map) {
+            for (let b of value.clones) {
+                value.original.link(b, "SHARES");
+                b.link(value.original, "SHARES");
+            }
+        }
     }
 
     getSize(): number {
@@ -78,20 +91,6 @@ export class City3D {
         let d3elements: Element3D[] = [];
         d3elements = d3elements.concat(this.buildings, this.roads);
         d3elements = d3elements.sort((a, b) => a.getWidth() - b.getWidth());
-        let currentX: number = 0;
-        let currentZ: number = 0;
-        let nextZ = 0;
-        let size = this.getSize();
-        // d3elements.forEach(e => {
-        //     e.place(currentX, currentZ, 1, 0);
-        //     currentX += size;
-        //     if (currentX === 0)
-        //         nextZ += e.getWidth();
-        //     if (currentX >= size) {
-        //         currentX = 0;
-        //         currentZ = nextZ;
-        //     }
-        // });
         this.roads[0].place(0, 0, 1, 0);
     }
 
