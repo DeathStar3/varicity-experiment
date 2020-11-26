@@ -33,5 +33,3 @@ echo "Running varicity unit tests"
 run_tests "tests"
 
 exit $RETURN_CODE
-# docker-compose -f varicity-unit-test.yaml up
-# docker-compose -f varicity-unit-test.yaml down

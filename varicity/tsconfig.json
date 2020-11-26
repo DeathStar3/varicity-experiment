@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./built",
     "target": "es5",
     "module": "commonjs",
     "noResolve": false,
@@ -24,13 +25,14 @@
       "es2015.collection",
       "es2015.iterable"
     ],
-    "rootDir": "src"
   },
+  "include": [
+    "./src",
+    "./tests"
+  ],
   "exclude": [
     "node_modules",
-    "dist",
-    "build",
-    "tests"
+    "build"
   ],
   "filesGlob": [
     "./src/**/*.ts",
