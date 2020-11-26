@@ -27,6 +27,7 @@ jobs:
   unit_tests:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: "Building symfinder engine"
       - run: docker build -f docker/symfinder/Dockerfile -t deathstar3/symfinder-engine:local .
       - name: "Building sources fetcher"
