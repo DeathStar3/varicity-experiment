@@ -36,7 +36,7 @@ export class Building3D implements Element3D {
     }
 
     showAllLinks() {
-        this.links.forEach(l => l.display(true));
+        this.links.forEach(l => l.display());
     }
 
     getWidth(): number {

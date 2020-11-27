@@ -334,14 +334,16 @@ export class Road3D implements Element3D {
     }
 
     showAllLinks() {
+        if (this.vp) this.vp.showAllLinks();
+
         const variants = this.leftVariants.concat(this.rightVariants);
         variants.forEach(v => {
-            v.showAllLinks()
+            v.showAllLinks();
         });
 
         const vps = this.leftVPs.concat(this.rightVPs);
         vps.forEach(vp => {
-            vp.showAllLinks()
+            vp.showAllLinks();
         });
     }
 }
