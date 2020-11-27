@@ -93,7 +93,6 @@ export class VPVariantsStrategy {
                 // add each district to the district's districts
                 // and add remaining classes to the district's buildings
                 const linkedNodes = this.getLinkedNodes(nodeElement, nodes, links);
-                // console.log("Linked to nodes : ", linkedNodes);
 
                 linkedNodes.forEach(n => {
                     const d = this.constructDistrict(n, trace, nodes, links);

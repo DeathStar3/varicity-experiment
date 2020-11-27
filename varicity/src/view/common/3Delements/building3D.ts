@@ -107,7 +107,6 @@ export class Building3D implements Element3D {
             this.d3Model.renderOutline = true;
             this.d3Model.outlineColor = Color3.FromHexString(config.building.colors.outline);
         } else {
-            console.log("outline not defined");
             this.d3Model.renderOutline = false;
         }
 
@@ -116,7 +115,6 @@ export class Building3D implements Element3D {
             this.d3Model.outlineWidth = 0.1;
             this.d3Model.edgesColor = Color4.FromHexString(config.building.colors.edges);
         } else {
-            console.log("edges not defined");
             this.d3Model.outlineWidth = 0.1;
             this.d3Model.edgesColor = new Color4(1, 0, 0);
         }
@@ -151,7 +149,6 @@ export class Building3D implements Element3D {
                     mat.specularColor = Color3.FromHexString(config.building.colors.faces[0].color);
                 }
             } else {
-                console.log("faces not defined");
                 mat.ambientColor = new Color3(1, 0, 0);
                 mat.diffuseColor = new Color3(1, 0, 0);
                 mat.emissiveColor = new Color3(1, 0, 0);

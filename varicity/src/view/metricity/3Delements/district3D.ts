@@ -190,16 +190,12 @@ export class District3D implements Element3D {
         if (config.district.colors.outline) {
             this.d3Model.renderOutline = true;
             this.d3Model.outlineColor = Color3.FromHexString(config.district.colors.outline);
-        } else {
-            console.log("outline not defined");
         }
 
         // if config -> district -> colors -> edges is defined
         if (config.district.colors.edges) {
             this.d3Model.outlineWidth = 0.1;
             this.d3Model.edgesColor = Color4.FromHexString(config.district.colors.edges);
-        } else {
-            console.log("edges not defined");
         }
 
         let mat = new StandardMaterial("District", this.scene);
@@ -209,8 +205,6 @@ export class District3D implements Element3D {
             mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[0].color);
             mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
             mat.specularColor = Color3.FromHexString("#000000");
-        } else {
-            console.log("faces not defined");
         }
         this.d3Model.material = mat;
 

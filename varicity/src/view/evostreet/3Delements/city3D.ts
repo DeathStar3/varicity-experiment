@@ -70,14 +70,10 @@ export class City3D {
                 src.link(dest, type);
                 dest.link(src, type);
             }
-            else {
-                console.log("massive error help tasukete kudasai");
-            }
         });
 
         for (let [, value] of this.config.clones.map) {
             for (let b of value.clones) {
-                console.log(b);
                 value.original.link(b, "SHARES");
                 b.link(value.original, "SHARES");
             }

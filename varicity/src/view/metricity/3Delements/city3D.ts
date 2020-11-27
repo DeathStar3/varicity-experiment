@@ -65,9 +65,6 @@ export class City3D {
                 src.link(dest, type);
                 dest.link(src, type);
             }
-            else {
-                console.log("massive error help tasukete kudasai");
-            }
         });
 
         this.place();
