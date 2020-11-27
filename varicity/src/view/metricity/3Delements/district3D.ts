@@ -153,7 +153,7 @@ export class District3D implements Element3D {
         let currentZ: number = 0;
         let nextZ = 0;
         this.size = this.getWidth();
-        this.vector = new Vector3(x + this.size / 2, 30 * this.depth - 15, z + this.size / 2);
+        this.vector = new Vector3(x, 30 * this.depth - 15, z);
         // this.vector = new Vector3(x + this.size / 2 + this.padding / 2, 30 * this.depth - 15, z + this.size / 2 + this.padding / 2);
 
         const s = this.size;
@@ -170,7 +170,7 @@ export class District3D implements Element3D {
             }
             // e.place(x + currentX, z + currentZ);
             // currentX += eSize;
-            e.place(x + currentX + p / 2, z + currentZ + p / 2);
+            e.place(x + currentX + (p + eSize - s) / 2, z + currentZ + (p + eSize - s) / 2);
             currentX += eSize + p / 2;
         });
     }
