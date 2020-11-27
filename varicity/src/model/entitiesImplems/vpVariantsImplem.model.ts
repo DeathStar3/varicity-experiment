@@ -10,7 +10,6 @@ export class VPVariantsImplem extends District {
         super();
         this.vp = vp;
         if (vp !== undefined) {
-            this.addBuilding(vp);
             this.name = vp.fullName;
         } else {
             this.name = "src";
