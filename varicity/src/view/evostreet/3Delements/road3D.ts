@@ -177,7 +177,7 @@ export class Road3D implements Element3D {
 
         this.vector = new Vector3(
             x + orientationX * (this.getRoadLength()/2 + this.getVpWidth()/2 - this.getVpPadding()/2),
-            -this.roadWidth/2,
+            0,
             z + orientationZ * (this.getRoadLength()/2 + this.getVpWidth()/2 - this.getVpPadding()/2)
         );
 
@@ -288,8 +288,6 @@ export class Road3D implements Element3D {
             //     mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
             //     mat.specularColor = Color3.FromHexString("#000000");
             // }
-        } else {
-            console.log("faces not defined");
         }
 
         this.d3Model.material = mat;
