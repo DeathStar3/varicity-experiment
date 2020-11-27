@@ -68,14 +68,14 @@ export class City3D {
             let type = l.type;
             if (src != undefined && dest != undefined) {
                 src.link(dest, type);
-                dest.link(src, type);
+                //dest.link(src, type);
             }
         });
 
         for (let [, value] of this.config.clones.map) {
             for (let b of value.clones) {
                 value.original.link(b, "SHARES");
-                b.link(value.original, "SHARES");
+                //b.link(value.original, "SHARES");
             }
         }
     }
