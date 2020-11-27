@@ -12,7 +12,14 @@ describe('calculate', function() {
 describe('parsing', function() {
   it('parse', function() {
     let entities = new ClassesPackagesStrategy().parse('test1WithoutLinks');
-    console.log(entities);
-    expect(7).equal(7);
+    let districts = entities.districts[0].districts[0].districts
+    let numberOfDistricts = districts.length;
+    expect(numberOfDistricts).equal(2);
+    let numberOfBuiildings = 0;
+    districts.forEach(d => {
+      numberOfBuiildings += d.buildings.length
+    })
+    // console.log(districts);
+    expect(numberOfBuiildings).equal(5);
   }); 
 });

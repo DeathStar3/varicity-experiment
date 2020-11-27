@@ -51,6 +51,19 @@
                   "number": 1
                 }
             ]
+        },
+        {
+            "types": ["CLASS"],
+            "name":"fr.polytech.d3.class3",
+            "methodVariants": 5,
+            "constructorVariants": 10,
+            "nbAttributes": 5,
+            "attributes": [
+                {
+                  "name": "fr.polytech.varicity.class1",
+                  "number": 1
+                }
+            ]
         }
     ],
     "links": [
