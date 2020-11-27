@@ -144,9 +144,21 @@ export class Road3D implements Element3D {
         });
         const roads3D: Road3D[] = [];
         this.elementModel.districts.forEach(v => {
-            let d3 = new Road3D(this.scene, v);
-            d3.build(config);
-            roads3D.push(d3);
+            if (config.clones) {
+                if (config.clones.objects.includes(v.vp)) {
+                    config.clones.map.get(v.vp).clones.push(this.vp);
+                } else {
+                    let d3 = new Road3D(this.scene, v);
+                    config.clones.objects.push(v.vp);
+                    config.clones.map.set(v.vp, { original: d3.vp, clones: [] });
+                    d3.build(config);
+                    roads3D.push(d3);
+                }
+            } else {
+                let d3 = new Road3D(this.scene, v);
+                d3.build(config);
+                roads3D.push(d3);
+            }
         });
 
         this.spreadElements(buildings3D, this.leftVariants, this.rightVariants);

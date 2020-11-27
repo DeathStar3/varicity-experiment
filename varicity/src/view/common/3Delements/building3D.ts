@@ -60,7 +60,7 @@ export class Building3D implements Element3D {
 
     place(x: number, z: number) {
         let halfHeight = (this.elementModel.getHeight() / 2);
-        this.center = new Vector3(x, this.depth + halfHeight, z);
+        this.center = new Vector3(x, this.depth * 30 + halfHeight, z);
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
     }
