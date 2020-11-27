@@ -72,6 +72,6 @@ done
 
 echo "Using $TAG images"
 
-docker run -it -v $(pwd)/experiments:/experiments -v $(pwd)/symfinder.yaml:/symfinder.yaml -v $(pwd)/resources:/resources -v $(pwd)/d3:/d3 -v $(pwd)/generated_visualizations:/generated_visualizations --user $(id -u):$(id -g) -e SYMFINDER_VERSION=$(git rev-parse --short=0 HEAD) -e SYMFINDER_PROJECTS="${SYMFINDER_PROJECTS[@]}" --rm deathstar3/symfinder-fetcher:${TAG}
+docker run -v $(pwd)/experiments:/experiments -v $(pwd)/symfinder.yaml:/symfinder.yaml -v $(pwd)/resources:/resources -v $(pwd)/d3:/d3 -v $(pwd)/generated_visualizations:/generated_visualizations --user $(id -u):$(id -g) -e SYMFINDER_VERSION=$(git rev-parse --short=0 HEAD) -e SYMFINDER_PROJECTS="${SYMFINDER_PROJECTS[@]}" --rm deathstar3/symfinder-fetcher:${TAG}
 
 ./rerun.sh "$SYMFINDER_PROJECTS"
