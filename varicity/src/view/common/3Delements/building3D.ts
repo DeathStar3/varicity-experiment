@@ -27,6 +27,7 @@ export class Building3D implements Element3D {
     links: Link3D[] = [];
 
     padding = 0.2;
+    heightScale = 0.3;
 
     constructor(scene: Scene, buildingElement: Building, depth: number) {
         this.scene = scene;
@@ -47,6 +48,10 @@ export class Building3D implements Element3D {
         return this.getWidth();
     }
 
+    getHeight(): number {
+        return this.elementModel.getHeight()*this.heightScale;
+    }
+
     getName() {
         return this.elementModel.fullName;
     }
@@ -59,7 +64,7 @@ export class Building3D implements Element3D {
     }
 
     place(x: number, z: number) {
-        let halfHeight = (this.elementModel.getHeight() / 2);
+        let halfHeight = this.getHeight()/2;
         this.center = new Vector3(x, this.depth * 30 + halfHeight, z);
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
@@ -70,7 +75,7 @@ export class Building3D implements Element3D {
         this.d3Model = MeshBuilder.CreateBox(
             this.elementModel.name,
             {
-                height: this.elementModel.getHeight(),
+                height: this.getHeight(),
                 width: this.elementModel.getWidth(),
                 depth: this.elementModel.getWidth()
             },

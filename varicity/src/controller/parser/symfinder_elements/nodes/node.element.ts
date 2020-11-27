@@ -6,6 +6,7 @@ export class NodeElement {
     nbFunctions: number;
     nbVariants: number;
     nbConstructorVariants: number;
+    nbMethodVariants: number;
 
     analyzed: boolean;
 

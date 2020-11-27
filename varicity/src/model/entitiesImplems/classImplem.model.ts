@@ -2,6 +2,9 @@ import { Building } from "../entities/building.interface";
 
 export class ClassImplem extends Building {
 
+    heightName: string = "height";
+    widthName: string = "width"
+
     constructor(name: string, height: number, width: number, types: string[], fullName: string) {
         super();
         this.name = name;
@@ -22,9 +25,9 @@ export class ClassImplem extends Building {
     public toString() : string {
         return "{fullName: "
             + this.fullName
-            + ", methodVariants: "
+            + ", "+this.heightName+": "
             + this.height
-            + ", attributes: "
+            + ", "+this.widthName+": "
             + this.width
             + "\ntypes: "
             + this.types

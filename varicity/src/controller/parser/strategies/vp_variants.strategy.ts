@@ -17,7 +17,7 @@ export class VPVariantsStrategy {
         const nodesList: NodeElement[] = [];
         data.nodes.forEach(n => {
             let node = new NodeElement(n.name);
-            node.nbFunctions = (n.methodVariants === undefined) ? 0 : n.methodVariants;
+            node.nbMethodVariants = (n.methodVariants === undefined) ? 0 : n.methodVariants;
 
             const attr = n.attributes;
             let nbAttributes = 0;
@@ -81,13 +81,16 @@ export class VPVariantsStrategy {
             // console.log("constructing district from vp : ", nodeElement.name);
             if (!nodeElement.analyzed) { // if n has not been analyzed yet
                 // create a new district with n
-                const res = new VPVariantsImplem(new ClassImplem(
+                let c = new ClassImplem(
                     nodeElement.name,
-                    nodeElement.nbVariants,
+                    nodeElement.nbMethodVariants,
                     nodeElement.nbConstructorVariants,
                     nodeElement.types,
                     nodeElement.name
-                ));
+                );
+                c.heightName = "methodVariants";
+                c.widthName = "constructorVariants";
+                const res = new VPVariantsImplem(c);
 
                 // construct districts for each of linked nodes
                 // add each district to the district's districts
@@ -97,13 +100,16 @@ export class VPVariantsStrategy {
                 linkedNodes.forEach(n => {
                     const d = this.constructDistrict(n, trace, nodes, links);
                     if (d === undefined) {
-                        res.addBuilding(new ClassImplem(
+                        let c = new ClassImplem(
                             n.name,
-                            n.nbVariants,
+                            n.nbMethodVariants,
                             n.nbConstructorVariants,
                             n.types,
-                            n.name)
+                            n.name
                         );
+                        c.heightName = "methodVariants";
+                        c.widthName = "constructorVariants";
+                        res.addBuilding(c);
                     } else {
                         res.addDistrict(d);
                     }
