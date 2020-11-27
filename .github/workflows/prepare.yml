@@ -47,10 +47,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Tests on sample projects
         run: ./run_integration_tests.sh
-        shell: bash
       - name: Acceptance tests on a pilot project
         run: ./run_acceptance_tests.sh sat4j
-        shell: bash
 
   feature_mapping:
     runs-on: ubuntu-latest
@@ -60,7 +58,5 @@ jobs:
         run: docker build -f docker/features-extractor/Dockerfile -t deathstar3/features-extractor:local .
       - name: Mapping features from Sat4j
         run: ./sat4j-feature-mapping.sh --local
-        shell: bash
       - name: Mapping features from ArgoUML
         run: ./argouml-feature-mapping.sh --local
-        shell: bash

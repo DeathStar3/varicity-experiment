@@ -35,7 +35,7 @@ sed -i -e 's/experiments.yaml/test-experiments.yaml/g' symfinder.yaml
 create_directory resources
 cp -r test_projects/* resources/
 
-docker run -it --rm --name test_projects_builder -v "$(pwd)/resources":/usr/src/mymaven -w /usr/src/mymaven maven:3-jdk-8 mvn clean compile clean
+docker run --rm --name test_projects_builder -v "$(pwd)/resources":/usr/src/mymaven -w /usr/src/mymaven maven:3-jdk-8 mvn clean compile clean
 
 ./build.sh -DskipTests
 ./run.sh --local
