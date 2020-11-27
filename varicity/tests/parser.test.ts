@@ -9,7 +9,7 @@ describe('calculate', function() {
     }); 
   });
 
-describe('parsing', function() {
+describe('parsing without links', function() {
   it('parse', function() {
     let entities = new ClassesPackagesStrategy().parse('test1WithoutLinks');
     let districts = entities.districts[0].districts[0].districts
@@ -19,7 +19,14 @@ describe('parsing', function() {
     districts.forEach(d => {
       numberOfBuiildings += d.buildings.length
     })
-    // console.log(districts);
     expect(numberOfBuiildings).equal(5);
+  }); 
+});
+
+describe('parsing links', function() {
+  it('parse', function() {
+    let entities = new ClassesPackagesStrategy().parse('test2WithLinks');
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(2);
   }); 
 });
