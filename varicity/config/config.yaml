@@ -8,7 +8,7 @@ building:
     # edges: "#a569bd" # light purple
     faces: # ordered by importance, descending : in case of conflict, the first color to match will be displayed
       - name: "VP"
-        color: "#0b5345" # green
+        color: "#335DFF"
       - name: "STRATEGY"
         color: "#17202a" # black
       - name: "FACTORY"
@@ -18,22 +18,26 @@ building:
       - name: "ABSTRACT"
         color: "#2c3e50" # dark blue
       - name: "CLASS"
-        color: "#2e86c1" # light blue
+        color: "#335DFF"
 district:
   colors:
     # outline: "#145a32" # dark green
     # edges: "#a569bd" # light purple
     faces:
       - name: "PACKAGE"
-        color: "#6e2c00" # light yellow
+        color: "#801A2E"
       - name: "VP"
-        color: "#7d3c98" # purple
+        color: "#1A8039"
 link:
   colors:
     - name: "IMPLEMENTS"
       color: "#e67e22"
     - name: "EXTENDS"
       color: "#2e86c1"
+
+vp_building:
+  color: "#FF6F33"
+
 whitelist: #all classes that must not appear #TODO: rename to blacklist
   - "org.jfree.chart.util.PublicCloneable"
   # - "org.jfree.chart.renderer.AbstractRenderer"

@@ -122,36 +122,44 @@ export class Building3D implements Element3D {
         }
 
         var mat = new StandardMaterial(this.elementModel.name + "Mat", this.scene);
-        // if config -> building -> colors -> faces is defined
-        if (config.building.colors.faces) {
-            let faces = config.building.colors.faces;
-            let done = false;
-            for (let face of faces) {
-                for (let type of this.elementModel.types) {
-                    if (type == face.name) {
-                        mat.ambientColor = Color3.FromHexString(face.color);
-                        mat.diffuseColor = Color3.FromHexString(face.color);
-                        mat.emissiveColor = Color3.FromHexString(face.color);
-                        mat.specularColor = Color3.FromHexString(face.color);
-                        done = true;
-                        break;
-                    }
-                }
-                if (done) break;
-            }
-            if (!done) {
-                mat.ambientColor = Color3.FromHexString(config.building.colors.faces[0].color);
-                mat.diffuseColor = Color3.FromHexString(config.building.colors.faces[0].color);
-                mat.emissiveColor = Color3.FromHexString(config.building.colors.faces[0].color);
-                mat.specularColor = Color3.FromHexString(config.building.colors.faces[0].color);
-            }
+        if (config.force_color) {
+            mat.ambientColor = Color3.FromHexString(config.force_color);
+            mat.diffuseColor = Color3.FromHexString(config.force_color);
+            mat.emissiveColor = Color3.FromHexString(config.force_color);
+            mat.specularColor = Color3.FromHexString(config.force_color);
         } else {
-            console.log("faces not defined");
-            mat.ambientColor = new Color3(1, 0, 0);
-            mat.diffuseColor = new Color3(1, 0, 0);
-            mat.emissiveColor = new Color3(1, 0, 0);
-            mat.specularColor = new Color3(1, 0, 0);
+            if (config.building.colors.faces) {
+                let faces = config.building.colors.faces;
+                let done = false;
+                for (let face of faces) {
+                    for (let type of this.elementModel.types) {
+                        if (type == face.name) {
+                            mat.ambientColor = Color3.FromHexString(face.color);
+                            mat.diffuseColor = Color3.FromHexString(face.color);
+                            mat.emissiveColor = Color3.FromHexString(face.color);
+                            mat.specularColor = Color3.FromHexString(face.color);
+                            done = true;
+                            break;
+                        }
+                    }
+                    if (done) break;
+                }
+                if (!done) {
+                    mat.ambientColor = Color3.FromHexString(config.building.colors.faces[0].color);
+                    mat.diffuseColor = Color3.FromHexString(config.building.colors.faces[0].color);
+                    mat.emissiveColor = Color3.FromHexString(config.building.colors.faces[0].color);
+                    mat.specularColor = Color3.FromHexString(config.building.colors.faces[0].color);
+                }
+            } else {
+                console.log("faces not defined");
+                mat.ambientColor = new Color3(1, 0, 0);
+                mat.diffuseColor = new Color3(1, 0, 0);
+                mat.emissiveColor = new Color3(1, 0, 0);
+                mat.specularColor = new Color3(1, 0, 0);
+            }
         }
+        // if config -> building -> colors -> faces is defined
+
         this.d3Model.material = mat;
 
         // Display links to other buildings

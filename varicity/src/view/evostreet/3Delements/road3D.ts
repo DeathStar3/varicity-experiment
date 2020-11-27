@@ -284,7 +284,13 @@ export class Road3D implements Element3D {
             console.log("faces not defined");
         }
 
+        this.d3Model.material = mat;
+
+        if (config.vp_building.color) {
+            config.force_color = config.vp_building.color;
+        }
         if (this.vp) this.vp.render(config);
+        config.force_color = undefined;
         // testing purposes
         // else {
         //     let mesh = MeshBuilder.CreateBox(
