@@ -23,11 +23,13 @@ export class Building3D implements Element3D {
     bot: Vector3;
 
     d3Model: Mesh;
+    d3ModelOutline: Mesh;
 
     links: Link3D[] = [];
 
     padding = 0.2;
     heightScale = 0.3;
+    outlineWidth = 0.05;
 
     constructor(scene: Scene, buildingElement: Building, depth: number) {
         this.scene = scene;
@@ -108,9 +110,33 @@ export class Building3D implements Element3D {
         );
 
         // if config -> building -> colors -> outline is defined
-        if (config.building.colors.outline) {
-            this.d3Model.renderOutline = true;
-            this.d3Model.outlineColor = Color3.FromHexString(config.building.colors.outline);
+        if (config.building.colors.outlines) {
+            let outlines = config.building.colors.outlines;
+            let done = false;
+            for (let o of outlines) {
+                for (let type of this.elementModel.types) {
+                    if (type == o.name) {
+                        this.d3ModelOutline = MeshBuilder.CreateBox(
+                            this.elementModel.name,
+                            {
+                                height: this.getHeight() + this.outlineWidth,
+                                width: this.elementModel.getWidth() + this.outlineWidth,
+                                depth: this.elementModel.getWidth() + this.outlineWidth,
+                                sideOrientation: Mesh.BACKSIDE,
+                                updatable: false
+                            },
+                            this.scene);
+                        var outlineMat = new StandardMaterial('outlineMaterial', this.scene);
+                        this.d3ModelOutline.material = outlineMat;
+                        this.d3ModelOutline.parent = this.d3Model;
+                        outlineMat.diffuseColor = Color3.FromHexString(o.color);
+                        outlineMat.emissiveColor = Color3.FromHexString(o.color);
+                        done = true;
+                        break;
+                    }
+                }
+                if (done) break;
+            }
         } else {
             this.d3Model.renderOutline = false;
         }
