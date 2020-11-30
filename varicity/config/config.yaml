@@ -43,7 +43,7 @@ link:
     - name: "EXTENDS"
       color: "#2e86c1"
     - name: "DUPLICATES"
-      color: "#530b4f"
+      color: "#1A8039"
 
 vp_building:
   color: "#FF6F33"
