@@ -7,6 +7,7 @@ import { Building3D } from '../../common/3Delements/building3D';
 import { Road3D } from './road3D';
 import { EntitiesList } from '../../../model/entitiesList';
 import { Building } from '../../../model/entities/building.interface';
+import { Link3DFactory } from '../../common/3Dfactory/link3D.factory';
 
 export class City3D {
 
@@ -70,15 +71,19 @@ export class City3D {
             let dest = this.findSrcLink(l.target.fullName);
             let type = l.type;
             if (src != undefined && dest != undefined) {
-                src.link(dest, type);
+                let link = Link3DFactory.createLink(src, dest, type, this.scene);
+                src.link(link);
+                // src.link(dest, type);
                 //dest.link(src, type);
             }
         });
 
         for (let [, value] of this.config.clones.map) {
             for (let b of value.clones) {
-                value.original.link(b, "SHARES");
-                //b.link(value.original, "SHARES");
+                let link = Link3DFactory.createLink(value.original, b, "DUPLICATES", this.scene);
+                value.original.link(link);
+                // value.original.link(b, "DUPLICATES");
+                //b.link(value.original, "DUPLICATES");
             }
         }
     }

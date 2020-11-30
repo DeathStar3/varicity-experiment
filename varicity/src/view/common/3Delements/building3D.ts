@@ -11,8 +11,8 @@ import {
     StandardMaterial,
     Vector3
 } from '@babylonjs/core';
-import {Building} from '../../../model/entities/building.interface';
-import {Link3D} from './link3D';
+import { Building } from '../../../model/entities/building.interface';
+import { Link3D } from '../3Dinterfaces/link3D.interface';
 
 export class Building3D implements Element3D {
     elementModel: Building;
@@ -40,8 +40,9 @@ export class Building3D implements Element3D {
         this.depth = depth;
     }
 
-    showAllLinks() {
-        this.links.forEach(l => l.display());
+    showAllLinks(status?: boolean) {
+        if(status == undefined) this.links.forEach(l => l.display());
+        else this.links.forEach(l => l.display(status));
     }
 
     getWidth(): number {
@@ -54,15 +55,15 @@ export class Building3D implements Element3D {
     }
 
     getHeight(): number {
-        return this.elementModel.getHeight()*this.heightScale;
+        return this.elementModel.getHeight() * this.heightScale;
     }
 
     getName() {
         return this.elementModel.fullName;
     }
 
-    link(dest: Building3D, type: string) {
-        this.links.push(new Link3D(this, dest, type, this.scene));
+    link(link: Link3D) {
+        this.links.push(link);
     }
 
     build() {
