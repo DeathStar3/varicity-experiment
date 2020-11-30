@@ -181,32 +181,8 @@ export class Road3D implements Element3D {
             z + orientationZ * (this.getRoadLength()/2 + this.getVpWidth()/2 - this.getVpPadding()/2)
         );
 
-        let offsetL = this.getVpWidth() / 2;
-        this.leftVariants.forEach(e => {
-            let vX =
-                /* horizontal case: */ ((e.getWidth() / 2) + offsetL) * orientationX +
-                /* vertical case:   */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * -orientationZ;
-            let vZ =
-                /* horizontal case: */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * orientationX +
-                /* vertical case:   */ (e.getWidth() / 2 + offsetL) * orientationZ
-            e.place(vX + x, vZ + z);
-            offsetL += e.getWidth();
-        });
-
-        let offsetR = this.getVpWidth() / 2;
-        this.rightVariants.forEach(e => {
-            let vX =
-                /* horizontal case: */ ((e.getWidth() / 2) + offsetR) * orientationX -
-                /* vertical case:   */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * -orientationZ;
-            let vZ =
-                /* horizontal case: */ - (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * orientationX +
-                /* vertical case:   */ ((e.getWidth()) / 2 + offsetR) * orientationZ
-            e.place(vX + x, vZ + z);
-            offsetR += e.getWidth();
-        });
-
-        let offsetVL = Math.max(offsetL, offsetR); // to start drawing VPs
-        let offsetVR = Math.max(offsetL, offsetR);
+        let offsetVL = this.getVpWidth() / 2; // to start drawing VPs
+        let offsetVR = this.getVpWidth() / 2;
         this.leftVPs.forEach(e => {
             let vX =
                 /* horizontal case: */ (e.getSideWidth(false) + offsetVL) * orientationX +
@@ -226,6 +202,31 @@ export class Road3D implements Element3D {
                 /* vertical case:   */ (e.getSideWidth(true) + offsetVR) * orientationZ;
             e.place(vX + x, vZ + z, orientationZ, -orientationX);
             offsetVR += e.getWidth();
+        });
+
+        let offsetL = Math.max(offsetVL, offsetVR);;
+        let offsetR = Math.max(offsetVL, offsetVR);;
+
+        this.leftVariants.forEach(e => {
+            let vX =
+                /* horizontal case: */ ((e.getWidth() / 2) + offsetL) * orientationX +
+                /* vertical case:   */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * -orientationZ;
+            let vZ =
+                /* horizontal case: */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * orientationX +
+                /* vertical case:   */ (e.getWidth() / 2 + offsetL) * orientationZ
+            e.place(vX + x, vZ + z);
+            offsetL += e.getWidth();
+        });
+
+        this.rightVariants.forEach(e => {
+            let vX =
+                /* horizontal case: */ ((e.getWidth() / 2) + offsetR) * orientationX -
+                /* vertical case:   */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * -orientationZ;
+            let vZ =
+                /* horizontal case: */ - (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * orientationX +
+                /* vertical case:   */ ((e.getWidth()) / 2 + offsetR) * orientationZ
+            e.place(vX + x, vZ + z);
+            offsetR += e.getWidth();
         });
     }
 
