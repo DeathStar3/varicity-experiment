@@ -35,7 +35,6 @@ class Main {
             childMetri.addEventListener("click", (ev) => {
                 if (this.scene) this.scene.dispose();
                 this.scene = new MetricityImplem();
-                console.log(this.scene);
                 let entities = new ClassesPackagesStrategy().parse(key);
                 this.scene.buildScene(entities);
             });

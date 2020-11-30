@@ -38,8 +38,9 @@ export class Building3D implements Element3D {
         this.depth = depth;
     }
 
-    showAllLinks() {
-        this.links.forEach(l => l.display());
+    showAllLinks(status?: boolean) {
+        if(status == undefined) this.links.forEach(l => l.display());
+        else this.links.forEach(l => l.display(status));
     }
 
     getWidth(): number {

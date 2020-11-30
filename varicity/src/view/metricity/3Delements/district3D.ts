@@ -23,6 +23,8 @@ export class District3D implements Element3D {
     d3Buildings: Building3D[] = [];
     d3Districts: District3D[] = [];
 
+    status = false;
+
     constructor(scene: Scene, element: District, depth: number) {
         this.scene = scene;
         this.depth = depth;
@@ -31,12 +33,14 @@ export class District3D implements Element3D {
         // this.z = z;
     }
 
-    showAllLinks() {
+    showAllLinks(status?: boolean) {
+        if(status) this.status = status;
+        else this.status = !this.status;
         this.d3Buildings.forEach(b =>
-            b.showAllLinks()
+            b.showAllLinks(this.status)
         );
         this.d3Districts.forEach(d =>
-            d.showAllLinks()
+            d.showAllLinks(this.status)
         );
     }
 

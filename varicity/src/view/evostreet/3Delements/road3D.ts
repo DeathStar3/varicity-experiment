@@ -30,6 +30,8 @@ export class Road3D implements Element3D {
 
     roadWidth = 0.3;
 
+    status: boolean = false;
+
     constructor(scene: Scene, vpElmt: VPVariantsImplem) {
         this.scene = scene;
 
@@ -79,11 +81,11 @@ export class Road3D implements Element3D {
         }
     }
 
-    getVpWidth() : number {
+    getVpWidth(): number {
         return this.vp === undefined ? 0 : this.vp.getWidth();
     }
 
-    getVpPadding() : number {
+    getVpPadding(): number {
         return this.vp === undefined ? 0 : this.vp.padding;
     }
 
@@ -165,7 +167,7 @@ export class Road3D implements Element3D {
         this.spreadElements(roads3D, this.leftVPs, this.rightVPs);
     }
 
-    getRoadLength() : number {
+    getRoadLength(): number {
         return this.getLength() - this.getVpWidth();
     }
 
@@ -176,9 +178,9 @@ export class Road3D implements Element3D {
         if (this.vp) this.vp.place(x, z);
 
         this.vector = new Vector3(
-            x + orientationX * (this.getRoadLength()/2 + this.getVpWidth()/2 - this.getVpPadding()/2),
+            x + orientationX * (this.getRoadLength() / 2 + this.getVpWidth() / 2 - this.getVpPadding() / 2),
             0,
-            z + orientationZ * (this.getRoadLength()/2 + this.getVpWidth()/2 - this.getVpPadding()/2)
+            z + orientationZ * (this.getRoadLength() / 2 + this.getVpWidth() / 2 - this.getVpPadding() / 2)
         );
 
         let offsetVL = this.getVpWidth() / 2; // to start drawing VPs
@@ -186,7 +188,7 @@ export class Road3D implements Element3D {
         this.leftVPs.forEach(e => {
             let vX =
                 /* horizontal case: */ (e.getSideWidth(false) + offsetVL) * orientationX +
-                /* vertical case:   */ (e.getVpWidth()/2) * -orientationZ;
+                /* vertical case:   */ (e.getVpWidth() / 2) * -orientationZ;
             let vZ =
                 /* horizontal case: */ (e.getVpWidth() / 2) * orientationX +
                 /* vertical case:   */ (e.getSideWidth(false) + offsetVL) * orientationZ;
@@ -210,9 +212,9 @@ export class Road3D implements Element3D {
         this.leftVariants.forEach(e => {
             let vX =
                 /* horizontal case: */ ((e.getWidth() / 2) + offsetL) * orientationX +
-                /* vertical case:   */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * -orientationZ;
+                /* vertical case:   */ (e.getWidth() / 2 - e.padding / 2 + this.roadWidth / 2) * -orientationZ;
             let vZ =
-                /* horizontal case: */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * orientationX +
+                /* horizontal case: */ (e.getWidth() / 2 - e.padding / 2 + this.roadWidth / 2) * orientationX +
                 /* vertical case:   */ (e.getWidth() / 2 + offsetL) * orientationZ
             e.place(vX + x, vZ + z);
             offsetL += e.getWidth();
@@ -221,9 +223,9 @@ export class Road3D implements Element3D {
         this.rightVariants.forEach(e => {
             let vX =
                 /* horizontal case: */ ((e.getWidth() / 2) + offsetR) * orientationX -
-                /* vertical case:   */ (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * -orientationZ;
+                /* vertical case:   */ (e.getWidth() / 2 - e.padding / 2 + this.roadWidth / 2) * -orientationZ;
             let vZ =
-                /* horizontal case: */ - (e.getWidth()/2 - e.padding/2 + this.roadWidth/2) * orientationX +
+                /* horizontal case: */ - (e.getWidth() / 2 - e.padding / 2 + this.roadWidth / 2) * orientationX +
                 /* vertical case:   */ ((e.getWidth()) / 2 + offsetR) * orientationZ
             e.place(vX + x, vZ + z);
             offsetR += e.getWidth();
@@ -334,17 +336,19 @@ export class Road3D implements Element3D {
         );
     }
 
-    showAllLinks() {
-        if (this.vp) this.vp.showAllLinks();
+    showAllLinks(status?: boolean) {
+        if(status) this.status = status;
+        else this.status = !this.status;
+        if (this.vp) this.vp.showAllLinks(this.status);
 
         const variants = this.leftVariants.concat(this.rightVariants);
         variants.forEach(v => {
-            v.showAllLinks();
+            v.showAllLinks(this.status);
         });
 
         const vps = this.leftVPs.concat(this.rightVPs);
         vps.forEach(vp => {
-            vp.showAllLinks();
+            vp.showAllLinks(this.status);
         });
     }
 }
