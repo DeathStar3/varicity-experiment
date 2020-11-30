@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build":"webpack",
+    "build": "webpack",
     "start": "webpack serve",
     "test": "karma start karma.conf.js"
   },
@@ -25,6 +25,7 @@
     "karma-chrome-launcher": "^3.1.0",
     "karma-firefox-launcher": "^2.1.0",
     "karma-mocha": "^2.0.1",
+    "karma-spec-reporter": "0.0.32",
     "karma-typescript-preprocessor2": "^1.2.1",
     "karma-webpack": "^4.0.2",
     "mocha": "^8.2.1",

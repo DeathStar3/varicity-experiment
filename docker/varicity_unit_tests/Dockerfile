@@ -7,6 +7,6 @@ RUN apk update && apk upgrade && apk add --no-cache chromium
 
 COPY varicity/. /opt/karma/
 
-RUN npm run-script build
+RUN npm install && npm run-script build
 
 CMD npm run test
