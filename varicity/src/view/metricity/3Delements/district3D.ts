@@ -1,3 +1,4 @@
+import { Config } from './../../../model/entitiesImplems/config.model';
 import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
 import { Building3D } from '../../common/3Delements/building3D';
 import { District } from '../../../model/entities/district.interface';
@@ -122,7 +123,7 @@ export class District3D implements Element3D {
         return building;
     }
 
-    build(config: any) {
+    build(config: Config) {
         this.elementModel.districts.forEach(d => {
             let d3District = new District3D(this.scene, d, this.depth + 1)
             this.d3Districts.push(d3District);
@@ -175,7 +176,7 @@ export class District3D implements Element3D {
         });
     }
 
-    render(config: any) {
+    render(config: Config) {
         this.d3Model = MeshBuilder.CreateBox(
             "package",
             {

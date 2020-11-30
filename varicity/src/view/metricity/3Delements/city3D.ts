@@ -1,3 +1,4 @@
+import { Config } from './../../../model/entitiesImplems/config.model';
 import { Link } from '../../../model/entities/link.interface';
 import { Scene } from '@babylonjs/core';
 import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
@@ -7,14 +8,14 @@ import { EntitiesList } from '../../../model/entitiesList';
 
 export class City3D {
 
-    config: any;
+    config: Config;
     scene: Scene;
 
     districts: District3D[] = [];
     buildings: Building3D[] = [];
     links: Link[] = [];
 
-    constructor(config: any, scene: Scene, entities: EntitiesList) {
+    constructor(config: Config, scene: Scene, entities: EntitiesList) {
         this.config = config;
         this.scene = scene;
         this.links = entities.links;
