@@ -19,6 +19,13 @@ building:
         color: "#2c3e50" # dark blue
       - name: "CLASS"
         color: "#335DFF"
+
+    outlines:
+      - name: "API"
+        color: "#FF0000"
+      # - name: "CLASS"
+        # color: "#000000"
+
 district:
   colors:
     # outline: "#145a32" # dark green
@@ -28,6 +35,7 @@ district:
         color: "#801A2E"
       - name: "VP"
         color: "#1A8039"
+
 link:
   colors:
     - name: "IMPLEMENTS"
@@ -41,3 +49,6 @@ vp_building:
 blacklist: #all classes that must not appear
   - "org.jfree.chart.util.PublicCloneable"
   # - "org.jfree.chart.renderer.AbstractRenderer"
+
+api_classes: #all API classes
+  - "org.jfree.chart.plot.CategoryPlot"

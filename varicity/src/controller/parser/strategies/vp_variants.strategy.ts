@@ -11,6 +11,7 @@ import {VPVariantsImplem} from "../../../model/entitiesImplems/vpVariantsImplem.
 export class VPVariantsStrategy {
     public parse(fileName: string) : EntitiesList {
         const data = FilesLoader.loadDataFile(fileName);
+        const config = ConfigLoader.loadDataFile("config")
 
         // console.log('Analyzing with VP and variants strategy: ', data);
 
@@ -29,6 +30,11 @@ export class VPVariantsStrategy {
             node.nbConstructorVariants = cVar;
 
             node.types = n.types;
+            if (config.api_classes) {
+                if (config.api_classes.includes(node.name)) {
+                    node.types.push("API");
+                }
+            }
             nodesList.push(node);
         });
 
