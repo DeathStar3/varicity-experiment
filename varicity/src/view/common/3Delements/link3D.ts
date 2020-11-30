@@ -1,3 +1,4 @@
+import { Config } from './../../../model/entitiesImplems/config.model';
 import { Color3, Color4, MeshBuilder, Scene, Vector3 } from '@babylonjs/core';
 import { Curve3, LinesMesh } from '@babylonjs/core';
 import { GradientMaterial } from '@babylonjs/materials';
@@ -19,9 +20,10 @@ export class Link3D {
         this.src = src;
         this.dest = dest;
         this.type = type;
+        this.scene = scene;
     }
 
-    render(config: any) {
+    render(config: Config) {
         this.curve = Curve3.CreateQuadraticBezier(this.src.top, this.src.top.add(new Vector3(0, (this.src.top.y + this.dest.top.y) / 2, 0)), this.dest.top, 25);
 
         let colors: Color4[] = [];

@@ -1,3 +1,4 @@
+import { Config } from './../model/entitiesImplems/config.model';
 import { Scene, Engine, ArcRotateCamera, HemisphericLight, Vector3 } from "@babylonjs/core";
 import { ConfigLoader } from "../controller/parser/configLoader";
 import { EntitiesList } from "../model/entitiesList";
@@ -6,7 +7,7 @@ export abstract class SceneRenderer {
 
     scene: Scene;
     engine: Engine;
-    config: any;
+    config: Config;
     camera: ArcRotateCamera;
     light: HemisphericLight;
 

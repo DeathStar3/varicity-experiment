@@ -1,3 +1,4 @@
+import { Config } from './../../../model/entitiesImplems/config.model';
 import { VPVariantsImplem } from './../../../model/entitiesImplems/vpVariantsImplem.model';
 import { Link } from '../../../model/entities/link.interface';
 import { Scene } from '@babylonjs/core';
@@ -5,17 +6,18 @@ import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
 import { Building3D } from '../../common/3Delements/building3D';
 import { Road3D } from './road3D';
 import { EntitiesList } from '../../../model/entitiesList';
+import { Building } from '../../../model/entities/building.interface';
 
 export class City3D {
 
-    config: any;
+    config: Config;
     scene: Scene;
 
     roads: Road3D[] = [];
     buildings: Building3D[] = [];
     links: Link[] = [];
 
-    constructor(config: any, scene: Scene, entities: EntitiesList) {
+    constructor(config: Config, scene: Scene, entities: EntitiesList) {
         this.config = config;
         this.scene = scene;
         this.links = entities.links;
@@ -48,12 +50,13 @@ export class City3D {
     }
 
     build() {
-        this.config.clones = {};
-        this.config.clones.objects = [];
-        this.config.clones.map = new Map<Building3D, {
-            original: Building3D
-            clones: Building3D[]
-        }>();
+        this.config.clones = {
+            objects: [],
+            map: new Map<Building, {
+                original: Building3D,
+                clones: Building3D[]
+            }>()
+        };
 
         this.roads[0].build(this.config);
         // this.roads.forEach(d => {

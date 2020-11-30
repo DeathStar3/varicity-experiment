@@ -1,10 +1,10 @@
+import { Config } from './../../../model/entitiesImplems/config.model';
 import { ActionManager, Color3, Color4, ExecuteCodeAction, MeshBuilder, StandardMaterial, Vector3 } from '@babylonjs/core';
 import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
 import { Building3D } from '../../common/3Delements/building3D';
 import { Scene } from '@babylonjs/core';
 import { Mesh } from '@babylonjs/core';
 import { VPVariantsImplem } from "../../../model/entitiesImplems/vpVariantsImplem.model";
-import {ClassImplem} from "../../../model/entitiesImplems/classImplem.model";
 
 export class Road3D implements Element3D {
     padding: number = 0;
@@ -123,7 +123,7 @@ export class Road3D implements Element3D {
         return building;
     }
 
-    build(config?: any) {
+    build(config?: Config) {
         const buildings3D: Building3D[] = [];
         this.elementModel.buildings.forEach(b => {
             if (config.clones) {
@@ -230,7 +230,7 @@ export class Road3D implements Element3D {
         });
     }
 
-    render(config: any) {
+    render(config: Config) {
         this.d3Model = MeshBuilder.CreateBox(
             "package",
             {

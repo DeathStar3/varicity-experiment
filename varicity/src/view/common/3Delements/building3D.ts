@@ -1,3 +1,4 @@
+import { Config } from './../../../model/entitiesImplems/config.model';
 import { Element3D } from '../3Dinterfaces/element3D.interface';
 import {
     ActionManager, Color3,
@@ -72,7 +73,7 @@ export class Building3D implements Element3D {
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
     }
 
-    render(config: any) {
+    render(config: Config) {
         // Display building
         this.d3Model = MeshBuilder.CreateBox(
             this.elementModel.name,

@@ -1,3 +1,4 @@
+import { Config } from './../../../model/entitiesImplems/config.model';
 import { Mesh } from "@babylonjs/core";
 
 export interface Element3D {
@@ -10,9 +11,9 @@ export interface Element3D {
 
     getLength(): number;
 
-    build(config?: any): void;
+    build(config?: Config): void;
 
     place(x: number, z:number, orientationX?: number, orientationZ?: number): void;
 
-    render(config: any): void;
+    render(config: Config): void;
 }
