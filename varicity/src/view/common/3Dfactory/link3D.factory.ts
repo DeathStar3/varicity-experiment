@@ -7,8 +7,8 @@ import { Link3D } from './../3Dinterfaces/link3D.interface';
 export class Link3DFactory {
     public static createLink(src: Building3D, dest: Building3D, type: string, scene: Scene): Link3D {
         switch(type) {
-            case 'DUPLICATES':
-            // case 'DUPLICATES': return new UndergroundRoad3DImplem(src, dest, type, scene);
+            // case 'DUPLICATES':
+            case 'DUPLICATES': return new UndergroundRoad3DImplem(src, dest, type, scene);
             case 'INSTANTIATE':
             case 'EXTENDS':
             case 'IMPLEMENTS': return new Link3DImplem(src, dest, type, scene);

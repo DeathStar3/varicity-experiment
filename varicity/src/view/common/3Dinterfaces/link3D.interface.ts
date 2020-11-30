@@ -1,5 +1,5 @@
 import { Config } from './../../../model/entitiesImplems/config.model';
-import { Mesh, Scene } from '@babylonjs/core';
+import { Scene } from '@babylonjs/core';
 import { Building3D } from '../3Delements/building3D';
 
 export interface Link3D {
@@ -8,10 +8,6 @@ export interface Link3D {
     src: Building3D;
     dest: Building3D
     type: string;
-
-    mesh: Mesh;
-
-    force: boolean;
 
     render(config: Config): void;
 
