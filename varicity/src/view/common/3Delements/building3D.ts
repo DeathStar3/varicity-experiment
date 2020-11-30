@@ -1,7 +1,8 @@
-import { Config } from './../../../model/entitiesImplems/config.model';
-import { Element3D } from '../3Dinterfaces/element3D.interface';
+import {Config} from './../../../model/entitiesImplems/config.model';
+import {Element3D} from '../3Dinterfaces/element3D.interface';
 import {
-    ActionManager, Color3,
+    ActionManager,
+    Color3,
     Color4,
     ExecuteCodeAction,
     Mesh,
@@ -10,8 +11,8 @@ import {
     StandardMaterial,
     Vector3
 } from '@babylonjs/core';
-import { Building } from '../../../model/entities/building.interface';
-import { Link3D } from './link3D';
+import {Building} from '../../../model/entities/building.interface';
+import {Link3D} from './link3D';
 
 export class Building3D implements Element3D {
     elementModel: Building;
@@ -25,6 +26,7 @@ export class Building3D implements Element3D {
 
     d3Model: Mesh;
     d3ModelOutline: Mesh;
+    d3ModelPyramid: Mesh;
 
     links: Link3D[] = [];
 
@@ -68,7 +70,7 @@ export class Building3D implements Element3D {
 
     place(x: number, z: number) {
         let halfHeight = this.getHeight()/2;
-        this.center = new Vector3(x, this.depth * 30 + halfHeight, z);
+        this.center = new Vector3(x, halfHeight, z);
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
     }
@@ -190,6 +192,18 @@ export class Building3D implements Element3D {
         // if config -> building -> colors -> faces is defined
 
         this.d3Model.material = mat;
+        if (this.elementModel.types.includes("API")) {
+            this.d3ModelPyramid = MeshBuilder.CreateCylinder("pyramid", {
+                diameterTop: 0,
+                tessellation: 4,
+                diameterBottom: this.getWidth(),
+                height: this.getWidth()
+            }, this.scene);
+            this.d3ModelPyramid.setPositionWithLocalVector(this.top.add(new Vector3(0, this.getWidth()/2, 0)));
+            this.d3ModelPyramid.rotate(new Vector3(0,1,0), Math.PI/4);
+            this.d3ModelPyramid.material = mat;
+            this.d3ModelPyramid.material.backFaceCulling = false;
+        }
 
         // Display links to other buildings
         this.links.forEach(l => {
