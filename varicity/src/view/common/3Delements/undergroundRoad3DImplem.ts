@@ -23,30 +23,28 @@ export class UndergroundRoad3DImplem implements Link3D {
     }
 
     render(config: Config): void {
+        const underGroundBuildingHeight = 4;
         this.mesh = MeshBuilder.CreateBox("box", {
             width: this.src.getWidth() / 2,
-            height: this.src.getHeight() * 4,
+            height: underGroundBuildingHeight,
             depth: this.src.getLength() / 2
-        },
-            this.scene);
+        }, this.scene);
 
-        let midBox: Vector3 = this.src.bot.add(new Vector3(0, - this.src.getHeight() * 2, 0))
-        let botBox: Vector3 = midBox.add(new Vector3(0, - this.src.getHeight() * 2, 0));
+        let midBox: Vector3 = this.src.bot.add(new Vector3(0, - underGroundBuildingHeight/2, 0))
+        let botBox: Vector3 = midBox.add(new Vector3(0, - underGroundBuildingHeight/2, 0));
         this.mesh.setPositionWithLocalVector(midBox);
 
         let pts: Vector3[] = [];
 
-        // for (let i = 0; i < 100; i++) {
-        //     pts.push(
-        //         botBox.add(this.dest.bot.scale(i / 100)),
-        //         botBox.add(this.dest.bot.scale(i / 100)).add(new Vector3(- this.src.getWidth() / 2, 0, 0)),
-        //         botBox.add(this.dest.bot.scale(i / 100)).add(new Vector3(this.src.getWidth() / 2, 0, 0))
-        //     );
-        // }
         pts.push(
             this.dest.bot,
-            botBox.add(new Vector3(- this.src.getWidth() / 2, 0, 0)),
-            botBox.add(new Vector3(this.src.getWidth() / 2, 0, 0)));
+            botBox.add(new Vector3(- this.src.getWidth() / 4, 0, - this.src.getWidth() / 4)),
+            botBox.add(new Vector3(this.src.getWidth() / 4, 0, - this.src.getWidth() / 4)),
+            botBox.add(new Vector3(this.src.getWidth() / 4, 0, this.src.getWidth() / 4)),
+            botBox.add(new Vector3(- this.src.getWidth() / 4, 0, this.src.getWidth() / 4)),
+            botBox.add(new Vector3(- this.src.getWidth() / 4, 0, - this.src.getWidth() / 4)),
+            this.dest.bot
+        );
 
         this.polyhedron = MeshBuilder.CreateRibbon("ribbon", { pathArray: [pts], closeArray: true, closePath: false }, this.scene);
 
