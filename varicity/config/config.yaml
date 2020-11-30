@@ -38,6 +38,6 @@ link:
 vp_building:
   color: "#FF6F33"
 
-whitelist: #all classes that must not appear #TODO: rename to blacklist
+blacklist: #all classes that must not appear
   - "org.jfree.chart.util.PublicCloneable"
   # - "org.jfree.chart.renderer.AbstractRenderer"

@@ -130,8 +130,8 @@ export class District3D implements Element3D {
         });
 
         this.elementModel.buildings.forEach(b => {
-            if (config.whitelist) {
-                if (!config.whitelist.includes(b.fullName)) {
+            if (config.blacklist) {
+                if (!config.blacklist.includes(b.fullName)) {
                     let d3Building = new Building3D(this.scene, b, this.depth);
                     this.d3Buildings.push(d3Building);
                     d3Building.build();
