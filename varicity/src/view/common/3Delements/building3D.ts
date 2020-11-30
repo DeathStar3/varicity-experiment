@@ -11,7 +11,7 @@ import {
     Vector3
 } from '@babylonjs/core';
 import { Building } from '../../../model/entities/building.interface';
-import { Link3D } from './link3D';
+import { Link3D } from '../3Dinterfaces/link3D.interface';
 
 export class Building3D implements Element3D {
     elementModel: Building;
@@ -52,22 +52,22 @@ export class Building3D implements Element3D {
     }
 
     getHeight(): number {
-        return this.elementModel.getHeight()*this.heightScale;
+        return this.elementModel.getHeight() * this.heightScale;
     }
 
     getName() {
         return this.elementModel.fullName;
     }
 
-    link(dest: Building3D, type: string) {
-        this.links.push(new Link3D(this, dest, type, this.scene));
+    link(link: Link3D) {
+        this.links.push(link);
     }
 
     build() {
     }
 
     place(x: number, z: number) {
-        let halfHeight = this.getHeight()/2;
+        let halfHeight = this.getHeight() / 2;
         this.center = new Vector3(x, this.depth * 30 + halfHeight, z);
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));

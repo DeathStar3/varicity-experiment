@@ -1,3 +1,4 @@
+import { Link3DFactory } from './../../common/3Dfactory/link3D.factory';
 import { Config } from './../../../model/entitiesImplems/config.model';
 import { Link } from '../../../model/entities/link.interface';
 import { Scene } from '@babylonjs/core';
@@ -63,8 +64,11 @@ export class City3D {
             let dest = this.findSrcLink(l.target.fullName);
             let type = l.type;
             if (src != undefined && dest != undefined) {
-                src.link(dest, type);
-                dest.link(src, type);
+                let link = Link3DFactory.createLink(src, dest, type, this.scene);
+                src.link(link);
+                dest.link(link);
+                // src.link(dest, type);
+                // dest.link(src, type);
             }
         });
 
