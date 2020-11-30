@@ -43,4 +43,58 @@ describe('parsing all tests projects with classe packages strategy', function() 
     let numberOfLinks = entities.links.length;
     expect(numberOfLinks).equal(3);
   }); 
+
+  it('parse density', function() {
+    let entities = new ClassesPackagesStrategy().parse('density');
+    let buildings = entities.buildings
+    let numberOfBuiildings = buildings.length;
+    expect(numberOfBuiildings).equal(6);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(4);
+  });
+
+  it('parse factory', function() {
+    let entities = new ClassesPackagesStrategy().parse('factory');
+    let buildings = entities.buildings
+    let numberOfBuiildings = buildings.length;
+    expect(numberOfBuiildings).equal(4);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(2);
+  });
+
+  it('parse generic_decorator', function() {
+    let entities = new ClassesPackagesStrategy().parse('generic_decorator');
+    let buildings = entities.buildings
+    let numberOfBuiildings = buildings.length;
+    expect(numberOfBuiildings).equal(4);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(3);
+  });
+
+  it('parse attribute_composition', function() {
+    let entities = new ClassesPackagesStrategy().parse('attribute_composition');
+    let buildings = entities.buildings
+    let numberOfBuiildings = buildings.length;
+    expect(numberOfBuiildings).equal(1);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(0);
+  });
+
+  it('parse attribute_composition_factory', function() {
+    let entities = new ClassesPackagesStrategy().parse('attribute_composition_factory');
+    let buildings = entities.buildings
+    let numberOfBuiildings = buildings.length;
+    expect(numberOfBuiildings).equal(10);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(9);
+  });
+
+  it('parse generics', function() {
+    let entities = new ClassesPackagesStrategy().parse('generics');
+    let buildings = entities.buildings
+    let numberOfBuiildings = buildings.length;
+    expect(numberOfBuiildings).equal(3);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(2);
+  });
 });
