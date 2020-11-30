@@ -15,4 +15,6 @@ export class Config implements ConfigInterface {
     force_color: string; // HEX color string
 
     constructor() { }
+
+    api_classes: string[];
 }

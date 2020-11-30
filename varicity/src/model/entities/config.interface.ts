@@ -11,6 +11,7 @@ export interface ConfigColor {
         outline: string, // HEX color string
         edges: string, // HEX color string
         faces: [Color],
+        outlines: [Color]
     }
 }
 
@@ -34,6 +35,7 @@ export interface ConfigInterface {
     }
 
     blacklist: string[]; //all classes that must not appear
+    api_classes: string[];
 
     clones: ConfigClones;
 
