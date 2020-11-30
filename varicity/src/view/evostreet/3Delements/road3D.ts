@@ -256,39 +256,35 @@ export class Road3D implements Element3D {
         let mat = new StandardMaterial("District", this.scene);
         // if config -> district -> colors -> faces is defined
         if (config.district.colors.faces) {
-            let faces = config.district.colors.faces;
-            let done = false;
             if (this.vp) {
-                mat.ambientColor = Color3.FromHexString(config.district.colors.faces[1].color);
-                mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[1].color);
-                mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[1].color);
-                mat.specularColor = Color3.FromHexString("#000000");
+                const vPColors = config.district.colors.faces.filter(c => c.name === "VP");
+                if (vPColors.length > 0) {
+                    mat.ambientColor = Color3.FromHexString(vPColors[0].color);
+                    mat.diffuseColor = Color3.FromHexString(vPColors[0].color);
+                    mat.emissiveColor = Color3.FromHexString(vPColors[0].color);
+                    mat.specularColor = Color3.FromHexString("#000000");
+                } else {
+                    const defaultVPColor = "#FFFFFF";
+                    mat.ambientColor = Color3.FromHexString(defaultVPColor);
+                    mat.diffuseColor = Color3.FromHexString(defaultVPColor);
+                    mat.emissiveColor = Color3.FromHexString(defaultVPColor);
+                    mat.specularColor = Color3.FromHexString("#000000");
+                }
             } else {
-                mat.ambientColor = Color3.FromHexString(config.district.colors.faces[0].color);
-                mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[0].color);
-                mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
-                mat.specularColor = Color3.FromHexString("#000000");
+                const pacColors = config.district.colors.faces.filter(c => c.name === "PACKAGE");
+                if (pacColors.length > 0) {
+                    mat.ambientColor = Color3.FromHexString(pacColors[0].color);
+                    mat.diffuseColor = Color3.FromHexString(pacColors[0].color);
+                    mat.emissiveColor = Color3.FromHexString(pacColors[0].color);
+                    mat.specularColor = Color3.FromHexString("#000000");
+                } else {
+                    const defaultPacColor = "#000000";
+                    mat.ambientColor = Color3.FromHexString(defaultPacColor);
+                    mat.diffuseColor = Color3.FromHexString(defaultPacColor);
+                    mat.emissiveColor = Color3.FromHexString(defaultPacColor);
+                    mat.specularColor = Color3.FromHexString("#000000");
+                }
             }
-            // for (let face of faces) {
-            //     if(!this.vp) break;
-            //     // for (let type of this.elementModel.types) {
-            //         // if (type == face.name) {
-            //             mat.ambientColor = Color3.FromHexString(face.color);
-            //             mat.diffuseColor = Color3.FromHexString(face.color);
-            //             mat.emissiveColor = Color3.FromHexString(face.color);
-            //             mat.specularColor = Color3.FromHexString(face.color);
-            //             done = true;
-            //             break;
-            //         // }
-            //     // }
-            //     if (done) break;
-            // }
-            // if (!done || !this.vp) {
-            //     mat.ambientColor = Color3.FromHexString(config.district.colors.faces[0].color);
-            //     mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[0].color);
-            //     mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
-            //     mat.specularColor = Color3.FromHexString("#000000");
-            // }
         }
 
         this.d3Model.material = mat;
@@ -298,18 +294,6 @@ export class Road3D implements Element3D {
         }
         if (this.vp) this.vp.render(config);
         config.force_color = undefined;
-        // testing purposes
-        // else {
-        //     let mesh = MeshBuilder.CreateBox(
-        //         "src",
-        //         {
-        //             height: 50,
-        //             width: 10,
-        //             depth: 10
-        //         },
-        //         this.scene);
-        //         mesh.setAbsolutePosition(new Vector3(this.getLength() / 2, 0, 0))
-        // }
 
         const variants = this.leftVariants.concat(this.rightVariants);
         variants.forEach(d => {
