@@ -32,6 +32,7 @@ export class VPVariantsStrategy {
             node.types = n.types;
             if (config.api_classes) {
                 if (config.api_classes.includes(node.name)) {
+                    console.log("API class: " + n.name);
                     node.types.push("API");
                 }
             }
@@ -44,7 +45,7 @@ export class VPVariantsStrategy {
         });
 
         nodesList.forEach(n => {
-            n.nbVariants = this.getLinkedNodes(n, nodesList, linkElements).length;
+            n.nbVariants = this.getLinkedNodesFromSource(n, nodesList, linkElements).length;
         })
 
         const d = this.constructDistricts(nodesList, linkElements);
@@ -63,26 +64,59 @@ export class VPVariantsStrategy {
         })
         result.links = inheritancesList;
 
+        data.allnodes.filter(
+            nod => config.api_classes.includes(nod.name)
+                && !nodesList.map(no => no.name).includes(nod.name)
+        ).forEach(n => {
+            console.log("API class: " + n.name);
+            let node = new NodeElement(n.name);
+            node.nbMethodVariants = (n.methodVariants === undefined) ? 0 : n.methodVariants;
 
-        // console.log(result);
+            const attr = n.attributes;
+            let nbAttributes = 0;
+            attr.forEach(a => {
+                nbAttributes += a.number;
+            })
+            const cVar = (n.constructorVariants === undefined) ? 0 : n.constructorVariants;
+            node.nbAttributes = nbAttributes;
+            node.nbConstructorVariants = cVar;
+
+            node.types = n.types;
+            node.types.push("API");
+            result.districts[0].addBuilding(new ClassImplem(
+                node.name,
+                node.nbMethodVariants,
+                node.nbConstructorVariants,
+                node.types,
+                node.name)
+            )
+        });
+
+        console.log("Result of parsing: ", result);
 
         return result;
     }
 
     private constructDistricts(nodes: NodeElement[], links: LinkElement[]) : VPVariantsImplem {
         const trace : VPVariantsImplem[] = [];
+        const roots : VPVariantsImplem[] = [];
         nodes.forEach(n => {
-            this.constructDistrict(n, trace, nodes, links);
+            this.constructDistrict(n, trace, nodes, links, roots);
         });
         const res : VPVariantsImplem = new VPVariantsImplem();
-        const maxDepth = trace.reduce<number>((a, b) => Math.max(a, b.depth()), 0);
-        trace.filter(v => v.depth() === maxDepth).forEach(v => {
-            res.addDistrict(v);
-        });
+        // console.log(trace);
+        // console.log("roots: ", roots);
+        // const maxDepth = trace.reduce<number>((a, b) => Math.max(a, b.depth()), 0);
+        // trace.filter(v => v.depth() === maxDepth).forEach(v => {
+        //     res.addDistrict(v);
+        // });
+        roots.forEach(r => {
+            res.addDistrict(r);
+        })
         return res;
     }
 
-    private constructDistrict(nodeElement: NodeElement, trace: VPVariantsImplem[], nodes: NodeElement[], links: LinkElement[]) : VPVariantsImplem {
+    private constructDistrict(nodeElement: NodeElement, trace: VPVariantsImplem[], nodes: NodeElement[], links: LinkElement[], roots: VPVariantsImplem[]) : VPVariantsImplem {
         if (nodeElement.types.includes("VP")) { // if n is a vp
             // console.log("constructing district from vp : ", nodeElement.name);
             if (!nodeElement.analyzed) { // if n has not been analyzed yet
@@ -101,10 +135,10 @@ export class VPVariantsStrategy {
                 // construct districts for each of linked nodes
                 // add each district to the district's districts
                 // and add remaining classes to the district's buildings
-                const linkedNodes = this.getLinkedNodes(nodeElement, nodes, links);
+                const linkedNodes = this.getLinkedNodesFromSource(nodeElement, nodes, links);
 
                 linkedNodes.forEach(n => {
-                    const d = this.constructDistrict(n, trace, nodes, links);
+                    const d = this.constructDistrict(n, trace, nodes, links, roots);
                     if (d === undefined) {
                         let c = new ClassImplem(
                             n.name,
@@ -119,7 +153,12 @@ export class VPVariantsStrategy {
                     } else {
                         res.addDistrict(d);
                     }
-                })
+                });
+
+                const ln = this.getLinkedNodesToTarget(nodeElement, nodes, links);
+                if (ln.length === 0) {
+                    roots.push(res);
+                }
 
                 // add result to the trace, set the node to have been analyzed, and return constructed district
                 trace.push(res);
@@ -138,7 +177,22 @@ export class VPVariantsStrategy {
         }
     }
 
-    private getLinkedNodes(n: NodeElement, nodes: NodeElement[], links: LinkElement[]) : NodeElement[]{
+    // private removeFromList(d: VPVariantsImplem, l: VPVariantsImplem[]) : VPVariantsImplem[] {
+    //     let index = -1;
+    //     for (let i = 0; i < l.length; i++) {
+    //         if (l[i].name === d.name) {
+    //             index = i;
+    //             break;
+    //         }
+    //     }
+    //     if (index > -1) {
+    //         return l.splice(index, 1);
+    //     } else {
+    //         throw "error: remove from list did not found node";
+    //     }
+    // }
+
+    private getLinkedNodesFromSource(n: NodeElement, nodes: NodeElement[], links: LinkElement[]) : NodeElement[]{
         const name = n.name;
         const res: NodeElement[] = [];
 
@@ -146,6 +200,20 @@ export class VPVariantsStrategy {
             if (l.source === name && l.target !== name) {
                 // console.log("Found link : ", l);
                 res.push(this.findNodeByName(l.target, nodes));
+            }
+        });
+
+        return res;
+    }
+
+    private getLinkedNodesToTarget(n: NodeElement, nodes: NodeElement[], links: LinkElement[]) : NodeElement[]{
+        const name = n.name;
+        const res: NodeElement[] = [];
+
+        links.forEach(l => {
+            if (l.source !== name && l.target === name) {
+                // console.log("Found link : ", l);
+                res.push(this.findNodeByName(l.source, nodes));
             }
         });
 

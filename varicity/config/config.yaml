@@ -21,8 +21,8 @@ building:
         color: "#335DFF"
 
     outlines:
-      - name: "API"
-        color: "#FF0000"
+#      - name: "API"
+#        color: "#FF0000"
       # - name: "CLASS"
         # color: "#000000"
 
@@ -53,4 +53,4 @@ blacklist: #all classes that must not appear
   # - "org.jfree.chart.renderer.AbstractRenderer"
 
 api_classes: #all API classes
-  - "org.jfree.chart.plot.CategoryPlot"
+  - "org.jfree.chart.JFreeChart"

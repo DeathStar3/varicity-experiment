@@ -63,9 +63,9 @@ export class City3D {
         // this.roads.forEach(d => {
         //     d.build(this.config);
         // });
-        // this.buildings.forEach(b => {
-        //     b.build();
-        // });
+        this.buildings.forEach(b => {
+            b.build();
+        });
         this.links.forEach(l => {
             let src = this.findSrcLink(l.source.fullName);
             let dest = this.findSrcLink(l.target.fullName);

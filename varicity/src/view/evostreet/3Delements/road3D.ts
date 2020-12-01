@@ -128,38 +128,46 @@ export class Road3D implements Element3D {
     build(config?: Config) {
         const buildings3D: Building3D[] = [];
         this.elementModel.buildings.forEach(b => {
-            if (config.clones) {
-                if (config.clones.objects.includes(b)) {
-                    config.clones.map.get(b).clones.push(this.vp);
-                } else {
-                    let d3 = new Building3D(this.scene, b, 0);
-                    config.clones.objects.push(b);
-                    config.clones.map.set(b, { original: d3, clones: [] });
-                    d3.build();
-                    buildings3D.push(d3);
+            if (config.blacklist) {
+                if (!config.blacklist.includes(b.fullName)) {
+                    if (config.clones) {
+                        if (config.clones.objects.includes(b)) {
+                            config.clones.map.get(b).clones.push(this.vp);
+                        } else {
+                            let d3 = new Building3D(this.scene, b, 0);
+                            config.clones.objects.push(b);
+                            config.clones.map.set(b, { original: d3, clones: [] });
+                            d3.build();
+                            buildings3D.push(d3);
+                        }
+                    } else {
+                        let d3 = new Building3D(this.scene, b, 0);
+                        d3.build();
+                        buildings3D.push(d3);
+                    }
                 }
-            } else {
-                let d3 = new Building3D(this.scene, b, 0);
-                d3.build();
-                buildings3D.push(d3);
             }
         });
         const roads3D: Road3D[] = [];
         this.elementModel.districts.forEach(v => {
-            if (config.clones) {
-                if (config.clones.objects.includes(v.vp)) {
-                    config.clones.map.get(v.vp).clones.push(this.vp);
-                } else {
-                    let d3 = new Road3D(this.scene, v);
-                    config.clones.objects.push(v.vp);
-                    config.clones.map.set(v.vp, { original: d3.vp, clones: [] });
-                    d3.build(config);
-                    roads3D.push(d3);
+            if (config.blacklist) {
+                if (!config.blacklist.includes(v.name)) {
+                    if (config.clones) {
+                        if (config.clones.objects.includes(v.vp)) {
+                            config.clones.map.get(v.vp).clones.push(this.vp);
+                        } else {
+                            let d3 = new Road3D(this.scene, v);
+                            config.clones.objects.push(v.vp);
+                            config.clones.map.set(v.vp, { original: d3.vp, clones: [] });
+                            d3.build(config);
+                            roads3D.push(d3);
+                        }
+                    } else {
+                        let d3 = new Road3D(this.scene, v);
+                        d3.build(config);
+                        roads3D.push(d3);
+                    }
                 }
-            } else {
-                let d3 = new Road3D(this.scene, v);
-                d3.build(config);
-                roads3D.push(d3);
             }
         });
 

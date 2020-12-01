@@ -9,9 +9,11 @@ export class NodeElement {
     nbMethodVariants: number;
 
     analyzed: boolean;
+    root: boolean;
 
     constructor(name: string) {
         this.name = name;
         this.analyzed = false;
+        this.root = true;
     }
 }
