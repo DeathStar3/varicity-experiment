@@ -50,7 +50,7 @@ jobs:
       - name: Acceptance tests on a pilot project
         run: ./run_acceptance_tests.sh sat4j
       - name: Varicity integration tests
-        run: ./run_varicity_integration_tests.sh
+        run: chmod +x ./run_varicity_integration_tests.sh && ./run_varicity_integration_tests.sh
 
   feature_mapping:
     runs-on: ubuntu-latest

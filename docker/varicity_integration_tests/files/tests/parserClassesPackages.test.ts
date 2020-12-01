@@ -97,4 +97,27 @@ describe('parsing all tests projects with classe packages strategy', function() 
     let numberOfLinks = entities.links.length;
     expect(numberOfLinks).equal(2);
   });
+
+  it('parse inheritance', function() {
+    let entities = new ClassesPackagesStrategy().parse('inheritance');
+    let buildings = entities.buildings
+    let numberOfBuiildings = buildings.length;
+    expect(numberOfBuiildings).equal(3);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(2);
+  });
+
+  it('parse import_from_different_package', function() {
+    let entities = new ClassesPackagesStrategy().parse('import_from_different_package');
+    let districts = entities.districts
+    let numberOfDistricts = districts.length;
+    expect(numberOfDistricts).equal(1);
+    let numberOfBuiildings = 0;
+    districts.forEach(d => {
+      numberOfBuiildings += d.buildings.length
+    })
+    expect(numberOfBuiildings).equal(1);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(1);
+  });
 });
