@@ -7,6 +7,11 @@
     background: rgba(0,50,80,0.7);
 }
 
+#overflowable {
+    overflow: auto;
+    height: 50%;
+}
+
 #project_selector {
     position: absolute;
     left: 20%;
@@ -27,6 +32,23 @@
 #evostreet {
     float: right;
     width: 50%;
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+}
+
+#gameCanvas {
+    float: left;
+    width: 70%;
+    height: 100%;
+}
+
+#console {
+    float: right;
+    width: 30%;
+    height: 100%;
 }
 
 #reset_camera {

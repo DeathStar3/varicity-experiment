@@ -13,13 +13,13 @@ export abstract class SceneRenderer {
 
     canvas: HTMLCanvasElement;
 
-    constructor() {
+    constructor(config: Config) {
         // create the canvas html element and attach it to the webpage
         this.canvas = document.createElement("canvas");
-        this.canvas.style.width = "100%";
-        this.canvas.style.height = "100%";
+        // this.canvas.style.width = "100%";
+        // this.canvas.style.height = "100%";
         this.canvas.id = "gameCanvas";
-        document.body.appendChild(this.canvas);
+        document.getElementById("main").appendChild(this.canvas);
 
         // initialize babylon scene and engine
         this.engine = new Engine(this.canvas, true);
@@ -30,7 +30,8 @@ export abstract class SceneRenderer {
         this.camera.panningSensibility = 10;
         this.light = new HemisphericLight("light1", new Vector3(0, 1, 0), this.scene);
 
-        this.config = ConfigLoader.loadDataFile("config");
+        this.config = config;
+        // this.config = ConfigLoader.loadDataFile("config");
 
         document.getElementById("reset_camera").addEventListener("click", () => {
             this.camera.position = Vector3.Zero();
