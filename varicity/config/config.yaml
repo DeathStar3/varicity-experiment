@@ -4,9 +4,11 @@
 
 building:
   colors:
-    outline: "#145a32" # dark green
-    edges: "#a569bd" # light purple
+    # outline: "#145a32" # dark green
+    # edges: "#a569bd" # light purple
     faces: # ordered by importance, descending : in case of conflict, the first color to match will be displayed
+      - name: "VP"
+        color: "#335DFF"
       - name: "STRATEGY"
         color: "#17202a" # black
       - name: "FACTORY"
@@ -16,20 +18,39 @@ building:
       - name: "ABSTRACT"
         color: "#2c3e50" # dark blue
       - name: "CLASS"
-        color: "#2e86c1" # light blue
+        color: "#335DFF"
+
+    outlines:
+#      - name: "API"
+#        color: "#FF0000"
+      # - name: "CLASS"
+        # color: "#000000"
+
 district:
   colors:
-    outline: "#145a32" # dark green
-    edges: "#a569bd" # light purple
+    # outline: "#145a32" # dark green
+    # edges: "#a569bd" # light purple
     faces:
       - name: "PACKAGE"
-        color: "#6e2c00" # light yellow
+        color: "#801A2E"
+      - name: "VP"
+        color: "#1A8039"
+
 link:
   colors:
     - name: "IMPLEMENTS"
       color: "#e67e22"
     - name: "EXTENDS"
       color: "#2e86c1"
-whitelist: #all classes that must not appear
+    - name: "DUPLICATES"
+      color: "#1A8039"
+
+vp_building:
+  color: "#FF6F33"
+
+blacklist: #all classes that must not appear
   - "org.jfree.chart.util.PublicCloneable"
   # - "org.jfree.chart.renderer.AbstractRenderer"
+
+api_classes: #all API classes
+  - "org.jfree.chart.JFreeChart"

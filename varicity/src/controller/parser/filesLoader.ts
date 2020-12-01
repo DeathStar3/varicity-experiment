@@ -1,5 +1,7 @@
+import { JsonInputInterface } from './../../model/entities/jsonInput.interface';
+
 export class FilesLoader {
-    private static json: Map<string, any> = undefined;
+    private static json: Map<string, JsonInputInterface> = undefined;
     // private static json = undefined;
 
     private static getFileNameOnly(filePath: string): string {
@@ -8,7 +10,7 @@ export class FilesLoader {
 
     private static loadJson(): void {
         const requireContext = require.context('/symfinder_files', false, /^(?!.*-stats\.json)(.*\.json)$/);
-        FilesLoader.json = new Map<string, any>();
+        FilesLoader.json = new Map<string, JsonInputInterface>();
         requireContext.keys().forEach((key) => {
             const obj = requireContext(key);
             const simpleKey = FilesLoader.getFileNameOnly(key);
@@ -18,7 +20,7 @@ export class FilesLoader {
         console.log('Loaded json files : ', FilesLoader.json);
     }
 
-    public static loadDataFile(fileName: string): any {
+    public static loadDataFile(fileName: string): JsonInputInterface {
         if (FilesLoader.json === undefined) {
             FilesLoader.loadJson();
         }

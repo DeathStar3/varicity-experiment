@@ -1,13 +1,15 @@
-export class ConfigLoader {
-    private static json = undefined;
+import { Config } from '../../model/entitiesImplems/config.model';
 
-    private static getConfigNameOnly(configPath: string) : string {
+export class ConfigLoader {
+    private static json: Config = undefined;
+
+    private static getConfigNameOnly(configPath: string): string {
         return configPath.split('/').pop().split(/\.ya?ml$/).shift();
     }
 
-    private static loadJson() : void {
+    private static loadJson(): void {
         const requireContext = require.context('/config', false, /\.ya?ml$/);
-        ConfigLoader.json = {};
+        ConfigLoader.json = new Config();
         requireContext.keys().forEach((key) => {
             const obj = requireContext(key);
             const simpleKey = ConfigLoader.getConfigNameOnly(key);
@@ -17,7 +19,7 @@ export class ConfigLoader {
         console.log('Loaded yaml files : ', ConfigLoader.json);
     }
 
-    public static loadDataFile(fileName: string) : any {
+    public static loadDataFile(fileName: string): Config {
         if (ConfigLoader.json === undefined) {
             ConfigLoader.loadJson();
         }

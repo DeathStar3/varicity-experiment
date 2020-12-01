@@ -1,20 +1,22 @@
-import { Link } from './../../model/entities/link.interface';
+import { Link3DFactory } from './../../common/3Dfactory/link3D.factory';
+import { Config } from './../../../model/entitiesImplems/config.model';
+import { Link } from '../../../model/entities/link.interface';
 import { Scene } from '@babylonjs/core';
-import { Building3D } from './building3D';
+import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
+import { Building3D } from '../../common/3Delements/building3D';
 import { District3D } from './district3D';
-import { EntitiesList } from './../../model/entitiesList';
-import { Element3D } from './element3D.interface';
+import { EntitiesList } from '../../../model/entitiesList';
 
 export class City3D {
 
-    config: any;
+    config: Config;
     scene: Scene;
 
     districts: District3D[] = [];
     buildings: Building3D[] = [];
     links: Link[] = [];
 
-    constructor(config: any, scene: Scene, entities: EntitiesList) {
+    constructor(config: Config, scene: Scene, entities: EntitiesList) {
         this.config = config;
         this.scene = scene;
         this.links = entities.links;
@@ -62,38 +64,37 @@ export class City3D {
             let dest = this.findSrcLink(l.target.fullName);
             let type = l.type;
             if (src != undefined && dest != undefined) {
-                src.link(dest, type);
-                dest.link(src, type);
-            }
-            else {
-                console.log("massive error help tasukete kudasai");
+                let link = Link3DFactory.createLink(src, dest, type, this.scene);
+                src.link(link);
+                dest.link(link);
+                // src.link(dest, type);
+                // dest.link(src, type);
             }
         });
 
         this.place();
     }
 
-    getSize(): number {
-        return this.districts[0].getSize();
+    getWidth(): number {
+        return this.districts.reduce<number>((prev, cur) => prev += cur.getWidth(), 0);
+    }
+
+    getLength(): number {
+        return this.getWidth();
     }
 
     place() {
         let d3elements: Element3D[] = [];
         d3elements = d3elements.concat(this.buildings, this.districts);
-        d3elements = d3elements.sort((a, b) => a.getSize() - b.getSize());
+        d3elements = d3elements.sort((a, b) => a.getWidth() - b.getWidth());
         let currentX: number = 0;
-        let currentZ: number = 0;
-        let nextZ = 0;
-        let size = this.getSize();
+        let size = this.getWidth();
         d3elements.forEach(e => {
-            e.place(currentX, currentZ);
-            currentX += size;
-            if (currentX === 0)
-                nextZ += e.getSize();
-            if (currentX >= size) {
-                currentX = 0;
-                currentZ = nextZ;
-            }
+            let eSize = e.getWidth();
+            // e.place(x + currentX, z + currentZ);
+            // currentX += eSize;
+            e.place(currentX + (eSize - size) / 2, 0);
+            currentX += eSize;
         });
     }
 

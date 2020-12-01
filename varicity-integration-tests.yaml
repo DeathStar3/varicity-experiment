@@ -22,9 +22,11 @@
 version: "3.6"
 
 services:
-  varicity_integration:
-    build:
-      context: .
-      dockerfile: docker/varicity_integration_tests/Dockerfile
-    image: varicity-integration-tests
-    container_name: varicity-integration-tests
+  visualization:
+    image: deathstar3/varicity:local
+    container_name: varicity
+    ports:
+      - 9090:9090
+    volumes:
+      - ../generated_visualizations/data:/symfinder_files
+    command: npm test

@@ -1,9 +1,10 @@
-import { Element3D } from './element3D.interface';
+import { Config } from './../../../model/entitiesImplems/config.model';
+import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
+import { Building3D } from '../../common/3Delements/building3D';
+import { District } from '../../../model/entities/district.interface';
 import { ActionManager, Color3, Color4, ExecuteCodeAction, StandardMaterial } from '@babylonjs/core';
-import { Building3D } from './building3D';
 import { Scene } from '@babylonjs/core';
 import { Mesh, MeshBuilder, Vector3 } from '@babylonjs/core';
-import { District } from '../../model/entities/district.interface';
 
 export class District3D implements Element3D {
     elementModel: District;
@@ -22,6 +23,8 @@ export class District3D implements Element3D {
     d3Buildings: Building3D[] = [];
     d3Districts: District3D[] = [];
 
+    status = false;
+
     constructor(scene: Scene, element: District, depth: number) {
         this.scene = scene;
         this.depth = depth;
@@ -30,12 +33,14 @@ export class District3D implements Element3D {
         // this.z = z;
     }
 
-    showAllLinks() {
+    showAllLinks(status?: boolean) {
+        if(status) this.status = status;
+        else this.status = !this.status;
         this.d3Buildings.forEach(b =>
-            b.showAllLinks()
+            b.showAllLinks(this.status)
         );
-        this.d3Districts.forEach(d => 
-            d.showAllLinks()
+        this.d3Districts.forEach(d =>
+            d.showAllLinks(this.status)
         );
     }
 
@@ -90,12 +95,16 @@ export class District3D implements Element3D {
         return currentWidth + placements.length * this.padding / 2;
     }
 
-    getSize(): number {
+    getWidth(): number {
         let modelsWithsSizes: number[] = [];
-        this.d3Districts.forEach(d => modelsWithsSizes.push(d.getSize()))
-        this.d3Buildings.forEach(b => modelsWithsSizes.push(b.getSize()))
+        this.d3Districts.forEach(d => modelsWithsSizes.push(d.getWidth()))
+        this.d3Buildings.forEach(b => modelsWithsSizes.push(b.getWidth()))
         // return (this.calculateSize(modelsWithsSizes.sort((a, b) => b - a))); // algo qui calcule size du district en fonction des éléments alain térieur
         return (this.calculateSize(modelsWithsSizes.sort((a, b) => b - a)) + this.padding); // algo qui calcule size du district en fonction des éléments alain térieur
+    }
+
+    getLength(): number {
+        return this.getWidth();
     }
 
     get(name: string): Building3D {
@@ -118,7 +127,7 @@ export class District3D implements Element3D {
         return building;
     }
 
-    build(config: any) {
+    build(config: Config) {
         this.elementModel.districts.forEach(d => {
             let d3District = new District3D(this.scene, d, this.depth + 1)
             this.d3Districts.push(d3District);
@@ -126,8 +135,8 @@ export class District3D implements Element3D {
         });
 
         this.elementModel.buildings.forEach(b => {
-            if(config.whitelist) {
-                if(!config.whitelist.includes(b.fullName)) {
+            if (config.blacklist) {
+                if (!config.blacklist.includes(b.fullName)) {
                     let d3Building = new Building3D(this.scene, b, this.depth);
                     this.d3Buildings.push(d3Building);
                     d3Building.build();
@@ -144,18 +153,18 @@ export class District3D implements Element3D {
     place(x: number, z: number): void {
         let d3elements: Element3D[] = []
         d3elements = d3elements.concat(this.d3Districts, this.d3Buildings);
-        d3elements = d3elements.sort((a, b) => b.getSize() - a.getSize());
+        d3elements = d3elements.sort((a, b) => b.getWidth() - a.getWidth());
         let currentX: number = 0;
         let currentZ: number = 0;
         let nextZ = 0;
-        this.size = this.getSize();
-        this.vector = new Vector3(x + this.size / 2 , 30 * this.depth - 15, z + this.size / 2);
+        this.size = this.getWidth();
+        this.vector = new Vector3(x, 30 * this.depth - 15, z);
         // this.vector = new Vector3(x + this.size / 2 + this.padding / 2, 30 * this.depth - 15, z + this.size / 2 + this.padding / 2);
 
         const s = this.size;
         const p = this.padding;
         d3elements.forEach(e => {
-            let eSize = e.getSize();
+            let eSize = e.getWidth();
             if (currentX + eSize + p > s) {
                 currentX = 0;
                 currentZ = nextZ;
@@ -166,12 +175,12 @@ export class District3D implements Element3D {
             }
             // e.place(x + currentX, z + currentZ);
             // currentX += eSize;
-            e.place(x + currentX + p / 2, z + currentZ + p / 2);
+            e.place(x + currentX + (p + eSize - s) / 2, z + currentZ + (p + eSize - s) / 2);
             currentX += eSize + p / 2;
         });
     }
 
-    render(config: any) {
+    render(config: Config) {
         this.d3Model = MeshBuilder.CreateBox(
             "package",
             {
@@ -186,16 +195,12 @@ export class District3D implements Element3D {
         if (config.district.colors.outline) {
             this.d3Model.renderOutline = true;
             this.d3Model.outlineColor = Color3.FromHexString(config.district.colors.outline);
-        } else {
-            console.log("outline not defined");
         }
 
         // if config -> district -> colors -> edges is defined
         if (config.district.colors.edges) {
             this.d3Model.outlineWidth = 0.1;
             this.d3Model.edgesColor = Color4.FromHexString(config.district.colors.edges);
-        } else {
-            console.log("edges not defined");
         }
 
         let mat = new StandardMaterial("District", this.scene);
@@ -205,8 +210,6 @@ export class District3D implements Element3D {
             mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[0].color);
             mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
             mat.specularColor = Color3.FromHexString("#000000");
-        } else {
-            console.log("faces not defined");
         }
         this.d3Model.material = mat;
 
