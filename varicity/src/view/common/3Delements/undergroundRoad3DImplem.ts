@@ -23,11 +23,12 @@ export class UndergroundRoad3DImplem implements Link3D {
     }
 
     render(config: Config): void {
-        const underGroundBuildingHeight = 4;
+        const underGroundBuildingHeight = 2;
+        const underGroundBuildingWidth = 0.5;
         this.mesh = MeshBuilder.CreateBox("box", {
-            width: this.src.getWidth() / 2,
+            width: underGroundBuildingWidth,
             height: underGroundBuildingHeight,
-            depth: this.src.getLength() / 2
+            depth: underGroundBuildingWidth
         }, this.scene);
 
         let midBox: Vector3 = this.src.bot.add(new Vector3(0, - underGroundBuildingHeight/2, 0))
@@ -38,15 +39,16 @@ export class UndergroundRoad3DImplem implements Link3D {
 
         pts.push(
             this.dest.bot,
-            botBox.add(new Vector3(- this.src.getWidth() / 4, 0, - this.src.getWidth() / 4)),
-            botBox.add(new Vector3(this.src.getWidth() / 4, 0, - this.src.getWidth() / 4)),
-            botBox.add(new Vector3(this.src.getWidth() / 4, 0, this.src.getWidth() / 4)),
-            botBox.add(new Vector3(- this.src.getWidth() / 4, 0, this.src.getWidth() / 4)),
-            botBox.add(new Vector3(- this.src.getWidth() / 4, 0, - this.src.getWidth() / 4)),
+            botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
+            botBox.add(new Vector3(underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
+            botBox.add(new Vector3(underGroundBuildingWidth / 2, 0, underGroundBuildingWidth / 2)),
+            botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, underGroundBuildingWidth / 2)),
+            botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
             this.dest.bot
         );
 
         this.polyhedron = MeshBuilder.CreateRibbon("ribbon", { pathArray: [pts], closeArray: true, closePath: false }, this.scene);
+        
 
         // this.polyhedron = MeshBuilder.CreatePolyhedron("polyhedron", {
         //     type: 5,
@@ -68,6 +70,7 @@ export class UndergroundRoad3DImplem implements Link3D {
                     mat.diffuseColor = Color3.FromHexString(c.color);
                     mat.emissiveColor = Color3.FromHexString(c.color);
                     mat.specularColor = Color3.FromHexString(c.color);
+                    mat.alpha = 0.5;
                     mat.backFaceCulling = false;
                     this.mesh.material = mat;
                     this.polyhedron.material = mat;
