@@ -1,5 +1,5 @@
-import {Config} from './../../../model/entitiesImplems/config.model';
-import {Element3D} from '../3Dinterfaces/element3D.interface';
+import { Config } from './../../../model/entitiesImplems/config.model';
+import { Element3D } from '../3Dinterfaces/element3D.interface';
 import {
     ActionManager,
     Color3,
@@ -41,7 +41,7 @@ export class Building3D implements Element3D {
     }
 
     showAllLinks(status?: boolean) {
-        if(status == undefined) this.links.forEach(l => l.display());
+        if (status == undefined) this.links.forEach(l => l.display());
         else this.links.forEach(l => l.display(status));
     }
 
@@ -70,8 +70,8 @@ export class Building3D implements Element3D {
     }
 
     place(x: number, z: number) {
-        let halfHeight = this.getHeight()/2;
-        this.center = new Vector3(x, halfHeight, z);
+        let halfHeight = this.getHeight() / 2;
+        this.center = new Vector3(x, halfHeight + this.depth * 30, z);
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
     }
@@ -200,8 +200,8 @@ export class Building3D implements Element3D {
                 diameterBottom: this.getWidth(),
                 height: this.getWidth()
             }, this.scene);
-            this.d3ModelPyramid.setPositionWithLocalVector(this.top.add(new Vector3(0, this.getWidth()/2, 0)));
-            this.d3ModelPyramid.rotate(new Vector3(0,1,0), Math.PI/4);
+            this.d3ModelPyramid.setPositionWithLocalVector(this.top.add(new Vector3(0, this.getWidth() / 2, 0)));
+            this.d3ModelPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
             this.d3ModelPyramid.material = mat;
             this.d3ModelPyramid.material.backFaceCulling = false;
         }
