@@ -38,8 +38,6 @@ jobs:
         run: docker build -f docker/neo4j/Dockerfile -t deathstar3/symfinder-neo4j:local .
       - name: Visualization unit tests
         run: ./run_visualization_tests.sh
-      - name: Varicity unit tests
-        run: chmod +x ./run_varicity_unit_tests.sh && ./run_varicity_unit_tests.sh
 
   integration_tests:
     runs-on: ubuntu-latest
@@ -49,8 +47,6 @@ jobs:
         run: ./run_integration_tests.sh
       - name: Acceptance tests on a pilot project
         run: ./run_acceptance_tests.sh sat4j
-      - name: Varicity integration tests
-        run: chmod +x ./run_varicity_integration_tests.sh && ./run_varicity_integration_tests.sh
 
   feature_mapping:
     runs-on: ubuntu-latest
@@ -62,3 +58,12 @@ jobs:
         run: ./sat4j-feature-mapping.sh --local
       - name: Mapping features from ArgoUML
         run: ./argouml-feature-mapping.sh --local
+
+  varcity_project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses actions/checkout@v2
+      - name: Varicity unit tests
+        run: chmod +x ./run_varicity_unit_tests.sh && ./run_varicity_unit_tests.sh
+      - name: Varicity integration tests
+        run: chmod +x ./run_varicity_integration_tests.sh && ./run_varicity_integration_tests.sh
