@@ -20,25 +20,25 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-set -e
+# set -e
 
-create_directory(){
-    if [[ ! -d "$1" ]]; then
-        echo "Creating $1 directory"
-        mkdir "$1"
-    else
-        echo "$1 directory already exists"
-    fi
-}
+# create_directory(){
+#     if [[ ! -d "$1" ]]; then
+#         echo "Creating $1 directory"
+#         mkdir "$1"
+#     else
+#         echo "$1 directory already exists"
+#     fi
+# }
 
-sed -i -e 's/experiments.yaml/test-experiments.yaml/g' symfinder.yaml
-create_directory resources
-cp -r test_projects/* resources/
+# sed -i -e 's/experiments.yaml/test-experiments.yaml/g' symfinder.yaml
+# create_directory resources
+# cp -r test_projects/* resources/
 
-docker run --rm --name test_projects_builder -v "$(pwd)/resources":/usr/src/mymaven -w /usr/src/mymaven maven:3-jdk-8 mvn clean compile clean
+# docker run --rm --name test_projects_builder -v "$(pwd)/resources":/usr/src/mymaven -w /usr/src/mymaven maven:3-jdk-8 mvn clean compile clean
 
-./build.sh -DskipTests
-./run.sh --local
+# ./build.sh -DskipTests
+# ./run.sh --local
 
 docker-compose -f varicity-integration-tests.yaml build
 

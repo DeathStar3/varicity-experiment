@@ -208,4 +208,27 @@ describe('parsing all tests projects with classe packages strategy', function() 
     let numberOfLinks = entities.links.length;
     expect(numberOfLinks).equal(1);
   });
+
+  it('parse vps_and_variants', function() {
+    let entities = new ClassesPackagesStrategy().parse('vps_and_variants');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(6);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(0);
+  });
+
+  it('parse vps_in_different_packages', function() {
+    let entities = new ClassesPackagesStrategy().parse('vps_in_different_packages');
+    let districts = entities.districts
+    let numberOfDistricts = districts.length;
+    expect(numberOfDistricts).equal(2);
+    let numberOfBuiildings = 0;
+    districts.forEach(d => {
+      numberOfBuiildings += d.buildings.length
+    })
+    numberOfBuiildings+= entities.buildings.length
+    // expect(numberOfBuiildings).equal(6);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(1);
+  });
 });
