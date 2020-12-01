@@ -55,7 +55,7 @@ describe('parsing all tests projects with classe packages strategy', function() 
 
   it('parse factory', function() {
     let entities = new ClassesPackagesStrategy().parse('factory');
-    let buildings = entities.buildings
+    let buildings = entities.buildings;
     let numberOfBuiildings = buildings.length;
     expect(numberOfBuiildings).equal(4);
     let numberOfLinks = entities.links.length;
@@ -64,7 +64,7 @@ describe('parsing all tests projects with classe packages strategy', function() 
 
   it('parse generic_decorator', function() {
     let entities = new ClassesPackagesStrategy().parse('generic_decorator');
-    let buildings = entities.buildings
+    let buildings = entities.buildings;
     let numberOfBuiildings = buildings.length;
     expect(numberOfBuiildings).equal(4);
     let numberOfLinks = entities.links.length;
@@ -73,7 +73,7 @@ describe('parsing all tests projects with classe packages strategy', function() 
 
   it('parse attribute_composition', function() {
     let entities = new ClassesPackagesStrategy().parse('attribute_composition');
-    let buildings = entities.buildings
+    let buildings = entities.buildings;
     let numberOfBuiildings = buildings.length;
     expect(numberOfBuiildings).equal(1);
     let numberOfLinks = entities.links.length;
@@ -82,7 +82,7 @@ describe('parsing all tests projects with classe packages strategy', function() 
 
   it('parse attribute_composition_factory', function() {
     let entities = new ClassesPackagesStrategy().parse('attribute_composition_factory');
-    let buildings = entities.buildings
+    let buildings = entities.buildings;
     let numberOfBuiildings = buildings.length;
     expect(numberOfBuiildings).equal(10);
     let numberOfLinks = entities.links.length;
@@ -116,7 +116,95 @@ describe('parsing all tests projects with classe packages strategy', function() 
     districts.forEach(d => {
       numberOfBuiildings += d.buildings.length
     })
+    numberOfBuiildings+= entities.buildings.length
+    expect(numberOfBuiildings).equal(2);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(1);
+  });
+
+  it('parse import_from_different_package_all_package_imported', function() {
+    let entities = new ClassesPackagesStrategy().parse('import_from_different_package_all_package_imported');
+    let districts = entities.districts
+    let numberOfDistricts = districts.length;
+    expect(numberOfDistricts).equal(1);
+    let numberOfBuiildings = 0;
+    districts.forEach(d => {
+      numberOfBuiildings += d.buildings.length
+    })
+    numberOfBuiildings+= entities.buildings.length
+    expect(numberOfBuiildings).equal(2);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(1);
+  });
+
+  it('parse inner_class', function() {
+    let entities = new ClassesPackagesStrategy().parse('inner_class');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(0);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(0);
+  });
+
+  it('parse inner_class_before_fields', function() {
+    let entities = new ClassesPackagesStrategy().parse('inner_class_before_fields');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(0);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(0);
+  });
+
+  it('parse metrics', function() {
+    let entities = new ClassesPackagesStrategy().parse('metrics');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(4);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(0);
+  });
+
+  it('parse multiple_patterns', function() {
+    let entities = new ClassesPackagesStrategy().parse('multiple_patterns');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(6);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(4);
+  });
+
+  it('parse multiple_vp', function() {
+    let entities = new ClassesPackagesStrategy().parse('multiple_vp');
+    let numberOfBuiildings = entities.buildings.length;
     expect(numberOfBuiildings).equal(1);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(0);
+  });
+
+  it('parse strategy', function() {
+    let entities = new ClassesPackagesStrategy().parse('strategy');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(3);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(2);
+  });
+
+  it('parse strategy_with_method_parameter', function() {
+    let entities = new ClassesPackagesStrategy().parse('strategy_with_method_parameter');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(3);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(2);
+  });
+
+  it('parse structures', function() {
+    let entities = new ClassesPackagesStrategy().parse('structures');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(3);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(0);
+  });
+
+  it('parse template', function() {
+    let entities = new ClassesPackagesStrategy().parse('template');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(2);
     let numberOfLinks = entities.links.length;
     expect(numberOfLinks).equal(1);
   });
