@@ -1,5 +1,5 @@
-import { Link3D } from './../3Dinterfaces/link3D.interface';
-import { Config } from './../../../model/entitiesImplems/config.model';
+import { Link3D } from '../3Dinterfaces/link3D.interface';
+import { Config } from '../../../model/entitiesImplems/config.model';
 import { Color3, Color4, MeshBuilder, Scene, Vector3 } from '@babylonjs/core';
 import { Curve3, LinesMesh } from '@babylonjs/core';
 import { Building3D } from './building3D';

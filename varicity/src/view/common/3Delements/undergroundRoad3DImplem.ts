@@ -1,5 +1,5 @@
-import { Link3D } from './../3Dinterfaces/link3D.interface';
-import { Config } from './../../../model/entitiesImplems/config.model';
+import { Link3D } from '../3Dinterfaces/link3D.interface';
+import { Config } from '../../../model/entitiesImplems/config.model';
 import { Color3, Color4, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3 } from '@babylonjs/core';
 import { Building3D } from './building3D';
 
@@ -23,7 +23,7 @@ export class UndergroundRoad3DImplem implements Link3D {
     }
 
     render(config: Config): void {
-        const underGroundBuildingHeight = 2;
+        const underGroundBuildingHeight = 0.5;
         const underGroundBuildingWidth = 0.5;
         this.mesh = MeshBuilder.CreateBox("box", {
             width: underGroundBuildingWidth,
@@ -70,7 +70,7 @@ export class UndergroundRoad3DImplem implements Link3D {
                     mat.diffuseColor = Color3.FromHexString(c.color);
                     mat.emissiveColor = Color3.FromHexString(c.color);
                     mat.specularColor = Color3.FromHexString(c.color);
-                    mat.alpha = 0.5;
+                    mat.alpha = 1;
                     mat.backFaceCulling = false;
                     this.mesh.material = mat;
                     this.polyhedron.material = mat;

@@ -165,6 +165,14 @@ export class Building3D implements Element3D {
                 let faces = config.building.colors.faces;
                 let done = false;
                 for (let face of faces) {
+                    if(face.name.charAt(0) === "!" && !this.elementModel.types.includes(face.name.substring(1))) {
+                        mat.ambientColor = Color3.FromHexString(face.color);
+                        mat.diffuseColor = Color3.FromHexString(face.color);
+                        mat.emissiveColor = Color3.FromHexString(face.color);
+                        mat.specularColor = Color3.FromHexString(face.color);
+                        done = true;
+                        break;
+                    }
                     for (let type of this.elementModel.types) {
                         if (type == face.name) {
                             mat.ambientColor = Color3.FromHexString(face.color);

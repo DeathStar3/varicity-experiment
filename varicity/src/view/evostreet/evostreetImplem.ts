@@ -1,8 +1,7 @@
-import { Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, Color3, Curve3, Color4 } from "@babylonjs/core";
-import { GradientMaterial } from '@babylonjs/materials';
-import { EntitiesList } from "../../model/entitiesList";
+import { Scene, ArcRotateCamera, Vector3, HemisphericLight } from "@babylonjs/core";
 import { City3D } from "./3Delements/city3D";
 import { SceneRenderer } from "../sceneRenderer";
+import {EntitiesList} from "../../model/entitiesList";
 
 export class EvostreetImplem extends SceneRenderer {
 
