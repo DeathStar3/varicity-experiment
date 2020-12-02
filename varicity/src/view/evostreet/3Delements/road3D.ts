@@ -68,7 +68,7 @@ export class Road3D extends Element3D {
             const sorted = elements.sort((a, b) => {
                 return (b.getWidth() - a.getWidth()) !== 0 ? b.getWidth() - a.getWidth() : (
                     (b.getLength() - a.getLength()) !== 0 ? b.getLength() - a.getLength() : (
-                        b.getVpHeight() - a.getVpHeight()
+                        b.getHeight() - a.getHeight()
                     )
                 );
             });
@@ -134,6 +134,16 @@ export class Road3D extends Element3D {
         ) + (this.getVpWidth());
     }
 
+    getHeight(): number {
+        return Math.max(
+            this.leftVPs.reduce((a, b) => Math.max(a, b.getHeight()), 0),
+            this.rightVPs.reduce((a, b) => Math.max(a, b.getHeight()), 0),
+            this.rightVariants.reduce((a, b) => Math.max(a, b.getHeight()), 0),
+            this.leftVariants.reduce((a, b) => Math.max(a, b.getHeight()), 0),
+            (this.vp === undefined ? 0 : this.vp.getHeight())
+        )
+    }
+
     get(name: string): Building3D {
         let building: Building3D = undefined;
         const arrConcat = this.leftVariants.concat(this.rightVariants);
@@ -148,7 +158,7 @@ export class Road3D extends Element3D {
                 let b = d.get(name);
                 if (b != undefined) {
                     return building = b;
-                };
+                }
             }
         } else {
             return building;
@@ -273,7 +283,7 @@ export class Road3D extends Element3D {
 
     render(config: Config) {
         this.d3Model = MeshBuilder.CreateBox(
-            "package",
+            this.elementModel.name,
             {
                 height: 0.001,
                 width: (this.orientationX == 0 ? this.roadWidth : this.getRoadLength()),
