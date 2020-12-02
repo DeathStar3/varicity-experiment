@@ -65,6 +65,7 @@ export class ConfigController {
                     let i = this.createInput("", parent);   // we create another empty node to be able to add to the config file
 
                     i.setAttribute("previous", "");
+                    i.style.display = "block";
                     i.addEventListener("keyup", (ke) => this.stringArrayListener(ke, i, parent));
                 }
 
