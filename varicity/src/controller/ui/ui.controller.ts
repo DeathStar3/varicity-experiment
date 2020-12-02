@@ -21,7 +21,7 @@ export class UIController {
 
     }
 
-    public static changeConfig(arr: string[], value: string| [string, string] | Color) {
+    public static changeConfig(arr: string[], value: string | [string, string] | Color) {
         Config.alterField(this.config, arr, value);
         if (this.scene) {
             this.scene = this.scene.rerender(this.config);
@@ -30,6 +30,5 @@ export class UIController {
         else {
             console.log("not initialized");
         }
-        console.log(this.config);
     }
 }

@@ -51,8 +51,30 @@ export class ConfigController {
         return arr.reverse();
     }
 
+    private static stringArrayListener(ke: KeyboardEvent, input: HTMLInputElement, parent: HTMLElement) {
+        let prev = input.getAttribute("previous");
+        if (ke.key == "Enter") {
+            if (!(input.value == prev)) { // prevents entering if the user hasn't changed the input
+                let arr = this.findValidParents(input);
+                UIController.changeConfig(arr, [prev, input.value]);
+
+                if (input.value == "" && prev != "") { // if current is empty when prev wasn't
+                    parent.removeChild(input); // then delete the node
+
+                } else if (input.value != "" && prev == "") { // else if prev is empty and current isn't
+                    let i = this.createInput("", parent);   // we create another empty node to be able to add to the config file
+
+                    i.setAttribute("previous", "");
+                    i.addEventListener("keyup", (ke) => this.stringArrayListener(ke, i, parent));
+                }
+
+                input.setAttribute("previous", input.value); // previous value becomes the current
+            }
+        }
+    }
+
     private static populateChildren(config: any, parent: HTMLElement): void {
-        if (config instanceof Array) {
+        if (Array.isArray(config)) {
             for (let obj of config) {
                 if (Config.instanceOfColor(obj)) {
                     let node = this.createKey(obj.name, parent);
@@ -71,22 +93,12 @@ export class ConfigController {
             }
         }
         else {
-            if (!(config instanceof Object)) {
+            if (!(config instanceof Object)) { // not [] nor object
                 let input = this.createInput(config, parent);
 
                 let prev = input.value;
-                input.addEventListener("keyup", (ke) => {
-                    if (ke.key == "Enter") {
-                        if (input.value == "" && prev != "") {
-                            parent.removeChild(input);
-
-                        }
-                        let arr = this.findValidParents(input);
-                        UIController.changeConfig(arr, [prev, input.value]);
-                        prev = input.value; // previous value becomes the current
-
-                    }
-                });
+                input.setAttribute("previous", prev);
+                input.addEventListener("keyup", (ke) => this.stringArrayListener(ke, input, parent));
             }
             else {
                 for (let key in config) {
