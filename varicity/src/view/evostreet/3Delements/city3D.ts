@@ -117,9 +117,9 @@ export class City3D {
         });
 
         let mat = new StandardMaterial("FloorMat", this.scene);
-        mat.ambientColor = Color3.FromHexString("#555555");
-        mat.diffuseColor = Color3.FromHexString("#555555");
-        mat.emissiveColor = Color3.FromHexString("#555555");
+        mat.ambientColor = Color3.FromHexString("#222222");
+        mat.diffuseColor = Color3.FromHexString("#222222");
+        mat.emissiveColor = Color3.FromHexString("#222222");
         mat.specularColor = Color3.FromHexString("#000000");
         mat.alpha = 0.3;
         this.floor.material = mat;

@@ -46,7 +46,7 @@ export class UndergroundRoad3DImplem implements Link3D {
         }, this.scene);
         this.roadMesh.setPositionWithLocalVector(new Vector3(
             botBox.x + (this.dest.bot.x - botBox.x)/2,
-            -underGroundBuildingHeight/2,
+            botBox.y + (this.dest.bot.y - botBox.y)/2,
             botBox.z + (this.dest.bot.z - botBox.z)/2
         ));
 

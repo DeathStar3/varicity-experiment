@@ -3,7 +3,7 @@ import {Matrix, Mesh, Quaternion, Vector3} from "@babylonjs/core";
 export abstract class D3Utils {
     static facePoint(rotatingObject: Mesh, pointToRotateTo: Vector3) {
         // a directional vector from one object to the other one
-        var direction = pointToRotateTo.subtract(rotatingObject.position);
+        const direction = pointToRotateTo.subtract(rotatingObject.position);
 
         if (!rotatingObject.rotationQuaternion) {
             rotatingObject.rotationQuaternion = Quaternion.Identity();
