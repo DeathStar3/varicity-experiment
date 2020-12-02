@@ -8,7 +8,7 @@ building:
     # edges: "#a569bd" # light purple
     faces: # ordered by importance, descending : in case of conflict, the first color to match will be displayed
       - name: "!HOTSPOT"
-        color: "#222222"
+        color: "#555555"
       - name: "VP"
         color: "#FF6F33"
       - name: "STRATEGY"
