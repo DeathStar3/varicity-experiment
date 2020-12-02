@@ -44,13 +44,20 @@ export class Road3D implements Element3D {
     private spreadElements(elements: Element3D[], left: Element3D[], right: Element3D[]): void {
         if (elements.length > 0) {
             const sorted = elements.sort((a, b) => b.getWidth() - a.getWidth());
-            let i = 0;
-            while (i < sorted.length && this.sumOfWidths(sorted) / 2 > this.sumOfWidths(left)) {
-                left.push(sorted[i]);
-                i++;
-            }
-            sorted.slice(i).forEach(e => {
-                right.push(e);
+            // let i = 0;
+            // while (i < sorted.length && this.sumOfWidths(sorted) / 2 > this.sumOfWidths(left)) {
+            //     left.push(sorted[i]);
+            //     i++;
+            // }
+            // sorted.slice(i).forEach(e => {
+            //     right.push(e);
+            // });
+            sorted.forEach((e, i) => {
+                if (i % 2 === 0) {
+                    left.push(e);
+                } else {
+                    right.push(e);
+                }
             });
         }
     }
