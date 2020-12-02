@@ -12,7 +12,7 @@
     height: 50%;
 }
 
-#project_selector {
+/* #project_selector {
     position: absolute;
     left: 20%;
     top: 2%;
@@ -32,7 +32,7 @@
 #evostreet {
     float: right;
     width: 50%;
-}
+} */
 
 #main {
     width: 100%;

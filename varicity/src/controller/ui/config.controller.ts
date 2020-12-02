@@ -3,11 +3,12 @@ import { Config } from './../../model/entitiesImplems/config.model';
 
 export class ConfigController {
     public static createConfigFolder(config: Config): void {
-        let node = document.getElementById("console");
-        let configNode = document.createElement("div");
-        configNode.id = "config";
+        // let node = document.getElementById("console");
+        // let configNode = document.createElement("div");
+        let configNode = document.getElementById("config");
+        // configNode.id = "config";
         configNode.innerHTML = "Config parameters";
-        node.appendChild(configNode);
+        // node.appendChild(configNode);
 
         this.populateChildren(config, configNode);
 

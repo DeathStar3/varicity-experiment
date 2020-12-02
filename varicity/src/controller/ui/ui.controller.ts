@@ -2,6 +2,7 @@ import { Color } from '../../model/entities/config.interface';
 import { Config } from '../../model/entitiesImplems/config.model';
 import { SceneRenderer } from '../../view/sceneRenderer';
 import { ConfigController } from './config.controller';
+import { ProjectController } from './project-selector.controller';
 
 export class UIController {
 
@@ -12,7 +13,11 @@ export class UIController {
 
     }
 
-    public static createRightSideConsole(config: Config): void {
+    public static createProjectSelector(keys: string[]): void {
+        ProjectController.createProjectSelector(keys);
+    }
+
+    public static createConfig(config: Config): void {
         this.config = config;
         ConfigController.createConfigFolder(config);
     }
