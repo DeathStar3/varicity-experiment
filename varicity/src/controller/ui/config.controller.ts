@@ -66,19 +66,25 @@ export class ConfigController {
                     });
                 } else this.populateChildren(obj, parent); // it's a string
             }
+            if (parent.getAttribute("value") == "api_classes" || parent.getAttribute("value") == "blacklist") {
+                this.populateChildren("", parent);
+            }
         }
         else {
             if (!(config instanceof Object)) {
-                console.log(config);
                 let input = this.createInput(config, parent);
 
+                let prev = input.value;
                 input.addEventListener("keyup", (ke) => {
                     if (ke.key == "Enter") {
-                        if (input.value == "") {
+                        if (input.value == "" && prev != "") {
                             parent.removeChild(input);
-                        } else {
-                            console.log(input.value);
+
                         }
+                        let arr = this.findValidParents(input);
+                        UIController.changeConfig(arr, [prev, input.value]);
+                        prev = input.value; // previous value becomes the current
+
                     }
                 });
             }

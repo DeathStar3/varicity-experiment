@@ -31,7 +31,7 @@ export class Config implements ConfigInterface {
             object.outlines && Array.isArray(object.outlines) && object.outlines.every((v: any) => this.instanceOfColor(v));
     }
 
-    public static alterField(config: Config, fields: string[], value: string | Color): void {
+    public static alterField(config: Config, fields: string[], value: string | [string, string] | Color): void {
         let cur = config;
         if (fields.includes("force_color")) {
             if (typeof value === "string") {
@@ -40,7 +40,7 @@ export class Config implements ConfigInterface {
             }
             else throw new Error('Tried to assign Color object to string in field force_color.');
         } else {
-            if(fields.includes("vp_building")) {
+            if (fields.includes("vp_building")) {
                 if (typeof value === "string") {
                     config.vp_building.color = value;
                     return;
@@ -56,7 +56,17 @@ export class Config implements ConfigInterface {
                 let obj = cur.find(v => v.name == value.name);
                 obj.color = value.color;
             } else { // value is prob a string
-                cur.push(value);
+                if (cur.some(v => v == value[0])) { // already exists
+                    let index = cur.findIndex(v => v == value[0])
+                    if (value[1] == "") { // prev value was defined, current wasn't, therefore we delete entry
+                        cur.splice(index, 1);
+                    }
+                    else { // prev and current are defined, therefore we change value
+                        cur[index] = value[1];
+                    }
+                } else { // doesn't exist, so we push the new value
+                    cur.push(value[1]);
+                }
             }
         }
     }

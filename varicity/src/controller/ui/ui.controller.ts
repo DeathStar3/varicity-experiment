@@ -21,7 +21,7 @@ export class UIController {
 
     }
 
-    public static changeConfig(arr: string[], value: string | Color) {
+    public static changeConfig(arr: string[], value: string| [string, string] | Color) {
         Config.alterField(this.config, arr, value);
         if (this.scene) {
             this.scene = this.scene.rerender(this.config);
