@@ -48,11 +48,11 @@ export class Road3D extends Element3D {
             // sorted.slice(i).forEach(e => {
             //     right.push(e);
             // });
-            sorted.forEach((e, i) => {
-                if (i % 2 === 0) {
-                    left.push(e);
-                } else {
+            sorted.forEach((e) => {
+                if (this.sumOfWidths(left) > this.sumOfWidths(right)) {
                     right.push(e);
+                } else {
+                    left.push(e);
                 }
             });
         }
