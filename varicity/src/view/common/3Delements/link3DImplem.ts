@@ -68,7 +68,6 @@ export class Link3DImplem implements Link3D {
 
     display(force?: boolean) {
         if (force != undefined) this.force = force;
-        console.log(!this.force && this.mesh.visibility == 1);
         if (!this.force && this.mesh.visibility == 1) {
             this.mesh.visibility = 0;
         } else 

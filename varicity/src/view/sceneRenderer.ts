@@ -1,6 +1,5 @@
 import { Config } from './../model/entitiesImplems/config.model';
 import { Scene, Engine, ArcRotateCamera, HemisphericLight, Vector3 } from "@babylonjs/core";
-import { ConfigLoader } from "../controller/parser/configLoader";
 import { EntitiesList } from "../model/entitiesList";
 
 export abstract class SceneRenderer {
@@ -10,16 +9,17 @@ export abstract class SceneRenderer {
     config: Config;
     camera: ArcRotateCamera;
     light: HemisphericLight;
+    entitiesList: EntitiesList;
 
     canvas: HTMLCanvasElement;
 
-    constructor() {
+    constructor(config: Config, entitiesList: EntitiesList) {
         // create the canvas html element and attach it to the webpage
         this.canvas = document.createElement("canvas");
-        this.canvas.style.width = "100%";
-        this.canvas.style.height = "100%";
+        // this.canvas.style.width = "100%";
+        // this.canvas.style.height = "100%";
         this.canvas.id = "gameCanvas";
-        document.body.appendChild(this.canvas);
+        document.getElementById("main").appendChild(this.canvas);
 
         // initialize babylon scene and engine
         this.engine = new Engine(this.canvas, true);
@@ -29,8 +29,10 @@ export abstract class SceneRenderer {
         this.camera.attachControl(this.canvas, true);
         this.camera.panningSensibility = 10;
         this.light = new HemisphericLight("light1", new Vector3(0, 1, 0), this.scene);
+        this.entitiesList = entitiesList;
 
-        this.config = ConfigLoader.loadDataFile("config");
+        this.config = config;
+        // this.config = ConfigLoader.loadDataFile("config");
 
         document.getElementById("reset_camera").addEventListener("click", () => {
             this.camera.position = Vector3.Zero();
@@ -63,5 +65,16 @@ export abstract class SceneRenderer {
         this.canvas.remove();
     }
 
-    abstract buildScene(entitiesList: EntitiesList): void;
+    abstract rerender(config: Config): SceneRenderer; //{
+        // this.config = config;
+        // this.scene.dispose();
+        // this.engine.dispose();
+        // this.engine = new Engine(this.canvas, true);
+        // this.scene = new Scene(this.engine);
+        // this.buildScene();
+    // }
+
+    abstract buildScene(): void;
+
+    abstract render(): void;
 }
