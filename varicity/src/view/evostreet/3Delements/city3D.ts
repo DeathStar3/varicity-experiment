@@ -1,7 +1,7 @@
 import { Config } from './../../../model/entitiesImplems/config.model';
 import { VPVariantsImplem } from './../../../model/entitiesImplems/vpVariantsImplem.model';
 import { Link } from '../../../model/entities/link.interface';
-import { Scene } from '@babylonjs/core';
+import {Color3, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3} from '@babylonjs/core';
 import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
 import { Building3D } from '../../common/3Delements/building3D';
 import { Road3D } from './road3D';
@@ -17,6 +17,8 @@ export class City3D {
     roads: Road3D[] = [];
     buildings: Building3D[] = [];
     links: Link[] = [];
+
+    floor: Mesh;
 
     constructor(config: Config, scene: Scene, entities: EntitiesList) {
         this.config = config;
@@ -86,17 +88,24 @@ export class City3D {
                 //b.link(value.original, "DUPLICATES");
             }
         }
+
+        this.floor = MeshBuilder.CreateBox(
+            "cityFloor",
+            {
+                height: 0.01,
+                width: this.getSize(),
+                depth: this.getSize()
+            },
+            this.scene);
     }
 
     getSize(): number {
-        return this.roads[0].getWidth();
+        return Math.max(this.roads[0].getWidth(), this.roads[0].getLength());
     }
 
     place() {
-        let d3elements: Element3D[] = [];
-        d3elements = d3elements.concat(this.buildings, this.roads);
-        d3elements = d3elements.sort((a, b) => a.getWidth() - b.getWidth());
         this.roads[0].place(0, 0, 1, 0);
+        this.floor.setPositionWithLocalVector(new Vector3(this.getSize()/2, -0.01, 0));
     }
 
     render() {
@@ -105,7 +114,15 @@ export class City3D {
         });
         this.buildings.forEach(b => {
             b.render(this.config);
-        })
+        });
+
+        let mat = new StandardMaterial("FloorMat", this.scene);
+        mat.ambientColor = Color3.FromHexString("#555555");
+        mat.diffuseColor = Color3.FromHexString("#555555");
+        mat.emissiveColor = Color3.FromHexString("#555555");
+        mat.specularColor = Color3.FromHexString("#555555");
+        mat.alpha = 0.3;
+        this.floor.material = mat;
     }
 
 }

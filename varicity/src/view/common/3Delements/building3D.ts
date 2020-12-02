@@ -154,7 +154,7 @@ export class Building3D implements Element3D {
             this.d3Model.edgesColor = new Color4(1, 0, 0);
         }
 
-        var mat = new StandardMaterial(this.elementModel.name + "Mat", this.scene);
+        let mat = new StandardMaterial(this.elementModel.name + "Mat", this.scene);
         if (config.force_color) {
             mat.ambientColor = Color3.FromHexString(config.force_color);
             mat.diffuseColor = Color3.FromHexString(config.force_color);
