@@ -30,7 +30,7 @@ export class VPVariantsStrategy {
             node.nbConstructorVariants = cVar;
 
             node.types = n.types;
-            if (config.api_classes) {
+            if (config.api_classes !== undefined) {
                 if (config.api_classes.includes(node.name)) {
                     console.log("API class: " + n.name);
                     node.types.push("API");
@@ -64,33 +64,35 @@ export class VPVariantsStrategy {
         })
         result.links = inheritancesList;
 
-        data.allnodes.filter(
-            nod => config.api_classes.includes(nod.name)
-                && !nodesList.map(no => no.name).includes(nod.name)
-        ).forEach(n => {
-            console.log("API class: " + n.name);
-            let node = new NodeElement(n.name);
-            node.nbMethodVariants = (n.methodVariants === undefined) ? 0 : n.methodVariants;
+        if (config.api_classes !== undefined){
+            data.allnodes.filter(
+                nod => config.api_classes.includes(nod.name)
+                    && !nodesList.map(no => no.name).includes(nod.name)
+            ).forEach(n => {
+                console.log("API class: " + n.name);
+                let node = new NodeElement(n.name);
+                node.nbMethodVariants = (n.methodVariants === undefined) ? 0 : n.methodVariants;
 
-            const attr = n.attributes;
-            let nbAttributes = 0;
-            attr.forEach(a => {
-                nbAttributes += a.number;
-            })
-            const cVar = (n.constructorVariants === undefined) ? 0 : n.constructorVariants;
-            node.nbAttributes = nbAttributes;
-            node.nbConstructorVariants = cVar;
+                const attr = n.attributes;
+                let nbAttributes = 0;
+                attr.forEach(a => {
+                    nbAttributes += a.number;
+                })
+                const cVar = (n.constructorVariants === undefined) ? 0 : n.constructorVariants;
+                node.nbAttributes = nbAttributes;
+                node.nbConstructorVariants = cVar;
 
-            node.types = n.types;
-            node.types.push("API");
-            result.districts[0].addBuilding(new ClassImplem(
-                node.name,
-                node.nbMethodVariants,
-                node.nbConstructorVariants,
-                node.types,
-                node.name)
-            )
-        });
+                node.types = n.types;
+                node.types.push("API");
+                result.districts[0].addBuilding(new ClassImplem(
+                    node.name,
+                    node.nbMethodVariants,
+                    node.nbConstructorVariants,
+                    node.types,
+                    node.name)
+                )
+            });
+        }
 
         console.log("Result of parsing: ", result);
 
