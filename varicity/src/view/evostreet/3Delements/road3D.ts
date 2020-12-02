@@ -37,9 +37,26 @@ export class Road3D extends Element3D {
         }
     }
 
-    private spreadElements(elements: Element3D[], left: Element3D[], right: Element3D[]): void {
+    private spreadElementsVariants(elements: Building3D[], left: Building3D[], right: Building3D[]): void {
         if (elements.length > 0) {
-            const sorted = elements.sort((a, b) => b.getWidth() - a.getWidth());
+            const sorted = elements.sort((a, b) => {
+                return (b.getWidth() - a.getWidth()) !== 0 ? b.getWidth() - a.getWidth() : (
+                    b.getHeight() - a.getHeight()
+                );
+            });
+            sorted.forEach((e) => {
+                if (this.sumOfWidths(left) > this.sumOfWidths(right)) {
+                    right.push(e);
+                } else {
+                    left.push(e);
+                }
+            });
+        }
+    }
+
+    private spreadElementsVP(elements: Road3D[], left: Road3D[], right: Road3D[]): void {
+        if (elements.length > 0) {
+            //const sorted = elements.sort((a, b) => b.getWidth() - a.getWidth());
             // let i = 0;
             // while (i < sorted.length && this.sumOfWidths(sorted) / 2 > this.sumOfWidths(left)) {
             //     left.push(sorted[i]);
@@ -48,6 +65,13 @@ export class Road3D extends Element3D {
             // sorted.slice(i).forEach(e => {
             //     right.push(e);
             // });
+            const sorted = elements.sort((a, b) => {
+                return (b.getWidth() - a.getWidth()) !== 0 ? b.getWidth() - a.getWidth() : (
+                    (b.getLength() - a.getLength()) !== 0 ? b.getLength() - a.getLength() : (
+                        b.getVpHeight() - a.getVpHeight()
+                    )
+                );
+            });
             sorted.forEach((e) => {
                 if (this.sumOfWidths(left) > this.sumOfWidths(right)) {
                     right.push(e);
@@ -86,6 +110,10 @@ export class Road3D extends Element3D {
 
     getVpWidth(): number {
         return this.vp === undefined ? 0 : this.vp.getWidth();
+    }
+
+    getVpHeight(): number {
+        return this.vp === undefined ? 0 : this.vp.getHeight();
     }
 
     getVpPadding(): number {
@@ -174,8 +202,8 @@ export class Road3D extends Element3D {
             }
         });
 
-        this.spreadElements(buildings3D, this.leftVariants, this.rightVariants);
-        this.spreadElements(roads3D, this.leftVPs, this.rightVPs);
+        this.spreadElementsVariants(buildings3D, this.leftVariants, this.rightVariants);
+        this.spreadElementsVP(roads3D, this.leftVPs, this.rightVPs);
     }
 
     getRoadLength(): number {
