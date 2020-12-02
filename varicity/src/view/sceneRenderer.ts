@@ -1,6 +1,5 @@
 import { Config } from './../model/entitiesImplems/config.model';
 import { Scene, Engine, ArcRotateCamera, HemisphericLight, Vector3 } from "@babylonjs/core";
-import { ConfigLoader } from "../controller/parser/configLoader";
 import { EntitiesList } from "../model/entitiesList";
 
 export abstract class SceneRenderer {
@@ -10,10 +9,11 @@ export abstract class SceneRenderer {
     config: Config;
     camera: ArcRotateCamera;
     light: HemisphericLight;
+    entitiesList: EntitiesList;
 
     canvas: HTMLCanvasElement;
 
-    constructor(config: Config) {
+    constructor(config: Config, entitiesList: EntitiesList) {
         // create the canvas html element and attach it to the webpage
         this.canvas = document.createElement("canvas");
         // this.canvas.style.width = "100%";
@@ -29,6 +29,7 @@ export abstract class SceneRenderer {
         this.camera.attachControl(this.canvas, true);
         this.camera.panningSensibility = 10;
         this.light = new HemisphericLight("light1", new Vector3(0, 1, 0), this.scene);
+        this.entitiesList = entitiesList;
 
         this.config = config;
         // this.config = ConfigLoader.loadDataFile("config");
@@ -64,5 +65,16 @@ export abstract class SceneRenderer {
         this.canvas.remove();
     }
 
-    abstract buildScene(entitiesList: EntitiesList): void;
+    abstract rerender(config: Config): SceneRenderer; //{
+        // this.config = config;
+        // this.scene.dispose();
+        // this.engine.dispose();
+        // this.engine = new Engine(this.canvas, true);
+        // this.scene = new Scene(this.engine);
+        // this.buildScene();
+    // }
+
+    abstract buildScene(): void;
+
+    abstract render(): void;
 }

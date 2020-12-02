@@ -29,17 +29,17 @@ class Main {
             // projets en vision evostreet
             childEvo.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
-                UIController.scene = new EvostreetImplem(config);
                 let entities = new VPVariantsStrategy().parse(key);
-                UIController.scene.buildScene(entities);
+                UIController.scene = new EvostreetImplem(config, entities);
+                UIController.scene.buildScene();
             });
 
             // projets en vision metricity
             childMetri.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
-                UIController.scene = new MetricityImplem(config);
                 let entities = new ClassesPackagesStrategy().parse(key);
-                UIController.scene.buildScene(entities);
+                UIController.scene = new MetricityImplem(config, entities);
+                UIController.scene.buildScene();
             });
 
             evoParent.appendChild(childEvo);

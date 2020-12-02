@@ -1,10 +1,11 @@
+import { UIController } from './ui.controller';
 import { Config } from './../../model/entitiesImplems/config.model';
 
 export class ConfigController {
     public static createConfigFolder(config: Config): void {
         let node = document.getElementById("console");
         let configNode = document.createElement("div");
-        configNode.id = "overflowable";
+        configNode.id = "config";
         configNode.innerHTML = "Config parameters";
         node.appendChild(configNode);
 
@@ -28,6 +29,7 @@ export class ConfigController {
     private static createKey(key: string, parent: HTMLElement): HTMLElement {
         let node = document.createElement("div");
         node.innerHTML = key;
+        node.setAttribute("value", key);
         parent.appendChild(node);
         return node;
     }
@@ -39,14 +41,30 @@ export class ConfigController {
         return input;
     }
 
+    private static findValidParents(node: HTMLElement): string[] {
+        let p = node.parentElement
+        let arr = [p.getAttribute("value")];
+        while (p.parentElement.id != "config") {
+            p = p.parentElement;
+            arr.push(p.getAttribute("value"));
+        }
+        return arr.reverse();
+    }
+
     private static populateChildren(config: any, parent: HTMLElement): void {
         if (config instanceof Array) {
             for (let obj of config) {
-                if (typeof obj === "string") this.populateChildren(obj, parent);
-                else {
-                    let node = this.createKey(obj['name'], parent);
-                    let input = this.createInput(obj['color'], node);
-                }
+                if (Config.instanceOfColor(obj)) {
+                    let node = this.createKey(obj.name, parent);
+                    let input = this.createInput(obj.color, node);
+
+                    input.addEventListener("keyup", (ke) => {
+                        if (ke.key == "Enter") {
+                            let arr = this.findValidParents(node);
+                            UIController.changeConfig(arr, { name: node.getAttribute("value"), color: input.value });
+                        }
+                    });
+                } else this.populateChildren(obj, parent); // it's a string
             }
         }
         else {
@@ -62,7 +80,7 @@ export class ConfigController {
                             console.log(input.value);
                         }
                     }
-                })
+                });
             }
             else {
                 for (let key in config) {
