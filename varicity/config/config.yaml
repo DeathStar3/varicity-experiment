@@ -24,7 +24,7 @@ building:
 
     edges:
       - name: "API"
-        color: "#FFFFFF"
+        color: "#000000"
 
     outlines:
 #      - name: "API"

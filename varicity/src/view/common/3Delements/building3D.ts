@@ -32,7 +32,7 @@ export class Building3D extends Element3D {
     heightScale = 0.3;
     outlineWidth = 0.05;
 
-    edgesWidth: number = 4.0;
+    edgesWidth: number = 7.0;
 
     constructor(scene: Scene, buildingElement: Building, depth: number) {
         super(scene);
