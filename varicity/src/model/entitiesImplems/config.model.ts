@@ -31,21 +31,17 @@ export class Config implements ConfigInterface {
             object.outlines && Array.isArray(object.outlines) && object.outlines.every((v: any) => this.instanceOfColor(v));
     }
 
-    public static alterField(config: Config, fields: string[], value: string | [string, string] | Color): void {
+    public static alterField(config: Config, fields: string[], value: [string, string] | Color): void { // for the tuple : [prev value, cur value]
         let cur = config;
-        if (fields.includes("force_color")) {
-            if (typeof value === "string") {
-                config.force_color = value;
+        if (fields.includes("vp_building")) {
+            if (Array.isArray(value)) {
+                config.vp_building.color = value[1];
                 return;
             }
-            else throw new Error('Tried to assign Color object to string in field force_color.');
-        } else {
-            if (fields.includes("vp_building")) {
-                if (typeof value === "string") {
-                    config.vp_building.color = value;
-                    return;
+            else {
+                if(this.instanceOfColor(value)) {
+                    throw new Error('Tried to assign Color ' + value + ' object to string in field vp_building.color.');
                 }
-                else throw new Error('Tried to assign Color object to string in field vp_building.color.');
             }
         }
         for (let key of fields) {
