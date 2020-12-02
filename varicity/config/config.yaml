@@ -57,3 +57,4 @@ blacklist: #all classes that must not appear
 
 api_classes: #all API classes
   - "org.jfree.chart.JFreeChart"
+  - "org.jfree.chart.plot.PlotState"

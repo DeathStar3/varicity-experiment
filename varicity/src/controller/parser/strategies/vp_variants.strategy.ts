@@ -94,6 +94,8 @@ export class VPVariantsStrategy {
             });
         }
 
+        //console.log(data.allnodes.filter(nod => !nodesList.map(no => no.name).includes(nod.name)).map(n => n.name));
+
         console.log("Result of parsing: ", result);
 
         return result;

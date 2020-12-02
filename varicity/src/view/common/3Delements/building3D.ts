@@ -177,7 +177,7 @@ export class Building3D extends Element3D {
                 diameterBottom: this.getWidth(),
                 height: this.getWidth()
             }, this.scene);
-            this.d3ModelPyramid.setPositionWithLocalVector(this.top.add(new Vector3(0, this.getWidth() / 2, 0)));
+            this.d3ModelPyramid.setPositionWithLocalVector(this.top.add(new Vector3(0, this.getWidth() / 2 + this.edgesWidth/120, 0)));
             this.d3ModelPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
             this.d3ModelPyramid.material = mat;
             this.d3ModelPyramid.material.backFaceCulling = false;
