@@ -7,7 +7,8 @@ const appDirectory = fs.realpathSync(process.cwd());
 module.exports = {
     entry: {
       'main': path.resolve(appDirectory, "src/main.ts"),
-      'parserTest':'./tests/parser.test.ts'
+      'parserTest':'./tests/parser.test.ts',
+      'parserVPTest':'./tests/parserVP.test.ts'
     },
     output: {
       filename: '[name].bundle.js',

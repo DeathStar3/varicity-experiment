@@ -39,7 +39,8 @@ module.exports = function (config) {
 
       // list of files / patterns to load in the browser
       files: [
-          'dist/parserTest.bundle.js'
+          'dist/parserTest.bundle.js',
+          'dist/parserVPTest.bundle.js'
       ],
 
       // list of files to exclude
