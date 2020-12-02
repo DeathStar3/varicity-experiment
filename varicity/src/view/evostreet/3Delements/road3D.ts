@@ -6,7 +6,7 @@ import { Scene } from '@babylonjs/core';
 import { Mesh } from '@babylonjs/core';
 import { VPVariantsImplem } from "../../../model/entitiesImplems/vpVariantsImplem.model";
 
-export class Road3D implements Element3D {
+export class Road3D extends Element3D {
     padding: number = 0;
 
     elementModel: VPVariantsImplem;
@@ -19,10 +19,6 @@ export class Road3D implements Element3D {
 
     vp: Building3D;
 
-    scene: Scene;
-
-    d3Model: Mesh;
-
     vector: Vector3;
 
     orientationX: number;
@@ -33,7 +29,7 @@ export class Road3D implements Element3D {
     status: boolean = false;
 
     constructor(scene: Scene, vpElmt: VPVariantsImplem) {
-        this.scene = scene;
+        super(scene);
 
         this.elementModel = vpElmt;
         if (vpElmt.vp) {
@@ -257,18 +253,6 @@ export class Road3D implements Element3D {
             },
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.vector);
-
-        // if config -> district -> colors -> outline is defined
-        if (config.district.colors.outline) {
-            this.d3Model.renderOutline = true;
-            this.d3Model.outlineColor = Color3.FromHexString(config.district.colors.outline);
-        }
-
-        // if config -> district -> colors -> edges is defined
-        if (config.district.colors.edges) {
-            this.d3Model.outlineWidth = 0.1;
-            this.d3Model.edgesColor = Color4.FromHexString(config.district.colors.edges);
-        }
 
         let mat = new StandardMaterial("District", this.scene);
         // if config -> district -> colors -> faces is defined

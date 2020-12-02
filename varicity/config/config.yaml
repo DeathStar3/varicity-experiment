@@ -22,6 +22,10 @@ building:
       - name: "CLASS"
         color: "#335DFF"
 
+    edges:
+      - name: "API"
+        color: "#FFFFFF"
+
     outlines:
 #      - name: "API"
 #        color: "#FF0000"

@@ -14,9 +14,8 @@ import {
 import { Building } from '../../../model/entities/building.interface';
 import { Link3D } from '../3Dinterfaces/link3D.interface';
 
-export class Building3D implements Element3D {
+export class Building3D extends Element3D {
     elementModel: Building;
-    scene: Scene;
 
     depth: number;
 
@@ -24,9 +23,8 @@ export class Building3D implements Element3D {
     top: Vector3;
     bot: Vector3;
 
-    d3Model: Mesh;
     d3ModelOutline: Mesh;
-    d3ModelPyramid: Mesh;
+    d3ModelPyramid: Mesh = undefined;
 
     links: Link3D[] = [];
 
@@ -34,8 +32,10 @@ export class Building3D implements Element3D {
     heightScale = 0.3;
     outlineWidth = 0.05;
 
+    edgesWidth: number = 4.0;
+
     constructor(scene: Scene, buildingElement: Building, depth: number) {
-        this.scene = scene;
+        super(scene);
         this.elementModel = buildingElement;
         this.depth = depth;
     }
@@ -115,43 +115,28 @@ export class Building3D implements Element3D {
 
         // if config -> building -> colors -> outline is defined
         if (config.building.colors.outlines) {
-            let outlines = config.building.colors.outlines;
-            let done = false;
-            for (let o of outlines) {
-                for (let type of this.elementModel.types) {
-                    if (type == o.name) {
-                        this.d3ModelOutline = MeshBuilder.CreateBox(
-                            this.elementModel.name,
-                            {
-                                height: this.getHeight() + this.outlineWidth,
-                                width: this.elementModel.getWidth() + this.outlineWidth,
-                                depth: this.elementModel.getWidth() + this.outlineWidth,
-                                sideOrientation: Mesh.BACKSIDE,
-                                updatable: false
-                            },
-                            this.scene);
-                        var outlineMat = new StandardMaterial('outlineMaterial', this.scene);
-                        this.d3ModelOutline.material = outlineMat;
-                        this.d3ModelOutline.parent = this.d3Model;
-                        outlineMat.diffuseColor = Color3.FromHexString(o.color);
-                        outlineMat.emissiveColor = Color3.FromHexString(o.color);
-                        done = true;
-                        break;
-                    }
-                }
-                if (done) break;
+            const outlineColor = this.getColor(config.building.colors.outlines, this.elementModel.types);
+            if (outlineColor !== undefined) {
+                this.d3ModelOutline = MeshBuilder.CreateBox(
+                    this.elementModel.name,
+                    {
+                        height: this.getHeight() + this.outlineWidth,
+                        width: this.elementModel.getWidth() + this.outlineWidth,
+                        depth: this.elementModel.getWidth() + this.outlineWidth,
+                        sideOrientation: Mesh.BACKSIDE,
+                        updatable: false
+                    },
+                    this.scene);
+                let outlineMat = new StandardMaterial('outlineMaterial', this.scene);
+                this.d3ModelOutline.material = outlineMat;
+                this.d3ModelOutline.parent = this.d3Model;
+                outlineMat.diffuseColor = Color3.FromHexString(outlineColor);
+                outlineMat.emissiveColor = Color3.FromHexString(outlineColor);
+            } else {
+                this.d3Model.renderOutline = false;
             }
         } else {
             this.d3Model.renderOutline = false;
-        }
-
-        // if config -> building -> colors -> edges is defined
-        if (config.building.colors.edges) {
-            this.d3Model.outlineWidth = 0.1;
-            this.d3Model.edgesColor = Color4.FromHexString(config.building.colors.edges);
-        } else {
-            this.d3Model.outlineWidth = 0.1;
-            this.d3Model.edgesColor = new Color4(1, 0, 0);
         }
 
         let mat = new StandardMaterial(this.elementModel.name + "Mat", this.scene);
@@ -159,48 +144,32 @@ export class Building3D implements Element3D {
             mat.ambientColor = Color3.FromHexString(config.force_color);
             mat.diffuseColor = Color3.FromHexString(config.force_color);
             mat.emissiveColor = Color3.FromHexString(config.force_color);
-            mat.specularColor = Color3.FromHexString(config.force_color);
+            mat.specularColor = Color3.FromHexString("#000000");
         } else {
             if (config.building.colors.faces) {
-                let faces = config.building.colors.faces;
-                let done = false;
-                for (let face of faces) {
-                    if(face.name.charAt(0) === "!" && !this.elementModel.types.includes(face.name.substring(1))) {
-                        mat.ambientColor = Color3.FromHexString(face.color);
-                        mat.diffuseColor = Color3.FromHexString(face.color);
-                        mat.emissiveColor = Color3.FromHexString(face.color);
-                        mat.specularColor = Color3.FromHexString(face.color);
-                        done = true;
-                        break;
-                    }
-                    for (let type of this.elementModel.types) {
-                        if (type == face.name) {
-                            mat.ambientColor = Color3.FromHexString(face.color);
-                            mat.diffuseColor = Color3.FromHexString(face.color);
-                            mat.emissiveColor = Color3.FromHexString(face.color);
-                            mat.specularColor = Color3.FromHexString(face.color);
-                            done = true;
-                            break;
-                        }
-                    }
-                    if (done) break;
-                }
-                if (!done) {
-                    mat.ambientColor = Color3.FromHexString(config.building.colors.faces[0].color);
-                    mat.diffuseColor = Color3.FromHexString(config.building.colors.faces[0].color);
-                    mat.emissiveColor = Color3.FromHexString(config.building.colors.faces[0].color);
-                    mat.specularColor = Color3.FromHexString(config.building.colors.faces[0].color);
+                const buildingColor = this.getColor(config.building.colors.faces, this.elementModel.types);
+                if (buildingColor !== undefined) {
+                    mat.ambientColor = Color3.FromHexString(buildingColor);
+                    mat.diffuseColor = Color3.FromHexString(buildingColor);
+                    mat.emissiveColor = Color3.FromHexString(buildingColor);
+                    mat.specularColor = Color3.FromHexString("#000000");
+                } else {
+                    mat.ambientColor = new Color3(1, 0, 0);
+                    mat.diffuseColor = new Color3(1, 0, 0);
+                    mat.emissiveColor = new Color3(1, 0, 0);
+                    mat.specularColor = new Color3(0, 0, 0);
                 }
             } else {
                 mat.ambientColor = new Color3(1, 0, 0);
                 mat.diffuseColor = new Color3(1, 0, 0);
                 mat.emissiveColor = new Color3(1, 0, 0);
-                mat.specularColor = new Color3(1, 0, 0);
+                mat.specularColor = new Color3(0, 0, 0);
             }
         }
-        // if config -> building -> colors -> faces is defined
 
         this.d3Model.material = mat;
+
+        // draw top pyramid if API class
         if (this.elementModel.types.includes("API")) {
             this.d3ModelPyramid = MeshBuilder.CreateCylinder("pyramid", {
                 diameterTop: 0,
@@ -212,6 +181,22 @@ export class Building3D implements Element3D {
             this.d3ModelPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
             this.d3ModelPyramid.material = mat;
             this.d3ModelPyramid.material.backFaceCulling = false;
+        }
+
+        if (config.building.colors.edges) {
+            const edgesColor = this.getColor(config.building.colors.edges, this.elementModel.types);
+            if (edgesColor !== undefined) {
+                this.d3Model.enableEdgesRendering();
+                this.d3Model.edgesWidth = this.edgesWidth;
+                const c = Color3.FromHexString(edgesColor);
+                this.d3Model.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                if (this.d3ModelPyramid !== undefined) {
+                    this.d3ModelPyramid.enableEdgesRendering();
+                    this.d3ModelPyramid.edgesWidth = this.edgesWidth;
+                    const c = Color3.FromHexString(edgesColor);
+                    this.d3ModelPyramid.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                }
+            }
         }
 
         // Display links to other buildings

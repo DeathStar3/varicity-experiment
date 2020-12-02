@@ -8,8 +8,7 @@ export interface Color {
 
 export interface ConfigColor {
     colors: {
-        outline: string, // HEX color string
-        edges: string, // HEX color string
+        edges: [Color], // HEX color string
         faces: [Color],
         outlines: [Color]
     }

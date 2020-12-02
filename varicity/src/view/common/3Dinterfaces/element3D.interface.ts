@@ -1,19 +1,38 @@
 import { Config } from './../../../model/entitiesImplems/config.model';
-import { Mesh } from "@babylonjs/core";
+import {Color3, Mesh, Scene} from "@babylonjs/core";
+import {Color} from "../../../model/entities/config.interface";
 
-export interface Element3D {
+export abstract class Element3D {
 
     d3Model: Mesh;
-
     padding: number;
+    scene: Scene;
 
-    getWidth(): number;
+    constructor(scene: Scene) {
+        this.scene = scene;
+    }
 
-    getLength(): number;
+    abstract getWidth(): number;
 
-    build(config?: Config): void;
+    abstract getLength(): number;
 
-    place(x: number, z:number, orientationX?: number, orientationZ?: number): void;
+    abstract build(config?: Config): void;
 
-    render(config: Config): void;
+    abstract place(x: number, z:number, orientationX?: number, orientationZ?: number): void;
+
+    abstract render(config: Config): void;
+
+    getColor(colorsList: Color[], types: string[]) : string {
+        for (let c of colorsList) {
+            if(c.name.charAt(0) === "!" && !types.includes(c.name.substring(1))) {
+                return c.color;
+            }
+            for (let type of types) {
+                if (type == c.name) {
+                    return c.color;
+                }
+            }
+        }
+        return undefined;
+    }
 }

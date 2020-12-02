@@ -6,14 +6,10 @@ import { ActionManager, Color3, Color4, ExecuteCodeAction, StandardMaterial } fr
 import { Scene } from '@babylonjs/core';
 import { Mesh, MeshBuilder, Vector3 } from '@babylonjs/core';
 
-export class District3D implements Element3D {
+export class District3D extends Element3D {
     elementModel: District;
-    scene: Scene;
     depth: number;
 
-    d3Model: Mesh;
-    x = 0;
-    z = 0;
     vector: Vector3;
 
     size = 0;
@@ -26,7 +22,7 @@ export class District3D implements Element3D {
     status = false;
 
     constructor(scene: Scene, element: District, depth: number) {
-        this.scene = scene;
+        super(scene);
         this.depth = depth;
         this.elementModel = element;
         // this.x = x;
@@ -191,25 +187,17 @@ export class District3D implements Element3D {
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.vector);//new Vector3(this.x + (this.elementModel.getTotalWidth() / 2), 30 * this.depth - 15, this.z));
 
-        // if config -> district -> colors -> outline is defined
-        if (config.district.colors.outline) {
-            this.d3Model.renderOutline = true;
-            this.d3Model.outlineColor = Color3.FromHexString(config.district.colors.outline);
-        }
-
-        // if config -> district -> colors -> edges is defined
-        if (config.district.colors.edges) {
-            this.d3Model.outlineWidth = 0.1;
-            this.d3Model.edgesColor = Color4.FromHexString(config.district.colors.edges);
-        }
-
         let mat = new StandardMaterial("District", this.scene);
         // if config -> district -> colors -> faces is defined
         if (config.district.colors.faces) {
-            mat.ambientColor = Color3.FromHexString(config.district.colors.faces[0].color);
-            mat.diffuseColor = Color3.FromHexString(config.district.colors.faces[0].color);
-            mat.emissiveColor = Color3.FromHexString(config.district.colors.faces[0].color);
-            mat.specularColor = Color3.FromHexString("#000000");
+            const districtColor = this.getColor(config.district.colors.faces, ["PACKAGE"]);
+            if (districtColor !== undefined){
+                mat.ambientColor = Color3.FromHexString(districtColor);
+                mat.diffuseColor = Color3.FromHexString(districtColor);
+                mat.emissiveColor = Color3.FromHexString(districtColor);
+                mat.specularColor = Color3.FromHexString("#000000");
+            }
+
         }
         this.d3Model.material = mat;
 
