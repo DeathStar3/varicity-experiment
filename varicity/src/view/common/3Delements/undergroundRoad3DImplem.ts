@@ -2,6 +2,7 @@ import { Link3D } from '../3Dinterfaces/link3D.interface';
 import { Config } from '../../../model/entitiesImplems/config.model';
 import { Color3, Color4, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3 } from '@babylonjs/core';
 import { Building3D } from './building3D';
+import {D3Utils} from "../3D.utils";
 
 export class UndergroundRoad3DImplem implements Link3D {
     scene: Scene;
@@ -10,8 +11,8 @@ export class UndergroundRoad3DImplem implements Link3D {
     dest: Building3D
     type: string;
 
-    mesh: Mesh;
-    polyhedron: Mesh
+    downRoadMesh: Mesh;
+    roadMesh: Mesh
 
     force: boolean = false;
 
@@ -23,32 +24,47 @@ export class UndergroundRoad3DImplem implements Link3D {
     }
 
     render(config: Config): void {
-        const underGroundBuildingHeight = 0.5;
-        const underGroundBuildingWidth = 0.5;
-        this.mesh = MeshBuilder.CreateBox("box", {
+        const underGroundBuildingHeight = 1;
+        const underGroundBuildingWidth = 0.3;
+        this.downRoadMesh = MeshBuilder.CreateBox("downRoad", {
             width: underGroundBuildingWidth,
-            height: underGroundBuildingHeight,
-            depth: underGroundBuildingWidth
+            height: 0.001,
+            depth: underGroundBuildingHeight
         }, this.scene);
 
         let midBox: Vector3 = this.src.bot.add(new Vector3(0, - underGroundBuildingHeight/2, 0))
         let botBox: Vector3 = midBox.add(new Vector3(0, - underGroundBuildingHeight/2, 0));
-        this.mesh.setPositionWithLocalVector(midBox);
+        this.downRoadMesh.setPositionWithLocalVector(midBox);
 
-        let pts: Vector3[] = [];
+        D3Utils.facePoint(this.downRoadMesh, new Vector3(this.dest.bot.x, - underGroundBuildingHeight/2, this.dest.bot.z));
 
-        pts.push(
-            this.dest.bot,
-            botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
-            botBox.add(new Vector3(underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
-            botBox.add(new Vector3(underGroundBuildingWidth / 2, 0, underGroundBuildingWidth / 2)),
-            botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, underGroundBuildingWidth / 2)),
-            botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
-            this.dest.bot
-        );
+        const roadLength = Vector3.Distance(botBox, this.dest.bot);
+        this.roadMesh = MeshBuilder.CreateBox("road", {
+            width: underGroundBuildingWidth,
+            height: roadLength,
+            depth: 0.001
+        }, this.scene);
+        this.roadMesh.setPositionWithLocalVector(new Vector3(
+            botBox.x + (this.dest.bot.x - botBox.x)/2,
+            -underGroundBuildingHeight/2,
+            botBox.z + (this.dest.bot.z - botBox.z)/2
+        ));
 
-        this.polyhedron = MeshBuilder.CreateRibbon("ribbon", { pathArray: [pts], closeArray: true, closePath: false }, this.scene);
-        
+        D3Utils.facePoint(this.roadMesh, new Vector3(this.dest.bot.x, this.dest.bot.y, this.dest.bot.z));
+
+        // let pts: Vector3[] = [];
+        //
+        // pts.push(
+        //     this.dest.bot,
+        //     botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
+        //     botBox.add(new Vector3(underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
+        //     botBox.add(new Vector3(underGroundBuildingWidth / 2, 0, underGroundBuildingWidth / 2)),
+        //     botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, underGroundBuildingWidth / 2)),
+        //     botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
+        //     this.dest.bot
+        // );
+        //
+        // this.polyhedron = MeshBuilder.CreateRibbon("ribbon", { pathArray: [pts], closeArray: true, closePath: false }, this.scene);
 
         // this.polyhedron = MeshBuilder.CreatePolyhedron("polyhedron", {
         //     type: 5,
@@ -59,10 +75,10 @@ export class UndergroundRoad3DImplem implements Link3D {
         // this.scene);
         // this.polyhedron.setPositionWithLocalVector(botBox);
 
-        this.mesh.visibility = 0; // defaults at hidden
-        this.polyhedron.visibility = 0;
+        this.downRoadMesh.visibility = 0; // defaults at hidden
+        this.roadMesh.visibility = 0;
 
-        let mat = new StandardMaterial(this.mesh.name + "Mat", this.scene);
+        let mat = new StandardMaterial(this.downRoadMesh.name + "Mat", this.scene);
         if (config.link.colors) {
             for (let c of config.link.colors) {
                 if (c.name == this.type) {
@@ -72,8 +88,8 @@ export class UndergroundRoad3DImplem implements Link3D {
                     mat.specularColor = Color3.FromHexString(c.color);
                     mat.alpha = 1;
                     mat.backFaceCulling = false;
-                    this.mesh.material = mat;
-                    this.polyhedron.material = mat;
+                    this.downRoadMesh.material = mat;
+                    this.roadMesh.material = mat;
                     return;
                 }
             }
@@ -81,13 +97,13 @@ export class UndergroundRoad3DImplem implements Link3D {
     }
     display(force?: boolean): void {
         if (force != undefined) this.force = force;
-        if (!this.force && this.mesh.visibility == 1) {
-            this.polyhedron.visibility = 0;
-            this.mesh.visibility = 0;
+        if (!this.force && this.downRoadMesh.visibility == 1) {
+            this.roadMesh.visibility = 0;
+            this.downRoadMesh.visibility = 0;
         } else {
             if (force == undefined || this.force) {
-                this.mesh.visibility = 1;
-                this.polyhedron.visibility = 1;
+                this.downRoadMesh.visibility = 1;
+                this.roadMesh.visibility = 1;
             }
         }
     }
