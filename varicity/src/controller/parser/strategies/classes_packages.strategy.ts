@@ -49,8 +49,8 @@ export class ClassesPackagesStrategy {
 
         const inheritancesList: LinkImplem[] = [];
         linkElements.forEach(le => {
-            const source = result.getBuildingFromName(le.source.split('.'));
-            const target = result.getBuildingFromName(le.target.split('.'));
+            const source = result.getBuildingFromName(le.source);
+            const target = result.getBuildingFromName(le.target);
             inheritancesList.push(new LinkImplem(source, target, le.type));
         })
         result.links = inheritancesList;

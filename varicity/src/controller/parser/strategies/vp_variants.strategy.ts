@@ -7,6 +7,7 @@ import {FilesLoader} from "../filesLoader";
 import {LinkElement} from "../symfinder_elements/links/link.element";
 import {LinkImplem} from "../../../model/entitiesImplems/linkImplem.model";
 import {VPVariantsImplem} from "../../../model/entitiesImplems/vpVariantsImplem.model";
+import {LinkInterface} from "../../../model/entities/jsonInput.interface";
 
 export class VPVariantsStrategy {
     public parse(fileName: string) : EntitiesList {
@@ -15,7 +16,8 @@ export class VPVariantsStrategy {
 
         // console.log('Analyzing with VP and variants strategy: ', data);
 
-        const nodesList: NodeElement[] = [];
+        let nodesList: NodeElement[] = [];
+        const apiList: NodeElement[] = [];
         data.nodes.forEach(n => {
             let node = new NodeElement(n.name);
             node.nbMethodVariants = (n.methodVariants === undefined) ? 0 : n.methodVariants;
@@ -34,21 +36,24 @@ export class VPVariantsStrategy {
                 if (config.api_classes.includes(node.name)) {
                     console.log("API class: " + n.name);
                     node.types.push("API");
+                    apiList.push(node);
                 }
             }
             nodesList.push(node);
         });
 
-        const linkElements : LinkElement[] = [];
-        data.links.forEach(l => {
-            linkElements.push(new LinkElement(l.source, l.target, l.type));
-        });
+        const linkElements = data.links.map(l => new LinkElement(l.source, l.target, l.type));
+
+        const compositionLinks = data.alllinks.map(l => new LinkElement(l.source, l.target, l.type));
 
         nodesList.forEach(n => {
             n.nbVariants = this.getLinkedNodesFromSource(n, nodesList, linkElements).length;
-        })
+        });
 
-        const d = this.constructDistricts(nodesList, linkElements);
+        this.buildComposition(data.alllinks, nodesList, apiList, 1);
+        console.log(nodesList.sort((a, b) => a.name.localeCompare(b.name)));
+
+        const d = this.buildDistricts(nodesList, linkElements);
 
         // console.log(d);
 
@@ -57,12 +62,21 @@ export class VPVariantsStrategy {
 
         const inheritancesList: LinkImplem[] = [];
         linkElements.forEach(le => {
-            const source = result.getBuildingFromName(le.source.split('.'));
-            const target = result.getBuildingFromName(le.target.split('.'));
+            const source = result.getBuildingFromName(le.source);
+            const target = result.getBuildingFromName(le.target);
             if (source !== undefined && target !== undefined)
                 inheritancesList.push(new LinkImplem(source, target, le.type));
-        })
+        });
         result.links = inheritancesList;
+
+        const compositionList: LinkImplem[] = [];
+        compositionLinks.forEach(le => {
+            const source = result.getBuildingFromName(le.source);
+            const target = result.getBuildingFromName(le.target);
+            if (source !== undefined && target !== undefined)
+                compositionList.push(new LinkImplem(source, target, le.type));
+        });
+        result.compositionLinks = compositionList;
 
         if (config.api_classes !== undefined){
             data.allnodes.filter(
@@ -101,11 +115,41 @@ export class VPVariantsStrategy {
         return result;
     }
 
-    private constructDistricts(nodes: NodeElement[], links: LinkElement[]) : VPVariantsImplem {
+    private buildComposition(alllinks: LinkInterface[], nodes: NodeElement[], srcNodes: NodeElement[], level: number) : void {
+        const newSrcNodes : NodeElement[] = [];
+        alllinks.forEach(l => {
+            if (l.type === "INSTANTIATE") {
+                nodes.forEach(n => {
+                    if (srcNodes.map(sn => sn.name).includes(n.name)) {
+                        if (n.name === l.source && n.name !== l.target) { // OUT
+                            const targetNode = this.findNodeByName(l.target, nodes);
+                            if (targetNode !== undefined && targetNode.compositionLevel === 0) {
+                                n.compositionLevel = level;
+                                newSrcNodes.push(targetNode);
+                                //console.log("Node: ", n.name, " - level: ", n.compositionLevel, " - link: ", l);
+                            }
+                        } else if (n.name === l.target && n.name !== l.source) { // IN
+                            const sourceNode = this.findNodeByName(l.source, nodes);
+                            if (sourceNode !== undefined && sourceNode.compositionLevel === 0) {
+                                n.compositionLevel = level;
+                                newSrcNodes.push(sourceNode);
+                                //console.log("Node: ", n.name, " - level: ", n.compositionLevel, " - link: ", l);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        if (newSrcNodes.length > 0) {
+            this.buildComposition(alllinks, nodes, newSrcNodes, level+1);
+        }
+    }
+
+    private buildDistricts(nodes: NodeElement[], links: LinkElement[]) : VPVariantsImplem {
         const trace : VPVariantsImplem[] = [];
         const roots : VPVariantsImplem[] = [];
         nodes.forEach(n => {
-            this.constructDistrict(n, trace, nodes, links, roots);
+            this.buildDistrict(n, trace, nodes, links, roots);
         });
         const res : VPVariantsImplem = new VPVariantsImplem();
         // console.log(trace);
@@ -120,7 +164,7 @@ export class VPVariantsStrategy {
         return res;
     }
 
-    private constructDistrict(nodeElement: NodeElement, trace: VPVariantsImplem[], nodes: NodeElement[], links: LinkElement[], roots: VPVariantsImplem[]) : VPVariantsImplem {
+    private buildDistrict(nodeElement: NodeElement, trace: VPVariantsImplem[], nodes: NodeElement[], links: LinkElement[], roots: VPVariantsImplem[]) : VPVariantsImplem {
         if (nodeElement.types.includes("VP")) { // if n is a vp
             // console.log("constructing district from vp : ", nodeElement.name);
             if (!nodeElement.analyzed) { // if n has not been analyzed yet
@@ -142,7 +186,7 @@ export class VPVariantsStrategy {
                 const linkedNodes = this.getLinkedNodesFromSource(nodeElement, nodes, links);
 
                 linkedNodes.forEach(n => {
-                    const d = this.constructDistrict(n, trace, nodes, links, roots);
+                    const d = this.buildDistrict(n, trace, nodes, links, roots);
                     if (d === undefined) {
                         let c = new ClassImplem(
                             n.name,

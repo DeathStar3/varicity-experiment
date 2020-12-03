@@ -9,6 +9,7 @@ export class EntitiesList {
     buildings: Building[] = [];
     districts: District[] = []; // [com] => [polytech, utils] => **[unice]**
     links: Link[] = [];
+    compositionLinks: Link[] = [];
 
     constructor() {}
 
@@ -16,27 +17,18 @@ export class EntitiesList {
         this.districts.push(district);
     }
 
-    addBuilding(building: Building) {
-    }
-
-    public getBuildingFromName(namesList: string[]) : Building {
-        if (namesList.length <= 1) {
-            for (let i = 0; i < this.buildings.length; i++) {
-                if (this.buildings[i].name === namesList[0]) {
-                    return this.buildings[i];
-                }
+    public getBuildingFromName(name: string) : Building {
+        for (let i = 0; i < this.buildings.length; i++) {
+            if (this.buildings[i].name === name) {
+                return this.buildings[i];
             }
-            return undefined;
-        } else {
-            for (let i = 0; i < this.districts.length; i++) {
-                const d = this.districts[i];
-                if (d.name.split('.').shift() === namesList[0]){
-                    const res = d.getBuildingFromName(namesList.slice(1));
-                    if (res !== undefined)
-                        return res;
-                }
-            }
-            return undefined;
         }
+        for (let i = 0; i < this.districts.length; i++) {
+            const res = this.districts[i].getBuildingFromName(name);
+            if (res !== undefined) {
+                return res;
+            }
+        }
+        return undefined;
     }
 }

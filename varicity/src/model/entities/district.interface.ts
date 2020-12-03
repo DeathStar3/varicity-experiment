@@ -20,24 +20,19 @@ export abstract class District {
     }
 
     // Get a building from its full name
-    // Parameter example ['org','jfree','chart','ClassName']
-    public getBuildingFromName(namesList: string[]) : Building {
-        if (namesList.length <= 1) {
-            for (let i = 0; i < this.buildings.length; i++) {
-                if (this.buildings[i].name === namesList[0]) {
-                    return this.buildings[i];
-                }
+    public getBuildingFromName(name: string) : Building {
+        for (let i = 0; i < this.buildings.length; i++) {
+            if (this.buildings[i].name === name) {
+                return this.buildings[i];
             }
-            return undefined;
-        } else {
-            for (let i = 0; i < this.districts.length; i++) {
-                const result = this.districts[i].getBuildingFromName(namesList.slice(1));
-                if (result !== undefined) {
-                    return result;
-                }
-            }
-            return undefined;
         }
+        for (let i = 0; i < this.districts.length; i++) {
+            const res = this.districts[i].getBuildingFromName(name);
+            if (res !== undefined) {
+                return res;
+            }
+        }
+        return undefined;
     }
 
     public depth() : number {
