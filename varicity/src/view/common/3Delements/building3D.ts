@@ -1,3 +1,4 @@
+import { UIController } from './../../../controller/ui/ui.controller';
 import { Config } from './../../../model/entitiesImplems/config.model';
 import { Element3D } from '../3Dinterfaces/element3D.interface';
 import {
@@ -96,9 +97,10 @@ export class Building3D extends Element3D {
                 {
                     trigger: ActionManager.OnPointerOverTrigger
                 },
-                function () {
+                () => {
                     links.forEach(l => l.display());
-                    document.getElementById("nodes_details").innerText = out;
+                    UIController.displayObjectInfo(this);
+                    // document.getElementById("nodes_details").innerText = out;
                 }
             )
         );
