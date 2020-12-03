@@ -55,10 +55,10 @@
     color: black;
 }
 
-#nodes_details {
+/* #nodes_details {
     color: white;
     font-family: "Roboto Light", serif;
-}
+} */
 
 body {
     overflow: hidden;

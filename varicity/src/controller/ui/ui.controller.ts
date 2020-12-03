@@ -1,7 +1,9 @@
+import { Building3D } from './../../view/common/3Delements/building3D';
 import { Color } from '../../model/entities/config.interface';
 import { Config } from '../../model/entitiesImplems/config.model';
 import { SceneRenderer } from '../../view/sceneRenderer';
 import { ConfigController } from './config.controller';
+import { DetailsController } from './details.controller';
 import { ProjectController } from './project-selector.controller';
 
 export class UIController {
@@ -20,6 +22,10 @@ export class UIController {
     public static createConfig(config: Config): void {
         this.config = config;
         ConfigController.createConfigFolder(config);
+    }
+
+    public static displayObjectInfo(obj: Building3D): void {
+        DetailsController.displayObjectInfo(obj);
     }
 
     public static createFooter(): void {
