@@ -6,12 +6,21 @@ export class DetailsController {
         let parent = document.getElementById("nodes_details");
         parent.innerHTML = "Object details";
 
+        // Display the model
         let elementDetails = document.createElement("div");
+        elementDetails.innerHTML = "Model:";
         parent.appendChild(elementDetails);
 
         this.populateChildren(obj.elementModel, elementDetails);
 
-        this.showChildrenOnClick(parent);
+        // Display the links
+        let linksDetails = document.createElement("div");
+        linksDetails.innerHTML = "Links:";
+        parent.appendChild(linksDetails);
+
+        this.populateLinks(obj, linksDetails);
+
+        this.showChildrenOnClick(elementDetails);
     }
 
     private static showChildrenOnClick(parent: HTMLElement) {
@@ -37,6 +46,30 @@ export class DetailsController {
         return el;
     }
 
+    private static populateLinks(obj: Building3D, parent: HTMLElement) {
+        for (let l of obj.links) {
+            let keyElement = document.getElementById(l.type);
+            if (keyElement == undefined) { // we check if we have already declared him
+                keyElement = document.createElement("div");
+                keyElement.id = l.type;
+                keyElement.innerHTML = l.type + ':';
+                parent.appendChild(keyElement);
+            }
+            let listElement = document.createElement("div");
+            let target = (l.src.getName() == obj.getName() ? l.dest : l.src);
+            listElement.innerHTML = target.getName();
+            keyElement.appendChild(listElement);
+
+            listElement.addEventListener("mouseenter", () => {
+                target.highlight(true);
+            });
+
+            listElement.addEventListener("mouseleave", () => {
+                target.highlight(false);
+            })
+        }
+    }
+
     private static populateChildren(obj: any, parent: HTMLElement) {
         if (Array.isArray(obj)) {
             for (let key of obj) {
@@ -50,7 +83,6 @@ export class DetailsController {
             for (let key in obj) {
                 if (!(obj[key] instanceof Object)) { // value of key isn't an object
                     let text: string;
-                    console.log(text);
                     text = key + ': ' + obj[key];
                     this.createEntry(text, parent);
                 } else {

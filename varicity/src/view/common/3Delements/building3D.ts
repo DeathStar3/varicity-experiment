@@ -6,6 +6,7 @@ import {
     Color3,
     Color4,
     ExecuteCodeAction,
+    HighlightLayer,
     Mesh,
     MeshBuilder,
     Scene,
@@ -34,6 +35,8 @@ export class Building3D extends Element3D {
     outlineWidth = 0.05;
 
     edgesWidth: number = 7.0;
+
+    highlightLayer: HighlightLayer;
 
     constructor(scene: Scene, buildingElement: Building, depth: number) {
         super(scene);
@@ -65,6 +68,15 @@ export class Building3D extends Element3D {
 
     link(link: Link3D) {
         this.links.push(link);
+    }
+
+    highlight(arg: boolean) {
+        if(arg) {
+            this.highlightLayer = new HighlightLayer("hl", this.scene);
+            this.highlightLayer.addMesh(this.d3Model, Color3.Blue());
+        } else {
+            this.highlightLayer.removeAllMeshes();
+        }
     }
 
     build() {
