@@ -52,7 +52,7 @@ export class VPVariantsImplem extends District {
         if (this.vp !== undefined && this.vp.compLevel > -1 && this.vp.compLevel <= level) {
             let result = new VPVariantsImplem(this.vp);
 
-            result.buildings = this.buildings.filter(b => b.compLevel > -1 && b.compLevel <= level);
+            result.buildings = this.buildings.filter(b => (b.compLevel > -1 && b.compLevel <= level) || b.types.includes("API"));
 
             this.districts.forEach(d => {
                 const f = d.filterCompLevel(level);
@@ -69,7 +69,6 @@ export class VPVariantsImplem extends District {
                     result.addDistrict(f);
                 }
             });
-            console.log("1 - ", result);
             return result;
         } else { // If this should not appear
             let result : [VPVariantsImplem[],ClassImplem[]] = [[],[]];
@@ -91,7 +90,6 @@ export class VPVariantsImplem extends District {
                     result[0].push(f);
                 }
             });
-            console.log("2 - ", result);
             return result;
         }
     }

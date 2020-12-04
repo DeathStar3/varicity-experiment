@@ -68,14 +68,12 @@ export class VPVariantsStrategy {
         });
         result.links = inheritancesList;
 
-        const compositionList: LinkImplem[] = [];
         compositionLinks.forEach(le => {
             const source = result.getBuildingFromName(le.source);
             const target = result.getBuildingFromName(le.target);
             if (source !== undefined && target !== undefined)
-                compositionList.push(new LinkImplem(source, target, le.type));
+                result.links.push(new LinkImplem(source, target, le.type));
         });
-        result.compositionLinks = compositionList;
 
         if (config.api_classes !== undefined){
             data.allnodes.filter(

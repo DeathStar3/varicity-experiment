@@ -29,7 +29,6 @@ export class EntitiesList {
 
         const d = this.district.filterCompLevel(level);
         if (Array.isArray(d)) {
-            console.log(d);
             result.district.districts = d[0];
             result.district.buildings = d[1];
         } else {
