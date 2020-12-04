@@ -10,7 +10,7 @@ export class NodeElement {
 
     analyzed: boolean;
     root: boolean;
-    compositionLevel: number = 0;
+    compositionLevel: number = -1;
 
     constructor(name: string) {
         this.name = name;
