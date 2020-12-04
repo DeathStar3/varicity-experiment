@@ -5,14 +5,14 @@ import { ClassesPackagesStrategy } from "../src/controller/parser/strategies/cla
 describe('parsing without links', function() {
   it('parse', function() {
     let entities = new ClassesPackagesStrategy().parse('test1WithoutLinks');
-    let districts = entities.district.districts[0].districts
+    let districts = entities.district.districts[0].districts[0].districts
     let numberOfDistricts = districts.length;
     expect(numberOfDistricts).equal(2);
-    let numberOfBuiildings = 0;
+    let numberOfBuildings = 0;
     districts.forEach(d => {
-      numberOfBuiildings += d.buildings.length
+      numberOfBuildings += d.buildings.length
     })
-    expect(numberOfBuiildings).equal(5);
+    expect(numberOfBuildings).equal(5);
   }); 
 });
 

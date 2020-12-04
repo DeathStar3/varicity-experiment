@@ -1,12 +1,8 @@
 import { District } from './entities/district.interface';
 import { Building } from './entities/building.interface';
 import {Link} from "./entities/link.interface";
-import { VPVariantsImplem } from './entitiesImplems/vpVariantsImplem.model';
 
 export class EntitiesList {
-
-    // TODO: change implem to only have ONE root district
-
     buildings: Building[] = [];
     district: District; // [com] => [polytech, utils] => **[unice]**
     links: Link[] = [];
