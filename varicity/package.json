@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack serve",
-    "test": "karma start karma.conf.js"
+    "test": "webpack && mocha dist/*Test.bundle.js"
   },
   "author": "",
   "license": "ISC",
