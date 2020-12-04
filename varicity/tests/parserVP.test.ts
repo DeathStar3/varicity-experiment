@@ -23,8 +23,6 @@ function countDistricts(districts: District[]) : number{
 describe('parsing without links', function() {
   it('parse', function() {
     let entities = new VPVariantsStrategy().parse('test3ForVPParser');
-    // console.log(entities.districts);
-    // console.log(entities.districts[0].districts[0].districts);
     let dis = entities.districts[0].districts
     let numberOfDistricts = countDistricts(entities.districts[0].districts);
     let numberOfBuiildings = countBuilding(entities.districts[0].districts) + countDistricts(entities.districts[0].districts)
