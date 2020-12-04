@@ -1,3 +1,5 @@
+import { UIController } from './ui.controller';
+import { Animation, Vector3 } from '@babylonjs/core';
 import { Building3D } from './../../view/common/3Delements/building3D';
 
 export class DetailsController {
@@ -66,7 +68,20 @@ export class DetailsController {
 
             listElement.addEventListener("mouseleave", () => {
                 target.highlight(false);
-            })
+            });
+
+            listElement.addEventListener("click", () => {
+                // var ease = new CubicEase();
+                // ease.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
+                let cam = UIController.scene.camera;
+                cam.focusOn([target.d3Model], true);
+                // Animation.CreateAndStartAnimation("an1", cam, "position", 60, 60, cam.position, target.center);
+                // Animation.CreateAndStartAnimation("an2", cam, "alpha", 60, 60, cam.alpha, 2 * Math.PI / 3);
+                // Animation.CreateAndStartAnimation("an3", cam, "beta", 60, 60, cam.beta, Math.PI / 3);
+                // Animation.CreateAndStartAnimation("an4", cam, "radius", 60, 60, cam.radius, 500);
+                // 2 * Math.PI / 3, Math.PI / 3, 1000, // alpha, beta, radius
+                // cam.position = Vector3.Lerp(cam.position, target.center, 1);
+            });
         }
     }
 

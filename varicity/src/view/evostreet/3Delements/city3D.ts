@@ -75,6 +75,7 @@ export class City3D {
             if (src != undefined && dest != undefined) {
                 let link = Link3DFactory.createLink(src, dest, type, this.scene);
                 src.link(link);
+                dest.link(link);
                 // src.link(dest, type);
                 //dest.link(src, type);
             }
@@ -84,6 +85,7 @@ export class City3D {
             for (let b of value.clones) {
                 let link = Link3DFactory.createLink(value.original, b, "DUPLICATES", this.scene);
                 value.original.link(link);
+                b.link(link);
                 // value.original.link(b, "DUPLICATES");
                 //b.link(value.original, "DUPLICATES");
             }
