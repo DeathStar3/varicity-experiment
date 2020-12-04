@@ -22,7 +22,7 @@ export abstract class District {
     // Get a building from its full name
     public getBuildingFromName(name: string) : Building {
         for (let i = 0; i < this.buildings.length; i++) {
-            if (this.buildings[i].name === name) {
+            if (this.buildings[i].fullName === name) {
                 return this.buildings[i];
             }
         }

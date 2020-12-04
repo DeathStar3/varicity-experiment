@@ -20,7 +20,7 @@ export class EntitiesList {
 
     public getBuildingFromName(name: string) : Building {
         for (let i = 0; i < this.buildings.length; i++) {
-            if (this.buildings[i].name === name) {
+            if (this.buildings[i].fullName === name) {
                 return this.buildings[i];
             }
         }

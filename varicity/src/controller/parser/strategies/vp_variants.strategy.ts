@@ -50,7 +50,7 @@ export class VPVariantsStrategy {
             n.nbVariants = this.getLinkedNodesFromSource(n, nodesList, linkElements).length;
         });
 
-        this.buildComposition(data.alllinks, nodesList, apiList, 1);
+        this.buildComposition(data.alllinks, nodesList, apiList, 0);
         console.log(nodesList.sort((a, b) => a.name.localeCompare(b.name)));
 
         const d = this.buildDistricts(nodesList, linkElements);
@@ -118,27 +118,27 @@ export class VPVariantsStrategy {
     private buildComposition(alllinks: LinkInterface[], nodes: NodeElement[], srcNodes: NodeElement[], level: number) : void {
         const newSrcNodes : NodeElement[] = [];
         alllinks.forEach(l => {
-            if (l.type === "INSTANTIATE") {
+            //if (l.type === "INSTANTIATE") {
                 nodes.forEach(n => {
                     if (srcNodes.map(sn => sn.name).includes(n.name)) {
                         if (n.name === l.source && n.name !== l.target) { // OUT
                             const targetNode = this.findNodeByName(l.target, nodes);
-                            if (targetNode !== undefined && targetNode.compositionLevel === 0) {
+                            if (targetNode !== undefined && targetNode.compositionLevel === -1) {
                                 n.compositionLevel = level;
                                 newSrcNodes.push(targetNode);
-                                //console.log("Node: ", n.name, " - level: ", n.compositionLevel, " - link: ", l);
+                                console.log("Node: ", n.name, " - level: ", n.compositionLevel, " - link: ", l);
                             }
                         } else if (n.name === l.target && n.name !== l.source) { // IN
                             const sourceNode = this.findNodeByName(l.source, nodes);
-                            if (sourceNode !== undefined && sourceNode.compositionLevel === 0) {
+                            if (sourceNode !== undefined && sourceNode.compositionLevel === -1) {
                                 n.compositionLevel = level;
                                 newSrcNodes.push(sourceNode);
-                                //console.log("Node: ", n.name, " - level: ", n.compositionLevel, " - link: ", l);
+                                console.log("Node: ", n.name, " - level: ", n.compositionLevel, " - link: ", l);
                             }
                         }
                     }
                 });
-            }
+            //}
         });
         if (newSrcNodes.length > 0) {
             this.buildComposition(alllinks, nodes, newSrcNodes, level+1);
