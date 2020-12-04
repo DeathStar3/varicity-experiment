@@ -55,11 +55,13 @@ export class DetailsController {
                 keyElement = document.createElement("div");
                 keyElement.id = l.type;
                 keyElement.innerHTML = l.type + ':';
+                keyElement.className = "parent";
                 parent.appendChild(keyElement);
             }
             let listElement = document.createElement("div");
             let target = (l.src.getName() == obj.getName() ? l.dest : l.src);
             listElement.innerHTML = target.getName();
+            listElement.className = "child";
             keyElement.appendChild(listElement);
 
             listElement.addEventListener("mouseenter", () => {
@@ -89,7 +91,7 @@ export class DetailsController {
         if (Array.isArray(obj)) {
             for (let key of obj) {
                 if ((obj[key] == undefined)) { // key is a value
-                    this.createEntry(key, parent)
+                    this.createEntry(key, parent).className = "child";
                 } else {
                     throw new Error('Not yet implemented');
                 }
@@ -99,9 +101,10 @@ export class DetailsController {
                 if (!(obj[key] instanceof Object)) { // value of key isn't an object
                     let text: string;
                     text = key + ': ' + obj[key];
-                    this.createEntry(text, parent);
+                    this.createEntry(text, parent).className = "parent";
                 } else {
                     let p = this.createEntry(key + ' :', parent);
+                    p.className = "parent";
                     this.populateChildren(obj[key], p);
 
                     this.showChildrenOnClick(p);

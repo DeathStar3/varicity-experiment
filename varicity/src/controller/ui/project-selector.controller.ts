@@ -20,6 +20,9 @@ export class ProjectController {
             childEvo.innerHTML = "EvoStreet View";
             childMetri.innerHTML = "Metricity View";
 
+            childEvo.className = "child";
+            childMetri.className = "child";
+
             // projets en vision evostreet
             childEvo.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();

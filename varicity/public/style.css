@@ -49,6 +49,37 @@
     float: right;
     width: 30%;
     height: 100%;
+    border: 5px black;
+}
+
+div {
+    padding-top: 10px;
+}
+
+input {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.parent {
+    width: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: lightgrey;
+    border: 2px lightgrey solid;
+}
+
+.child {
+    width: auto;
+    padding-left: inherit;
+    padding-right: inherit;
+    background-color: white;
+    border: 1px black solid;
+}
+
+#right-input {
+    float: right;
+    width: 50%;
 }
 
 #reset_camera {

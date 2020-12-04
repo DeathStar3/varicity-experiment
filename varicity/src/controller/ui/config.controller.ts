@@ -81,7 +81,9 @@ export class ConfigController {
                 if (Config.instanceOfColor(obj)) {
                     let node = this.createKey(obj.name, parent);
                     let input = this.createInput(obj.color, node);
+                    node.className = "child";
 
+                    input.className = "right-input";
                     input.addEventListener("keyup", (ke) => {
                         if (ke.key == "Enter") {
                             let arr = this.findValidParents(node);
@@ -100,11 +102,13 @@ export class ConfigController {
 
                 let prev = input.value;
                 input.setAttribute("previous", prev);
+                input.className = "child";
                 input.addEventListener("keyup", (ke) => this.stringArrayListener(ke, input, parent));
             }
             else {
                 for (let key in config) {
                     let node = this.createKey(key, parent);
+                    node.className = "parent";
                     this.populateChildren(config[key], node);
 
                     /* @ts-ignore */
