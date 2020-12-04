@@ -25,6 +25,16 @@ export class EntitiesList {
 
     public filterCompLevel(level: number) : EntitiesList {
         let result = new EntitiesList();
+        result.district = this.district;
+
+        const d = this.district.filterCompLevel(level);
+        if (Array.isArray(d)) {
+            console.log(d);
+            result.district.districts = d[0];
+            result.district.buildings = d[1];
+        } else {
+            result.district = d;
+        }
         return result;
     }
 }

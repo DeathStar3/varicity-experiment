@@ -7,6 +7,8 @@ export abstract class Building {
     name: string;
     fullName: string;
 
+    compLevel: number;
+
     constructor() {
         this.types = [];
     }i

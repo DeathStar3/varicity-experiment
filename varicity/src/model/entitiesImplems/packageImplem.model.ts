@@ -1,8 +1,12 @@
 import { District } from '../entities/district.interface';
 import { ClassImplem } from './classImplem.model';
+import {Building} from "../entities/building.interface";
 
 export class PackageImplem extends District {
     name: string;
+
+    buildings: ClassImplem[];
+    districts: PackageImplem[];
 
     constructor(name: string) {
         super();
@@ -50,5 +54,9 @@ export class PackageImplem extends District {
             width += b.getWidth() + 2; // 10 = with padding
         })
         return width;
+    }
+
+    filterCompLevel(level: number): District {
+        return this;
     }
 }

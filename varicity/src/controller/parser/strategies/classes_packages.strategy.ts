@@ -68,7 +68,7 @@ export class ClassesPackagesStrategy {
             const p = this.getPackageFromName(splitName[0], packagesList);
             if (p !== undefined) { // if the package is found at this level we can add the class into it
                 if (splitName.length == 2) { // if the class is terminal then add it to the package
-                    p.addBuilding(new ClassImplem(splitName[1], nbFunctions, nbAttributes, types, fullName));
+                    p.addBuilding(new ClassImplem(splitName[1], nbFunctions, nbAttributes, types, fullName, 0));
                 } else { // else add it to the corresponding subPackage
                     this.addToLists(splitName.slice(1), types, nbFunctions, nbAttributes, p.districts, classesList, fullName);
                 }
@@ -76,13 +76,13 @@ export class ClassesPackagesStrategy {
                 const newP = new PackageImplem(splitName[0]);
                 packagesList.push(newP);
                 if (splitName.length == 2) { // If the class is terminal then add it to the package
-                    newP.addBuilding(new ClassImplem(splitName[1], nbFunctions, nbAttributes, types, fullName));
+                    newP.addBuilding(new ClassImplem(splitName[1], nbFunctions, nbAttributes, types, fullName, 0));
                 } else { // else add it to its packages list
                     this.addToLists(splitName.slice(1), types, nbFunctions, nbAttributes, newP.districts, classesList, fullName);
                 }
             }
         } else { // if the depth is 0, then add it to the classesList
-            const newC = new ClassImplem(splitName[0], nbFunctions, nbAttributes, types, fullName);
+            const newC = new ClassImplem(splitName[0], nbFunctions, nbAttributes, types, fullName, 0);
             classesList.push(newC);
         }
     }

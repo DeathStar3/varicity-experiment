@@ -96,13 +96,15 @@ export class VPVariantsStrategy {
 
                 node.types = n.types;
                 node.types.push("API");
-                result.district.addBuilding(new ClassImplem(
+                let c = new ClassImplem(
                     node.name,
                     node.nbMethodVariants,
                     node.nbConstructorVariants,
                     node.types,
-                    node.name)
-                )
+                    node.name,
+                    node.compositionLevel
+                );
+                result.district.addBuilding(c);
             });
         }
 
@@ -168,7 +170,8 @@ export class VPVariantsStrategy {
                     nodeElement.nbMethodVariants,
                     nodeElement.nbConstructorVariants,
                     nodeElement.types,
-                    nodeElement.name
+                    nodeElement.name,
+                    nodeElement.compositionLevel
                 );
                 c.heightName = "methodVariants";
                 c.widthName = "constructorVariants";
@@ -187,7 +190,8 @@ export class VPVariantsStrategy {
                             n.nbMethodVariants,
                             n.nbConstructorVariants,
                             n.types,
-                            n.name
+                            n.name,
+                            n.compositionLevel
                         );
                         c.heightName = "methodVariants";
                         c.widthName = "constructorVariants";

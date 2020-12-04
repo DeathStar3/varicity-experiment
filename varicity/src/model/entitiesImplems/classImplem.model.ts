@@ -5,13 +5,14 @@ export class ClassImplem extends Building {
     heightName: string = "height";
     widthName: string = "width"
 
-    constructor(name: string, height: number, width: number, types: string[], fullName: string) {
+    constructor(name: string, height: number, width: number, types: string[], fullName: string, level: number) {
         super();
         this.name = name;
         this.height = height;
         this.width = width;
         this.types = types;
         this.fullName = fullName;
+        this.compLevel = level;
     }
 
     public getHeight() : number {

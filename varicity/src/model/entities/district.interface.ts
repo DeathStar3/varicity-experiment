@@ -14,6 +14,8 @@ export abstract class District {
 
     abstract hasChild(obj: District | Building): boolean;
 
+    abstract filterCompLevel(level: number) : District | [District[],Building[]];
+
     constructor() {
         this.buildings = [];
         this.districts = [];

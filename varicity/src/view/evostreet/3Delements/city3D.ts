@@ -81,11 +81,13 @@ export class City3D {
 
         for (let [, value] of this.config.clones.map) {
             for (let b of value.clones) {
-                let link = Link3DFactory.createLink(value.original, b, "DUPLICATES", this.scene);
-                value.original.link(link);
-                b.link(link);
-                // value.original.link(b, "DUPLICATES");
-                //b.link(value.original, "DUPLICATES");
+                if (b !== undefined) {
+                    let link = Link3DFactory.createLink(value.original, b, "DUPLICATES", this.scene);
+                    value.original.link(link);
+                    b.link(link);
+                    // value.original.link(b, "DUPLICATES");
+                    //b.link(value.original, "DUPLICATES");
+                }
             }
         }
 
