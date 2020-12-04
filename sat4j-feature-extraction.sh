@@ -11,4 +11,4 @@ fi
 
 ./run.sh $@ sat4j
 
-docker run -it -v $(pwd)/resources/$PROJECT_DIR:/project-sources -v $(pwd)/generated_visualizations/data/$PROJECT_DIR.json:/symfinder-json-output.json --rm deathstar3/features-extractor:${TAG}
+docker run -v $(pwd)/resources/$PROJECT_DIR:/project-sources -v $(pwd)/generated_visualizations/data/$PROJECT_DIR.json:/symfinder-json-output.json --rm deathstar3/features-extractor:${TAG}

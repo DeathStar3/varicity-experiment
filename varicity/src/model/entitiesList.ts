@@ -1,6 +1,7 @@
 import { District } from './entities/district.interface';
 import { Building } from './entities/building.interface';
 import {Link} from "./entities/link.interface";
+import { VPVariantsImplem } from './entitiesImplems/vpVariantsImplem.model';
 
 export class EntitiesList {
 

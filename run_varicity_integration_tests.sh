@@ -40,26 +40,9 @@ docker run --rm --name test_projects_builder -v "$(pwd)/resources":/usr/src/myma
 ./build.sh -DskipTests
 ./run.sh --local
 
-function run_tests() {
-  export CONTEXT_FILE="$1"
-  export TESTS_DIR="$2"
-  docker-compose -f integration-tests-compose.yaml up --abort-on-container-exit --exit-code-from integration
-  RETURN_CODE=$?
-  docker-compose -f integration-tests-compose.yaml down
-}
+docker-compose -f varicity-integration-tests.yaml build
 
-docker-compose -f integration-tests-compose.yaml build
-
-echo "Running integration tests on standard visualization"
-run_tests "pages/context.html" "tests"
-
-if [ $RETURN_CODE != 0 ]; then
-    exit $RETURN_CODE
-fi
-
-echo "Running integration tests on composition visualization"
-run_tests "pages/context_composition.html" "composition_tests"
+docker-compose -f varicity-integration-tests.yaml up --abort-on-container-exit --exit-code-from varicity_integration
+docker-compose -f varicity-integration-tests.yaml down
 
 sed -i -e 's/test-experiments.yaml/experiments.yaml/g' symfinder.yaml
-
-exit $RETURN_CODE

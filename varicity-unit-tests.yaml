@@ -22,11 +22,9 @@
 version: "3.6"
 
 services:
-  visualization:
-    image: deathstar3/varicity:local
-    container_name: varicity
-    ports:
-      - 9090:9090
-    volumes:
-      - ../generated_visualizations/data:/symfinder_files
-    command: npm test
+  varicity_unit_tests:
+    build:
+      context: .
+      dockerfile: docker/varicity_unit_tests/Dockerfile
+    image: varicity_unit_tests
+    container_name: varicity_unit_tests

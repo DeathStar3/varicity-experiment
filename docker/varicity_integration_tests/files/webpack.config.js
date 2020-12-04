@@ -6,9 +6,7 @@ const appDirectory = fs.realpathSync(process.cwd());
 
 module.exports = {
     entry: {
-      'main': path.resolve(appDirectory, "src/main.ts"),
-      'parserTest':'./tests/parser.test.ts',
-      'parserVPTest':'./tests/parserVP.test.ts'
+      'parserTestClassesPackages':'./tests/parserClassesPackages.test.ts'
     },
     output: {
       filename: '[name].bundle.js',
@@ -19,7 +17,7 @@ module.exports = {
     },
     devServer: {
         host: '0.0.0.0',
-        port: 9090, //port that we're using for local host (localhost:9090)
+        port: 8080, //port that we're using for local host (localhost:8080)
         disableHostCheck: true,
         contentBase: path.resolve(appDirectory, "public"), //tells webpack to serve from the public folder
         publicPath: '/',

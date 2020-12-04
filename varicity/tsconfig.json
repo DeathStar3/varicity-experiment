@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "outDir": "./built",
+    "target": "es5",
     "module": "commonjs",
     "noResolve": false,
     "noImplicitAny": false,
     "sourceMap": true,
+    "downlevelIteration": true,
     "moduleResolution": "node",
     "preserveConstEnums": true,
     "resolveJsonModule": true,
@@ -19,19 +21,22 @@
     ],
     "lib": [
       "dom",
-      "es6"
+      "es5",
+      "es2015.collection",
+      "es2015.iterable"
     ],
-    "rootDir": "src"
   },
+  "include": [
+    "./src",
+    "./tests"
+  ],
   "exclude": [
     "node_modules",
-    "dist",
-    "build",
-    "tests"
+    "build"
   ],
   "filesGlob": [
     "./src/**/*.ts",
-    "./test/**/*.ts",
+    "./tests/*.ts",
     "./typings/index.d.ts",
     "./custom_typings/**/*.d.ts",
     "./node_modules/@types/**/*.d.ts"
