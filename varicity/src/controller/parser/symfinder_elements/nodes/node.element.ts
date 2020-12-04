@@ -11,6 +11,7 @@ export class NodeElement {
     analyzed: boolean;
     root: boolean;
     compositionLevel: number = -1;
+    origin: string = "";
 
     constructor(name: string) {
         this.name = name;

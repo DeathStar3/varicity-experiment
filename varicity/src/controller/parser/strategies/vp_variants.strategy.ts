@@ -51,11 +51,10 @@ export class VPVariantsStrategy {
         });
 
         this.buildComposition(data.alllinks, nodesList, apiList, 0);
+        //console.log(nodesList.sort((a, b) => a.compositionLevel - b.compositionLevel));
         console.log(nodesList.sort((a, b) => a.name.localeCompare(b.name)));
 
         const d = this.buildDistricts(nodesList, linkElements);
-
-        // console.log(d);
 
         let result = new EntitiesList();
         result.addDistrict(d);
@@ -83,7 +82,6 @@ export class VPVariantsStrategy {
                 nod => config.api_classes.includes(nod.name)
                     && !nodesList.map(no => no.name).includes(nod.name)
             ).forEach(n => {
-                console.log("API class: " + n.name);
                 let node = new NodeElement(n.name);
                 node.nbMethodVariants = (n.methodVariants === undefined) ? 0 : n.methodVariants;
 
@@ -108,6 +106,7 @@ export class VPVariantsStrategy {
             });
         }
 
+        // log for non-vp non-variant ndoes
         //console.log(data.allnodes.filter(nod => !nodesList.map(no => no.name).includes(nod.name)).map(n => n.name));
 
         console.log("Result of parsing: ", result);
@@ -117,28 +116,30 @@ export class VPVariantsStrategy {
 
     private buildComposition(alllinks: LinkInterface[], nodes: NodeElement[], srcNodes: NodeElement[], level: number) : void {
         const newSrcNodes : NodeElement[] = [];
-        alllinks.forEach(l => {
-            //if (l.type === "INSTANTIATE") {
-                nodes.forEach(n => {
-                    if (srcNodes.map(sn => sn.name).includes(n.name)) {
-                        if (n.name === l.source && n.name !== l.target) { // OUT
-                            const targetNode = this.findNodeByName(l.target, nodes);
-                            if (targetNode !== undefined && targetNode.compositionLevel === -1) {
-                                n.compositionLevel = level;
-                                newSrcNodes.push(targetNode);
-                                console.log("Node: ", n.name, " - level: ", n.compositionLevel, " - link: ", l);
-                            }
-                        } else if (n.name === l.target && n.name !== l.source) { // IN
-                            const sourceNode = this.findNodeByName(l.source, nodes);
-                            if (sourceNode !== undefined && sourceNode.compositionLevel === -1) {
-                                n.compositionLevel = level;
-                                newSrcNodes.push(sourceNode);
-                                console.log("Node: ", n.name, " - level: ", n.compositionLevel, " - link: ", l);
-                            }
+        const nodeNames = srcNodes.map(sn => sn.name);
+        nodes.forEach(n => {
+            if (nodeNames.includes(n.name)) {
+                n.compositionLevel = level;
+                alllinks.filter(l => {
+                    return (l.target === n.name && !nodeNames.includes(l.source)) // IN
+                        || (l.source === n.name && !nodeNames.includes(l.target)) // OUT
+                }).forEach(l => {
+                    //console.log("Node: ", n.name, " - level: ", n.compositionLevel, " - link: ", l);
+                    if (n.name === l.source && n.name !== l.target) { // OUT
+                        const targetNode = this.findNodeByName(l.target, nodes);
+                        if (targetNode !== undefined && targetNode.compositionLevel === -1 && !newSrcNodes.map(e => e.name).includes(l.target)) {
+                            targetNode.origin = n.name + " (source)";
+                            newSrcNodes.push(targetNode);
+                        }
+                    } else if (n.name === l.target && n.name !== l.source) { // IN
+                        const sourceNode = this.findNodeByName(l.source, nodes);
+                        if (sourceNode !== undefined && sourceNode.compositionLevel === -1 && !newSrcNodes.map(e => e.name).includes(l.source)) {
+                            sourceNode.origin = n.name + " (target)";
+                            newSrcNodes.push(sourceNode);
                         }
                     }
                 });
-            //}
+            }
         });
         if (newSrcNodes.length > 0) {
             this.buildComposition(alllinks, nodes, newSrcNodes, level+1);
@@ -152,12 +153,6 @@ export class VPVariantsStrategy {
             this.buildDistrict(n, trace, nodes, links, roots);
         });
         const res : VPVariantsImplem = new VPVariantsImplem();
-        // console.log(trace);
-        // console.log("roots: ", roots);
-        // const maxDepth = trace.reduce<number>((a, b) => Math.max(a, b.depth()), 0);
-        // trace.filter(v => v.depth() === maxDepth).forEach(v => {
-        //     res.addDistrict(v);
-        // });
         roots.forEach(r => {
             res.addDistrict(r);
         })
@@ -166,7 +161,6 @@ export class VPVariantsStrategy {
 
     private buildDistrict(nodeElement: NodeElement, trace: VPVariantsImplem[], nodes: NodeElement[], links: LinkElement[], roots: VPVariantsImplem[]) : VPVariantsImplem {
         if (nodeElement.types.includes("VP")) { // if n is a vp
-            // console.log("constructing district from vp : ", nodeElement.name);
             if (!nodeElement.analyzed) { // if n has not been analyzed yet
                 // create a new district with n
                 let c = new ClassImplem(
@@ -246,7 +240,6 @@ export class VPVariantsStrategy {
 
         links.forEach(l => {
             if (l.source === name && l.target !== name) {
-                // console.log("Found link : ", l);
                 res.push(this.findNodeByName(l.target, nodes));
             }
         });
@@ -260,7 +253,6 @@ export class VPVariantsStrategy {
 
         links.forEach(l => {
             if (l.source !== name && l.target === name) {
-                // console.log("Found link : ", l);
                 res.push(this.findNodeByName(l.source, nodes));
             }
         });
