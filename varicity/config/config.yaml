@@ -53,6 +53,8 @@ link:
 
 blacklist: #all classes that must not appear
   - "org.jfree.chart.util.PublicCloneable"
+  - "org.jfree.chart.event"
+  - "org.jfree.data.general"
   # - "org.jfree.chart.renderer.AbstractRenderer"
 
 api_classes: #all API classes

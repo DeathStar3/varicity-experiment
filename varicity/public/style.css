@@ -1,11 +1,11 @@
-#ui_square {
-    position: absolute;
-    left: 20%;
-    top: 78%;
-    width: 60%;
-    height: 20%;
-    background: rgba(0,50,80,0.7);
-}
+/*#ui_square {*/
+/*    position: absolute;*/
+/*    left: 20%;*/
+/*    top: 78%;*/
+/*    width: 60%;*/
+/*    height: 20%;*/
+/*    background: rgba(0,50,80,0.7);*/
+/*}*/
 
 #overflowable {
     overflow: auto;

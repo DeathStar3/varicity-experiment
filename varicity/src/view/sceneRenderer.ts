@@ -34,12 +34,12 @@ export abstract class SceneRenderer {
         this.config = config;
         // this.config = ConfigLoader.loadDataFile("config");
 
-        document.getElementById("reset_camera").addEventListener("click", () => {
-            this.camera.position = Vector3.Zero();
-            this.camera.radius = 500;
-            this.camera.alpha = 2 * Math.PI / 3;
-            this.camera.beta = Math.PI / 3;
-        });
+        // document.getElementById("reset_camera").addEventListener("click", () => {
+        //     this.camera.position = Vector3.Zero();
+        //     this.camera.radius = 500;
+        //     this.camera.alpha = 2 * Math.PI / 3;
+        //     this.camera.beta = Math.PI / 3;
+        // });
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
