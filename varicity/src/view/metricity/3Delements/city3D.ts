@@ -25,12 +25,8 @@ export class City3D {
 
     private init(entities: EntitiesList) {
 
-        entities.districts.forEach(d => {
-            let d3elem = new District3D(this.scene, d, 0);
-            this.districts.push(d3elem);
-            // d3elem.build();
-            // d3elem.render(this.config);
-        });
+        let d3elem = new District3D(this.scene, entities.district, 0);
+        this.districts.push(d3elem);
 
         entities.buildings.forEach(b => {
             let d3elem = new Building3D(this.scene, b, 0);

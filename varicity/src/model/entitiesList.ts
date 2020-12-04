@@ -8,15 +8,11 @@ export class EntitiesList {
     // TODO: change implem to only have ONE root district
 
     buildings: Building[] = [];
-    districts: District[] = []; // [com] => [polytech, utils] => **[unice]**
+    district: District; // [com] => [polytech, utils] => **[unice]**
     links: Link[] = [];
     compositionLinks: Link[] = [];
 
     constructor() {}
-
-    addDistrict(district: District) {
-        this.districts.push(district);
-    }
 
     public getBuildingFromName(name: string) : Building {
         for (let i = 0; i < this.buildings.length; i++) {
@@ -24,12 +20,15 @@ export class EntitiesList {
                 return this.buildings[i];
             }
         }
-        for (let i = 0; i < this.districts.length; i++) {
-            const res = this.districts[i].getBuildingFromName(name);
-            if (res !== undefined) {
-                return res;
-            }
+        const res = this.district.getBuildingFromName(name);
+        if (res !== undefined) {
+            return res;
         }
         return undefined;
+    }
+
+    public filterCompLevel(level: number) : EntitiesList {
+        let result = new EntitiesList();
+        return result;
     }
 }

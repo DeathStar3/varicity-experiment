@@ -115,7 +115,7 @@ export class District3D extends Element3D {
                 let b = d.get(name);
                 if (b != undefined) {
                     return building = b;
-                };
+                }
             }
         } else {
             return building;

@@ -57,7 +57,7 @@ export class VPVariantsStrategy {
         const d = this.buildDistricts(nodesList, linkElements);
 
         let result = new EntitiesList();
-        result.addDistrict(d);
+        result.district = d;
 
         const inheritancesList: LinkImplem[] = [];
         linkElements.forEach(le => {
@@ -96,7 +96,7 @@ export class VPVariantsStrategy {
 
                 node.types = n.types;
                 node.types.push("API");
-                result.districts[0].addBuilding(new ClassImplem(
+                result.district.addBuilding(new ClassImplem(
                     node.name,
                     node.nbMethodVariants,
                     node.nbConstructorVariants,

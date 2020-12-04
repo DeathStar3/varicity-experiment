@@ -5,7 +5,7 @@ import { ClassesPackagesStrategy } from "../src/controller/parser/strategies/cla
 describe('parsing without links', function() {
   it('parse', function() {
     let entities = new ClassesPackagesStrategy().parse('test1WithoutLinks');
-    let districts = entities.districts[0].districts[0].districts
+    let districts = entities.district.districts[0].districts
     let numberOfDistricts = districts.length;
     expect(numberOfDistricts).equal(2);
     let numberOfBuiildings = 0;

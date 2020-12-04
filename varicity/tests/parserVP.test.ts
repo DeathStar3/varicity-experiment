@@ -23,9 +23,9 @@ function countDistricts(districts: District[]) : number{
 describe('parsing without links', function() {
   it('parse', function() {
     let entities = new VPVariantsStrategy().parse('test3ForVPParser');
-    let dis = entities.districts[0].districts
-    let numberOfDistricts = countDistricts(entities.districts[0].districts);
-    let numberOfBuiildings = countBuilding(entities.districts[0].districts) + countDistricts(entities.districts[0].districts)
+    let dis = entities.district.districts
+    let numberOfDistricts = countDistricts(dis);
+    let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
     expect(numberOfBuiildings).equal(4);
     expect(numberOfDistricts).equal(2);
   }); 

@@ -40,7 +40,10 @@ export class ClassesPackagesStrategy {
 
         let result = new EntitiesList();
         result.buildings = classesList;
-        result.districts = packagesList;
+
+        let root = new PackageImplem("");
+        root.districts = packagesList;
+        result.district = root;
 
         const linkElements : LinkElement[] = [];
         data.links.forEach(l => {

@@ -29,10 +29,8 @@ export class City3D {
 
     private init(entities: EntitiesList) {
 
-        entities.districts.forEach(d => {
-            let d3elem = new Road3D(this.scene, d as VPVariantsImplem);
-            this.roads.push(d3elem);
-        });
+        let d3elem = new Road3D(this.scene, entities.district as VPVariantsImplem);
+        this.roads.push(d3elem);
 
         entities.buildings.forEach(b => {
             let d3elem = new Building3D(this.scene, b, 0);

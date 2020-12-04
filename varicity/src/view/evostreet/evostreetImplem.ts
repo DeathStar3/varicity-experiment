@@ -16,7 +16,7 @@ export class EvostreetImplem extends SceneRenderer {
         this.render();
     }
 
-    rerender(config: Config) {
+    rerender(config: Config) : EvostreetImplem {
         this.dispose();
         return new EvostreetImplem(config, this.entitiesList);
     }

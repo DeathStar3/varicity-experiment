@@ -12,7 +12,7 @@ export class VPVariantsImplem extends District {
         if (vp !== undefined) {
             this.name = vp.fullName;
         } else {
-            this.name = "src";
+            this.name = "";
         }
     }
 
