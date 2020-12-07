@@ -83,14 +83,17 @@ export class VPVariantsImplem extends District {
 
                 if (Array.isArray(f)) {
                     f[0].forEach(e => {
-                        result[0].push(e);
+                        if (e.vp === undefined || !result[0].map(n => n.vp === undefined ? "" : n.vp.fullName).includes(e.vp.fullName))
+                            result[0].push(e);
                     });
 
                     f[1].forEach(e => {
-                        result[1].push(e);
+                        if (!result[1].map(n => n.fullName).includes(e.fullName))
+                            result[1].push(e);
                     });
                 } else {
-                    result[0].push(f);
+                    if (f.vp === undefined || !result[0].map(n => n.vp === undefined ? "" : n.vp.fullName).includes(f.vp.fullName))
+                        result[0].push(f);
                 }
             });
             return result;

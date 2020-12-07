@@ -35,6 +35,9 @@ export class EntitiesList {
             result.district = d;
         }
         result.links = Object.assign([], this.links);
+        this.district.buildings.forEach(b => {
+            result.district.buildings.push(Object.assign([], b));
+        });
         return result;
     }
 }
