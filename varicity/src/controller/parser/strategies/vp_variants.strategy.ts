@@ -59,15 +59,6 @@ export class VPVariantsStrategy {
         let result = new EntitiesList();
         result.district = d;
 
-        const inheritancesList: LinkImplem[] = [];
-        linkElements.forEach(le => {
-            const source = result.getBuildingFromName(le.source);
-            const target = result.getBuildingFromName(le.target);
-            if (source !== undefined && target !== undefined)
-                inheritancesList.push(new LinkImplem(source, target, le.type));
-        });
-        result.links = inheritancesList;
-
         compositionLinks.forEach(le => {
             const source = result.getBuildingFromName(le.source);
             const target = result.getBuildingFromName(le.target);
