@@ -1,8 +1,7 @@
 import { Config } from './../../../model/entitiesImplems/config.model';
 import { VPVariantsImplem } from './../../../model/entitiesImplems/vpVariantsImplem.model';
 import { Link } from '../../../model/entities/link.interface';
-import {Color3, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3} from '@babylonjs/core';
-import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
+import { Color3, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3 } from '@babylonjs/core';
 import { Building3D } from '../../common/3Delements/building3D';
 import { Road3D } from './road3D';
 import { EntitiesList } from '../../../model/entitiesList';
@@ -14,8 +13,7 @@ export class City3D {
     config: Config;
     scene: Scene;
 
-    roads: Road3D[] = [];
-    buildings: Building3D[] = [];
+    road: Road3D;
     links: Link[] = [];
 
     floor: Mesh;
@@ -30,24 +28,11 @@ export class City3D {
     private init(entities: EntitiesList) {
 
         let d3elem = new Road3D(this.scene, entities.district as VPVariantsImplem);
-        this.roads.push(d3elem);
-
-        entities.buildings.forEach(b => {
-            let d3elem = new Building3D(this.scene, b, 0);
-            this.buildings.push(d3elem);
-        });
+        this.road = d3elem;
     }
 
     private findSrcLink(name: string): Building3D {
-        let building: Building3D = undefined;
-        for (let b of this.buildings) {
-            if (b.getName() == name) return building = b;
-        }
-        for (let d of this.roads) {
-            let b = d.get(name);
-            if (b != undefined) return building = b;
-        }
-        return building;
+        return this.road.get(name);
     }
 
     build() {
@@ -59,23 +44,19 @@ export class City3D {
             }>()
         };
 
-        this.roads[0].build(this.config);
-        // this.roads.forEach(d => {
-        //     d.build(this.config);
-        // });
-        this.buildings.forEach(b => {
-            b.build();
-        });
+        this.road.build(this.config);
         this.links.forEach(l => {
-            let src = this.findSrcLink(l.source.fullName);
-            let dest = this.findSrcLink(l.target.fullName);
             let type = l.type;
-            if (src != undefined && dest != undefined) {
-                let link = Link3DFactory.createLink(src, dest, type, this.scene);
-                src.link(link);
-                dest.link(link);
-                // src.link(dest, type);
-                //dest.link(src, type);
+            if (type == "INSTANTIATE") { // we only want to show INSTANTIATE type links since the visualization is based off IMPLEMENTS & EXTENDS hierarchy
+                let src = this.findSrcLink(l.source.fullName);
+                let dest = this.findSrcLink(l.target.fullName);
+                if (src !== undefined && dest !== undefined) {
+                    let link = Link3DFactory.createLink(src, dest, type, this.scene);
+                    src.link(link);
+                    dest.link(link);
+                    // src.link(dest, type);
+                    //dest.link(src, type);
+                }
             }
         });
 
@@ -102,21 +83,16 @@ export class City3D {
     }
 
     getSize(): number {
-        return Math.max(this.roads[0].getWidth(), this.roads[0].getLength());
+        return Math.max(this.road.getWidth(), this.road.getLength());
     }
 
     place() {
-        this.roads[0].place(0, 0, 1, 0);
-        this.floor.setPositionWithLocalVector(new Vector3(this.getSize()/2, -0.01, 0));
+        this.road.place(0, 0, 1, 0);
+        this.floor.setPositionWithLocalVector(new Vector3(this.getSize() / 2, -0.01, 0));
     }
 
     render() {
-        this.roads.forEach(d => {
-            d.render(this.config);
-        });
-        this.buildings.forEach(b => {
-            b.render(this.config);
-        });
+        this.road.render(this.config);
 
         let mat = new StandardMaterial("FloorMat", this.scene);
         mat.ambientColor = Color3.FromHexString("#222222");

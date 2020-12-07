@@ -59,22 +59,6 @@ export class VPVariantsStrategy {
         let result = new EntitiesList();
         result.district = d;
 
-        const inheritancesList: LinkImplem[] = [];
-        linkElements.forEach(le => {
-            const source = result.getBuildingFromName(le.source);
-            const target = result.getBuildingFromName(le.target);
-            if (source !== undefined && target !== undefined)
-                inheritancesList.push(new LinkImplem(source, target, le.type));
-        });
-        result.links = inheritancesList;
-
-        compositionLinks.forEach(le => {
-            const source = result.getBuildingFromName(le.source);
-            const target = result.getBuildingFromName(le.target);
-            if (source !== undefined && target !== undefined)
-                result.links.push(new LinkImplem(source, target, le.type));
-        });
-
         if (config.api_classes !== undefined){
             data.allnodes.filter(
                 nod => config.api_classes.includes(nod.name)
@@ -105,6 +89,14 @@ export class VPVariantsStrategy {
                 result.district.addBuilding(c);
             });
         }
+
+        compositionLinks.forEach(le => {
+            const source = result.getBuildingFromName(le.source);
+            const target = result.getBuildingFromName(le.target);
+            if (source !== undefined && target !== undefined){
+                result.links.push(new LinkImplem(source, target, le.type));
+            }
+        });
 
         // log for non-vp non-variant ndoes
         //console.log(data.allnodes.filter(nod => !nodesList.map(no => no.name).includes(nod.name)).map(n => n.name));

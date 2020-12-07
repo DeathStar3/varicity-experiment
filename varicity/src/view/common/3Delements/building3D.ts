@@ -85,8 +85,11 @@ export class Building3D extends Element3D {
     place(x: number, z: number) {
         let halfHeight = this.getHeight() / 2;
         this.center = new Vector3(x, halfHeight + this.depth * 30, z);
-        this.top = this.center.add(new Vector3(0, halfHeight, 0));
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
+        if (this.elementModel.types.includes("API")) {
+            halfHeight += this.getWidth();
+        }
+        this.top = this.center.add(new Vector3(0, halfHeight, 0));
     }
 
     render(config: Config) {
@@ -191,7 +194,7 @@ export class Building3D extends Element3D {
                 diameterBottom: this.getWidth(),
                 height: this.getWidth()
             }, this.scene);
-            this.d3ModelPyramid.setPositionWithLocalVector(this.top.add(new Vector3(0, this.getWidth() / 2 + this.edgesWidth/120, 0)));
+            this.d3ModelPyramid.setPositionWithLocalVector(this.center.add(new Vector3(0, this.getHeight()/2+ this.getWidth()/2 + this.edgesWidth/120, 0)));
             this.d3ModelPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
             this.d3ModelPyramid.material = mat;
             this.d3ModelPyramid.material.backFaceCulling = false;
