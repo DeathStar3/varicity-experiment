@@ -146,23 +146,24 @@ export class Road3D extends Element3D {
 
     get(name: string): Building3D {
         let building: Building3D = undefined;
+        // if(this.vp && this.vp.getName() == name) return this.vp;
         const arrConcat = this.leftVariants.concat(this.rightVariants);
-        if (name.includes(this.elementModel.name)) {
-            for (let b of arrConcat) {
-                if (b.getName() == name) {
-                    return building = this.vp;
-                }
+        // if (name.includes(this.elementModel.name)) {
+        for (let b of arrConcat) {
+            if (b.getName() == name) {
+                return building = this.vp;
             }
-            const roadsConcat = this.leftVPs.concat(this.rightVPs);
-            for (let d of roadsConcat) {
-                let b = d.get(name);
-                if (b != undefined) {
-                    return building = b;
-                }
-            }
-        } else {
-            return building;
         }
+        const roadsConcat = this.leftVPs.concat(this.rightVPs);
+        for (let d of roadsConcat) {
+            let b = d.get(name);
+            if (b != undefined) {
+                return building = b;
+            }
+        }
+        // } else {
+        // return building;
+        // }
         return building;
     }
 
@@ -354,7 +355,7 @@ export class Road3D extends Element3D {
     }
 
     showAllLinks(status?: boolean) {
-        if(status) this.status = status;
+        if (status) this.status = status;
         else this.status = !this.status;
         if (this.vp) this.vp.showAllLinks(this.status);
 

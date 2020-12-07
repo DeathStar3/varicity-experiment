@@ -34,6 +34,7 @@ export class EntitiesList {
         } else {
             result.district = d;
         }
+        result.links = this.links;
         return result;
     }
 }
