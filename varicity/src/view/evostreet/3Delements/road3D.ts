@@ -146,12 +146,11 @@ export class Road3D extends Element3D {
 
     get(name: string): Building3D {
         let building: Building3D = undefined;
-        // if(this.vp && this.vp.getName() == name) return this.vp;
+        if(this.vp && this.vp.getName() === name) return this.vp;
         const arrConcat = this.leftVariants.concat(this.rightVariants);
-        // if (name.includes(this.elementModel.name)) {
         for (let b of arrConcat) {
             if (b.getName() == name) {
-                return building = this.vp;
+                return building = b;
             }
         }
         const roadsConcat = this.leftVPs.concat(this.rightVPs);
@@ -161,9 +160,6 @@ export class Road3D extends Element3D {
                 return building = b;
             }
         }
-        // } else {
-        // return building;
-        // }
         return building;
     }
 
