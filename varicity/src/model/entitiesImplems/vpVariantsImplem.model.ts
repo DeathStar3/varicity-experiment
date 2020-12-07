@@ -1,12 +1,12 @@
-import {District} from "../entities/district.interface";
-import {ClassImplem} from "./classImplem.model";
-import {Building} from "../entities/building.interface";
+import { District } from "../entities/district.interface";
+import { ClassImplem } from "./classImplem.model";
+import { Building } from "../entities/building.interface";
 
 export class VPVariantsImplem extends District {
-    public vp : ClassImplem;
+    public vp: ClassImplem;
 
-    buildings : ClassImplem[];
-    districts : VPVariantsImplem[];
+    buildings: ClassImplem[];
+    districts: VPVariantsImplem[];
 
     constructor(vp: ClassImplem = undefined) {
         super();
@@ -48,11 +48,14 @@ export class VPVariantsImplem extends District {
         return false;
     }
 
-    filterCompLevel(level: number): VPVariantsImplem | [VPVariantsImplem[],ClassImplem[]] {
+    filterCompLevel(level: number): VPVariantsImplem | [VPVariantsImplem[], ClassImplem[]] {
         if (this.vp !== undefined && this.vp.compLevel > -1 && this.vp.compLevel <= level) {
+            // let result: VPVariantsImplem = Object.assign(new VPVariantsImplem(), this);
+            // let vp: ClassImplem = Object.assign({}, this.vp);
+            // let result = new VPVariantsImplem(vp);
             let result = new VPVariantsImplem(this.vp);
 
-            result.buildings = this.buildings.filter(b => (b.compLevel > -1 && b.compLevel <= level) || b.types.includes("API"));
+            result.buildings = Object.assign([], this.buildings.filter(b => (b.compLevel > -1 && b.compLevel <= level) || b.types.includes("API")));
 
             this.districts.forEach(d => {
                 const f = d.filterCompLevel(level);
@@ -71,9 +74,9 @@ export class VPVariantsImplem extends District {
             });
             return result;
         } else { // If this should not appear
-            let result : [VPVariantsImplem[],ClassImplem[]] = [[],[]];
+            let result: [VPVariantsImplem[], ClassImplem[]] = [[], []];
 
-            result[1] = this.buildings.filter(b => b.compLevel > -1 && b.compLevel <= level);
+            result[1] = Object.assign([], this.buildings.filter(b => b.compLevel > -1 && b.compLevel <= level));
 
             this.districts.forEach(d => {
                 const f = d.filterCompLevel(level);

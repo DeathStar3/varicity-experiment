@@ -24,8 +24,8 @@ export class EntitiesList {
     }
 
     public filterCompLevel(level: number) : EntitiesList {
-        let result = new EntitiesList();
-        result.district = this.district;
+        let result: EntitiesList = Object.assign({}, this);
+        result.district = Object.assign([], this.district);
 
         const d = this.district.filterCompLevel(level);
         if (Array.isArray(d)) {
@@ -34,7 +34,7 @@ export class EntitiesList {
         } else {
             result.district = d;
         }
-        result.links = this.links;
+        result.links = Object.assign([], this.links);
         return result;
     }
 }
