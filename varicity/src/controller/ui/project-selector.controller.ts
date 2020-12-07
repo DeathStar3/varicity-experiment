@@ -27,7 +27,8 @@ export class ProjectController {
             childEvo.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
                 let entities = new VPVariantsStrategy().parse(key);
-                UIController.scene = new EvostreetImplem(UIController.config, entities.filterCompLevel(2));
+                let filteredEntities = entities.filterCompLevel(1);
+                UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
                 UIController.scene.buildScene();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childEvo.innerHTML;
 

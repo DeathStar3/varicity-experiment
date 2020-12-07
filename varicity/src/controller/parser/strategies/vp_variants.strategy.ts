@@ -93,6 +93,9 @@ export class VPVariantsStrategy {
         compositionLinks.forEach(le => {
             const source = result.getBuildingFromName(le.source);
             const target = result.getBuildingFromName(le.target);
+            if (le.source === "org.jfree.chart.JFreeChart" || le.target === "org.jfree.chart.JFreeChart") {
+                console.log(le, "\n---\n", source, "\n---\n", target);
+            }
             if (source !== undefined && target !== undefined){
                 result.links.push(new LinkImplem(source, target, le.type));
             }
