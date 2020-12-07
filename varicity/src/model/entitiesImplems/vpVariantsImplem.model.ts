@@ -96,4 +96,11 @@ export class VPVariantsImplem extends District {
             return result;
         }
     }
+
+    public getBuildingFromName(name: string) : Building {
+        if (this.vp !== undefined && this.vp.name === name) {
+            return this.vp;
+        }
+        return super.getBuildingFromName(name);
+    }
 }
