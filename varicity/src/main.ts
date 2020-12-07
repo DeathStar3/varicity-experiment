@@ -9,6 +9,7 @@ class Main {
 
         let config = ConfigLoader.loadDataFile("config");
 
+        UIController.initSearchbar();
         UIController.createConfig(config);
         UIController.createProjectSelector(keys);
         // UIController.createFooter();

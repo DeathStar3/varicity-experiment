@@ -30,6 +30,7 @@ export class ProjectController {
                 let filteredEntities = entities.filterCompLevel(1);
                 UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
                 UIController.scene.buildScene();
+                UIController.clearMap();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childEvo.innerHTML;
 
                 /* @ts-ignore */
@@ -44,6 +45,7 @@ export class ProjectController {
                 let entities = new ClassesPackagesStrategy().parse(key);
                 UIController.scene = new MetricityImplem(UIController.config, entities);
                 UIController.scene.buildScene();
+                UIController.clearMap();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childMetri.innerHTML;
 
                 /* @ts-ignore */

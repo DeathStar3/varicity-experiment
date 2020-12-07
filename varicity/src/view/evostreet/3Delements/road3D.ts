@@ -165,6 +165,7 @@ export class Road3D extends Element3D {
 
     build(config?: Config) {
         const buildings3D: Building3D[] = [];
+        if(this.vp) this.vp.build();
         this.elementModel.buildings.forEach(b => {
             if (config.blacklist) {
                 if (!config.blacklist.includes(b.fullName)) {
