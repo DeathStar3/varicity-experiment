@@ -45,4 +45,8 @@ export class EntitiesList {
         });
         return result;
     }
+
+    public getMaxCompLevel() : number {
+        return this.district.getMaxCompLevel();
+    }
 }

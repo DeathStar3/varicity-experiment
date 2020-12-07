@@ -27,6 +27,11 @@ export class ProjectController {
             childEvo.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
                 let entities = new VPVariantsStrategy().parse(key);
+                let inputElement = document.getElementById("comp-level") as HTMLInputElement;
+                inputElement.min = "1";
+                inputElement.max = entities.getMaxCompLevel().toString();
+
+
                 let filteredEntities = entities.filterCompLevel(1);
                 UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
                 UIController.scene.buildScene();

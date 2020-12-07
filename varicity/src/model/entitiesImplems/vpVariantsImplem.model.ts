@@ -100,6 +100,10 @@ export class VPVariantsImplem extends District {
         }
     }
 
+    public getMaxCompLevel() : number {
+        return Math.max(this.vp === undefined ? -1 : this.vp.compLevel, super.getMaxCompLevel());
+    }
+
     public getBuildingFromName(name: string) : Building {
         if (this.vp !== undefined && this.vp.name === name) {
             return this.vp;
