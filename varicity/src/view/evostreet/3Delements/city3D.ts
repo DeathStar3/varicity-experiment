@@ -44,8 +44,6 @@ export class City3D {
         };
 
         this.road.build(this.config);
-
-        console.log(this.config.clones);
         this.links.forEach(l => {
             let type = l.type;
             if (type == "INSTANTIATE") { // we only want to show INSTANTIATE type links since the visualization is based off IMPLEMENTS & EXTENDS hierarchy
