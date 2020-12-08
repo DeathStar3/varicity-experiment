@@ -118,14 +118,14 @@ export class Building3D extends Element3D {
 
         UIController.addEntry(this.getName(), this);
 
-        const links = this.links;
+        // const links = this.links;
         this.d3Model.actionManager.registerAction(
             new ExecuteCodeAction(
                 {
                     trigger: ActionManager.OnPointerOverTrigger
                 },
                 () => {
-                    links.forEach(l => l.display());
+                    this.links.forEach(l => l.display());
                     UIController.displayObjectInfo(this);
                     // document.getElementById("nodes_details").innerText = out;
                 }
@@ -136,8 +136,8 @@ export class Building3D extends Element3D {
                 {
                     trigger: ActionManager.OnPointerOutTrigger
                 },
-                function () {
-                    links.forEach(l => l.display());
+                () => {
+                    this.links.forEach(l => l.display());
                 }
             )
         );
@@ -230,7 +230,7 @@ export class Building3D extends Element3D {
 
         // Display links to other buildings
         this.links.forEach(l => {
-            l.render(config);
+            if (l.src.elementModel.fullName === this.getName()) l.render(config);
         });
     }
 }

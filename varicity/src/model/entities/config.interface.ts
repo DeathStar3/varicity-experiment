@@ -15,8 +15,7 @@ export interface ConfigColor {
 }
 
 export interface ConfigClones {
-    objects: Building[],
-    map: Map<Building, {
+    map: Map<string, {
         original: Building3D,
         clones: Building3D[]
     }>
