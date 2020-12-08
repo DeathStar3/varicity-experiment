@@ -20,7 +20,7 @@ export class ProjectController {
 
             let childEvo = document.createElement("div");
             let childMetri = document.createElement("div");
-            childEvo.innerHTML = "EvoStreet View";
+            childEvo.innerHTML = "EvoStreets View";
             childMetri.innerHTML = "Metricity View";
 
             childEvo.className = "child";
@@ -29,6 +29,7 @@ export class ProjectController {
             // projets en vision evostreet
             childEvo.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
+                UIController.clearMap();
                 this.el = new VPVariantsStrategy().parse(key);
                 let inputElement = document.getElementById("comp-level") as HTMLInputElement;
                 inputElement.min = "1";
@@ -64,11 +65,11 @@ export class ProjectController {
             let filterButton = document.getElementById("filter-button") as HTMLButtonElement;
             filterButton.onclick = () => {
                 if (UIController.scene) UIController.scene.dispose();
+                UIController.clearMap();
                 const lvl = +(document.getElementById("comp-level") as HTMLInputElement).value;
                 let filteredEntities = this.el.filterCompLevel(lvl);
                 UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
                 UIController.scene.buildScene();
-                UIController.clearMap();
             }
 
             node.appendChild(childEvo);
