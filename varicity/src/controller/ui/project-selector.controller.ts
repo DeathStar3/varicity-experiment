@@ -38,7 +38,6 @@ export class ProjectController {
 
                 UIController.scene = new EvostreetImplem(UIController.config, this.el);
                 UIController.scene.buildScene();
-                UIController.clearMap();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childEvo.innerHTML;
 
                 /* @ts-ignore */
@@ -50,10 +49,10 @@ export class ProjectController {
             // projets en vision metricity
             childMetri.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
+                UIController.clearMap();
                 let entities = new ClassesPackagesStrategy().parse(key);
                 UIController.scene = new MetricityImplem(UIController.config, entities);
                 UIController.scene.buildScene();
-                UIController.clearMap();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childMetri.innerHTML;
 
                 /* @ts-ignore */

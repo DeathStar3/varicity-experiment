@@ -31,26 +31,25 @@ export class SearchbarController {
                     searchbar.style.backgroundColor = "";
                     return;
                 }
-            }
-        });
-        searchbar.addEventListener("input", (ev) => {
-            for (let [k, v] of this.map) {
-                if (k.includes(searchbar.value)) {
-                    searchbar.placeholder = k;
-                    searchbar.style.backgroundColor = "";
-                    searchbar.setAttribute("previous", k);
+            } else {
+                for (let [k, v] of this.map) {
+                    if (k.includes(searchbar.value)) {
+                        searchbar.placeholder = k;
+                        searchbar.style.backgroundColor = "";
+                        searchbar.setAttribute("previous", k);
 
-                    // NOT YET IMPLEMENTED : HIGHLIGHTS BUILDING OF NAME BEING TYPED
-                    let prev = searchbar.getAttribute("previous");
-                    if (prev != "" && this.map.has(prev)) {
-                        // this.map.get(prev).highlight(false);
+                        // NOT YET IMPLEMENTED : HIGHLIGHTS BUILDING OF NAME BEING TYPED
+                        let prev = searchbar.getAttribute("previous");
+                        if (prev != "" && this.map.has(prev)) {
+                            // this.map.get(prev).highlight(false);
+                        }
+                        // v.highlight(true);
+                        return;
                     }
-                    // v.highlight(true);
-                    return;
                 }
+                searchbar.placeholder = "";
+                searchbar.style.backgroundColor = "red";
             }
-            searchbar.placeholder = "";
-            searchbar.style.backgroundColor = "red";
         });
     }
 
