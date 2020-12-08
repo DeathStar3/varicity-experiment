@@ -3,8 +3,11 @@ import { MetricityImplem } from "../../view/metricity/metricityImplem";
 import { ClassesPackagesStrategy } from "../parser/strategies/classes_packages.strategy";
 import { VPVariantsStrategy } from "../parser/strategies/vp_variants.strategy";
 import { UIController } from "./ui.controller";
+import {EntitiesList} from "../../model/entitiesList";
 
 export class ProjectController {
+
+    static el : EntitiesList;
 
     static createProjectSelector(keys: string[]) {
         let parent = document.getElementById("project_selector");
@@ -26,14 +29,14 @@ export class ProjectController {
             // projets en vision evostreet
             childEvo.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
-                let entities = new VPVariantsStrategy().parse(key);
+                this.el = new VPVariantsStrategy().parse(key);
                 let inputElement = document.getElementById("comp-level") as HTMLInputElement;
                 inputElement.min = "1";
-                inputElement.max = entities.getMaxCompLevel().toString();
+                const maxLvl = this.el.getMaxCompLevel().toString();
+                inputElement.max = maxLvl;
+                inputElement.value = maxLvl;
 
-
-                let filteredEntities = entities.filterCompLevel(1);
-                UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
+                UIController.scene = new EvostreetImplem(UIController.config, this.el);
                 UIController.scene.buildScene();
                 UIController.clearMap();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childEvo.innerHTML;
@@ -58,6 +61,16 @@ export class ProjectController {
                     child.style.display = "none";
                 }
             });
+
+            let filterButton = document.getElementById("filter-button") as HTMLButtonElement;
+            filterButton.onclick = () => {
+                if (UIController.scene) UIController.scene.dispose();
+                const lvl = +(document.getElementById("comp-level") as HTMLInputElement).value;
+                let filteredEntities = this.el.filterCompLevel(lvl);
+                UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
+                UIController.scene.buildScene();
+                UIController.clearMap();
+            }
 
             node.appendChild(childEvo);
             node.appendChild(childMetri);
