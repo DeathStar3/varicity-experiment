@@ -37,6 +37,13 @@ export abstract class District {
         return undefined;
     }
 
+    public getMaxCompLevel() : number {
+        return Math.max(
+            this.buildings.reduce((a, b) => Math.max(a, b.compLevel), -1),
+            this.districts.reduce((a, b) => Math.max(a, b.getMaxCompLevel()), -1)
+        );
+    }
+
     public depth() : number {
         if (this.districts.length > 0) {
             const depths = this.districts.map(d => d.depth());

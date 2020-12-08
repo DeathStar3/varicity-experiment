@@ -37,8 +37,7 @@ export class City3D {
 
     build() {
         this.config.clones = {
-            objects: [],
-            map: new Map<Building, {
+            map: new Map<string, {
                 original: Building3D,
                 clones: Building3D[]
             }>()

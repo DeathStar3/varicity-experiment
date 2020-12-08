@@ -165,16 +165,16 @@ export class Road3D extends Element3D {
 
     build(config?: Config) {
         const buildings3D: Building3D[] = [];
+        if(this.vp) this.vp.build();
         this.elementModel.buildings.forEach(b => {
             if (config.blacklist) {
                 if (!config.blacklist.includes(b.fullName)) {
                     if (config.clones) {
-                        if (config.clones.objects.includes(b)) {
-                            config.clones.map.get(b).clones.push(this.vp);
+                        if (config.clones.map.has(b.fullName)) {
+                            config.clones.map.get(b.fullName).clones.push(this.vp);
                         } else {
                             let d3 = new Building3D(this.scene, b, 0);
-                            config.clones.objects.push(b);
-                            config.clones.map.set(b, { original: d3, clones: [] });
+                            config.clones.map.set(b.fullName, { original: d3, clones: [] });
                             d3.build();
                             buildings3D.push(d3);
                         }
@@ -191,12 +191,11 @@ export class Road3D extends Element3D {
             if (config.blacklist) {
                 if (!config.blacklist.includes(v.name)) {
                     if (config.clones) {
-                        if (config.clones.objects.includes(v.vp)) {
-                            config.clones.map.get(v.vp).clones.push(this.vp);
+                        if (config.clones.map.has(v.vp.fullName)) {
+                            config.clones.map.get(v.vp.fullName).clones.push(this.vp);
                         } else {
                             let d3 = new Road3D(this.scene, v);
-                            config.clones.objects.push(v.vp);
-                            config.clones.map.set(v.vp, { original: d3.vp, clones: [] });
+                            config.clones.map.set(v.vp.fullName, { original: d3.vp, clones: [] });
                             d3.build(config);
                             roads3D.push(d3);
                         }

@@ -1,3 +1,4 @@
+import { SearchbarController } from './searchbar.controller';
 import { Building3D } from './../../view/common/3Delements/building3D';
 import { Color } from '../../model/entities/config.interface';
 import { Config } from '../../model/entitiesImplems/config.model';
@@ -14,6 +15,18 @@ export class UIController {
     public static createHeader(): void {
 
     }
+
+    public static initSearchbar(): void {
+        SearchbarController.initMap();
+    }
+
+    public static addEntry(k: string, v: Building3D): void {
+        SearchbarController.addEntry(k, v);
+    }
+    public static clearMap() {
+        SearchbarController.emptyMap();
+    }
+
 
     public static createProjectSelector(keys: string[]): void {
         ProjectController.createProjectSelector(keys);

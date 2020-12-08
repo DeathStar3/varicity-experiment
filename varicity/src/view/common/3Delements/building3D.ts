@@ -71,12 +71,22 @@ export class Building3D extends Element3D {
     }
 
     highlight(arg: boolean) {
-        if(arg) {
+        if (arg) {
+            // if (this.highlightLayer) this.highlightLayer.removeAllMeshes();
             this.highlightLayer = new HighlightLayer("hl", this.scene);
             this.highlightLayer.addMesh(this.d3Model, Color3.Blue());
         } else {
-            this.highlightLayer.removeAllMeshes();
+            if (this.highlightLayer) this.highlightLayer.removeAllMeshes();
+            else {
+                console.log("mAZUI ZO");
+            }
         }
+    }
+
+    focus() {
+        let cam = UIController.scene.camera;
+        cam.focusOn([this.d3Model], true);
+        cam.radius = 20;
     }
 
     build() {
@@ -105,15 +115,17 @@ export class Building3D extends Element3D {
         this.d3Model.setPositionWithLocalVector(this.center);
 
         this.d3Model.actionManager = new ActionManager(this.scene);
-        const out = this.elementModel.toString();
-        const links = this.links;
+
+        UIController.addEntry(this.getName(), this);
+
+        // const links = this.links;
         this.d3Model.actionManager.registerAction(
             new ExecuteCodeAction(
                 {
                     trigger: ActionManager.OnPointerOverTrigger
                 },
                 () => {
-                    links.forEach(l => l.display());
+                    this.links.forEach(l => l.display());
                     UIController.displayObjectInfo(this);
                     // document.getElementById("nodes_details").innerText = out;
                 }
@@ -124,8 +136,8 @@ export class Building3D extends Element3D {
                 {
                     trigger: ActionManager.OnPointerOutTrigger
                 },
-                function () {
-                    links.forEach(l => l.display());
+                () => {
+                    this.links.forEach(l => l.display());
                 }
             )
         );
@@ -194,7 +206,7 @@ export class Building3D extends Element3D {
                 diameterBottom: this.getWidth(),
                 height: this.getWidth()
             }, this.scene);
-            this.d3ModelPyramid.setPositionWithLocalVector(this.center.add(new Vector3(0, this.getHeight()/2+ this.getWidth()/2 + this.edgesWidth/120, 0)));
+            this.d3ModelPyramid.setPositionWithLocalVector(this.center.add(new Vector3(0, this.getHeight() / 2 + this.getWidth() / 2 + this.edgesWidth / 120, 0)));
             this.d3ModelPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
             this.d3ModelPyramid.material = mat;
             this.d3ModelPyramid.material.backFaceCulling = false;
@@ -218,7 +230,7 @@ export class Building3D extends Element3D {
 
         // Display links to other buildings
         this.links.forEach(l => {
-            l.render(config);
+            if (l.src.elementModel.fullName === this.getName()) l.render(config);
         });
     }
 }
