@@ -39,18 +39,18 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
         });
 
         const linkElements = data.links.map(l => new LinkElement(l.source, l.target, l.type));
-
-        const compositionLinks = data.alllinks.map(l => new LinkElement(l.source, l.target, l.type));
+        const allLinks = data.alllinks.map(l => new LinkElement(l.source, l.target, l.type));
+        const compositionLink = allLinks.filter(l => l.type === "INSTANTIATE");
 
         nodesList.forEach(n => {
             n.nbVariants = this.getLinkedNodesFromSource(n, nodesList, linkElements).length;
         });
 
-        this.buildComposition(data.alllinks, nodesList, apiList, 0);
+        this.buildComposition(compositionLink, nodesList, apiList, 0);
         //console.log(nodesList.sort((a, b) => a.compositionLevel - b.compositionLevel));
         console.log(nodesList.sort((a, b) => a.name.localeCompare(b.name)));
 
-        const d = this.buildDistricts(nodesList, linkElements);
+        const d = this.buildDistricts(nodesList, compositionLink);
 
         let result = new EntitiesList();
         result.district = d;
@@ -86,7 +86,7 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
             });
         }
 
-        compositionLinks.forEach(le => {
+        allLinks.forEach(le => {
             const source = result.getBuildingFromName(le.source);
             const target = result.getBuildingFromName(le.target);
             if (source !== undefined && target !== undefined){
@@ -135,77 +135,56 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
     }
 
     private buildDistricts(nodes: NodeElement[], links: LinkElement[]) : VPVariantsImplem {
-        const trace : VPVariantsImplem[] = [];
-        const roots : VPVariantsImplem[] = [];
-        nodes.forEach(n => {
-            this.buildDistrict(n, trace, nodes, links, roots);
+        const roots = nodes.filter(n => n.compositionLevel === 0);
+        const rootElems = roots.map(r => {
+            return this.buildDistrict(r, nodes, links, 0)
         });
-        const res : VPVariantsImplem = new VPVariantsImplem();
-        roots.forEach(r => {
-            res.addDistrict(r);
-        })
+        let res = new VPVariantsImplem();
+        rootElems.forEach(e => {
+            if (e instanceof VPVariantsImplem) {
+                res.districts.push(e);
+            } else {
+                res.buildings.push(e);
+            }
+        });
         return res;
     }
 
-    private buildDistrict(nodeElement: NodeElement, trace: VPVariantsImplem[], nodes: NodeElement[], links: LinkElement[], roots: VPVariantsImplem[]) : VPVariantsImplem {
-        if (nodeElement.types.includes("VP")) { // if n is a vp
-            if (!nodeElement.analyzed) { // if n has not been analyzed yet
-                // create a new district with n
-                let c = new ClassImplem(
-                    nodeElement.name,
-                    nodeElement.nbMethodVariants,
-                    nodeElement.nbConstructorVariants,
-                    nodeElement.types,
-                    nodeElement.name,
-                    nodeElement.compositionLevel
-                );
-                c.heightName = "methodVariants";
-                c.widthName = "constructorVariants";
-                const res = new VPVariantsImplem(c);
-
-                // construct districts for each of linked nodes
-                // add each district to the district's districts
-                // and add remaining classes to the district's buildings
-                const linkedNodes = this.getLinkedNodesFromSource(nodeElement, nodes, links);
-
-                linkedNodes.forEach(n => {
-                    const d = this.buildDistrict(n, trace, nodes, links, roots);
-                    if (d === undefined) {
-                        let c = new ClassImplem(
-                            n.name,
-                            n.nbMethodVariants,
-                            n.nbConstructorVariants,
-                            n.types,
-                            n.name,
-                            n.compositionLevel
-                        );
-                        c.heightName = "methodVariants";
-                        c.widthName = "constructorVariants";
-                        res.addBuilding(c);
-                    } else {
-                        res.addDistrict(d);
-                    }
-                });
-
-                const ln = this.getLinkedNodesToTarget(nodeElement, nodes, links);
-                if (ln.length === 0) {
-                    roots.push(res);
+    private buildDistrict(nodeElement: NodeElement, nodes: NodeElement[], links: LinkElement[], level: number) : VPVariantsImplem | ClassImplem {
+        const linked = this.getLinkedNodesFromSource(nodeElement, nodes, links); // OUT
+        this.getLinkedNodesToTarget(nodeElement, nodes, links).forEach(l => linked.push(l)); // IN
+        if (level === 0)
+            console.log("---",linked);
+        const children = linked.filter(ln => ln.compositionLevel === level+1);
+        if (level === 0)
+            console.log("===",children);
+        if (children.length > 0) {
+            let result = new VPVariantsImplem(new ClassImplem(
+                nodeElement.name,
+                nodeElement.nbMethodVariants,
+                nodeElement.nbConstructorVariants,
+                nodeElement.types,
+                nodeElement.name,
+                nodeElement.compositionLevel
+            ));
+            children.forEach(c => {
+                const r = this.buildDistrict(c, nodes, links, level+1);
+                if (r instanceof VPVariantsImplem) {
+                    result.districts.push(r);
+                } else {
+                    result.buildings.push(r);
                 }
-
-                // add result to the trace, set the node to have been analyzed, and return constructed district
-                trace.push(res);
-                nodeElement.analyzed = true;
-                return res;
-            } else { // else return its element found from the trace
-                for (let i = 0; i < trace.length; i++) {
-                    if (trace[i].vp.name === nodeElement.name) {
-                        return trace[i];
-                    }
-                }
-                throw "Error: node analyzed but not found in trace.";
-            }
-        } else { // else return undefined
-            return undefined;
+            });
+            return result;
+        } else {
+            return new ClassImplem(
+                nodeElement.name,
+                nodeElement.nbMethodVariants,
+                nodeElement.nbConstructorVariants,
+                nodeElement.types,
+                nodeElement.name,
+                nodeElement.compositionLevel
+            );
         }
     }
 
@@ -230,7 +209,9 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
 
         links.forEach(l => {
             if (l.source === name && l.target !== name) {
-                res.push(this.findNodeByName(l.target, nodes));
+                const n = this.findNodeByName(l.target, nodes);
+                if (n !== undefined)
+                    res.push(n);
             }
         });
 
@@ -243,7 +224,9 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
 
         links.forEach(l => {
             if (l.source !== name && l.target === name) {
-                res.push(this.findNodeByName(l.source, nodes));
+                const n = this.findNodeByName(l.source, nodes);
+                if (n !== undefined)
+                    res.push(n);
             }
         });
 

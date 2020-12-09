@@ -6,6 +6,7 @@ import { UIController } from "./ui.controller";
 import {EntitiesList} from "../../model/entitiesList";
 import {FilesLoader} from "../parser/filesLoader";
 import {ConfigLoader} from "../parser/configLoader";
+import {VPVariantsCompositionStrategy} from "../parser/strategies/vp_variants_composition.strategy";
 
 export class ProjectController {
 
@@ -21,11 +22,14 @@ export class ProjectController {
             parent.appendChild(node);
 
             let childEvo = document.createElement("div");
+            let childEvoComp = document.createElement("div");
             let childMetri = document.createElement("div");
-            childEvo.innerHTML = "EvoStreets View";
+            childEvo.innerHTML = "EvoStreets View - Inheritance";
+            childEvoComp.innerHTML = "EvoStreets View - Composition";
             childMetri.innerHTML = "Metricity View";
 
             childEvo.className = "child";
+            childEvoComp.className = "child";
             childMetri.className = "child";
 
             // projets en vision evostreet
@@ -33,6 +37,26 @@ export class ProjectController {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
                 this.el = new VPVariantsInheritanceStrategy().parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
+                let inputElement = document.getElementById("comp-level") as HTMLInputElement;
+                inputElement.min = "1";
+                const maxLvl = this.el.getMaxCompLevel().toString();
+                inputElement.max = maxLvl;
+                inputElement.value = maxLvl;
+
+                UIController.scene = new EvostreetImplem(UIController.config, this.el);
+                UIController.scene.buildScene();
+                parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childEvo.innerHTML;
+
+                /* @ts-ignore */
+                for (let child of parent.children) {
+                    child.style.display = "none";
+                }
+            });
+
+            childEvoComp.addEventListener("click", (ev) => {
+                if (UIController.scene) UIController.scene.dispose();
+                UIController.clearMap();
+                this.el = new VPVariantsCompositionStrategy().parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
                 let inputElement = document.getElementById("comp-level") as HTMLInputElement;
                 inputElement.min = "1";
                 const maxLvl = this.el.getMaxCompLevel().toString();
@@ -75,6 +99,7 @@ export class ProjectController {
             }
 
             node.appendChild(childEvo);
+            node.appendChild(childEvoComp);
             node.appendChild(childMetri);
 
             /* @ts-ignore */
