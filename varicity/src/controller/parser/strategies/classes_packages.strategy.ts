@@ -6,11 +6,12 @@ import {PackageImplem} from "../../../model/entitiesImplems/packageImplem.model"
 import {FilesLoader} from "../filesLoader";
 import {LinkElement} from "../symfinder_elements/links/link.element";
 import {LinkImplem} from "../../../model/entitiesImplems/linkImplem.model";
+import {JsonInputInterface} from "../../../model/entities/jsonInput.interface";
+import {Config} from "../../../model/entitiesImplems/config.model";
+import {ParsingStrategy} from "./parsing.strategy.interface";
 
-export class ClassesPackagesStrategy {
-    public parse(fileName: string) : EntitiesList {
-        const data = FilesLoader.loadDataFile(fileName);
-
+export class ClassesPackagesStrategy implements ParsingStrategy {
+    public parse(data: JsonInputInterface, config: Config) : EntitiesList {
         console.log('Analyzing with classes and packages strategy: ', data);
 
         const nodesList: NodeElement[] = [];

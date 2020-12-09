@@ -1,9 +1,11 @@
 import { EvostreetImplem } from "../../view/evostreet/evostreetImplem";
 import { MetricityImplem } from "../../view/metricity/metricityImplem";
 import { ClassesPackagesStrategy } from "../parser/strategies/classes_packages.strategy";
-import { VPVariantsStrategy } from "../parser/strategies/vp_variants.strategy";
+import { VPVariantsInheritanceStrategy } from "../parser/strategies/vp_variants_inheritance.strategy";
 import { UIController } from "./ui.controller";
 import {EntitiesList} from "../../model/entitiesList";
+import {FilesLoader} from "../parser/filesLoader";
+import {ConfigLoader} from "../parser/configLoader";
 
 export class ProjectController {
 
@@ -30,7 +32,7 @@ export class ProjectController {
             childEvo.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
-                this.el = new VPVariantsStrategy().parse(key);
+                this.el = new VPVariantsInheritanceStrategy().parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
                 let inputElement = document.getElementById("comp-level") as HTMLInputElement;
                 inputElement.min = "1";
                 const maxLvl = this.el.getMaxCompLevel().toString();
@@ -51,7 +53,7 @@ export class ProjectController {
             childMetri.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
-                let entities = new ClassesPackagesStrategy().parse(key);
+                let entities = new ClassesPackagesStrategy().parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
                 UIController.scene = new MetricityImplem(UIController.config, entities);
                 UIController.scene.buildScene();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childMetri.innerHTML;

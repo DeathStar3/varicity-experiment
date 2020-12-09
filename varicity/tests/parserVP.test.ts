@@ -1,7 +1,9 @@
 import {expect} from 'chai';
 
-import { VPVariantsStrategy } from "../src/controller/parser/strategies/vp_variants.strategy";
+import { VPVariantsInheritanceStrategy } from "../src/controller/parser/strategies/vp_variants_inheritance.strategy";
 import { District } from '../src/model/entities/district.interface';
+import {FilesLoader} from "../src/controller/parser/filesLoader";
+import {ConfigLoader} from "../src/controller/parser/configLoader";
 
 function countBuilding(districts: District[]) : number{
   let sum = 0;
@@ -22,7 +24,7 @@ function countDistricts(districts: District[]) : number{
 }
 describe('parsing without filtering by composition level', function() {
   it('parse', function() {
-    let entities = new VPVariantsStrategy().parse('test3ForVPParser');
+    let entities = new VPVariantsInheritanceStrategy().parse(FilesLoader.loadDataFile('test3ForVPParser'), ConfigLoader.loadDataFile("config"));
     let dis = entities.district.districts
     let numberOfDistricts = countDistricts(dis);
     let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
@@ -33,7 +35,7 @@ describe('parsing without filtering by composition level', function() {
 
 describe('parsing with filtering by composition level', function() {
   it('parse', function() {
-    let entities = new VPVariantsStrategy().parse('test3ForVPParser');
+    let entities = new VPVariantsInheritanceStrategy().parse(FilesLoader.loadDataFile('test3ForVPParser'), ConfigLoader.loadDataFile("config"));
     let ent = entities.filterCompLevel(1);
     let dis = ent.district.districts
     let numberOfDistricts = countDistricts(dis);

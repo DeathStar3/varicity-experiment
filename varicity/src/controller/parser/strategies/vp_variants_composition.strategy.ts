@@ -1,19 +1,15 @@
-import { ConfigLoader } from './../configLoader';
 import {EntitiesList} from "../../../model/entitiesList";
 import {NodeElement} from "../symfinder_elements/nodes/node.element";
 import {ClassImplem} from "../../../model/entitiesImplems/classImplem.model";
-import {PackageImplem} from "../../../model/entitiesImplems/packageImplem.model";
-import {FilesLoader} from "../filesLoader";
 import {LinkElement} from "../symfinder_elements/links/link.element";
 import {LinkImplem} from "../../../model/entitiesImplems/linkImplem.model";
 import {VPVariantsImplem} from "../../../model/entitiesImplems/vpVariantsImplem.model";
-import {LinkInterface} from "../../../model/entities/jsonInput.interface";
+import {JsonInputInterface, LinkInterface} from "../../../model/entities/jsonInput.interface";
+import {Config} from "../../../model/entitiesImplems/config.model";
+import {ParsingStrategy} from "./parsing.strategy.interface";
 
-export class VPVariantsStrategy {
-    public parse(fileName: string) : EntitiesList {
-        const data = FilesLoader.loadDataFile(fileName);
-        const config = ConfigLoader.loadDataFile("config")
-
+export class VPVariantsCompositionStrategy  implements ParsingStrategy {
+    public parse(data: JsonInputInterface, config: Config) : EntitiesList {
         // console.log('Analyzing with VP and variants strategy: ', data);
 
         let nodesList: NodeElement[] = [];
