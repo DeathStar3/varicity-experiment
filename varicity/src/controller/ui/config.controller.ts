@@ -113,6 +113,20 @@ export class ConfigController {
                     if ((config[key]) instanceof Object) {
                         this.populateChildren(config[key], node); // the child will be an array of values
                         node.className = "parent";
+
+                        /* @ts-ignore */
+                        for (let child of node.children) {
+                            child.style.display = "none";
+                        }
+                        node.onclick = (me) => {
+                            if (me.target == node) {
+                                /* @ts-ignore */
+                                for (let child of node.children) {
+                                    if (child.style.display == "block") child.style.display = "none";
+                                    else child.style.display = "block";
+                                }
+                            }
+                        }
                     }
                     else {
                         let input = this.createInput(config[key], node);
@@ -125,20 +139,6 @@ export class ConfigController {
                                 UIController.changeConfig(arr, ["", input.value]);
                             }
                         });
-                    }
-
-                    /* @ts-ignore */
-                    for (let child of node.children) {
-                        child.style.display = "none";
-                    }
-                    node.onclick = (me) => {
-                        if (me.target == node) {
-                            /* @ts-ignore */
-                            for (let child of node.children) {
-                                if (child.style.display == "block") child.style.display = "none";
-                                else child.style.display = "block";
-                            }
-                        }
                     }
                 }
             }
