@@ -1,5 +1,14 @@
+export interface Node {
+    name: string;
+    types: string[];
+    nbAttributes: number;
+    nbFunctions: number;
+    nbVariants: number;
+    nbConstructorVariants: number;
+    nbMethodVariants: number;
+}
 
-export class NodeElement {
+export class NodeElement implements Node{
     name: string;
     types: string[];
     nbAttributes: number;

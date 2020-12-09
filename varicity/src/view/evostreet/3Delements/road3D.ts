@@ -28,12 +28,12 @@ export class Road3D extends Element3D {
 
     status: boolean = false;
 
-    constructor(scene: Scene, vpElmt: VPVariantsImplem) {
+    constructor(scene: Scene, vpElmt: VPVariantsImplem, config: Config) {
         super(scene);
 
         this.elementModel = vpElmt;
         if (vpElmt.vp) {
-            this.vp = new Building3D(scene, vpElmt.vp, 0);
+            this.vp = new Building3D(scene, vpElmt.vp, 0, config);
         }
     }
 
@@ -168,18 +168,18 @@ export class Road3D extends Element3D {
         if(this.vp) this.vp.build();
         this.elementModel.buildings.forEach(b => {
             if (config.blacklist) {
-                if (!config.blacklist.includes(b.fullName)) {
+                if (!config.blacklist.includes(b.name)) {
                     if (config.clones) {
-                        if (config.clones.map.has(b.fullName)) {
-                            config.clones.map.get(b.fullName).clones.push(this.vp);
+                        if (config.clones.map.has(b.name)) {
+                            config.clones.map.get(b.name).clones.push(this.vp);
                         } else {
-                            let d3 = new Building3D(this.scene, b, 0);
-                            config.clones.map.set(b.fullName, { original: d3, clones: [] });
+                            let d3 = new Building3D(this.scene, b, 0, config);
+                            config.clones.map.set(b.name, { original: d3, clones: [] });
                             d3.build();
                             buildings3D.push(d3);
                         }
                     } else {
-                        let d3 = new Building3D(this.scene, b, 0);
+                        let d3 = new Building3D(this.scene, b, 0, config);
                         d3.build();
                         buildings3D.push(d3);
                     }
@@ -191,16 +191,16 @@ export class Road3D extends Element3D {
             if (config.blacklist) {
                 if (!config.blacklist.includes(v.name)) {
                     if (config.clones) {
-                        if (config.clones.map.has(v.vp.fullName)) {
-                            config.clones.map.get(v.vp.fullName).clones.push(this.vp);
+                        if (config.clones.map.has(v.vp.name)) {
+                            config.clones.map.get(v.vp.name).clones.push(this.vp);
                         } else {
-                            let d3 = new Road3D(this.scene, v);
-                            config.clones.map.set(v.vp.fullName, { original: d3.vp, clones: [] });
+                            let d3 = new Road3D(this.scene, v, config);
+                            config.clones.map.set(v.vp.name, { original: d3.vp, clones: [] });
                             d3.build(config);
                             roads3D.push(d3);
                         }
                     } else {
-                        let d3 = new Road3D(this.scene, v);
+                        let d3 = new Road3D(this.scene, v, config);
                         d3.build(config);
                         roads3D.push(d3);
                     }
@@ -324,11 +324,11 @@ export class Road3D extends Element3D {
 
         this.d3Model.material = mat;
 
-        if (this.vp) this.vp.render(config);
+        if (this.vp) this.vp.render();
 
         const variants = this.leftVariants.concat(this.rightVariants);
         variants.forEach(d => {
-            d.render(config);
+            d.render();
         });
 
         const vps = this.leftVPs.concat(this.rightVPs);

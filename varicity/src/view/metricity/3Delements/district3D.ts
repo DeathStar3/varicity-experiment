@@ -132,14 +132,14 @@ export class District3D extends Element3D {
 
         this.elementModel.buildings.forEach(b => {
             if (config.blacklist) {
-                if (!config.blacklist.includes(b.fullName)) {
-                    let d3Building = new Building3D(this.scene, b, this.depth);
+                if (!config.blacklist.includes(b.name)) {
+                    let d3Building = new Building3D(this.scene, b, this.depth, config);
                     this.d3Buildings.push(d3Building);
                     d3Building.build();
                 }
             }
             else {
-                let d3Building = new Building3D(this.scene, b, this.depth);
+                let d3Building = new Building3D(this.scene, b, this.depth, config);
                 this.d3Buildings.push(d3Building);
                 d3Building.build();
             }
@@ -206,7 +206,7 @@ export class District3D extends Element3D {
         });
 
         this.d3Buildings.forEach(b => {
-            b.render(config);
+            b.render();
         });
 
         this.d3Model.actionManager = new ActionManager(this.scene);

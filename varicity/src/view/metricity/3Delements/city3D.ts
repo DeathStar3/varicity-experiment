@@ -29,7 +29,7 @@ export class City3D {
         this.districts.push(d3elem);
 
         entities.buildings.forEach(b => {
-            let d3elem = new Building3D(this.scene, b, 0);
+            let d3elem = new Building3D(this.scene, b, 0, this.config);
             this.buildings.push(d3elem);
             // d3elem.build();
             // d3elem.render(this.config);
@@ -56,8 +56,8 @@ export class City3D {
             b.build();
         });
         this.links.forEach(l => {
-            let src = this.findSrcLink(l.source.fullName);
-            let dest = this.findSrcLink(l.target.fullName);
+            let src = this.findSrcLink(l.source.name);
+            let dest = this.findSrcLink(l.target.name);
             let type = l.type;
             if (src != undefined && dest != undefined) {
                 let link = Link3DFactory.createLink(src, dest, type, this.scene);
@@ -99,7 +99,7 @@ export class City3D {
             d.render(this.config);
         });
         this.buildings.forEach(b => {
-            b.render(this.config);
+            b.render();
         })
     }
 

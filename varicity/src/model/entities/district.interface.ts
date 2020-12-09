@@ -10,7 +10,7 @@ export abstract class District {
     abstract addDistrict(district: District);
     abstract addBuilding(building: Building);
 
-    abstract getTotalWidth(): number;
+    abstract getTotalWidth(field: string): number;
 
     abstract hasChild(obj: District | Building): boolean;
 
@@ -24,7 +24,7 @@ export abstract class District {
     // Get a building from its full name
     public getBuildingFromName(name: string) : Building {
         for (let i = 0; i < this.buildings.length; i++) {
-            if (this.buildings[i].fullName === name) {
+            if (this.buildings[i].name === name) {
                 return this.buildings[i];
             }
         }

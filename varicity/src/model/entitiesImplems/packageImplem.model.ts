@@ -1,6 +1,5 @@
 import { District } from '../entities/district.interface';
 import { ClassImplem } from './classImplem.model';
-import {Building} from "../entities/building.interface";
 
 export class PackageImplem extends District {
     name: string;
@@ -45,13 +44,13 @@ export class PackageImplem extends District {
         return true;
     }
 
-    getTotalWidth(): number {
+    getTotalWidth(field: string): number {
         let width = 0;
         this.districts.forEach(d => {
-            width += d.getTotalWidth() + 5; // 25 = with padding
+            width += d.getTotalWidth(field) + 5; // 25 = with padding
         });
         this.buildings.forEach(b => {
-            width += b.getWidth() + 2; // 10 = with padding
+            width += b.getWidth(field) + 2; // 10 = with padding
         })
         return width;
     }

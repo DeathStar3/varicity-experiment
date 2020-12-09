@@ -38,10 +38,13 @@ export class Building3D extends Element3D {
 
     highlightLayer: HighlightLayer;
 
-    constructor(scene: Scene, buildingElement: Building, depth: number) {
+    config: Config;
+
+    constructor(scene: Scene, buildingElement: Building, depth: number, config: Config) {
         super(scene);
         this.elementModel = buildingElement;
         this.depth = depth;
+        this.config = config;
     }
 
     showAllLinks(status?: boolean) {
@@ -50,7 +53,7 @@ export class Building3D extends Element3D {
     }
 
     getWidth(): number {
-        return this.elementModel.getWidth() + this.padding; // 2.5 av 2.5 ap
+        return this.elementModel.getWidth(this.config.variables.width) + this.padding; // 2.5 av 2.5 ap
         // return this.elementModel.getWidth();// 2.5 av 2.5 ap
     }
 
@@ -59,11 +62,11 @@ export class Building3D extends Element3D {
     }
 
     getHeight(): number {
-        return this.elementModel.getHeight() * this.heightScale;
+        return this.elementModel.getHeight(this.config.variables.height) * this.heightScale;
     }
 
     getName() {
-        return this.elementModel.fullName;
+        return this.elementModel.name;
     }
 
     link(link: Link3D) {
@@ -102,14 +105,14 @@ export class Building3D extends Element3D {
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
     }
 
-    render(config: Config) {
+    render() {
         // Display building
         this.d3Model = MeshBuilder.CreateBox(
             this.elementModel.name,
             {
                 height: this.getHeight(),
-                width: this.elementModel.getWidth(),
-                depth: this.elementModel.getWidth()
+                width: this.elementModel.getWidth(this.config.variables.width),
+                depth: this.elementModel.getWidth(this.config.variables.width)
             },
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.center);
@@ -143,15 +146,15 @@ export class Building3D extends Element3D {
         );
 
         // if config -> building -> colors -> outline is defined
-        if (config.building.colors.outlines) {
-            const outlineColor = this.getColor(config.building.colors.outlines, this.elementModel.types);
+        if (this.config.building.colors.outlines) {
+            const outlineColor = this.getColor(this.config.building.colors.outlines, this.elementModel.types);
             if (outlineColor !== undefined) {
                 this.d3ModelOutline = MeshBuilder.CreateBox(
                     this.elementModel.name,
                     {
                         height: this.getHeight() + this.outlineWidth,
-                        width: this.elementModel.getWidth() + this.outlineWidth,
-                        depth: this.elementModel.getWidth() + this.outlineWidth,
+                        width: this.elementModel.getWidth(this.config.variables.width) + this.outlineWidth,
+                        depth: this.elementModel.getWidth(this.config.variables.width) + this.outlineWidth,
                         sideOrientation: Mesh.BACKSIDE,
                         updatable: false
                     },
@@ -169,14 +172,14 @@ export class Building3D extends Element3D {
         }
 
         let mat = new StandardMaterial(this.elementModel.name + "Mat", this.scene);
-        if (config.force_color) {
-            mat.ambientColor = Color3.FromHexString(config.force_color);
-            mat.diffuseColor = Color3.FromHexString(config.force_color);
-            mat.emissiveColor = Color3.FromHexString(config.force_color);
+        if (this.config.force_color) {
+            mat.ambientColor = Color3.FromHexString(this.config.force_color);
+            mat.diffuseColor = Color3.FromHexString(this.config.force_color);
+            mat.emissiveColor = Color3.FromHexString(this.config.force_color);
             mat.specularColor = Color3.FromHexString("#000000");
         } else {
-            if (config.building.colors.faces) {
-                const buildingColor = this.getColor(config.building.colors.faces, this.elementModel.types);
+            if (this.config.building.colors.faces) {
+                const buildingColor = this.getColor(this.config.building.colors.faces, this.elementModel.types);
                 if (buildingColor !== undefined) {
                     mat.ambientColor = Color3.FromHexString(buildingColor);
                     mat.diffuseColor = Color3.FromHexString(buildingColor);
@@ -212,8 +215,8 @@ export class Building3D extends Element3D {
             this.d3ModelPyramid.material.backFaceCulling = false;
         }
 
-        if (config.building.colors.edges) {
-            const edgesColor = this.getColor(config.building.colors.edges, this.elementModel.types);
+        if (this.config.building.colors.edges) {
+            const edgesColor = this.getColor(this.config.building.colors.edges, this.elementModel.types);
             if (edgesColor !== undefined) {
                 this.d3Model.enableEdgesRendering();
                 this.d3Model.edgesWidth = this.edgesWidth;
@@ -230,7 +233,7 @@ export class Building3D extends Element3D {
 
         // Display links to other buildings
         this.links.forEach(l => {
-            if (l.src.elementModel.fullName === this.getName()) l.render(config);
+            if (l.src.elementModel.name === this.getName()) l.render(this.config);
         });
     }
 }

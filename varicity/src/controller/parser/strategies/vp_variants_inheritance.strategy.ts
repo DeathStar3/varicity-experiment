@@ -1,8 +1,6 @@
-import { ConfigLoader } from './../configLoader';
 import {EntitiesList} from "../../../model/entitiesList";
 import {NodeElement} from "../symfinder_elements/nodes/node.element";
 import {ClassImplem} from "../../../model/entitiesImplems/classImplem.model";
-import {FilesLoader} from "../filesLoader";
 import {LinkElement} from "../symfinder_elements/links/link.element";
 import {LinkImplem} from "../../../model/entitiesImplems/linkImplem.model";
 import {VPVariantsImplem} from "../../../model/entitiesImplems/vpVariantsImplem.model";
@@ -77,11 +75,7 @@ export class VPVariantsInheritanceStrategy implements ParsingStrategy {
                 node.types = n.types;
                 node.types.push("API");
                 let c = new ClassImplem(
-                    node.name,
-                    node.nbMethodVariants,
-                    node.nbConstructorVariants,
-                    node.types,
-                    node.name,
+                    node,
                     node.compositionLevel
                 );
                 result.district.addBuilding(c);
@@ -154,11 +148,7 @@ export class VPVariantsInheritanceStrategy implements ParsingStrategy {
             if (!nodeElement.analyzed) { // if n has not been analyzed yet
                 // create a new district with n
                 let c = new ClassImplem(
-                    nodeElement.name,
-                    nodeElement.nbMethodVariants,
-                    nodeElement.nbConstructorVariants,
-                    nodeElement.types,
-                    nodeElement.name,
+                    nodeElement,
                     nodeElement.compositionLevel
                 );
                 c.heightName = "methodVariants";
@@ -174,11 +164,7 @@ export class VPVariantsInheritanceStrategy implements ParsingStrategy {
                     const d = this.buildDistrict(n, trace, nodes, links, roots);
                     if (d === undefined) {
                         let c = new ClassImplem(
-                            n.name,
-                            n.nbMethodVariants,
-                            n.nbConstructorVariants,
-                            n.types,
-                            n.name,
+                            n,
                             n.compositionLevel
                         );
                         c.heightName = "methodVariants";

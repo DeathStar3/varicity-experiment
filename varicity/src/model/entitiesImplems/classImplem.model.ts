@@ -1,3 +1,4 @@
+import { Node } from './../../controller/parser/symfinder_elements/nodes/node.element';
 import { Building } from "../entities/building.interface";
 
 export class ClassImplem extends Building {
@@ -5,33 +6,23 @@ export class ClassImplem extends Building {
     heightName: string = "height";
     widthName: string = "width"
 
-    constructor(name: string, height: number, width: number, types: string[], fullName: string, level: number) {
+    constructor(node: Node, level: number) {
         super();
-        this.name = name;
-        this.height = height;
-        this.width = width;
-        this.types = types;
-        this.fullName = fullName;
+        Object.assign(this, node);
+        // this.name = name;
+        // this.height = height;
+        // this.width = width;
+        // this.types = types;
+        // this.fullName = fullName;
         this.compLevel = level;
     }
 
-    public getHeight() : number {
-        return 0.5 + this.height*0.5;
+    public getHeight(field: string) : number {
+        console.log(this[field]);
+        return 0.5 + this[field] *0.5;
     }
 
-    public getWidth() : number {
-        return 0.5 + this.width*0.5;
-    }
-
-    public toString() : string {
-        return "{fullName: "
-            + this.fullName
-            + ", "+this.heightName+": "
-            + this.height
-            + ", "+this.widthName+": "
-            + this.width
-            + "\ntypes: "
-            + this.types
-            + "}";
+    public getWidth(field: string) : number {
+        return 0.5 + this[field] *0.5;
     }
 }

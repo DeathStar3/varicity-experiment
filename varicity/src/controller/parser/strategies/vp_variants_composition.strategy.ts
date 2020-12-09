@@ -75,11 +75,7 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
                 node.types = n.types;
                 node.types.push("API");
                 let c = new ClassImplem(
-                    node.name,
-                    node.nbMethodVariants,
-                    node.nbConstructorVariants,
-                    node.types,
-                    node.name,
+                    node,
                     node.compositionLevel
                 );
                 result.district.addBuilding(c);
@@ -152,11 +148,7 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
             if (!nodeElement.analyzed) { // if n has not been analyzed yet
                 // create a new district with n
                 let c = new ClassImplem(
-                    nodeElement.name,
-                    nodeElement.nbMethodVariants,
-                    nodeElement.nbConstructorVariants,
-                    nodeElement.types,
-                    nodeElement.name,
+                    nodeElement,
                     nodeElement.compositionLevel
                 );
                 c.heightName = "methodVariants";
@@ -172,11 +164,7 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
                     const d = this.buildDistrict(n, trace, nodes, links, roots);
                     if (d === undefined) {
                         let c = new ClassImplem(
-                            n.name,
-                            n.nbMethodVariants,
-                            n.nbConstructorVariants,
-                            n.types,
-                            n.name,
+                            n,
                             n.compositionLevel
                         );
                         c.heightName = "methodVariants";

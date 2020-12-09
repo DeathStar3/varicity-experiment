@@ -12,7 +12,7 @@ export class VPVariantsImplem extends District {
         super();
         this.vp = vp;
         if (vp !== undefined) {
-            this.name = vp.fullName;
+            this.name = vp.name;
         } else {
             this.name = "";
         }
@@ -83,16 +83,16 @@ export class VPVariantsImplem extends District {
 
                 if (Array.isArray(f)) {
                     f[0].forEach(e => {
-                        if (e.vp === undefined || !result[0].map(n => n.vp === undefined ? "" : n.vp.fullName).includes(e.vp.fullName))
+                        if (e.vp === undefined || !result[0].map(n => n.vp === undefined ? "" : n.vp.name).includes(e.vp.name))
                             result[0].push(e);
                     });
 
                     f[1].forEach(e => {
-                        if (!result[1].map(n => n.fullName).includes(e.fullName))
+                        if (!result[1].map(n => n.name).includes(e.name))
                             result[1].push(e);
                     });
                 } else {
-                    if (f.vp === undefined || !result[0].map(n => n.vp === undefined ? "" : n.vp.fullName).includes(f.vp.fullName))
+                    if (f.vp === undefined || !result[0].map(n => n.vp === undefined ? "" : n.vp.name).includes(f.vp.name))
                         result[0].push(f);
                 }
             });

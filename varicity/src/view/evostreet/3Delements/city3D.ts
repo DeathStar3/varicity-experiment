@@ -5,7 +5,6 @@ import { Color3, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3 } from '@ba
 import { Building3D } from '../../common/3Delements/building3D';
 import { Road3D } from './road3D';
 import { EntitiesList } from '../../../model/entitiesList';
-import { Building } from '../../../model/entities/building.interface';
 import { Link3DFactory } from '../../common/3Dfactory/link3D.factory';
 
 export class City3D {
@@ -27,7 +26,7 @@ export class City3D {
 
     private init(entities: EntitiesList) {
 
-        let d3elem = new Road3D(this.scene, entities.district as VPVariantsImplem);
+        let d3elem = new Road3D(this.scene, entities.district as VPVariantsImplem, this.config);
         this.road = d3elem;
     }
 
@@ -47,8 +46,8 @@ export class City3D {
         this.links.forEach(l => {
             let type = l.type;
             if (type == "INSTANTIATE") { // we only want to show INSTANTIATE type links since the visualization is based off IMPLEMENTS & EXTENDS hierarchy
-                let src = this.findSrcLink(l.source.fullName);
-                let dest = this.findSrcLink(l.target.fullName);
+                let src = this.findSrcLink(l.source.name);
+                let dest = this.findSrcLink(l.target.name);
                 if (src !== undefined && dest !== undefined) {
                     let link = Link3DFactory.createLink(src, dest, type, this.scene);
                     src.link(link);

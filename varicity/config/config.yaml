@@ -61,3 +61,7 @@ api_classes: #all API classes
   - "org.jfree.chart.JFreeChart"
   - "org.jfree.chart.plot.PlotState"
   - "ChristmasTree"
+
+variables: #variables to be used for width and height of a building
+  width: "nbConstructorVariants"
+  height: "nbMethodVariants"

@@ -14,6 +14,10 @@ export class Config implements ConfigInterface {
     clones: ConfigClones;
     force_color: string; // HEX color string
     api_classes: string[];
+    variables: {
+        width: string;
+        height: string;
+    };
 
     constructor() { }
 
@@ -39,7 +43,7 @@ export class Config implements ConfigInterface {
                 return;
             }
             else {
-                if(this.instanceOfColor(value)) {
+                if (this.instanceOfColor(value)) {
                     throw new Error('Tried to assign Color ' + value + ' object to string in field vp_building.color.');
                 }
             }

@@ -1,5 +1,4 @@
 import { Building3D } from '../../view/common/3Delements/building3D';
-import { Building } from './building.interface';
 
 export interface Color {
     name: string;
@@ -38,4 +37,9 @@ export interface ConfigInterface {
     clones: ConfigClones;
 
     force_color: string; // HEX color string
+
+    variables: {
+        width: string,
+        height: string,
+    }
 }
