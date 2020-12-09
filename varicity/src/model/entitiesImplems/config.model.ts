@@ -14,6 +14,7 @@ export class Config implements ConfigInterface {
     clones: ConfigClones;
     force_color: string; // HEX color string
     api_classes: string[];
+    parsing_mode: string;
 
     constructor() { }
 
@@ -42,6 +43,12 @@ export class Config implements ConfigInterface {
                 if(this.instanceOfColor(value)) {
                     throw new Error('Tried to assign Color ' + value + ' object to string in field vp_building.color.');
                 }
+            }
+        }
+        if (fields.includes("parsing_mode")) {
+            if (Array.isArray(value)) {
+                config.parsing_mode = value[1];
+                return;
             }
         }
         for (let key of fields) {

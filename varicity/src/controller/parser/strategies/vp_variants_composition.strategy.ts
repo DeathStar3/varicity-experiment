@@ -153,11 +153,7 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
     private buildDistrict(nodeElement: NodeElement, nodes: NodeElement[], links: LinkElement[], level: number) : VPVariantsImplem | ClassImplem {
         const linked = this.getLinkedNodesFromSource(nodeElement, nodes, links); // OUT
         this.getLinkedNodesToTarget(nodeElement, nodes, links).forEach(l => linked.push(l)); // IN
-        if (level === 0)
-            console.log("---",linked);
         const children = linked.filter(ln => ln.compositionLevel === level+1);
-        if (level === 0)
-            console.log("===",children);
         if (children.length > 0) {
             let result = new VPVariantsImplem(new ClassImplem(
                 nodeElement.name,
