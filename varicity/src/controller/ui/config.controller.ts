@@ -67,6 +67,7 @@ export class ConfigController {
 
                     i.setAttribute("previous", "");
                     i.className = "child";
+                    i.setAttribute("list", "datalist");
                     i.style.display = "block";
                     i.addEventListener("keyup", (ke) => this.stringArrayListener(ke, i, parent));
                 }
@@ -104,6 +105,9 @@ export class ConfigController {
                 let prev = input.value;
                 input.setAttribute("previous", prev);
                 input.className = "child";
+                if (parent.getAttribute("value") === "api_classes" || parent.getAttribute("value") === "blacklist") {
+                    input.setAttribute("list", "datalist");
+                }
                 input.addEventListener("keyup", (ke) => this.stringArrayListener(ke, input, parent));
             }
             else {

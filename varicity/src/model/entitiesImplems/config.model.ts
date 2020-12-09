@@ -53,11 +53,6 @@ export class Config implements ConfigInterface {
                 config.variables[fields[1]] = value[1];
                 return;
             }
-            else {
-                if (this.instanceOfColor(value)) {
-                    throw new Error('Tried to assign Color ' + value + ' object to string in field variables.' + fields[1] + '.');
-                }
-            }
         }
         for (let key of fields) {
             cur = cur[key]; // we go deeper

@@ -48,6 +48,7 @@ export class UIController {
     public static changeConfig(arr: string[], value: [string, string] | Color) {
         Config.alterField(this.config, arr, value);
         if (this.scene) {
+            SearchbarController.emptyMap();
             this.scene = this.scene.rerender(this.config);
             this.scene.buildScene();
         }
