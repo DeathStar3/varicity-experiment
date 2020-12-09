@@ -1,3 +1,4 @@
+import { ParsingStrategy } from './../parser/strategies/parsing.strategy.interface';
 import { EvostreetImplem } from "../../view/evostreet/evostreetImplem";
 import { MetricityImplem } from "../../view/metricity/metricityImplem";
 import { ClassesPackagesStrategy } from "../parser/strategies/classes_packages.strategy";
@@ -13,6 +14,9 @@ import {VPVariantsStrategy} from "../parser/strategies/vp_variants.strategy";
 export class ProjectController {
 
     static el : EntitiesList;
+    private static previousParser: ParsingStrategy;
+    private static filename: string;
+    private static compLevel: number = 0;
 
     static createProjectSelector(keys: string[]) {
         let parent = document.getElementById("project_selector");
@@ -35,12 +39,12 @@ export class ProjectController {
             childEvo.addEventListener("click", () => {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
-                UIController.changeConfig(["parsing_mode"], ["", "inheritance"]);
-                console.log("---HERE",UIController.config);
-                ProjectController.el = new VPVariantsStrategy().parse(FilesLoader.loadDataFile(key), UIController.config);
+                this.previousParser = new VPVariantsCompositionStrategy();
+                this.filename = key;
+                this.el = this.previousParser.parse(FilesLoader.loadDataFile(key), UIController.config);
                 let inputElement = document.getElementById("comp-level") as HTMLInputElement;
                 inputElement.min = "1";
-                const maxLvl = ProjectController.el.getMaxCompLevel().toString();
+                const maxLvl = this.el.getMaxCompLevel().toString();
                 inputElement.max = maxLvl;
                 inputElement.value = maxLvl;
 
@@ -59,6 +63,7 @@ export class ProjectController {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
                 let entities = new ClassesPackagesStrategy().parse(FilesLoader.loadDataFile(key), UIController.config);
+                this.compLevel = -1;
                 UIController.scene = new MetricityImplem(UIController.config, entities);
                 UIController.scene.buildScene();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childMetri.innerHTML;
@@ -74,13 +79,14 @@ export class ProjectController {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
                 const lvl = +(document.getElementById("comp-level") as HTMLInputElement).value;
-                let filteredEntities = ProjectController.el.filterCompLevel(lvl);
+                this.compLevel = lvl;
+                let filteredEntities = this.el.filterCompLevel(lvl);
                 UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
                 UIController.scene.buildScene();
             }
 
             const x = (document.getElementById("hierarchy-select") as HTMLSelectElement).value;
-            UIController.changeConfig(["parsing_mode"], ["", x]);
+            UIController.config.parsing_mode = x;
 
             let hierarchySelect = document.getElementById("hierarchy-select") as HTMLSelectElement;
             hierarchySelect.onchange = () => {
@@ -118,5 +124,14 @@ export class ProjectController {
                 }
             }
         }
+    }
+
+    public static reParse() {
+        if (UIController.scene) UIController.scene.dispose();
+        UIController.clearMap();
+        this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config);
+        if(this.compLevel > -1) this.el.filterCompLevel(this.compLevel);
+        UIController.scene = new EvostreetImplem(UIController.config, this.el);
+        UIController.scene.buildScene();
     }
 }
