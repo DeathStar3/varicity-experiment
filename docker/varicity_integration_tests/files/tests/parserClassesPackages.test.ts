@@ -190,42 +190,36 @@ describe('parsing all tests projects with classe packages strategy', function() 
     expect(numberOfLinks).equal(2);
   });
 
-  // it('parse structures', function() {
-  //   let entities = new ClassesPackagesStrategy().parse('structures');
-  //   let numberOfBuiildings = entities.buildings.length;
-  //   expect(numberOfBuiildings).equal(3);
-  //   let numberOfLinks = entities.links.length;
-  //   expect(numberOfLinks).equal(0);
-  // });
+  it('parse structures', function() {
+    let entities = new ClassesPackagesStrategy().parse('structures');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(3);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(0);
+  });
 
-  // it('parse template', function() {
-  //   let entities = new ClassesPackagesStrategy().parse('template');
-  //   let numberOfBuiildings = entities.buildings.length;
-  //   expect(numberOfBuiildings).equal(2);
-  //   let numberOfLinks = entities.links.length;
-  //   expect(numberOfLinks).equal(1);
-  // });
+  it('parse template', function() {
+    let entities = new ClassesPackagesStrategy().parse('template');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(2);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(1);
+  });
 
-  // it('parse vps_and_variants', function() {
-  //   let entities = new ClassesPackagesStrategy().parse('vps_and_variants');
-  //   let numberOfBuiildings = entities.buildings.length;
-  //   expect(numberOfBuiildings).equal(6);
-  //   let numberOfLinks = entities.links.length;
-  //   expect(numberOfLinks).equal(0);
-  // });
+  it('parse vps_and_variants', function() {
+    let entities = new ClassesPackagesStrategy().parse('vps_and_variants');
+    let numberOfBuiildings = entities.buildings.length;
+    expect(numberOfBuiildings).equal(6);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(0);
+  });
 
-  // it('parse vps_in_different_packages', function() {
-  //   let entities = new ClassesPackagesStrategy().parse('vps_in_different_packages');
-  //   let districts = entities.district[0].districts
-  //   let numberOfDistricts = districts.length;
-  //   expect(numberOfDistricts).equal(2);
-  //   let numberOfBuiildings = 0;
-  //   districts.forEach(d => {
-  //     numberOfBuiildings += d.buildings.length
-  //   })
-  //   numberOfBuiildings+= entities.buildings.length
-  //   // expect(numberOfBuiildings).equal(6);
-  //   let numberOfLinks = entities.links.length;
-  //   expect(numberOfLinks).equal(1);
-  // });
+  it('parse vps_in_different_packages', function() {
+    let entities = new ClassesPackagesStrategy().parse('vps_in_different_packages');
+    let districts = entities.district.districts
+    let numberOfBuiildings = countBuilding(districts) + countDistricts(districts) // à revérifier
+    expect(numberOfBuiildings).equal(6);
+    let numberOfLinks = entities.links.length;
+    expect(numberOfLinks).equal(1);
+  });
 });
