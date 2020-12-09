@@ -168,7 +168,8 @@ export class Road3D extends Element3D {
         if(this.vp) this.vp.build();
         this.elementModel.buildings.forEach(b => {
             if (config.blacklist) {
-                if (!config.blacklist.includes(b.name)) {
+                // if (!config.blacklist.includes(b.name)) {
+                if (!config.blacklist.some(blacklisted => b.name.includes(blacklisted))) {
                     if (config.clones) {
                         if (config.clones.map.has(b.name)) {
                             config.clones.map.get(b.name).clones.push(this.vp);
@@ -189,7 +190,8 @@ export class Road3D extends Element3D {
         const roads3D: Road3D[] = [];
         this.elementModel.districts.forEach(v => {
             if (config.blacklist) {
-                if (!config.blacklist.includes(v.name)) {
+                // if (!config.blacklist.includes(v.name)) {
+                    if (!config.blacklist.some(blacklisted => v.name.includes(blacklisted))) {
                     if (config.clones) {
                         if (config.clones.map.has(v.vp.name)) {
                             config.clones.map.get(v.vp.name).clones.push(this.vp);
