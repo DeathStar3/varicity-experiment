@@ -37,21 +37,32 @@ export class Config implements ConfigInterface {
 
     public static alterField(config: Config, fields: string[], value: [string, string] | Color): void { // for the tuple : [prev value, cur value]
         let cur = config;
-        if (fields.includes("vp_building")) {
+        // if (fields.includes("vp_building")) {
+        //     if (Array.isArray(value)) {
+        //         config.vp_building.color = value[1];
+        //         return;
+        //     }
+        //     else {
+        //         if (this.instanceOfColor(value)) {
+        //             throw new Error('Tried to assign Color ' + value + ' object to string in field vp_building.color.');
+        //         }
+        //     }
+        // }
+        if (fields.includes("variables")) {
             if (Array.isArray(value)) {
-                config.vp_building.color = value[1];
+                config.variables[fields[1]] = value[1];
                 return;
             }
             else {
                 if (this.instanceOfColor(value)) {
-                    throw new Error('Tried to assign Color ' + value + ' object to string in field vp_building.color.');
+                    throw new Error('Tried to assign Color ' + value + ' object to string in field variables.' + fields[1] + '.');
                 }
             }
         }
         for (let key of fields) {
             cur = cur[key]; // we go deeper
         }
-        if (Array.isArray(cur)) {
+        if (Array.isArray(cur)) { // cur is an array of values
             if (cur.every(v => Config.instanceOfColor(v)) && Config.instanceOfColor(value)) {
                 let obj = cur.find(v => v.name == value.name);
                 obj.color = value.color;

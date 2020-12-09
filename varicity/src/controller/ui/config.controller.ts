@@ -66,6 +66,7 @@ export class ConfigController {
                     let i = this.createInput("", parent);   // we create another empty node to be able to add to the config file
 
                     i.setAttribute("previous", "");
+                    i.className = "child";
                     i.style.display = "block";
                     i.addEventListener("keyup", (ke) => this.stringArrayListener(ke, i, parent));
                 }
@@ -108,8 +109,23 @@ export class ConfigController {
             else {
                 for (let key in config) {
                     let node = this.createKey(key, parent);
-                    node.className = "parent";
-                    this.populateChildren(config[key], node);
+
+                    if ((config[key]) instanceof Object) {
+                        this.populateChildren(config[key], node); // the child will be an array of values
+                        node.className = "parent";
+                    }
+                    else {
+                        let input = this.createInput(config[key], node);
+                        node.className = "child";
+
+                        input.className = "right-input";
+                        input.addEventListener("keyup", (ke) => {
+                            if (ke.key == "Enter") {
+                                let arr = this.findValidParents(input);
+                                UIController.changeConfig(arr, ["", input.value]);
+                            }
+                        });
+                    }
 
                     /* @ts-ignore */
                     for (let child of node.children) {

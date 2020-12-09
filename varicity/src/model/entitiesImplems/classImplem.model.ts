@@ -18,7 +18,6 @@ export class ClassImplem extends Building {
     }
 
     public getHeight(field: string) : number {
-        console.log(this[field]);
         return 0.5 + this[field] *0.5;
     }
 
