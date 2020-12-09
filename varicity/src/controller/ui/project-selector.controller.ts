@@ -1,3 +1,4 @@
+import { ParsingStrategy } from './../parser/strategies/parsing.strategy.interface';
 import { EvostreetImplem } from "../../view/evostreet/evostreetImplem";
 import { MetricityImplem } from "../../view/metricity/metricityImplem";
 import { ClassesPackagesStrategy } from "../parser/strategies/classes_packages.strategy";
@@ -11,6 +12,9 @@ import {VPVariantsCompositionStrategy} from "../parser/strategies/vp_variants_co
 export class ProjectController {
 
     static el : EntitiesList;
+    private static previousParser: ParsingStrategy;
+    private static filename: string;
+    private static compLevel: number = 0;
 
     static createProjectSelector(keys: string[]) {
         let parent = document.getElementById("project_selector");
@@ -36,7 +40,9 @@ export class ProjectController {
             childEvo.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
-                this.el = new VPVariantsInheritanceStrategy().parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
+                this.previousParser = new VPVariantsInheritanceStrategy();
+                this.filename = key;
+                this.el = this.previousParser.parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
                 let inputElement = document.getElementById("comp-level") as HTMLInputElement;
                 inputElement.min = "1";
                 const maxLvl = this.el.getMaxCompLevel().toString();
@@ -56,7 +62,10 @@ export class ProjectController {
             childEvoComp.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
-                this.el = new VPVariantsCompositionStrategy().parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
+                this.compLevel = -1;
+                this.previousParser = new VPVariantsCompositionStrategy();
+                this.filename = key;
+                this.el = this.previousParser.parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
                 let inputElement = document.getElementById("comp-level") as HTMLInputElement;
                 inputElement.min = "1";
                 const maxLvl = this.el.getMaxCompLevel().toString();
@@ -77,7 +86,9 @@ export class ProjectController {
             childMetri.addEventListener("click", (ev) => {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
-                let entities = new ClassesPackagesStrategy().parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
+                this.compLevel = -1;
+                this.previousParser = new ClassesPackagesStrategy();
+                let entities = this.previousParser.parse(FilesLoader.loadDataFile(key), ConfigLoader.loadDataFile("config"));
                 UIController.scene = new MetricityImplem(UIController.config, entities);
                 UIController.scene.buildScene();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childMetri.innerHTML;
@@ -93,6 +104,7 @@ export class ProjectController {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
                 const lvl = +(document.getElementById("comp-level") as HTMLInputElement).value;
+                this.compLevel = lvl;
                 let filteredEntities = this.el.filterCompLevel(lvl);
                 UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
                 UIController.scene.buildScene();
@@ -130,6 +142,15 @@ export class ProjectController {
                 }
             }
         }
+    }
+
+    public static reParse() {
+        if (UIController.scene) UIController.scene.dispose();
+        UIController.clearMap();
+        this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config);
+        if(this.compLevel > -1) this.el.filterCompLevel(this.compLevel);
+        UIController.scene = new EvostreetImplem(UIController.config, this.el);
+        UIController.scene.buildScene();
     }
 
 }
