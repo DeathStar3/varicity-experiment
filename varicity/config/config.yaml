@@ -50,6 +50,14 @@ link:
       color: "#2e86c1"
     - name: "DUPLICATES"
       color: "#2B914A"
+  display:
+    air_traffic:
+      # - "IMPLEMENTS"
+      # - "EXTENDS"
+      - "INSTANTIATE"
+    underground_road:
+      # - "INSTANTIATE"
+      - "DUPLICATES"
 
 blacklist: #all classes that must not appear
   - "org.jfree.chart.util.PublicCloneable"
