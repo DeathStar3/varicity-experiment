@@ -53,7 +53,7 @@ export class Config implements ConfigInterface {
         if (fields.includes("parsing_mode")) {
             if (Array.isArray(value)) {
                 config.parsing_mode = value[1];
-                return;
+                return CriticalLevel.HIGH_IMPACT;
             }
         }
         for (let key of fields) {

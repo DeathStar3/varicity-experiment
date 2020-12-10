@@ -39,7 +39,7 @@ export class ProjectController {
             childEvo.addEventListener("click", () => {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
-                this.previousParser = new VPVariantsCompositionStrategy();
+                this.previousParser = new VPVariantsStrategy();
                 this.filename = key;
                 this.el = this.previousParser.parse(FilesLoader.loadDataFile(key), UIController.config);
                 let inputElement = document.getElementById("comp-level") as HTMLInputElement;
