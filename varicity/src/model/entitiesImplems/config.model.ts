@@ -57,7 +57,7 @@ export class Config implements ConfigInterface {
         if (fields.includes("variables")) {
             if (Array.isArray(value)) {
                 config.variables[fields[1]] = value[1];
-                return;
+                return CriticalLevel.MEDIUM_IMPACT;
             }
         }
         if (fields.includes("parsing_mode")) {
