@@ -1,3 +1,4 @@
+import { Node } from './../parser/symfinder_elements/nodes/node.element';
 import { UIController } from './ui.controller';
 import { Config } from './../../model/entitiesImplems/config.model';
 
@@ -137,6 +138,9 @@ export class ConfigController {
                         node.className = "child";
 
                         input.className = "right-input";
+                        if(parent.getAttribute("value") === "variables") {
+                            input.setAttribute("list", "attributelist");
+                        }
                         input.addEventListener("keyup", (ke) => {
                             if (ke.key == "Enter") {
                                 let arr = this.findValidParents(input);
