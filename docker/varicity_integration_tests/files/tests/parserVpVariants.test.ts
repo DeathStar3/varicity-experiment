@@ -55,76 +55,89 @@ describe('parsing all tests projects with vp strategy', function() {
     it('parse decorator', function() {
       let entities = new VPVariantsStrategy().parse('decorator');
       let dis = entities.district.districts
-    //   let numberOfDistricts = countDistricts(dis);
+      let numberOfDistricts = countDistricts(dis);
+      let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
+      expect(numberOfDistricts).equal(1)
+      expect(numberOfBuiildings).equal(4);
+      let numberOfLinks = entities.links.length;
+      expect(numberOfLinks).equal(5);
+    }); 
+  
+    it('parse density', function() {
+      let entities = new VPVariantsStrategy().parse('density');
+      let dis = entities.district.districts
+      // let numberOfDistricts = countDistricts(dis);
+      let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
+      expect(numberOfBuiildings).equal(6);
+      let numberOfLinks = entities.links.length;
+      expect(numberOfLinks).equal(6);
+    });
+  
+    it('parse factory', function() {
+      let entities = new VPVariantsStrategy().parse('factory');
+      let dis = entities.district.districts
       let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
       expect(numberOfBuiildings).equal(4);
       let numberOfLinks = entities.links.length;
-      expect(numberOfLinks).equal(5); // pourquoi 5 
-    }); 
+      expect(numberOfLinks).equal(3);
+    });
   
-    // it('parse density', function() {
-    //   let entities = new ClassesPackagesStrategy().parse('density');
-    //   let numberOfBuiildings = entities.buildings.length;
-    //   expect(numberOfBuiildings).equal(6);
-    //   let numberOfLinks = entities.links.length;
-    //   expect(numberOfLinks).equal(4);
-    // });
+    it('parse generic_decorator', function() {
+      let entities = new VPVariantsStrategy().parse('generic_decorator');
+      let dis = entities.district.districts
+      let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
+      expect(numberOfBuiildings).equal(4);
+      let numberOfLinks = entities.links.length;
+      expect(numberOfLinks).equal(5);
+    });
   
-    // it('parse factory', function() {
-    //   let entities = new ClassesPackagesStrategy().parse('factory');
-    //   let numberOfBuiildings = entities.buildings.length;
-    //   expect(numberOfBuiildings).equal(4);
-    //   let numberOfLinks = entities.links.length;
-    //   expect(numberOfLinks).equal(2);
-    // });
+    it('parse attribute_composition', function() {
+      let entities = new VPVariantsStrategy().parse('attribute_composition');
+      let dis = entities.district.districts
+      let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
+      expect(numberOfBuiildings).equal(1);
+      let numberOfLinks = entities.links.length;
+      expect(numberOfLinks).equal(0);
+    });
   
-    // it('parse generic_decorator', function() {
-    //   let entities = new ClassesPackagesStrategy().parse('generic_decorator');
-    //   let numberOfBuiildings = entities.buildings.length;
-    //   expect(numberOfBuiildings).equal(4);
-    //   let numberOfLinks = entities.links.length;
-    //   expect(numberOfLinks).equal(3);
-    // });
+    it('parse generics', function() {
+      let entities = new VPVariantsStrategy().parse('generics');
+      let dis = entities.district.districts
+      let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
+      expect(numberOfBuiildings).equal(3);
+      let numberOfLinks = entities.links.length;
+      expect(numberOfLinks).equal(2);
+    });
   
-    // it('parse attribute_composition', function() {
-    //   let entities = new ClassesPackagesStrategy().parse('attribute_composition');
-    //   let numberOfBuiildings = entities.buildings.length;
-    //   expect(numberOfBuiildings).equal(1);
-    //   let numberOfLinks = entities.links.length;
-    //   expect(numberOfLinks).equal(0);
-    // });
+    it('parse inheritance', function() {
+      let entities = new VPVariantsStrategy().parse('inheritance');
+      let dis = entities.district.districts
+      let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
+      expect(numberOfBuiildings).equal(3);
+      let numberOfLinks = entities.links.length;
+      expect(numberOfLinks).equal(2);
+    });
   
-    // it('parse attribute_composition_factory', function() {
-    //   let entities = new ClassesPackagesStrategy().parse('attribute_composition_factory');
-    //   let numberOfBuiildings = entities.buildings.length;
-    //   expect(numberOfBuiildings).equal(10);
-    //   let numberOfLinks = entities.links.length;
-    //   expect(numberOfLinks).equal(9);
-    // });
-  
-    // it('parse generics', function() {
-    //   let entities = new ClassesPackagesStrategy().parse('generics');
-    //   let numberOfBuiildings = entities.buildings.length;
-    //   expect(numberOfBuiildings).equal(3);
-    //   let numberOfLinks = entities.links.length;
-    //   expect(numberOfLinks).equal(2);
-    // });
-  
-    // it('parse inheritance', function() {
-    //   let entities = new ClassesPackagesStrategy().parse('inheritance');
-    //   let numberOfBuiildings = entities.buildings.length;
-    //   expect(numberOfBuiildings).equal(3);
-    //   let numberOfLinks = entities.links.length;
-    //   expect(numberOfLinks).equal(2);
-    // });
-  
-    // it('parse import_from_different_package', function() {
-    //   let entities = new ClassesPackagesStrategy().parse('import_from_different_package');
-    //   let numberOfBuiildings = entities.buildings.length;
-    //   expect(numberOfBuiildings).equal(2);
-    //   let numberOfLinks = entities.links.length;
-    //   expect(numberOfLinks).equal(1);
-    // });
+    it('parse import_from_different_package', function() {
+      let entities = new VPVariantsStrategy().parse('import_from_different_package');
+      let dis = entities.district.districts
+      let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
+      expect(numberOfBuiildings).equal(2);
+      let numberOfLinks = entities.links.length;
+      expect(numberOfLinks).equal(1);
+    });
+
+    it('parse attribute_composition_factory', function() {
+      let entities = new VPVariantsStrategy().parse('attribute_composition_factory');
+      let dis = entities.district.districts
+      console.log('\n\n*********\n\n')
+      console.log(dis)
+      let numberOfBuiildings = countBuilding(dis) + dis.length
+      // let numberOfBuiildings = entities.buildings.length
+      expect(numberOfBuiildings).equal(10);
+      let numberOfLinks = entities.links.length;
+      expect(numberOfLinks).equal(12);
+    });
   
     // it('parse import_from_different_package_all_package_imported', function() {
     //   let entities = new ClassesPackagesStrategy().parse('import_from_different_package_all_package_imported');
