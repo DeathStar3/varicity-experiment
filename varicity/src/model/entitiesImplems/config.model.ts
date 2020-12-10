@@ -1,5 +1,10 @@
 import { Color, ConfigClones, ConfigColor, ConfigInterface } from "../entities/config.interface";
 
+export enum CriticalLevel {
+    LOW_IMPACT = 0,
+    MEDIUM_IMPACT = 1,
+    HIGH_IMPACT = 2
+}
 
 export class Config implements ConfigInterface {
     building: ConfigColor;
@@ -18,6 +23,7 @@ export class Config implements ConfigInterface {
         width: string;
         height: string;
     };
+    parsing_mode: string;
 
     constructor() { }
 
@@ -35,7 +41,7 @@ export class Config implements ConfigInterface {
             object.outlines && Array.isArray(object.outlines) && object.outlines.every((v: any) => this.instanceOfColor(v));
     }
 
-    public static alterField(config: Config, fields: string[], value: [string, string] | Color): void { // for the tuple : [prev value, cur value]
+    public static alterField(config: Config, fields: string[], value: [string, string] | Color): CriticalLevel { // for the tuple : [prev value, cur value]
         let cur = config;
         // if (fields.includes("vp_building")) {
         //     if (Array.isArray(value)) {
@@ -54,6 +60,12 @@ export class Config implements ConfigInterface {
                 return;
             }
         }
+        if (fields.includes("parsing_mode")) {
+            if (Array.isArray(value)) {
+                config.parsing_mode = value[1];
+                return CriticalLevel.HIGH_IMPACT;
+            }
+        }
         for (let key of fields) {
             cur = cur[key]; // we go deeper
         }
@@ -61,6 +73,7 @@ export class Config implements ConfigInterface {
             if (cur.every(v => Config.instanceOfColor(v)) && Config.instanceOfColor(value)) {
                 let obj = cur.find(v => v.name == value.name);
                 obj.color = value.color;
+                return CriticalLevel.LOW_IMPACT;
             } else { // value is prob a string
                 if (cur.some(v => v == value[0])) { // already exists
                     let index = cur.findIndex(v => v == value[0])
@@ -73,7 +86,9 @@ export class Config implements ConfigInterface {
                 } else { // doesn't exist, so we push the new value
                     cur.push(value[1]);
                 }
+                if(fields.includes("api_classes")) return CriticalLevel.HIGH_IMPACT;
             }
+            return CriticalLevel.MEDIUM_IMPACT;
         }
     }
 }

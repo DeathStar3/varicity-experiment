@@ -2,33 +2,38 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <title>Symfinder Varicity</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Symfinder Varicity</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div id="main">
+<div id="main">
     <div id="console" class="overflowable">
-      <input id="searchbar" style="display: none;">
-      <div id="project_selector" class="parent"></div>
-      <div id="config" class="parent"></div>
-      <div class="parent">
-        <label for="comp-level">Composition level</label>
-        <input type="number" id="comp-level" name="comp-level" min="0" max="0" onkeydown="return false">
-        <button id="filter-button">Filter</button>
-      </div>
-      <div id="nodes_details" class="parent"></div>
+        <input id="searchbar" style="display: none;">
+        <div id="project_selector" class="parent"></div>
+        <div id="config" class="parent"></div>
+        <div class="parent"><label for="hierarchy-select">Select hierarchy mode: </label>
+            <select id="hierarchy-select">
+                <option value="inheritance">Inheritance</option>
+                <option value="composition" selected>Composition</option>
+            </select>
+            <br/>
+            <label for="comp-level">Composition level</label>
+            <input type="number" id="comp-level" name="comp-level" min="0" max="0" onkeydown="return false">
+            <button id="filter-button">Filter</button>
+        </div>
+        <div id="nodes_details" class="parent"></div>
     </div>
-  </div>
-  <!-- <div id="project_selector">
-    <div id="metricity">Using Metricity View</div>
-    <div id="evostreet">Using EvoStreet View</div>
-  </div> -->
-  <!--  <div id="ui_square">-->
-  <!--    <button id="reset_camera">Reset camera</button>-->
-  <!--    &lt;!&ndash; <p id="nodes_details"></p> &ndash;&gt;-->
-  <!--  </div>-->
+</div>
+<!-- <div id="project_selector">
+  <div id="metricity">Using Metricity View</div>
+  <div id="evostreet">Using EvoStreet View</div>
+</div> -->
+<!--  <div id="ui_square">-->
+<!--    <button id="reset_camera">Reset camera</button>-->
+<!--    &lt;!&ndash; <p id="nodes_details"></p> &ndash;&gt;-->
+<!--  </div>-->
 </body>
 
 </html>
