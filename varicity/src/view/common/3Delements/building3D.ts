@@ -45,6 +45,7 @@ export class Building3D extends Element3D {
         this.elementModel = buildingElement;
         this.depth = depth;
         this.config = config;
+        this.padding = config.building.padding;
     }
 
     showAllLinks(status?: boolean) {
@@ -100,7 +101,7 @@ export class Building3D extends Element3D {
         this.center = new Vector3(x, halfHeight + this.depth * 30, z);
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
         if (this.elementModel.types.includes("API")) {
-            halfHeight += this.getWidth();
+            halfHeight += this.getWidth() - this.padding;
         }
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
     }
@@ -206,10 +207,10 @@ export class Building3D extends Element3D {
             this.d3ModelPyramid = MeshBuilder.CreateCylinder("pyramid", {
                 diameterTop: 0,
                 tessellation: 4,
-                diameterBottom: this.getWidth(),
-                height: this.getWidth()
+                diameterBottom: this.getWidth() - this.padding,
+                height: this.getWidth() - this.padding
             }, this.scene);
-            this.d3ModelPyramid.setPositionWithLocalVector(this.center.add(new Vector3(0, this.getHeight() / 2 + this.getWidth() / 2 + this.edgesWidth / 120, 0)));
+            this.d3ModelPyramid.setPositionWithLocalVector(this.center.add(new Vector3(0, this.getHeight() / 2 + (this.getWidth() - this.padding) / 2 + this.edgesWidth / 120, 0)));
             this.d3ModelPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
             this.d3ModelPyramid.material = mat;
             this.d3ModelPyramid.material.backFaceCulling = false;

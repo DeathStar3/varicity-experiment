@@ -1,5 +1,5 @@
-import { Color, ConfigClones, ConfigColor, ConfigInterface } from "../entities/config.interface";
-import {Orientation} from "./orientation.enum";
+import { Color, ConfigClones, ConfigColor, ConfigInterface, D3Config } from "../entities/config.interface";
+import { Orientation } from "./orientation.enum";
 
 export enum CriticalLevel {
     LOW_IMPACT = 0,
@@ -8,8 +8,10 @@ export enum CriticalLevel {
 }
 
 export class Config implements ConfigInterface {
-    building: ConfigColor;
-    district: ConfigColor;
+    building: D3Config;
+    // building: ConfigColor;
+    // district: ConfigColor;
+    district: D3Config;
     link: {
         colors: [Color],
         display: {
@@ -20,6 +22,7 @@ export class Config implements ConfigInterface {
     vp_building: {
         color: string; // HEX color string
     };
+    hierarchy_links: string[];
     blacklist: string[];
     clones: ConfigClones;
     force_color: string; // HEX color string
@@ -30,6 +33,7 @@ export class Config implements ConfigInterface {
     };
     parsing_mode: string;
     orientation: Orientation;
+    default_level: number;
 
     constructor() { }
 
@@ -41,25 +45,14 @@ export class Config implements ConfigInterface {
 
     public static instanceOfConfigColor(object: any): object is ConfigColor {
         return object &&
-            object.outline && typeof (object.outline) == "string" &&
-            object.edges && typeof (object.edges) == "string" &&
+            // object.outline && typeof (object.outline) == "string" &&
+            object.edges && Array.isArray(object.edges) && object.edges.every((v: any) => this.instanceOfColor(v)) &&
             object.faces && Array.isArray(object.faces) && object.faces.every((v: any) => this.instanceOfColor(v)) &&
             object.outlines && Array.isArray(object.outlines) && object.outlines.every((v: any) => this.instanceOfColor(v));
     }
 
     public static alterField(config: Config, fields: string[], value: [string, string] | Color): CriticalLevel { // for the tuple : [prev value, cur value]
         let cur = config;
-        // if (fields.includes("vp_building")) {
-        //     if (Array.isArray(value)) {
-        //         config.vp_building.color = value[1];
-        //         return;
-        //     }
-        //     else {
-        //         if (this.instanceOfColor(value)) {
-        //             throw new Error('Tried to assign Color ' + value + ' object to string in field vp_building.color.');
-        //         }
-        //     }
-        // }
         if (fields.includes("variables")) {
             if (Array.isArray(value)) {
                 config.variables[fields[1]] = value[1];
@@ -76,6 +69,12 @@ export class Config implements ConfigInterface {
             if (Array.isArray(value)) {
                 config.orientation = Orientation[value[1]];
                 return CriticalLevel.HIGH_IMPACT;
+            }
+        }
+        if (fields.includes("padding")) {
+            if (Array.isArray(value)) {
+                config[fields[0]].padding = +value[1];
+                return CriticalLevel.MEDIUM_IMPACT;
             }
         }
         for (let key of fields) {
@@ -98,7 +97,7 @@ export class Config implements ConfigInterface {
                 } else { // doesn't exist, so we push the new value
                     cur.push(value[1]);
                 }
-                if(fields.includes("api_classes")) return CriticalLevel.HIGH_IMPACT;
+                if(fields.includes("api_classes") || fields.includes("hierarchy_links")) return CriticalLevel.HIGH_IMPACT;
             }
             return CriticalLevel.MEDIUM_IMPACT;
         }

@@ -41,17 +41,17 @@ export class VPVariantsCompositionStrategy  implements ParsingStrategy {
 
         const linkElements = data.links.map(l => new LinkElement(l.source, l.target, l.type));
         const allLinks = data.alllinks.map(l => new LinkElement(l.source, l.target, l.type));
-        const compositionLink = allLinks.filter(l => l.type === "INSTANTIATE");
+        const hierarchyLinks = allLinks.filter(l => config.hierarchy_links.includes(l.type));
 
         nodesList.forEach(n => {
             n.nbVariants = this.getLinkedNodesFromSource(n, nodesList, linkElements).length;
         });
 
-        this.buildComposition(compositionLink, nodesList, apiList, 0, config.orientation);
+        this.buildComposition(hierarchyLinks, nodesList, apiList, 0, config.orientation);
         //console.log(nodesList.sort((a, b) => a.compositionLevel - b.compositionLevel));
         console.log(nodesList.sort((a, b) => a.name.localeCompare(b.name)));
 
-        const d = this.buildDistricts(nodesList, compositionLink, config.orientation);
+        const d = this.buildDistricts(nodesList, hierarchyLinks, config.orientation);
 
         let result = new EntitiesList();
         result.district = d;

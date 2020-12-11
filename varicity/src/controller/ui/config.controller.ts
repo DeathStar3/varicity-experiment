@@ -96,7 +96,7 @@ export class ConfigController {
                 } else this.populateChildren(obj, parent); // it's a string
             }
             let attr = parent.getAttribute("value");
-            let values = ["api_classes", "blacklist", "underground_road", "air_traffic"];
+            let values = ["api_classes", "blacklist", "underground_road", "air_traffic", "hierarchy_links"];
             if (values.includes(attr)) {
                 this.populateChildren("", parent);
             }
@@ -110,7 +110,7 @@ export class ConfigController {
                 input.className = "child";
 
                 let attr = parent.getAttribute("value");
-                let values = ["api_classes", "blacklist"];
+                let values = ["api_classes", "blacklist", "hierarchy_links"];
                 if (values.includes(attr)) {
                     input.setAttribute("list", "datalist");
                 }
@@ -118,40 +118,42 @@ export class ConfigController {
             }
             else {
                 for (let key in config) {
-                    let node = this.createKey(key, parent);
+                    if (key !== "default_level") {
+                        let node = this.createKey(key, parent);
 
-                    if ((config[key]) instanceof Object) {
-                        this.populateChildren(config[key], node); // the child will be an array of values
-                        node.className = "parent";
+                        if ((config[key]) instanceof Object) {
+                            this.populateChildren(config[key], node); // the child will be an array of values
+                            node.className = "parent";
 
-                        /* @ts-ignore */
-                        for (let child of node.children) {
-                            child.style.display = "none";
-                        }
-                        node.onclick = (me) => {
-                            if (me.target == node) {
-                                /* @ts-ignore */
-                                for (let child of node.children) {
-                                    if (child.style.display == "block") child.style.display = "none";
-                                    else child.style.display = "block";
+                            /* @ts-ignore */
+                            for (let child of node.children) {
+                                child.style.display = "none";
+                            }
+                            node.onclick = (me) => {
+                                if (me.target == node) {
+                                    /* @ts-ignore */
+                                    for (let child of node.children) {
+                                        if (child.style.display == "block") child.style.display = "none";
+                                        else child.style.display = "block";
+                                    }
                                 }
                             }
                         }
-                    }
-                    else {
-                        let input = this.createInput(config[key], node);
-                        node.className = "child";
+                        else {
+                            let input = this.createInput(config[key], node);
+                            node.className = "child";
 
-                        input.className = "right-input";
-                        if(parent.getAttribute("value") === "variables") {
-                            input.setAttribute("list", "attributelist");
-                        }
-                        input.addEventListener("keyup", (ke) => {
-                            if (ke.key == "Enter") {
-                                let arr = this.findValidParents(input);
-                                UIController.changeConfig(arr, ["", input.value]);
+                            input.className = "right-input";
+                            if(parent.getAttribute("value") === "variables") {
+                                input.setAttribute("list", "attributelist");
                             }
-                        });
+                            input.addEventListener("keyup", (ke) => {
+                                if (ke.key == "Enter") {
+                                    let arr = this.findValidParents(input);
+                                    UIController.changeConfig(arr, ["", input.value]);
+                                }
+                            });
+                        }
                     }
                 }
             }

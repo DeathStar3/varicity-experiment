@@ -21,6 +21,23 @@ export class ProjectController {
         let parent = document.getElementById("project_selector");
         parent.innerHTML = "Project selection";
 
+        let inputElement = document.getElementById("comp-level") as HTMLInputElement;
+        inputElement.value = UIController.config.default_level.toString();
+
+        let filterButton = document.getElementById("filter-button") as HTMLButtonElement;
+        filterButton.onclick = () => {
+            ProjectController.reParse();
+        }
+
+        const x = (document.getElementById("hierarchy-select") as HTMLSelectElement).value;
+        UIController.config.parsing_mode = x;
+
+        let hierarchySelect = document.getElementById("hierarchy-select") as HTMLSelectElement;
+        hierarchySelect.onchange = () => {
+            const x = (document.getElementById("hierarchy-select") as HTMLSelectElement).value;
+            UIController.changeConfig(["parsing_mode"], ["", x]);
+        }
+
         for (let key of keys) {
             let node = document.createElement("div");
             node.innerHTML = key;
@@ -61,25 +78,6 @@ export class ProjectController {
                 }
             });
 
-            let filterButton = document.getElementById("filter-button") as HTMLButtonElement;
-            filterButton.onclick = () => {
-                if (UIController.scene) UIController.scene.dispose();
-                UIController.clearMap();
-                const lvl = +(document.getElementById("comp-level") as HTMLInputElement).value;
-                let filteredEntities = this.el.filterCompLevel(lvl);
-                UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
-                UIController.scene.buildScene();
-            }
-
-            const x = (document.getElementById("hierarchy-select") as HTMLSelectElement).value;
-            UIController.config.parsing_mode = x;
-
-            let hierarchySelect = document.getElementById("hierarchy-select") as HTMLSelectElement;
-            hierarchySelect.onchange = () => {
-                const x = (document.getElementById("hierarchy-select") as HTMLSelectElement).value;
-                UIController.changeConfig(["parsing_mode"], ["", x]);
-            }
-
             node.appendChild(childEvo);
             node.appendChild(childMetri);
 
@@ -118,10 +116,11 @@ export class ProjectController {
         this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config);
         let inputElement = document.getElementById("comp-level") as HTMLInputElement;
         inputElement.min = "1";
-        const maxLvl = this.el.getMaxCompLevel().toString();
-        inputElement.max = maxLvl;
-        inputElement.value = maxLvl;
-        UIController.scene = new EvostreetImplem(UIController.config, this.el);
+        const maxLvl = this.el.getMaxCompLevel();
+        inputElement.max = maxLvl.toString();
+        if (+inputElement.value > maxLvl)
+            inputElement.value = maxLvl.toString();
+        UIController.scene = new EvostreetImplem(UIController.config, this.el.filterCompLevel(+inputElement.value));
         UIController.scene.buildScene();
     }
 }

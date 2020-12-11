@@ -3,6 +3,7 @@
 # pick your color at https://htmlcolorcodes.com/
 
 building:
+  padding: 0.2
   colors:
     # outline: "#145a32" # dark green
     # edges: "#a569bd" # light purple
@@ -33,6 +34,7 @@ building:
 # color: "#000000"
 
 district:
+  padding: 0
   colors:
     # outline: "#145a32" # dark green
     # edges: "#a569bd" # light purple
@@ -45,21 +47,26 @@ district:
 link:
   colors:
     - name: "IMPLEMENTS"
-      color: "#e67e22"
+      color: "#f78f33"
     - name: "EXTENDS"
-      color: "#2e86c1"
+      color: "#3f97d2"
     - name: "DUPLICATES"
       color: "#2B914A"
     - name: "INSTANTIATE"
-      color: "#ff4747"
+      color: "#1A8039"
   display:
     air_traffic:
-      # - "IMPLEMENTS"
-      # - "EXTENDS"
-      - "INSTANTIATE"
-    underground_road:
+      - "IMPLEMENTS"
+      - "EXTENDS"
       # - "INSTANTIATE"
-      - "DUPLICATES"
+    underground_road:
+      - "INSTANTIATE"
+      # - "DUPLICATES"
+
+hierarchy_links:
+  - "INSTANTIATE"
+  - "IMPLEMENTS"
+  - "EXTENDS"
 
 blacklist: #all classes that must not appear
   - "org.jfree.chart.util.PublicCloneable"
@@ -77,3 +84,5 @@ variables: #variables to be used for width and height of a building
   height: "nbMethodVariants"
 
 orientation: "OUT"
+
+default_level: 4
