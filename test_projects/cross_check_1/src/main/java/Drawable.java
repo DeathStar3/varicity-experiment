@@ -1,4 +1,4 @@
 public abstract class Drawable {
 
-    public void orientation(JfreeChart jfreeChart);
+    public void orientation(JfreeChart jfreeChart){}
 }
