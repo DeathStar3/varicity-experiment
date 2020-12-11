@@ -85,7 +85,7 @@ export class City3D {
     }
 
     getSize(): number {
-        return Math.max(this.road.getWidth(), this.road.getLength());
+        return Math.max(this.road.getSideWidth(true)*2, this.road.getSideWidth(false)*2, this.road.getLength());
     }
 
     place() {

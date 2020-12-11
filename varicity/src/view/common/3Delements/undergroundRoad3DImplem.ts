@@ -34,7 +34,7 @@ export class UndergroundRoad3DImplem implements Link3D {
             delete this.roadMesh;
             return;
         }
-        const underGroundBuildingHeight = 1;
+        const underGroundBuildingHeight = Math.abs(this.src.elementModel.compLevel - 1 - this.dest.elementModel.compLevel);
         const underGroundBuildingWidth = 0.3;
         this.downRoadMesh = MeshBuilder.CreateBox("downRoad", {
             width: underGroundBuildingWidth,
@@ -62,32 +62,6 @@ export class UndergroundRoad3DImplem implements Link3D {
 
         D3Utils.facePoint(this.roadMesh, new Vector3(this.dest.bot.x, this.dest.bot.y, this.dest.bot.z));
 
-        // let pts: Vector3[] = [];
-        //
-        // pts.push(
-        //     this.dest.bot,
-        //     botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
-        //     botBox.add(new Vector3(underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
-        //     botBox.add(new Vector3(underGroundBuildingWidth / 2, 0, underGroundBuildingWidth / 2)),
-        //     botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, underGroundBuildingWidth / 2)),
-        //     botBox.add(new Vector3(- underGroundBuildingWidth / 2, 0, - underGroundBuildingWidth / 2)),
-        //     this.dest.bot
-        // );
-        //
-        // this.polyhedron = MeshBuilder.CreateRibbon("ribbon", { pathArray: [pts], closeArray: true, closePath: false }, this.scene);
-
-        // this.polyhedron = MeshBuilder.CreatePolyhedron("polyhedron", {
-        //     type: 5,
-        //     sizeX: this.src.getWidth() / 2,
-        //     sizeZ: this.src.getLength() / 2,
-        //     sizeY: 1
-        // }, 
-        // this.scene);
-        // this.polyhedron.setPositionWithLocalVector(botBox);
-
-        // this.downRoadMesh.visibility = 0; // defaults at hidden
-        // this.roadMesh.visibility = 0;
-
         let mat = new StandardMaterial(this.downRoadMesh.name + "Mat", this.scene);
         if (this.config.link.colors) {
             for (let c of this.config.link.colors) {
@@ -107,7 +81,7 @@ export class UndergroundRoad3DImplem implements Link3D {
     }
 
     // render(config: Config): void {
-    //     const underGroundBuildingHeight = 1;
+    //     const underGroundBuildingHeight = Math.abs(this.src.elementModel.compLevel - 1 - this.dest.elementModel.compLevel);
     //     const underGroundBuildingWidth = 0.3;
     //     this.downRoadMesh = MeshBuilder.CreateBox("downRoad", {
     //         width: underGroundBuildingWidth,
