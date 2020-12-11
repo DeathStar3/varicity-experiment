@@ -51,4 +51,6 @@ export interface ConfigInterface {
     }
 
     orientation: Orientation;
+
+    default_level: number;
 }
