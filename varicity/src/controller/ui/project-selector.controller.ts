@@ -36,15 +36,11 @@ export class ProjectController {
 
             // projets en vision evostreet
             childEvo.addEventListener("click", () => {
-                if (UIController.scene) UIController.scene.dispose();
-                UIController.clearMap();
                 this.previousParser = new VPVariantsStrategy();
                 this.filename = key;
-                console.log(UIController.config);
-                this.el = this.previousParser.parse(FilesLoader.loadDataFile(key), UIController.config);
 
-                UIController.scene = new EvostreetImplem(UIController.config, this.el);
-                UIController.scene.buildScene();
+                this.reParse();
+
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childEvo.innerHTML;
 
                 /* @ts-ignore */
@@ -55,11 +51,8 @@ export class ProjectController {
 
             // projets en vision metricity
             childMetri.addEventListener("click", (ev) => {
-                if (UIController.scene) UIController.scene.dispose();
-                UIController.clearMap();
-                let entities = new ClassesPackagesStrategy().parse(FilesLoader.loadDataFile(key), UIController.config);
-                UIController.scene = new MetricityImplem(UIController.config, entities);
-                UIController.scene.buildScene();
+                this.previousParser = new ClassesPackagesStrategy();
+                this.filename = key;
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childMetri.innerHTML;
 
                 /* @ts-ignore */

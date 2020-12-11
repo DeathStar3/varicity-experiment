@@ -96,7 +96,7 @@ export class ConfigController {
                 } else this.populateChildren(obj, parent); // it's a string
             }
             let attr = parent.getAttribute("value");
-            let values = ["api_classes", "blacklist", "underground_road", "air_traffic"];
+            let values = ["api_classes", "blacklist", "underground_road", "air_traffic", "hierarchy_links"];
             if (values.includes(attr)) {
                 this.populateChildren("", parent);
             }
@@ -110,7 +110,7 @@ export class ConfigController {
                 input.className = "child";
 
                 let attr = parent.getAttribute("value");
-                let values = ["api_classes", "blacklist"];
+                let values = ["api_classes", "blacklist", "hierarchy_links"];
                 if (values.includes(attr)) {
                     input.setAttribute("list", "datalist");
                 }

@@ -63,6 +63,9 @@ link:
       # - "INSTANTIATE"
       - "DUPLICATES"
 
+hierarchy_links:
+  - "INSTANTIATE"
+
 blacklist: #all classes that must not appear
   - "org.jfree.chart.util.PublicCloneable"
   - "org.jfree.chart.event"
