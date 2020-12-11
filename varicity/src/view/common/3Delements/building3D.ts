@@ -233,8 +233,8 @@ export class Building3D extends Element3D {
         }
 
         // Display links to other buildings
-        this.links.forEach(l => {
-            if (l.src.elementModel.name === this.getName()) l.render(this.config);
-        });
+        // this.links.forEach(l => {
+        //     if (l.src.elementModel.name === this.getName()) l.render(this.config);
+        // });
     }
 }

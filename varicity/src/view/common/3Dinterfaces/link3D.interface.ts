@@ -9,7 +9,8 @@ export interface Link3D {
     dest: Building3D
     type: string;
 
-    render(config: Config): void;
+    render(bool: boolean): void;
+    // render(config: Config): void;
 
     display(force?: boolean): void;
 }
