@@ -38,6 +38,7 @@
         <module>attribute_composition_factory</module>
         <module>composition_levels_inheritance</module>
         <module>composition_levels_mixed</module>
+        <module>cross_check_1</module>
         <module>decorator</module>
         <module>density</module>
         <module>factory</module>

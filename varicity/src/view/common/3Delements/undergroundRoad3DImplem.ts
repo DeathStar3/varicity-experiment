@@ -1,8 +1,8 @@
 import { Link3D } from '../3Dinterfaces/link3D.interface';
 import { Config } from '../../../model/entitiesImplems/config.model';
-import { Color3, Color4, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3 } from '@babylonjs/core';
+import { Color3, Mesh, MeshBuilder, Scene, StandardMaterial, Vector3 } from '@babylonjs/core';
 import { Building3D } from './building3D';
-import {D3Utils} from "../3D.utils";
+import { D3Utils } from "../3D.utils";
 
 export class UndergroundRoad3DImplem implements Link3D {
     scene: Scene;
@@ -32,11 +32,11 @@ export class UndergroundRoad3DImplem implements Link3D {
             depth: underGroundBuildingHeight
         }, this.scene);
 
-        let midBox: Vector3 = this.src.bot.add(new Vector3(0, - underGroundBuildingHeight/2, 0))
-        let botBox: Vector3 = midBox.add(new Vector3(0, - underGroundBuildingHeight/2, 0));
+        let midBox: Vector3 = this.src.bot.add(new Vector3(0, - underGroundBuildingHeight / 2, 0))
+        let botBox: Vector3 = midBox.add(new Vector3(0, - underGroundBuildingHeight / 2, 0));
         this.downRoadMesh.setPositionWithLocalVector(midBox);
 
-        D3Utils.facePoint(this.downRoadMesh, new Vector3(this.dest.bot.x, - underGroundBuildingHeight/2, this.dest.bot.z));
+        D3Utils.facePoint(this.downRoadMesh, new Vector3(this.dest.bot.x, - underGroundBuildingHeight / 2, this.dest.bot.z));
 
         const roadLength = Vector3.Distance(botBox, this.dest.bot);
         this.roadMesh = MeshBuilder.CreateBox("road", {
@@ -45,9 +45,9 @@ export class UndergroundRoad3DImplem implements Link3D {
             depth: 0.001
         }, this.scene);
         this.roadMesh.setPositionWithLocalVector(new Vector3(
-            botBox.x + (this.dest.bot.x - botBox.x)/2,
-            botBox.y + (this.dest.bot.y - botBox.y)/2,
-            botBox.z + (this.dest.bot.z - botBox.z)/2
+            botBox.x + (this.dest.bot.x - botBox.x) / 2,
+            botBox.y + (this.dest.bot.y - botBox.y) / 2,
+            botBox.z + (this.dest.bot.z - botBox.z) / 2
         ));
 
         D3Utils.facePoint(this.roadMesh, new Vector3(this.dest.bot.x, this.dest.bot.y, this.dest.bot.z));

@@ -50,7 +50,7 @@ export class UIController {
         console.log(this.config);
         if (this.scene) {
             SearchbarController.emptyMap();
-            switch(critical) {
+            switch (critical) {
                 case CriticalLevel.LOW_IMPACT: // Only change the colour, so simple rerender
                 case CriticalLevel.MEDIUM_IMPACT: // Changed variables important enough to warrant a complete rebuilding of the scene
                     this.scene = this.scene.rerender(this.config);
