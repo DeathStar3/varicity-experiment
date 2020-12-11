@@ -24,7 +24,7 @@ export class UndergroundRoad3DImplem implements Link3D {
     }
 
     render(config: Config): void {
-        const underGroundBuildingHeight = 1;
+        const underGroundBuildingHeight = Math.abs(this.src.elementModel.compLevel - 1 - this.dest.elementModel.compLevel);
         const underGroundBuildingWidth = 0.3;
         this.downRoadMesh = MeshBuilder.CreateBox("downRoad", {
             width: underGroundBuildingWidth,
