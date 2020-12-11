@@ -35,6 +35,8 @@ export class Road3D extends Element3D {
         if (vpElmt.vp) {
             this.vp = new Building3D(scene, vpElmt.vp, 0, config);
         }
+
+        this.padding = config.district.padding;
     }
 
     private spreadElementsVariants(elements: Building3D[], left: Building3D[], right: Building3D[]): void {
@@ -121,7 +123,7 @@ export class Road3D extends Element3D {
     }
 
     getWidth(): number {
-        return this.getSideWidth(true) + this.getSideWidth(false);
+        return this.getSideWidth(true) + this.getSideWidth(false) + this.padding;
     }
 
     getLength(): number {
@@ -131,7 +133,7 @@ export class Road3D extends Element3D {
         ) + Math.max(
             this.leftVPs.reduce(((a, b) => a + b.getWidth()), 0),
             this.rightVPs.reduce(((a, b) => a + b.getWidth()), 0)
-        ) + (this.getVpWidth());
+        ) + (this.getVpWidth()) + this.padding;
     }
 
     getHeight(): number {
@@ -146,7 +148,7 @@ export class Road3D extends Element3D {
 
     get(name: string): Building3D {
         let building: Building3D = undefined;
-        if(this.vp && this.vp.getName() === name) return this.vp;
+        if (this.vp && this.vp.getName() === name) return this.vp;
         const arrConcat = this.leftVariants.concat(this.rightVariants);
         for (let b of arrConcat) {
             if (b.getName() == name) {
@@ -165,7 +167,7 @@ export class Road3D extends Element3D {
 
     build(config?: Config) {
         const buildings3D: Building3D[] = [];
-        if(this.vp) this.vp.build();
+        if (this.vp) this.vp.build();
         this.elementModel.buildings.forEach(b => {
             if (config.blacklist) {
                 // if (!config.blacklist.includes(b.name)) {
@@ -191,7 +193,7 @@ export class Road3D extends Element3D {
         this.elementModel.districts.forEach(v => {
             if (config.blacklist) {
                 // if (!config.blacklist.includes(v.name)) {
-                    if (!config.blacklist.some(blacklisted => v.name.includes(blacklisted))) {
+                if (!config.blacklist.some(blacklisted => v.name.includes(blacklisted))) {
                     if (config.clones) {
                         if (config.clones.map.has(v.vp.name)) {
                             config.clones.map.get(v.vp.name).clones.push(this.vp);
@@ -235,9 +237,9 @@ export class Road3D extends Element3D {
         this.leftVPs.forEach(e => {
             let vX =
                 /* horizontal case: */ (e.getSideWidth(false) + offsetVL) * orientationX +
-                /* vertical case:   */ (e.getVpWidth() / 2) * -orientationZ;
+                /* vertical case:   */ (e.getVpWidth() / 2 - e.vp.padding / 2 + this.roadWidth / 2) * -orientationZ;
             let vZ =
-                /* horizontal case: */ (e.getVpWidth() / 2) * orientationX +
+                /* horizontal case: */ (e.getVpWidth() / 2 - e.vp.padding / 2 + this.roadWidth / 2) * orientationX +
                 /* vertical case:   */ (e.getSideWidth(false) + offsetVL) * orientationZ;
             e.place(vX + x, vZ + z, -orientationZ, orientationX);
             offsetVL += e.getWidth();
@@ -245,9 +247,9 @@ export class Road3D extends Element3D {
         this.rightVPs.forEach(e => {
             let vX =
                 /* horizontal case: */ (e.getSideWidth(true) + offsetVR) * orientationX +
-                /* vertical case:   */ (e.getVpWidth() / 2) * orientationZ;
+                /* vertical case:   */ (e.getVpWidth() / 2 - e.vp.padding / 2 + this.roadWidth / 2) * orientationZ;
             let vZ =
-                /* horizontal case: */ - (e.getVpWidth() / 2) * orientationX +
+                /* horizontal case: */ - (e.getVpWidth() / 2 - e.vp.padding / 2 + this.roadWidth / 2) * orientationX +
                 /* vertical case:   */ (e.getSideWidth(true) + offsetVR) * orientationZ;
             e.place(vX + x, vZ + z, orientationZ, -orientationX);
             offsetVR += e.getWidth();
