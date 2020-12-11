@@ -27,16 +27,9 @@ function countDistricts(districts: District[]) : number{
 describe('cross check', function() {
     it('cross check cross_check_1', function() {
         let entities = new VPVariantsCompositionStrategy().parse(FilesLoader.loadDataFile('cross_check_1'), ConfigLoader.loadDataFile("config"));
-        let dis = entities.district.districts
-        // console.log('\n********\n')
-        // console.log(dis)
-        // console.log('\n********\n')
         let ent = entities.filterCompLevel(1);
-        let dis1 = ent.district
-        console.log('\n********\n')
-        console.log(dis1)
-        console.log('\n********\n')
+        let dis = ent.district.districts
         let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
-        expect(numberOfBuiildings).equal(25);
+        expect(numberOfBuiildings).equal(22);
     });
 })
