@@ -47,9 +47,9 @@ district:
 link:
   colors:
     - name: "IMPLEMENTS"
-      color: "#f78f33"
+      color: "#ef2222"
     - name: "EXTENDS"
-      color: "#3f97d2"
+      color: "#3f97ff"
     - name: "DUPLICATES"
       color: "#2B914A"
     - name: "INSTANTIATE"
