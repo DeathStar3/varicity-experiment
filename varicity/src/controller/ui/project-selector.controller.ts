@@ -16,7 +16,6 @@ export class ProjectController {
     static el : EntitiesList;
     private static previousParser: ParsingStrategy;
     private static filename: string;
-    private static compLevel: number = 0;
 
     static createProjectSelector(keys: string[]) {
         let parent = document.getElementById("project_selector");
@@ -41,12 +40,8 @@ export class ProjectController {
                 UIController.clearMap();
                 this.previousParser = new VPVariantsStrategy();
                 this.filename = key;
+                console.log(UIController.config);
                 this.el = this.previousParser.parse(FilesLoader.loadDataFile(key), UIController.config);
-                let inputElement = document.getElementById("comp-level") as HTMLInputElement;
-                inputElement.min = "1";
-                const maxLvl = this.el.getMaxCompLevel().toString();
-                inputElement.max = maxLvl;
-                inputElement.value = maxLvl;
 
                 UIController.scene = new EvostreetImplem(UIController.config, this.el);
                 UIController.scene.buildScene();
@@ -63,7 +58,6 @@ export class ProjectController {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
                 let entities = new ClassesPackagesStrategy().parse(FilesLoader.loadDataFile(key), UIController.config);
-                this.compLevel = -1;
                 UIController.scene = new MetricityImplem(UIController.config, entities);
                 UIController.scene.buildScene();
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childMetri.innerHTML;
@@ -79,7 +73,6 @@ export class ProjectController {
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
                 const lvl = +(document.getElementById("comp-level") as HTMLInputElement).value;
-                this.compLevel = lvl;
                 let filteredEntities = this.el.filterCompLevel(lvl);
                 UIController.scene = new EvostreetImplem(UIController.config, filteredEntities);
                 UIController.scene.buildScene();
@@ -130,7 +123,11 @@ export class ProjectController {
         if (UIController.scene) UIController.scene.dispose();
         UIController.clearMap();
         this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config);
-        if(this.compLevel > -1) this.el.filterCompLevel(this.compLevel);
+        let inputElement = document.getElementById("comp-level") as HTMLInputElement;
+        inputElement.min = "1";
+        const maxLvl = this.el.getMaxCompLevel().toString();
+        inputElement.max = maxLvl;
+        inputElement.value = maxLvl;
         UIController.scene = new EvostreetImplem(UIController.config, this.el);
         UIController.scene.buildScene();
     }
