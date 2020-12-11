@@ -33,7 +33,6 @@ export class SearchbarController {
                     return;
                 }
             } else {
-                let [k, v] = this.map;
                 for (let [k, v] of this.map) {
                     if (k.includes(searchbar.value)) {
                         searchbar.placeholder = k;
