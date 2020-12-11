@@ -3,8 +3,8 @@ import { Orientation } from "./orientation.enum";
 
 export enum CriticalLevel {
     LOW_IMPACT = 0,
-    MEDIUM_IMPACT = 1,
-    HIGH_IMPACT = 2
+    RERENDER_SCENE = 1,
+    REPARSE_DATA = 2
 }
 
 export class Config implements ConfigInterface {
@@ -56,25 +56,25 @@ export class Config implements ConfigInterface {
         if (fields.includes("variables")) {
             if (Array.isArray(value)) {
                 config.variables[fields[1]] = value[1];
-                return CriticalLevel.MEDIUM_IMPACT;
+                return CriticalLevel.RERENDER_SCENE;
             }
         }
         if (fields.includes("parsing_mode")) {
             if (Array.isArray(value)) {
                 config.parsing_mode = value[1];
-                return CriticalLevel.HIGH_IMPACT;
+                return CriticalLevel.REPARSE_DATA;
             }
         }
         if (fields.includes("orientation")) {
             if (Array.isArray(value)) {
                 config.orientation = Orientation[value[1]];
-                return CriticalLevel.HIGH_IMPACT;
+                return CriticalLevel.REPARSE_DATA;
             }
         }
         if (fields.includes("padding")) {
             if (Array.isArray(value)) {
                 config[fields[0]].padding = +value[1];
-                return CriticalLevel.MEDIUM_IMPACT;
+                return CriticalLevel.RERENDER_SCENE;
             }
         }
         for (let key of fields) {
@@ -97,9 +97,9 @@ export class Config implements ConfigInterface {
                 } else { // doesn't exist, so we push the new value
                     cur.push(value[1]);
                 }
-                if(fields.includes("api_classes") || fields.includes("hierarchy_links")) return CriticalLevel.HIGH_IMPACT;
+                if(fields.includes("api_classes") || fields.includes("hierarchy_links")) return CriticalLevel.REPARSE_DATA;
             }
-            return CriticalLevel.MEDIUM_IMPACT;
+            return CriticalLevel.RERENDER_SCENE;
         }
     }
 }

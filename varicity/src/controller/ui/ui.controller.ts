@@ -52,11 +52,11 @@ export class UIController {
             SearchbarController.emptyMap();
             switch (critical) {
                 case CriticalLevel.LOW_IMPACT: // Only change the colour, so simple rerender
-                case CriticalLevel.MEDIUM_IMPACT: // Changed variables important enough to warrant a complete rebuilding of the scene
+                case CriticalLevel.RERENDER_SCENE: // Changed variables important enough to warrant a complete rebuilding of the scene
                     this.scene = this.scene.rerender(this.config);
                     this.scene.buildScene();
                     break;
-                case CriticalLevel.HIGH_IMPACT: // Changed variables that modify the parsing method, need to reparse the entire file and rebuild
+                case CriticalLevel.REPARSE_DATA: // Changed variables that modify the parsing method, need to reparse the entire file and rebuild
                     ProjectController.reParse();
                     break;
                 default: throw new Error("didn't receive the correct result from altering config field: " + critical);
