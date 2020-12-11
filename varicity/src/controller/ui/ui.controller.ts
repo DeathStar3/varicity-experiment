@@ -37,8 +37,8 @@ export class UIController {
         ConfigController.createConfigFolder(config);
     }
 
-    public static displayObjectInfo(obj: Building3D): void {
-        DetailsController.displayObjectInfo(obj);
+    public static displayObjectInfo(obj: Building3D, force: boolean = false): void {
+        DetailsController.displayObjectInfo(obj, force);
     }
 
     public static createFooter(): void {

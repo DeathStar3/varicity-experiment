@@ -2,8 +2,22 @@ import { Building3D } from './../../view/common/3Delements/building3D';
 
 export class DetailsController {
 
-    static displayObjectInfo(obj: Building3D) {
+    private static force: boolean = false;
+    private static current: Building3D;
+
+    static displayObjectInfo(obj: Building3D, force: boolean) {
+        if(this.force && !force) return;
+        if(this.force && force) {
+            this.current.highlight(false, true);
+            this.current.showAllLinks(false);
+        }
+        this.force = force;
+        this.current = obj
         let parent = document.getElementById("nodes_details");
+
+        while (parent.firstChild) {
+            parent.removeChild(parent.lastChild);
+        }
         parent.innerHTML = "Object details";
 
         // Display the model

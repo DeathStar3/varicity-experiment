@@ -37,6 +37,7 @@ export class Building3D extends Element3D {
     edgesWidth: number = 7.0;
 
     highlightLayer: HighlightLayer;
+    highlightForce: boolean;
 
     config: Config;
 
@@ -74,16 +75,15 @@ export class Building3D extends Element3D {
         this.links.push(link);
     }
 
-    highlight(arg: boolean) {
-        if (arg) {
-            // if (this.highlightLayer) this.highlightLayer.removeAllMeshes();
-            this.highlightLayer = new HighlightLayer("hl", this.scene);
-            this.highlightLayer.addMesh(this.d3Model, Color3.Blue());
+    highlight(arg: boolean, force: boolean = false) {
+        if(force) this.highlightForce = arg;
+        if (!arg && !this.highlightForce) {
+            this.highlightLayer.removeAllMeshes();
+            // this.highlightLayer.dispose();
+            // delete this.highlightLayer;
         } else {
-            if (this.highlightLayer) this.highlightLayer.removeAllMeshes();
-            else {
-                console.log("mAZUI ZO");
-            }
+            // if (this.highlightLayer) this.highlightLayer.removeAllMeshes();
+            this.highlightLayer.addMesh(this.d3Model, Color3.Blue());
         }
     }
 
@@ -118,6 +118,8 @@ export class Building3D extends Element3D {
             this.scene);
         this.d3Model.setPositionWithLocalVector(this.center);
 
+        this.highlightLayer = new HighlightLayer("hl", this.scene);
+
         this.d3Model.actionManager = new ActionManager(this.scene);
 
         UIController.addEntry(this.getName(), this);
@@ -129,6 +131,7 @@ export class Building3D extends Element3D {
                     trigger: ActionManager.OnPointerOverTrigger
                 },
                 () => {
+                    this.highlight(true);
                     this.links.forEach(l => l.display());
                     UIController.displayObjectInfo(this);
                     // document.getElementById("nodes_details").innerText = out;
@@ -141,7 +144,20 @@ export class Building3D extends Element3D {
                     trigger: ActionManager.OnPointerOutTrigger
                 },
                 () => {
+                    this.highlight(false);
                     this.links.forEach(l => l.display());
+                }
+            )
+        );
+        this.d3Model.actionManager.registerAction(
+            new ExecuteCodeAction(
+                {
+                    trigger: ActionManager.OnPickTrigger
+                },
+                () => {
+                    this.highlight(true, true);
+                    this.links.forEach(l => l.display(true,));
+                    UIController.displayObjectInfo(this, true);
                 }
             )
         );
