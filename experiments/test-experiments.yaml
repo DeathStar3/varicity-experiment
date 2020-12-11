@@ -7,6 +7,9 @@ composition_levels_inheritance:
 composition_levels_mixed:
   localDirectory: composition_levels_mixed
   sourcePackage: .
+cross_check_1:
+  localDirectory: cross_check_1
+  sourcePackage: .
 decorator:
   localDirectory: decorator
   sourcePackage: .
