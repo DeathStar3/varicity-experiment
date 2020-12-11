@@ -3,8 +3,7 @@ import {expect} from 'chai';
 import { District } from '../src/model/entities/district.interface';
 import { ConfigLoader } from '../src/controller/parser/configLoader';
 import { FilesLoader } from '../src/controller/parser/filesLoader';
-import { VPVariantsCompositionStrategy } from "../src/controller/parser/strategies/vp_variants_composition.strategy";
-import { VPVariantsInheritanceStrategy } from "../src/controller/parser/strategies/vp_variants_inheritance.strategy";
+import { VPVariantsStrategy } from "../src/controller/parser/strategies/vp_variants.strategy";
 
 function countBuilding(districts: District[]) : number{
   let sum = 0;
@@ -26,7 +25,7 @@ function countDistricts(districts: District[]) : number{
 
 describe('cross check', function() {
     it('cross check cross_check_1', function() {
-        let entities = new VPVariantsCompositionStrategy().parse(FilesLoader.loadDataFile('cross_check_1'), ConfigLoader.loadDataFile("config"));
+        let entities = new VPVariantsStrategy().parse(FilesLoader.loadDataFile('cross_check_1'), ConfigLoader.loadDataFile("config"));
         let ent = entities.filterCompLevel(1);
         let dis = ent.district.districts
         let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
