@@ -6,6 +6,10 @@ export class EntitiesList {
     buildings: Building[] = [];
     district: District; // [com] => [polytech, utils] => **[unice]**
     links: Link[] = [];
+    
+    /**
+     * @deprecated
+     */
     compositionLinks: Link[] = [];
 
     constructor() {}

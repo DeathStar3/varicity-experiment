@@ -3,6 +3,7 @@
 # pick your color at https://htmlcolorcodes.com/
 
 building:
+  padding: 0.2
   colors:
     # outline: "#145a32" # dark green
     # edges: "#a569bd" # light purple
@@ -33,6 +34,7 @@ building:
 # color: "#000000"
 
 district:
+  padding: 0
   colors:
     # outline: "#145a32" # dark green
     # edges: "#a569bd" # light purple

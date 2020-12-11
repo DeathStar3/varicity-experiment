@@ -47,6 +47,7 @@ export class UIController {
 
     public static changeConfig(arr: string[], value: [string, string] | Color) {
         let critical: CriticalLevel = Config.alterField(this.config, arr, value);
+        console.log(this.config);
         if (this.scene) {
             SearchbarController.emptyMap();
             switch(critical) {

@@ -1,5 +1,5 @@
 import { Building3D } from '../../view/common/3Delements/building3D';
-import {Orientation} from "../entitiesImplems/orientation.enum";
+import { Orientation } from "../entitiesImplems/orientation.enum";
 
 export interface Color {
     name: string;
@@ -7,11 +7,16 @@ export interface Color {
 }
 
 export interface ConfigColor {
-    colors: {
-        edges: [Color], // HEX color string
-        faces: [Color],
-        outlines: [Color]
-    }
+    // colors: {
+        edges: Color[], // HEX color string
+        faces: Color[],
+        outlines: Color[]
+    // }
+}
+
+export interface D3Config {
+    padding: number;
+    colors: ConfigColor;
 }
 
 export interface ConfigClones {
@@ -22,10 +27,12 @@ export interface ConfigClones {
 }
 
 export interface ConfigInterface {
-    building: ConfigColor;
-    district: ConfigColor;
+    building: D3Config;
+    // building: ConfigColor;
+    district: D3Config;
+    // district: ConfigColor;
     link: {
-        colors: [Color],
+        colors: Color[],
         display: {
             air_traffic: string[],
             underground_road: string[],
