@@ -20,6 +20,7 @@ export class Config implements ConfigInterface {
     vp_building: {
         color: string; // HEX color string
     };
+    hierarchy_links: string[];
     blacklist: string[];
     clones: ConfigClones;
     force_color: string; // HEX color string
@@ -98,7 +99,7 @@ export class Config implements ConfigInterface {
                 } else { // doesn't exist, so we push the new value
                     cur.push(value[1]);
                 }
-                if(fields.includes("api_classes")) return CriticalLevel.HIGH_IMPACT;
+                if(fields.includes("api_classes") || fields.includes("hierarchy_links")) return CriticalLevel.HIGH_IMPACT;
             }
             return CriticalLevel.MEDIUM_IMPACT;
         }

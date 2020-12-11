@@ -36,6 +36,8 @@ export interface ConfigInterface {
         color: string; // HEX color string
     }
 
+    hierarchy_links: string[];
+
     blacklist: string[]; //all classes that must not appear
     api_classes: string[];
 
