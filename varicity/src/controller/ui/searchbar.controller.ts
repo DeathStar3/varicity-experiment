@@ -33,18 +33,19 @@ export class SearchbarController {
                     return;
                 }
             } else {
+                let [k, v] = this.map;
                 for (let [k, v] of this.map) {
                     if (k.includes(searchbar.value)) {
                         searchbar.placeholder = k;
                         searchbar.style.backgroundColor = "";
-                        searchbar.setAttribute("previous", k);
 
                         // NOT YET IMPLEMENTED : HIGHLIGHTS BUILDING OF NAME BEING TYPED
                         let prev = searchbar.getAttribute("previous");
                         if (prev != "" && this.map.has(prev)) {
-                            // this.map.get(prev).highlight(false);
+                            this.map.get(prev).highlight(false);
                         }
-                        // v.highlight(true);
+                        searchbar.setAttribute("previous", k);
+                        v.highlight(true);
                         return;
                     }
                 }
@@ -89,6 +90,9 @@ export class SearchbarController {
 
     public static addEntry(key: string, building: Building3D) {
         this.map.set(key, building);
+
+        // niveau opti on a vu mieux mais sort the keys
+        // this.map = new Map<string, Building3D>([...this.map.entries()].sort());
 
         let datalist = document.getElementById("datalist");
         let option = document.createElement("option");
