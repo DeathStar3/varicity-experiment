@@ -5,7 +5,7 @@ RUN mkdir -p /opt/karma
 WORKDIR /opt/karma
 
 COPY varicity/package.json /opt/karma/
-COPY varicity/config /opt/karma/config
+COPY docker/varicity_integration_tests/configs /opt/karma/config
 COPY varicity/public /opt/karma/public
 COPY varicity/src /opt/karma/src
 COPY varicity/tsconfig.json /opt/karma/
