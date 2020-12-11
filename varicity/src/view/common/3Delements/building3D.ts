@@ -78,12 +78,10 @@ export class Building3D extends Element3D {
     highlight(arg: boolean, force: boolean = false) {
         if(force) this.highlightForce = arg;
         if (!arg && !this.highlightForce) {
-            console.log("removing " + this.elementModel.name);
             this.highlightLayer.removeAllMeshes();
             // this.highlightLayer.dispose();
             // delete this.highlightLayer;
         } else {
-            console.log("adding " +this.elementModel.name);
             // if (this.highlightLayer) this.highlightLayer.removeAllMeshes();
             this.highlightLayer.addMesh(this.d3Model, Color3.Blue());
         }
