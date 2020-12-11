@@ -25,7 +25,11 @@ export interface ConfigInterface {
     building: ConfigColor;
     district: ConfigColor;
     link: {
-        colors: [Color]
+        colors: [Color],
+        display: {
+            air_traffic: string[],
+            underground_road: string[],
+        }
     };
 
     vp_building: {

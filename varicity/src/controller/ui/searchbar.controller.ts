@@ -1,3 +1,4 @@
+import { Node } from './../parser/symfinder_elements/nodes/node.element';
 import { Building3D } from './../../view/common/3Delements/building3D';
 
 export class SearchbarController {
@@ -51,6 +52,29 @@ export class SearchbarController {
                 searchbar.style.backgroundColor = "red";
             }
         });
+
+        let datalist2 = document.createElement("datalist");
+        datalist2.id = "attributelist";
+        datalist2.style.display = "none";
+
+        const nodeKeys: Node = {
+            name: "",
+            types: [],
+            nbAttributes: 0,
+            nbVariants: 0,
+            nbConstructorVariants: 0,
+            nbFunctions: 0,
+            nbMethodVariants: 0
+        }
+        for (let key in nodeKeys) {
+            if (typeof nodeKeys[key] === "number") {
+                let opt = document.createElement("option");
+                opt.innerHTML = key;
+                datalist2.appendChild(opt);
+            }
+        }
+
+        searchbar.appendChild(datalist2);
     }
 
     public static emptyMap() {

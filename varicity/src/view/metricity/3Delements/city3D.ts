@@ -60,11 +60,13 @@ export class City3D {
             let dest = this.findSrcLink(l.target.name);
             let type = l.type;
             if (src != undefined && dest != undefined) {
-                let link = Link3DFactory.createLink(src, dest, type, this.scene);
-                src.link(link);
-                dest.link(link);
-                // src.link(dest, type);
-                // dest.link(src, type);
+                let link = Link3DFactory.createLink(src, dest, type, this.scene, this.config);
+                if (link) {
+                    src.link(link);
+                    dest.link(link);
+                    // src.link(dest, type);
+                    // dest.link(src, type);
+                }
             }
         });
 
