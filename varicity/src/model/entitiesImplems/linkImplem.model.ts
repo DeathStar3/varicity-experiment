@@ -1,5 +1,4 @@
 import {Link} from "../entities/link.interface";
-import {ClassImplem} from "./classImplem.model";
 import {Building} from "../entities/building.interface";
 
 export class LinkImplem extends Link {

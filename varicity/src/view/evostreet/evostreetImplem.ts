@@ -7,7 +7,7 @@ export class EvostreetImplem extends SceneRenderer {
 
     buildScene() {
         this.scene = new Scene(this.engine);
-        
+
         this.camera = new ArcRotateCamera("Camera", 2 * Math.PI / 3, Math.PI / 3, 100, Vector3.Zero(), this.scene);
         this.camera.attachControl(this.canvas, true);
         this.camera.panningSensibility = 100;
@@ -16,7 +16,7 @@ export class EvostreetImplem extends SceneRenderer {
         this.render();
     }
 
-    rerender(config: Config) : EvostreetImplem {
+    rerender(config: Config): EvostreetImplem {
         this.dispose();
         return new EvostreetImplem(config, this.entitiesList);
     }

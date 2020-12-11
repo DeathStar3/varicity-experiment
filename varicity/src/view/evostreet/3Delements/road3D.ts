@@ -3,7 +3,6 @@ import { ActionManager, Color3, Color4, ExecuteCodeAction, MeshBuilder, Standard
 import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
 import { Building3D } from '../../common/3Delements/building3D';
 import { Scene } from '@babylonjs/core';
-import { Mesh } from '@babylonjs/core';
 import { VPVariantsImplem } from "../../../model/entitiesImplems/vpVariantsImplem.model";
 
 export class Road3D extends Element3D {
