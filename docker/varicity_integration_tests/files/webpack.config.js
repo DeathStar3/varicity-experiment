@@ -7,7 +7,8 @@ const appDirectory = fs.realpathSync(process.cwd());
 module.exports = {
     entry: {
       'parserClassesPackagesTest':'./tests/parserClassesPackages.test.ts',
-      'parserVPVariantsTest': './tests/parserVpVariants.test.ts'
+      'parserVPVariantsTest': './tests/parserVpVariants.test.ts',
+      'crossCheckTest': './tests/crossCheck.test.ts'
     },
     output: {
       filename: '[name].bundle.js',
