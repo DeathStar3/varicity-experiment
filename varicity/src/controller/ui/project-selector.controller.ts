@@ -24,15 +24,6 @@ export class ProjectController {
             ProjectController.reParse();
         }
 
-        const x = (document.getElementById("hierarchy-select") as HTMLSelectElement).value;
-        UIController.config.parsing_mode = x;
-
-        let hierarchySelect = document.getElementById("hierarchy-select") as HTMLSelectElement;
-        hierarchySelect.onchange = () => {
-            const x = (document.getElementById("hierarchy-select") as HTMLSelectElement).value;
-            UIController.changeConfig(["parsing_mode"], ["", x]);
-        }
-
         for (let key of keys) {
             let node = document.createElement("div");
             node.innerHTML = key;
