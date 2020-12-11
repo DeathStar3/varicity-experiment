@@ -1,3 +1,4 @@
+import { Node } from './../parser/symfinder_elements/nodes/node.element';
 import { UIController } from './ui.controller';
 import { Config } from './../../model/entitiesImplems/config.model';
 
@@ -94,7 +95,9 @@ export class ConfigController {
                     });
                 } else this.populateChildren(obj, parent); // it's a string
             }
-            if (parent.getAttribute("value") == "api_classes" || parent.getAttribute("value") == "blacklist") {
+            let attr = parent.getAttribute("value");
+            let values = ["api_classes", "blacklist", "underground_road", "air_traffic"];
+            if (values.includes(attr)) {
                 this.populateChildren("", parent);
             }
         }
@@ -105,7 +108,10 @@ export class ConfigController {
                 let prev = input.value;
                 input.setAttribute("previous", prev);
                 input.className = "child";
-                if (parent.getAttribute("value") === "api_classes" || parent.getAttribute("value") === "blacklist") {
+
+                let attr = parent.getAttribute("value");
+                let values = ["api_classes", "blacklist"];
+                if (values.includes(attr)) {
                     input.setAttribute("list", "datalist");
                 }
                 input.addEventListener("keyup", (ke) => this.stringArrayListener(ke, input, parent));
@@ -137,6 +143,9 @@ export class ConfigController {
                         node.className = "child";
 
                         input.className = "right-input";
+                        if(parent.getAttribute("value") === "variables") {
+                            input.setAttribute("list", "attributelist");
+                        }
                         input.addEventListener("keyup", (ke) => {
                             if (ke.key == "Enter") {
                                 let arr = this.findValidParents(input);

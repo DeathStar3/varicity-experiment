@@ -1,4 +1,5 @@
 import { Color, ConfigClones, ConfigColor, ConfigInterface } from "../entities/config.interface";
+import {Orientation} from "./orientation.enum";
 
 export enum CriticalLevel {
     LOW_IMPACT = 0,
@@ -10,7 +11,11 @@ export class Config implements ConfigInterface {
     building: ConfigColor;
     district: ConfigColor;
     link: {
-        colors: [Color]
+        colors: [Color],
+        display: {
+            air_traffic: string[],
+            underground_road: string[],
+        }
     };
     vp_building: {
         color: string; // HEX color string
@@ -24,6 +29,7 @@ export class Config implements ConfigInterface {
         height: string;
     };
     parsing_mode: string;
+    orientation: Orientation;
 
     constructor() { }
 
@@ -63,6 +69,12 @@ export class Config implements ConfigInterface {
         if (fields.includes("parsing_mode")) {
             if (Array.isArray(value)) {
                 config.parsing_mode = value[1];
+                return CriticalLevel.HIGH_IMPACT;
+            }
+        }
+        if (fields.includes("orientation")) {
+            if (Array.isArray(value)) {
+                config.orientation = Orientation[value[1]];
                 return CriticalLevel.HIGH_IMPACT;
             }
         }

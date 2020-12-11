@@ -1,4 +1,5 @@
 import { Building3D } from '../../view/common/3Delements/building3D';
+import {Orientation} from "../entitiesImplems/orientation.enum";
 
 export interface Color {
     name: string;
@@ -24,7 +25,11 @@ export interface ConfigInterface {
     building: ConfigColor;
     district: ConfigColor;
     link: {
-        colors: [Color]
+        colors: [Color],
+        display: {
+            air_traffic: string[],
+            underground_road: string[],
+        }
     };
 
     vp_building: {
@@ -42,4 +47,6 @@ export interface ConfigInterface {
         width: string,
         height: string,
     }
+
+    orientation: Orientation;
 }

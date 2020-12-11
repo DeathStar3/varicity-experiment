@@ -45,27 +45,31 @@ export class City3D {
         this.road.build(this.config);
         this.links.forEach(l => {
             let type = l.type;
-            if (type == "INSTANTIATE") { // we only want to show INSTANTIATE type links since the visualization is based off IMPLEMENTS & EXTENDS hierarchy
-                let src = this.findSrcLink(l.source.name);
-                let dest = this.findSrcLink(l.target.name);
-                if (src !== undefined && dest !== undefined) {
-                    let link = Link3DFactory.createLink(src, dest, type, this.scene);
+            // if (type == "INSTANTIATE") { // we only want to show INSTANTIATE type links since the visualization is based off IMPLEMENTS & EXTENDS hierarchy
+            let src = this.findSrcLink(l.source.name);
+            let dest = this.findSrcLink(l.target.name);
+            if (src !== undefined && dest !== undefined) {
+                let link = Link3DFactory.createLink(src, dest, type, this.scene, this.config);
+                if (link) {
                     src.link(link);
                     dest.link(link);
                     // src.link(dest, type);
                     //dest.link(src, type);
                 }
             }
+            // }
         });
 
         for (let [, value] of this.config.clones.map) {
             for (let b of value.clones) {
                 if (b !== undefined) {
-                    let link = Link3DFactory.createLink(value.original, b, "DUPLICATES", this.scene);
-                    value.original.link(link);
-                    b.link(link);
-                    // value.original.link(b, "DUPLICATES");
-                    //b.link(value.original, "DUPLICATES");
+                    let link = Link3DFactory.createLink(value.original, b, "DUPLICATES", this.scene, this.config);
+                    if (link) {
+                        value.original.link(link);
+                        b.link(link);
+                        // value.original.link(b, "DUPLICATES");
+                        //b.link(value.original, "DUPLICATES");
+                    }
                 }
             }
         }

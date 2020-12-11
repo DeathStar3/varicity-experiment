@@ -1,6 +1,6 @@
 # config file for varicity
 # you may alter this file before running the program
-# pick your color at https://htmlcolorcodes.com/ 
+# pick your color at https://htmlcolorcodes.com/
 
 building:
   colors:
@@ -29,8 +29,8 @@ building:
     outlines:
 #      - name: "API"
 #        color: "#FF0000"
-      # - name: "CLASS"
-        # color: "#000000"
+# - name: "CLASS"
+# color: "#000000"
 
 district:
   colors:
@@ -50,6 +50,16 @@ link:
       color: "#2e86c1"
     - name: "DUPLICATES"
       color: "#2B914A"
+    - name: "INSTANTIATE"
+      color: "#ff4747"
+  display:
+    air_traffic:
+      # - "IMPLEMENTS"
+      # - "EXTENDS"
+      - "INSTANTIATE"
+    underground_road:
+      # - "INSTANTIATE"
+      - "DUPLICATES"
 
 blacklist: #all classes that must not appear
   - "org.jfree.chart.util.PublicCloneable"
@@ -65,3 +75,5 @@ api_classes: #all API classes
 variables: #variables to be used for width and height of a building
   width: "nbConstructorVariants"
   height: "nbMethodVariants"
+
+orientation: "OUT"
