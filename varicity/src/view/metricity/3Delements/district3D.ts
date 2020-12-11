@@ -2,9 +2,9 @@ import { Config } from './../../../model/entitiesImplems/config.model';
 import { Element3D } from '../../common/3Dinterfaces/element3D.interface';
 import { Building3D } from '../../common/3Delements/building3D';
 import { District } from '../../../model/entities/district.interface';
-import { ActionManager, Color3, Color4, ExecuteCodeAction, StandardMaterial } from '@babylonjs/core';
+import { ActionManager, Color3, ExecuteCodeAction, StandardMaterial } from '@babylonjs/core';
 import { Scene } from '@babylonjs/core';
-import { Mesh, MeshBuilder, Vector3 } from '@babylonjs/core';
+import { MeshBuilder, Vector3 } from '@babylonjs/core';
 
 export class District3D extends Element3D {
     elementModel: District;
@@ -30,7 +30,7 @@ export class District3D extends Element3D {
     }
 
     showAllLinks(status?: boolean) {
-        if(status) this.status = status;
+        if (status) this.status = status;
         else this.status = !this.status;
         this.d3Buildings.forEach(b =>
             b.showAllLinks(this.status)
@@ -191,7 +191,7 @@ export class District3D extends Element3D {
         // if config -> district -> colors -> faces is defined
         if (config.district.colors.faces) {
             const districtColor = this.getColor(config.district.colors.faces, ["PACKAGE"]);
-            if (districtColor !== undefined){
+            if (districtColor !== undefined) {
                 mat.ambientColor = Color3.FromHexString(districtColor);
                 mat.diffuseColor = Color3.FromHexString(districtColor);
                 mat.emissiveColor = Color3.FromHexString(districtColor);

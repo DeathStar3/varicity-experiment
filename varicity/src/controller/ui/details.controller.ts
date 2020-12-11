@@ -1,5 +1,3 @@
-import { UIController } from './ui.controller';
-import { Animation, Vector3 } from '@babylonjs/core';
 import { Building3D } from './../../view/common/3Delements/building3D';
 
 export class DetailsController {
@@ -88,7 +86,7 @@ export class DetailsController {
                 }
             }
         } else {
-            for (let key in obj) {
+            for (let key of Object.keys(obj)) {
                 if (!(obj[key] instanceof Object)) { // value of key isn't an object
                     let text: string;
                     text = key + ': ' + obj[key];

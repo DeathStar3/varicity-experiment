@@ -1,4 +1,5 @@
 import { Node } from './../../controller/parser/symfinder_elements/nodes/node.element';
+
 export abstract class Building implements Node {
     name: string;
     types: string[];
@@ -6,7 +7,7 @@ export abstract class Building implements Node {
     nbFunctions: number;
     nbVariants: number;
     nbConstructorVariants: number;
-    nbMethodVariants: number;    
+    nbMethodVariants: number;
 
     width: number;
     height: number;
@@ -19,6 +20,6 @@ export abstract class Building implements Node {
         this.types = [];
     }
 
-    abstract getHeight(field: string) : number;
-    abstract getWidth(field: string) : number;
+    abstract getHeight(field: string): number;
+    abstract getWidth(field: string): number;
 }

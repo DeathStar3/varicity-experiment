@@ -1,4 +1,3 @@
-import { Node } from './../parser/symfinder_elements/nodes/node.element';
 import { UIController } from './ui.controller';
 import { Config } from './../../model/entitiesImplems/config.model';
 

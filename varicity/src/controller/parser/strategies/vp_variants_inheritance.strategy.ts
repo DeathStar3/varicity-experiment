@@ -8,6 +8,7 @@ import {JsonInputInterface, LinkInterface} from "../../../model/entities/jsonInp
 import {ParsingStrategy} from "./parsing.strategy.interface";
 import {Config} from "../../../model/entitiesImplems/config.model";
 
+// DEPRECATED
 export class VPVariantsInheritanceStrategy implements ParsingStrategy {
     public parse(data: JsonInputInterface, config: Config) : EntitiesList {
         // console.log('Analyzing with VP and variants strategy: ', data);
