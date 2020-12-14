@@ -241,6 +241,19 @@ export class Building3D extends Element3D {
             offSet += this.getWidth() - this.padding;
         }
 
+        // draw 16 faced prism for strategy
+        if (this.elementModel.types.includes("STRATEGY")) {
+            this.d3ModelPrism = MeshBuilder.CreateCylinder("prism", {
+                tessellation: 16,
+                diameter: (this.getWidth() - this.padding),
+                height: this.getWidth() - this.padding
+            }, this.scene);
+            this.d3ModelPrism.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelPrism.material = mat;
+            this.d3ModelPrism.material.backFaceCulling = false;
+            offSet += this.getWidth() - this.padding;
+        }
+
         // draw chimney for factories
         if (this.elementModel.types.includes("FACTORY")) {
             this.d3ModelChimney1 = MeshBuilder.CreateCylinder("chimney1", {
@@ -318,6 +331,13 @@ export class Building3D extends Element3D {
                     const c = Color3.FromHexString(edgesColor);
                     this.d3ModelInvertedPyramid.edgesColor = new Color4(c.r, c.g, c.b, 1);
                 }
+                if (this.d3ModelPrism !== undefined) {
+                    this.d3ModelPrism.enableEdgesRendering();
+                    this.d3ModelPrism.edgesWidth = this.edgesWidth;
+                    const c = Color3.FromHexString(edgesColor);
+                    this.d3ModelPrism.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                }
+            }
         }
 
         // Display links to other buildings
