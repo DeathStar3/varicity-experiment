@@ -27,6 +27,11 @@ export class Building3D extends Element3D {
 
     d3ModelOutline: Mesh;
     d3ModelPyramid: Mesh = undefined;
+    d3ModelChimney1: Mesh = undefined;
+    d3ModelChimney2: Mesh = undefined;
+    d3ModelChimney3: Mesh = undefined;
+    d3ModelPrism: Mesh = undefined;
+    d3ModelInvertedPyramid: Mesh = undefined;
 
     links: Link3D[] = [];
 
@@ -218,6 +223,33 @@ export class Building3D extends Element3D {
 
         this.d3Model.material = mat;
 
+        let offSet = 0;
+
+        if (this.elementModel.types.includes("FACTORY")) {
+            this.d3ModelChimney1 = MeshBuilder.CreateCylinder("chimney1", {
+                diameter: (this.getWidth() - this.padding)/6,
+                height: this.getWidth() - this.padding
+            }, this.scene);
+            this.d3ModelChimney2 = MeshBuilder.CreateCylinder("chimney2", {
+                diameter: (this.getWidth() - this.padding)/6,
+                height: this.getWidth() - this.padding
+            }, this.scene);
+            this.d3ModelChimney3 = MeshBuilder.CreateCylinder("chimney3", {
+                diameter: (this.getWidth() - this.padding)/6,
+                height: this.getWidth() - this.padding
+            }, this.scene);
+            this.d3ModelChimney1.setPositionWithLocalVector(this.center.add(new Vector3(- ((this.getWidth() - this.padding)/2)*10/12, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelChimney2.setPositionWithLocalVector(this.center.add(new Vector3(0, this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelChimney3.setPositionWithLocalVector(this.center.add(new Vector3(((this.getWidth() - this.padding)/2)*10/12, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelChimney1.material = mat;
+            this.d3ModelChimney2.material = mat;
+            this.d3ModelChimney3.material = mat;
+            this.d3ModelChimney1.material.backFaceCulling = false;
+            this.d3ModelChimney2.material.backFaceCulling = false;
+            this.d3ModelChimney3.material.backFaceCulling = false;
+            offSet += this.getWidth() - this.padding;
+        }
+
         // draw top pyramid if API class
         if (this.elementModel.types.includes("API")) {
             this.d3ModelPyramid = MeshBuilder.CreateCylinder("pyramid", {
@@ -226,7 +258,7 @@ export class Building3D extends Element3D {
                 diameterBottom: this.getWidth() - this.padding,
                 height: this.getWidth() - this.padding
             }, this.scene);
-            this.d3ModelPyramid.setPositionWithLocalVector(this.center.add(new Vector3(0, this.getHeight() / 2 + (this.getWidth() - this.padding) / 2 + this.edgesWidth / 120, 0)));
+            this.d3ModelPyramid.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2 + this.edgesWidth / 120, 0)));
             this.d3ModelPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
             this.d3ModelPyramid.material = mat;
             this.d3ModelPyramid.material.backFaceCulling = false;
@@ -244,6 +276,24 @@ export class Building3D extends Element3D {
                     this.d3ModelPyramid.edgesWidth = this.edgesWidth;
                     const c = Color3.FromHexString(edgesColor);
                     this.d3ModelPyramid.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                }
+                if (this.d3ModelChimney1 !== undefined) {
+                    this.d3ModelChimney1.enableEdgesRendering();
+                    this.d3ModelChimney1.edgesWidth = this.edgesWidth;
+                    const c = Color3.FromHexString(edgesColor);
+                    this.d3ModelChimney1.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                }
+                if (this.d3ModelChimney2 !== undefined) {
+                    this.d3ModelChimney2.enableEdgesRendering();
+                    this.d3ModelChimney2.edgesWidth = this.edgesWidth;
+                    const c = Color3.FromHexString(edgesColor);
+                    this.d3ModelChimney2.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                }
+                if (this.d3ModelChimney3 !== undefined) {
+                    this.d3ModelChimney3.enableEdgesRendering();
+                    this.d3ModelChimney3.edgesWidth = this.edgesWidth;
+                    const c = Color3.FromHexString(edgesColor);
+                    this.d3ModelChimney3.edgesColor = new Color4(c.r, c.g, c.b, 1);
                 }
             }
         }
