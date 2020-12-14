@@ -103,12 +103,18 @@ export class Building3D extends Element3D {
     }
 
     place(x: number, z: number) {
+        const increaseHeight = ["API", "FACTORY", "DECORATOR", "TEMPLATE", "STRATEGY"];
         let halfHeight = this.getHeight() / 2;
         this.center = new Vector3(x, halfHeight + this.depth * 30, z);
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
-        if (this.elementModel.types.includes("API")) {
-            halfHeight += this.getWidth() - this.padding;
-        }
+        // if (this.elementModel.types.includes("API")) {
+        //     halfHeight += this.getWidth() - this.padding;
+        // }
+        this.elementModel.types.forEach(t => {
+            if (increaseHeight.includes(t)) {
+                halfHeight += this.getWidth() - this.padding;
+            }
+        });
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
     }
 
