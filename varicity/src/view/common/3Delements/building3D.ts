@@ -32,6 +32,7 @@ export class Building3D extends Element3D {
     d3ModelChimney3: Mesh = undefined;
     d3ModelPrism: Mesh = undefined;
     d3ModelInvertedPyramid: Mesh = undefined;
+    d3ModelSphere: Mesh = undefined;
 
     links: Link3D[] = [];
 
@@ -225,6 +226,17 @@ export class Building3D extends Element3D {
 
         let offSet = 0;
 
+        // draw sphere for decorator
+        if (this.elementModel.types.includes("DECORATOR")) {
+            this.d3ModelSphere = MeshBuilder.CreateSphere("sphere", {
+                diameter: (this.getWidth() - this.padding) / 2,
+            }, this.scene);
+            this.d3ModelSphere.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelSphere.material = mat;
+            this.d3ModelSphere.material.backFaceCulling = false;
+            offSet += this.getWidth() - this.padding;
+        }
+
         // draw reversed pyramid for template
         if (this.elementModel.types.includes("TEMPLATE")) {
             this.d3ModelInvertedPyramid = MeshBuilder.CreateCylinder("reversedPyramid", {
@@ -324,6 +336,12 @@ export class Building3D extends Element3D {
                     this.d3ModelChimney3.edgesWidth = this.edgesWidth;
                     const c = Color3.FromHexString(edgesColor);
                     this.d3ModelChimney3.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                }
+                if (this.d3ModelSphere !== undefined) {
+                    this.d3ModelSphere.enableEdgesRendering();
+                    this.d3ModelSphere.edgesWidth = this.edgesWidth;
+                    const c = Color3.FromHexString(edgesColor);
+                    this.d3ModelSphere.edgesColor = new Color4(c.r, c.g, c.b, 1);
                 }
                 if (this.d3ModelInvertedPyramid !== undefined) {
                     this.d3ModelInvertedPyramid.enableEdgesRendering();
