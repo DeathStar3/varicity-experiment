@@ -225,6 +225,23 @@ export class Building3D extends Element3D {
 
         let offSet = 0;
 
+        // draw reversed pyramid for template
+        if (this.elementModel.types.includes("TEMPLATE")) {
+            this.d3ModelInvertedPyramid = MeshBuilder.CreateCylinder("reversedPyramid", {
+                diameterTop: 0,
+                tessellation: 4,
+                diameterBottom: this.getWidth() - this.padding,
+                height: this.getWidth() - this.padding
+            }, this.scene);
+            this.d3ModelInvertedPyramid.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelInvertedPyramid.rotate(new Vector3(1, 0, 0), Math.PI);
+            this.d3ModelInvertedPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
+            this.d3ModelInvertedPyramid.material = mat;
+            this.d3ModelInvertedPyramid.material.backFaceCulling = false;
+            offSet += this.getWidth() - this.padding;
+        }
+
+        // draw chimney for factories
         if (this.elementModel.types.includes("FACTORY")) {
             this.d3ModelChimney1 = MeshBuilder.CreateCylinder("chimney1", {
                 diameter: (this.getWidth() - this.padding)/6,
@@ -295,7 +312,12 @@ export class Building3D extends Element3D {
                     const c = Color3.FromHexString(edgesColor);
                     this.d3ModelChimney3.edgesColor = new Color4(c.r, c.g, c.b, 1);
                 }
-            }
+                if (this.d3ModelInvertedPyramid !== undefined) {
+                    this.d3ModelInvertedPyramid.enableEdgesRendering();
+                    this.d3ModelInvertedPyramid.edgesWidth = this.edgesWidth;
+                    const c = Color3.FromHexString(edgesColor);
+                    this.d3ModelInvertedPyramid.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                }
         }
 
         // Display links to other buildings
