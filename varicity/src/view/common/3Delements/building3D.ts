@@ -193,7 +193,7 @@ export class Building3D extends Element3D {
         // draw sphere for decorator
         if (this.elementModel.types.includes("DECORATOR")) {
             this.d3ModelSphere = MeshBuilder.CreateSphere("sphere", {
-                diameter: (this.getWidth() - this.padding) / 2,
+                diameter: (this.getWidth() - this.padding),
             }, this.scene);
             this.d3ModelSphere.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
             this.d3ModelSphere.material = mat;
@@ -248,7 +248,7 @@ export class Building3D extends Element3D {
                 height: this.getWidth() - this.padding
             }, this.scene);
             this.d3ModelChimney1.setPositionWithLocalVector(this.center.add(new Vector3(- ((this.getWidth() - this.padding) / 2) * 10 / 12, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
-            this.d3ModelChimney2.setPositionWithLocalVector(this.center.add(new Vector3(0, this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelChimney2.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
             this.d3ModelChimney3.setPositionWithLocalVector(this.center.add(new Vector3(((this.getWidth() - this.padding) / 2) * 10 / 12, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
             this.d3ModelChimney1.material = mat;
             this.d3ModelChimney2.material = mat;

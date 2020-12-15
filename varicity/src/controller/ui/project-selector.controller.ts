@@ -1,3 +1,4 @@
+import { MetricityImplem } from './../../view/metricity/metricityImplem';
 import { ParsingStrategy } from './../parser/strategies/parsing.strategy.interface';
 import { EvostreetImplem } from "../../view/evostreet/evostreetImplem";
 import { ClassesPackagesStrategy } from "../parser/strategies/classes_packages.strategy";
@@ -57,6 +58,18 @@ export class ProjectController {
                 this.previousParser = new ClassesPackagesStrategy();
                 this.filename = key;
                 parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childMetri.innerHTML;
+
+                if (UIController.scene) UIController.scene.dispose();
+                UIController.clearMap();
+                this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config);
+                let inputElement = document.getElementById("comp-level") as HTMLInputElement;
+                inputElement.min = "1";
+                const maxLvl = this.el.getMaxCompLevel();
+                inputElement.max = maxLvl.toString();
+                if (+inputElement.value > maxLvl)
+                    inputElement.value = maxLvl.toString();
+                UIController.scene = new MetricityImplem(UIController.config, this.el);
+                UIController.scene.buildScene();
 
                 /* @ts-ignore */
                 for (let child of parent.children) {
