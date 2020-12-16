@@ -222,7 +222,7 @@ export class Building3D extends Element3D {
         // draw 16 faced prism for strategy
         if (this.elementModel.types.includes("STRATEGY")) {
             this.d3ModelPrism = MeshBuilder.CreateCylinder("prism", {
-                tessellation: 16,
+                tessellation: 8,
                 diameter: (this.getWidth() - this.padding),
                 height: this.getWidth() - this.padding
             }, this.scene);
