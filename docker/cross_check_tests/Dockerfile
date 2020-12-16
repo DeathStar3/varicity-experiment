@@ -23,4 +23,3 @@ RUN npm install --save-dev jasmine-core karma-jasmine karma-jquery
 RUN npm install && npm run-script build
 
 CMD npm run test -- --contextFile=$CONTEXT_FILE --testsDir=$TESTS_DIR
-# CMD cd symfinder_files && ls
