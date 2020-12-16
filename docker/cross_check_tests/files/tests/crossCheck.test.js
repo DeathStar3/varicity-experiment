@@ -24,7 +24,7 @@ function countDistricts(districts) {
 describe('cross check', function() {
   
   beforeAll(async () => {
-    await display("symfinder_files/cross_check_1.json", "symfinder_files/cross_check_1-stats.json", [], ["JfreeChart"], 1, "IN_OUT");
+    await display("symfinder_files/cross_check_1.json", "symfinder_files/cross_check_1-stats.json", [], ["JfreeChart"], 1, "IN-OUT");
     setTimeout(() => done(), 500); // wait for onclick event to execute totally
   });
 
