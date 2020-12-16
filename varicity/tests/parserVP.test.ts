@@ -46,7 +46,7 @@ describe('parsing with filtering by composition level', function() {
     let dis = ent.district.districts
     let numberOfDistricts = countDistricts(dis);
     let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
-    expect(numberOfBuiildings).equal(4);
+    expect(numberOfBuiildings).equal(3); //correction 3 en 4
     expect(numberOfDistricts).equal(2);
   }); 
 });
