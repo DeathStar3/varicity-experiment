@@ -1,3 +1,3 @@
-public class HorizontalAlignment extends Drawable {
-    public void orientation(JfreeChart jfreeChart){}
+public abstract class HorizontalAlignment extends Drawable {
+    private JfreeChart jfreeChart;
 }

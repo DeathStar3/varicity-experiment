@@ -1,3 +1,3 @@
-public class Size2D {
+public abstract class Size2D {
     private JfreeChart jfreeChart;
 }

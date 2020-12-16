@@ -1,4 +1,4 @@
-public class TextTitle extends Title {
+public abstract class TextTitle extends Title {
 
     private JfreeChart jfreeChart;
 }

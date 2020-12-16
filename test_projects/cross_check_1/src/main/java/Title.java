@@ -1,4 +1,4 @@
-public class Title {
+public abstract class Title {
 
     private JfreeChart jfreeChart;
 }
