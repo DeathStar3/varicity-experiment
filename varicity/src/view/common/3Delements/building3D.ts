@@ -32,6 +32,7 @@ export class Building3D extends Element3D {
     d3ModelChimney3: Mesh = undefined;
     d3ModelPrism: Mesh = undefined;
     d3ModelInvertedPyramid: Mesh = undefined;
+    d3ModelSphere: Mesh = undefined;
 
     links: Link3D[] = [];
 
@@ -81,7 +82,7 @@ export class Building3D extends Element3D {
     }
 
     highlight(arg: boolean, force: boolean = false) {
-        if(force) this.highlightForce = arg;
+        if (force) this.highlightForce = arg;
         if (!arg && !this.highlightForce) {
             this.highlightLayer.removeAllMeshes();
             // this.highlightLayer.dispose();
@@ -102,12 +103,18 @@ export class Building3D extends Element3D {
     }
 
     place(x: number, z: number) {
+        const increaseHeight = ["API", "FACTORY", "DECORATOR", "TEMPLATE", "STRATEGY"];
         let halfHeight = this.getHeight() / 2;
         this.center = new Vector3(x, halfHeight + this.depth * 30, z);
         this.bot = this.center.add(new Vector3(0, -halfHeight, 0));
-        if (this.elementModel.types.includes("API")) {
-            halfHeight += this.getWidth() - this.padding;
-        }
+        // if (this.elementModel.types.includes("API")) {
+        //     halfHeight += this.getWidth() - this.padding;
+        // }
+        this.elementModel.types.forEach(t => {
+            if (increaseHeight.includes(t)) {
+                halfHeight += this.getWidth() - this.padding;
+            }
+        });
         this.top = this.center.add(new Vector3(0, halfHeight, 0));
     }
 
@@ -124,48 +131,6 @@ export class Building3D extends Element3D {
         this.d3Model.setPositionWithLocalVector(this.center);
 
         this.highlightLayer = new HighlightLayer("hl", this.scene);
-
-        this.d3Model.actionManager = new ActionManager(this.scene);
-
-        UIController.addEntry(this.getName(), this);
-
-        // const links = this.links;
-        this.d3Model.actionManager.registerAction(
-            new ExecuteCodeAction(
-                {
-                    trigger: ActionManager.OnPointerOverTrigger
-                },
-                () => {
-                    this.highlight(true);
-                    this.links.forEach(l => l.display());
-                    UIController.displayObjectInfo(this);
-                    // document.getElementById("nodes_details").innerText = out;
-                }
-            )
-        );
-        this.d3Model.actionManager.registerAction(
-            new ExecuteCodeAction(
-                {
-                    trigger: ActionManager.OnPointerOutTrigger
-                },
-                () => {
-                    this.highlight(false);
-                    this.links.forEach(l => l.display());
-                }
-            )
-        );
-        this.d3Model.actionManager.registerAction(
-            new ExecuteCodeAction(
-                {
-                    trigger: ActionManager.OnPickTrigger
-                },
-                () => {
-                    this.highlight(true, true);
-                    this.links.forEach(l => l.display(true,));
-                    UIController.displayObjectInfo(this, true);
-                }
-            )
-        );
 
         // if config -> building -> colors -> outline is defined
         if (this.config.building.colors.outlines) {
@@ -225,22 +190,66 @@ export class Building3D extends Element3D {
 
         let offSet = 0;
 
+        // draw sphere for decorator
+        if (this.elementModel.types.includes("DECORATOR")) {
+            this.d3ModelSphere = MeshBuilder.CreateSphere("sphere", {
+                diameter: (this.getWidth() - this.padding),
+            }, this.scene);
+            this.d3ModelSphere.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelSphere.material = mat;
+            this.d3ModelSphere.material.backFaceCulling = false;
+            offSet += this.getWidth() - this.padding;
+            this.d3Model = Mesh.MergeMeshes([this.d3Model, this.d3ModelSphere], true);
+        }
+
+        // draw reversed pyramid for template
+        if (this.elementModel.types.includes("TEMPLATE")) {
+            this.d3ModelInvertedPyramid = MeshBuilder.CreateCylinder("reversedPyramid", {
+                diameterTop: 0,
+                tessellation: 4,
+                diameterBottom: this.getWidth() - this.padding,
+                height: this.getWidth() - this.padding
+            }, this.scene);
+            this.d3ModelInvertedPyramid.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelInvertedPyramid.rotate(new Vector3(1, 0, 0), Math.PI);
+            this.d3ModelInvertedPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
+            this.d3ModelInvertedPyramid.material = mat;
+            this.d3ModelInvertedPyramid.material.backFaceCulling = false;
+            offSet += this.getWidth() - this.padding;
+            this.d3Model = Mesh.MergeMeshes([this.d3Model, this.d3ModelInvertedPyramid], true);
+        }
+
+        // draw 16 faced prism for strategy
+        if (this.elementModel.types.includes("STRATEGY")) {
+            this.d3ModelPrism = MeshBuilder.CreateCylinder("prism", {
+                tessellation: 16,
+                diameter: (this.getWidth() - this.padding),
+                height: this.getWidth() - this.padding
+            }, this.scene);
+            this.d3ModelPrism.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelPrism.material = mat;
+            this.d3ModelPrism.material.backFaceCulling = false;
+            offSet += this.getWidth() - this.padding;
+            this.d3Model = Mesh.MergeMeshes([this.d3Model, this.d3ModelPrism], true);
+        }
+
+        // draw chimney for factories
         if (this.elementModel.types.includes("FACTORY")) {
             this.d3ModelChimney1 = MeshBuilder.CreateCylinder("chimney1", {
-                diameter: (this.getWidth() - this.padding)/6,
+                diameter: (this.getWidth() - this.padding) / 6,
                 height: this.getWidth() - this.padding
             }, this.scene);
             this.d3ModelChimney2 = MeshBuilder.CreateCylinder("chimney2", {
-                diameter: (this.getWidth() - this.padding)/6,
+                diameter: (this.getWidth() - this.padding) / 6,
                 height: this.getWidth() - this.padding
             }, this.scene);
             this.d3ModelChimney3 = MeshBuilder.CreateCylinder("chimney3", {
-                diameter: (this.getWidth() - this.padding)/6,
+                diameter: (this.getWidth() - this.padding) / 6,
                 height: this.getWidth() - this.padding
             }, this.scene);
-            this.d3ModelChimney1.setPositionWithLocalVector(this.center.add(new Vector3(- ((this.getWidth() - this.padding)/2)*10/12, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
-            this.d3ModelChimney2.setPositionWithLocalVector(this.center.add(new Vector3(0, this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
-            this.d3ModelChimney3.setPositionWithLocalVector(this.center.add(new Vector3(((this.getWidth() - this.padding)/2)*10/12, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelChimney1.setPositionWithLocalVector(this.center.add(new Vector3(- ((this.getWidth() - this.padding) / 2) * 10 / 12, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelChimney2.setPositionWithLocalVector(this.center.add(new Vector3(0, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
+            this.d3ModelChimney3.setPositionWithLocalVector(this.center.add(new Vector3(((this.getWidth() - this.padding) / 2) * 10 / 12, offSet + this.getHeight() / 2 + (this.getWidth() - this.padding) / 2, 0)));
             this.d3ModelChimney1.material = mat;
             this.d3ModelChimney2.material = mat;
             this.d3ModelChimney3.material = mat;
@@ -248,6 +257,7 @@ export class Building3D extends Element3D {
             this.d3ModelChimney2.material.backFaceCulling = false;
             this.d3ModelChimney3.material.backFaceCulling = false;
             offSet += this.getWidth() - this.padding;
+            this.d3Model = Mesh.MergeMeshes([this.d3Model, this.d3ModelChimney1, this.d3ModelChimney2, this.d3ModelChimney3], true);
         }
 
         // draw top pyramid if API class
@@ -262,6 +272,7 @@ export class Building3D extends Element3D {
             this.d3ModelPyramid.rotate(new Vector3(0, 1, 0), Math.PI / 4);
             this.d3ModelPyramid.material = mat;
             this.d3ModelPyramid.material.backFaceCulling = false;
+            this.d3Model = Mesh.MergeMeshes([this.d3Model, this.d3ModelPyramid], true);
         }
 
         if (this.config.building.colors.edges) {
@@ -271,31 +282,91 @@ export class Building3D extends Element3D {
                 this.d3Model.edgesWidth = this.edgesWidth;
                 const c = Color3.FromHexString(edgesColor);
                 this.d3Model.edgesColor = new Color4(c.r, c.g, c.b, 1);
-                if (this.d3ModelPyramid !== undefined) {
-                    this.d3ModelPyramid.enableEdgesRendering();
-                    this.d3ModelPyramid.edgesWidth = this.edgesWidth;
-                    const c = Color3.FromHexString(edgesColor);
-                    this.d3ModelPyramid.edgesColor = new Color4(c.r, c.g, c.b, 1);
-                }
-                if (this.d3ModelChimney1 !== undefined) {
-                    this.d3ModelChimney1.enableEdgesRendering();
-                    this.d3ModelChimney1.edgesWidth = this.edgesWidth;
-                    const c = Color3.FromHexString(edgesColor);
-                    this.d3ModelChimney1.edgesColor = new Color4(c.r, c.g, c.b, 1);
-                }
-                if (this.d3ModelChimney2 !== undefined) {
-                    this.d3ModelChimney2.enableEdgesRendering();
-                    this.d3ModelChimney2.edgesWidth = this.edgesWidth;
-                    const c = Color3.FromHexString(edgesColor);
-                    this.d3ModelChimney2.edgesColor = new Color4(c.r, c.g, c.b, 1);
-                }
-                if (this.d3ModelChimney3 !== undefined) {
-                    this.d3ModelChimney3.enableEdgesRendering();
-                    this.d3ModelChimney3.edgesWidth = this.edgesWidth;
-                    const c = Color3.FromHexString(edgesColor);
-                    this.d3ModelChimney3.edgesColor = new Color4(c.r, c.g, c.b, 1);
-                }
+                // if (this.d3ModelPyramid !== undefined) {
+                //     this.d3ModelPyramid.enableEdgesRendering();
+                //     this.d3ModelPyramid.edgesWidth = this.edgesWidth;
+                //     const c = Color3.FromHexString(edgesColor);
+                //     this.d3ModelPyramid.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                // }
+                // if (this.d3ModelChimney1 !== undefined) {
+                //     this.d3ModelChimney1.enableEdgesRendering();
+                //     this.d3ModelChimney1.edgesWidth = this.edgesWidth;
+                //     const c = Color3.FromHexString(edgesColor);
+                //     this.d3ModelChimney1.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                // }
+                // if (this.d3ModelChimney2 !== undefined) {
+                //     this.d3ModelChimney2.enableEdgesRendering();
+                //     this.d3ModelChimney2.edgesWidth = this.edgesWidth;
+                //     const c = Color3.FromHexString(edgesColor);
+                //     this.d3ModelChimney2.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                // }
+                // if (this.d3ModelChimney3 !== undefined) {
+                //     this.d3ModelChimney3.enableEdgesRendering();
+                //     this.d3ModelChimney3.edgesWidth = this.edgesWidth;
+                //     const c = Color3.FromHexString(edgesColor);
+                //     this.d3ModelChimney3.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                // }
+                // if (this.d3ModelSphere !== undefined) {
+                //     this.d3ModelSphere.enableEdgesRendering();
+                //     this.d3ModelSphere.edgesWidth = this.edgesWidth;
+                //     const c = Color3.FromHexString(edgesColor);
+                //     this.d3ModelSphere.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                // }
+                // if (this.d3ModelInvertedPyramid !== undefined) {
+                //     this.d3ModelInvertedPyramid.enableEdgesRendering();
+                //     this.d3ModelInvertedPyramid.edgesWidth = this.edgesWidth;
+                //     const c = Color3.FromHexString(edgesColor);
+                //     this.d3ModelInvertedPyramid.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                // }
+                // if (this.d3ModelPrism !== undefined) {
+                //     this.d3ModelPrism.enableEdgesRendering();
+                //     this.d3ModelPrism.edgesWidth = this.edgesWidth;
+                //     const c = Color3.FromHexString(edgesColor);
+                //     this.d3ModelPrism.edgesColor = new Color4(c.r, c.g, c.b, 1);
+                // }
             }
+
+            this.d3Model.actionManager = new ActionManager(this.scene);
+
+            UIController.addEntry(this.getName(), this);
+
+            // const links = this.links;
+            this.d3Model.actionManager.registerAction(
+                new ExecuteCodeAction(
+                    {
+                        trigger: ActionManager.OnPointerOverTrigger
+                    },
+                    () => {
+                        this.highlight(true);
+                        this.links.forEach(l => l.display());
+                        UIController.displayObjectInfo(this);
+                        // document.getElementById("nodes_details").innerText = out;
+                    }
+                )
+            );
+            this.d3Model.actionManager.registerAction(
+                new ExecuteCodeAction(
+                    {
+                        trigger: ActionManager.OnPointerOutTrigger
+                    },
+                    () => {
+                        this.highlight(false);
+                        this.links.forEach(l => l.display());
+                    }
+                )
+            );
+            this.d3Model.actionManager.registerAction(
+                new ExecuteCodeAction(
+                    {
+                        trigger: ActionManager.OnPickTrigger
+                    },
+                    () => {
+                        this.highlight(true, true);
+                        this.links.forEach(l => l.display(true,));
+                        UIController.displayObjectInfo(this, true);
+                    }
+                )
+            );
         }
 
         // Display links to other buildings
