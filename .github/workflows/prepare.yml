@@ -70,4 +70,11 @@ jobs:
       - name: Varicity unit tests
         run: chmod +x ./run_varicity_unit_tests.sh && ./run_varicity_unit_tests.sh
       - name: Varicity integration tests
-        run: chmod +x ./run_varicity_integration_tests.sh && ./run_varicity_integration_tests.sh
+        run: chmod +x ./run_varicity_integration_tests.sh && ./run_varicity_integration_tests
+        
+  cross_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cross check test between varicity and symfindercomp
+        run: chmod +x ./run_cross_check_tests.sh && ./run_cross_check_tests.sh
