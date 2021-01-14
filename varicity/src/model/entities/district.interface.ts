@@ -52,4 +52,12 @@ export abstract class District {
             return 1;
         }
     }
+
+    public getNumberOfBuildings() {
+        return this.buildings.length + this.districts.reduce((a, b) => a + b.getMaxCompLevel(), 0);
+    }
+
+    public getNumberOfDistricts() {
+        return 1 + this.districts.reduce((a, b) => a + b.getNumberOfDistricts(), 0);
+    }
 }

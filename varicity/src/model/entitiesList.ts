@@ -53,4 +53,12 @@ export class EntitiesList {
     public getMaxCompLevel() : number {
         return this.district.getMaxCompLevel();
     }
+
+    public getNumberOfBuildings() : number {
+        return this.buildings.length + this.district.getNumberOfBuildings();
+    }
+
+    public getNumberOfDistricts() : number {
+        return this.district === undefined ? 0 : this.district.getNumberOfDistricts();
+    }
 }

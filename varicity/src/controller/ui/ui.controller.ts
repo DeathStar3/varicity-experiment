@@ -6,6 +6,7 @@ import { SceneRenderer } from '../../view/sceneRenderer';
 import { ConfigController } from './config.controller';
 import { DetailsController } from './details.controller';
 import { ProjectController } from './project-selector.controller';
+import {LogsController} from "./logs.controller";
 
 export class UIController {
 
@@ -27,7 +28,6 @@ export class UIController {
         SearchbarController.emptyMap();
     }
 
-
     public static createProjectSelector(keys: string[]): void {
         ProjectController.createProjectSelector(keys);
     }
@@ -35,6 +35,10 @@ export class UIController {
     public static createConfig(config: Config): void {
         this.config = config;
         ConfigController.createConfigFolder(config);
+    }
+
+    public static createLogs() {
+        LogsController.createLogsDisplay();
     }
 
     public static displayObjectInfo(obj: Building3D, force: boolean = false): void {
@@ -55,6 +59,7 @@ export class UIController {
                 case CriticalLevel.RERENDER_SCENE: // Changed variables important enough to warrant a complete rebuilding of the scene
                     this.scene = this.scene.rerender(this.config);
                     this.scene.buildScene();
+                    LogsController.updateLogs(this.scene.entitiesList);
                     break;
                 case CriticalLevel.REPARSE_DATA: // Changed variables that modify the parsing method, need to reparse the entire file and rebuild
                     ProjectController.reParse();

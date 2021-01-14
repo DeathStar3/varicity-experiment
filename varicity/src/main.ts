@@ -12,7 +12,7 @@ class Main {
         UIController.initSearchbar();
         UIController.createConfig(config);
         UIController.createProjectSelector(keys);
-        // UIController.createFooter();
+        UIController.createLogs();
     }
 }
 new Main();
