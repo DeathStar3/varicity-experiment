@@ -10,6 +10,11 @@ module.exports = {
       'parserTest':'./tests/parser.test.ts',
       'parserVPTest':'./tests/parserVP.test.ts'
     },
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
+    },
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist'),
