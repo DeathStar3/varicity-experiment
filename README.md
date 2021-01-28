@@ -214,7 +214,7 @@ To access the visualization once Varicity is running, you need to access ```loca
 
 ### Select a project
 
-To select the project you want to visualize, head to to side menu and click on Project selection, then on the name of your symfinder file (if it does not appear in the list, make sure it is in the ```varicity/symfinder_files``` folder and rerun Varicity).![project selection](readme_files/varicity/Project selection.png)
+To select the project you want to visualize, head to to side menu and click on Project selection, then on the name of your symfinder file (if it does not appear in the list, make sure it is in the ```varicity/symfinder_files``` folder and rerun Varicity).![project selection](readme_files/varicity/Project_selection.png)
 
 You have the choice between the Metricity view or the Evostreet view. The Metricity view works, but has been abandoned to focus on the Evostreet visualization, thus it is considered legacy and not exploitable.
 
@@ -259,21 +259,21 @@ In Varicity, you can also see relations between your classes, in different ways:
 
 - Roads: A road is created when a VP is parsed, and all its variants are displayed next to the road.
 - Aerial links: By default, inheritance links (EXTENDS and IMPLEMENTS) are displayed as aerial links. The building at the darker side is the source (sub class), and the one at the brighter side is the destination (super class).  
-  ![aerial link](readme_files/varicity/Aerial link.png)
+  ![aerial link](readme_files/varicity/Aerial_link.png)
 - Underground links: By default, an underground link between two buildings shows the DUPLICATE links, unique to Varicity and not present in the symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's road because it had already been drawn. Thus, each building is displayed only once.  
-  ![underground link](readme_files/varicity/Underground link.png)
+  ![underground link](readme_files/varicity/Underground_link.png)
 
 
 
 By clicking on a building, you can display the links leading to or coming from it, as well as detailed info on the side menu (types, attributes, links, etc.) in the "Object details" section.
 
-![building selected](readme_files/varicity/Building selected.png)
+![building selected](readme_files/varicity/Building_selected.png)
 
 
 
 ### Configuration
 
-![config menu](readme_files/varicity/Configuration menu.png)
+![config menu](readme_files/varicity/Configuration_menu.png)
 
 In the side menu, you can change various configuration variables in the "Config parameters":
 
@@ -290,7 +290,7 @@ In the side menu, you can change various configuration variables in the "Config 
     - colors:
       - faces: Contains the Colors list in which the buildings should be displayed according to their tags. Every Colors list in the configuration is ordered, and if a class has two of the listed tags, the first one in the list will be taken into account. Putting a ```!```before a tag name will set the color for each class that does not have the tag.
         Example (default config): 
-        ![colors list](readme_files/varicity/Colors list.png)
+        ![colors list](readme_files/varicity/Colors_list.png)
       - edges: Colors list for the outlines of the buildings (by default, there is only a black outline for the API classes).
       - outlines: Deprecated
   - district:
@@ -302,5 +302,5 @@ In the side menu, you can change various configuration variables in the "Config 
       - air_traffic: List of tags corresponding to the links that should be displayed as aerial links.
       - underground_road: List of tags corresponding to the links that should be displayed as underground links.
 
-The default configuration is retrieved from the ```config/config.yaml``` file in the ```varicity ```folder, which you can modify at any time (you will need to rerun Varicity to take the changes into account). An additional attribute in this file is "default_level", used to determine the default composition level (currently 4).
+The default configuration is retrieved from the ```config/config.yaml``` file in the ```varicity ``` folder, which you can modify at any time (you will need to rerun Varicity to take the changes into account). An additional attribute in this file is "default_level", used to determine the default composition level (currently 4).
 
