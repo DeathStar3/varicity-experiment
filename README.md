@@ -240,16 +240,16 @@ Buildings represent classes and wear information with how they are displayed:
 - Color: the color of a building depends on the tags of its corresponding class (see the config section)
 - Models: Some building may have additional features to their 3D model:
   - Design patterns:
-    - Chimneys:  A building with chimneys represents a Factory class
+    - Chimneys:  A building with chimneys represents a Factory class  
       ![factory](readme_files/varicity/Factory.png)
-    - Dome: A building with a dome represents a Strategy class
-      ![strategy](readme_files/varicity/strategy.png)
-    - Inverted pyramid: A building with an inverted pyramid represents a Template class
-      ![template](readme_files/varicity/template.png)
-    - Sphere: A building with a sphere represents a Decorator class
-      ![decorator](readme_files/varicity/decorator.png)
-  - Pyramid and outline: The API classes have a pyramid and an outline added to their representation
-    ![api](readme_files/varicity/api.png)
+    - Dome: A building with a dome represents a Strategy class  
+      ![strategy](readme_files/varicity/Strategy.png)
+    - Inverted pyramid: A building with an inverted pyramid represents a Template class  
+      ![template](readme_files/varicity/Template.png)
+    - Sphere: A building with a sphere represents a Decorator class  
+      ![decorator](readme_files/varicity/Decorator.png)
+  - Pyramid and outline: The API classes have a pyramid and an outline added to their representation  
+    ![api](readme_files/varicity/API.png)
 
 
 
@@ -258,22 +258,22 @@ Buildings represent classes and wear information with how they are displayed:
 In Varicity, you can also see relations between your classes, in different ways:
 
 - Roads: A road is created when a VP is parsed, and all its variants are displayed next to the road.
-- Aerial links: By default, inheritance links (EXTENDS and IMPLEMENTS) are displayed as aerial links. The building at the darker side is the source (sub class), and the one at the brighter side is the destination (super class).
-  ![aerial link](readme_files/varicity/aerial link.png)
-- Underground links: By default, an underground link between two buildings shows the DUPLICATE links, unique to Varicity and not present in the symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's road because it had already been drawn. Thus, each building is displayed only once.
-  ![underground link](readme_files/varicity/underground link.png)
+- Aerial links: By default, inheritance links (EXTENDS and IMPLEMENTS) are displayed as aerial links. The building at the darker side is the source (sub class), and the one at the brighter side is the destination (super class).  
+  ![aerial link](readme_files/varicity/Aerial link.png)
+- Underground links: By default, an underground link between two buildings shows the DUPLICATE links, unique to Varicity and not present in the symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's road because it had already been drawn. Thus, each building is displayed only once.  
+  ![underground link](readme_files/varicity/Underground link.png)
 
 
 
 By clicking on a building, you can display the links leading to or coming from it, as well as detailed info on the side menu (types, attributes, links, etc.) in the "Object details" section.
 
-![building selected](readme_files/varicity/building selected.png)
+![building selected](readme_files/varicity/Building selected.png)
 
 
 
 ### Configuration
 
-![config menu](readme_files/varicity/configuration menu.png)
+![config menu](readme_files/varicity/Configuration menu.png)
 
 In the side menu, you can change various configuration variables in the "Config parameters":
 
@@ -290,7 +290,7 @@ In the side menu, you can change various configuration variables in the "Config 
     - colors:
       - faces: Contains the Colors list in which the buildings should be displayed according to their tags. Every Colors list in the configuration is ordered, and if a class has two of the listed tags, the first one in the list will be taken into account. Putting a ```!```before a tag name will set the color for each class that does not have the tag.
         Example (default config): 
-        ![colors list](readme_files/varicity/colors list.png)
+        ![colors list](readme_files/varicity/Colors list.png)
       - edges: Colors list for the outlines of the buildings (by default, there is only a black outline for the API classes).
       - outlines: Deprecated
   - district:
