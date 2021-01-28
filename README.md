@@ -282,8 +282,6 @@ In the side menu, you can change various configuration variables in the "Config 
   - Orientation: Can be IN, OUT, or IN_OUT. Used to change the orientation of the links used to establish the composition level of each element.
   - hierarchy_links: Contains the list of link types used to compose the graph of the city.
   - api_classes: List of names of the API classes used as starting points to build the city.
-  - blacklist: Each class or package in this list will be excluded from the algorithm's parsing.
-  - variables: Names of the variables used to determine the height and the width of the buildings (do not change unless you know the variable names in the source code).
 - Esthetic config: These variables only change some display features and will not relaunch the parsing algorithm:
   - Building:
     - padding: Will change the space between each building
@@ -301,6 +299,8 @@ In the side menu, you can change various configuration variables in the "Config 
     - display:
       - air_traffic: List of tags corresponding to the links that should be displayed as aerial links.
       - underground_road: List of tags corresponding to the links that should be displayed as underground links.
+  - blacklist: Each class or package in this list will be excluded from visualization.
+  - variables: Names of the variables used to determine the height and the width of the buildings (do not change unless you know the variable names in the source code).
 
 The default configuration is retrieved from the ```config/config.yaml``` file in the ```varicity ``` folder, which you can modify at any time (you will need to rerun Varicity to take the changes into account). An additional attribute in this file is "default_level", used to determine the default composition level (currently 4).
 
