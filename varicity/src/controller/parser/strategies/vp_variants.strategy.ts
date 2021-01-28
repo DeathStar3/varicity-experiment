@@ -29,6 +29,7 @@ export class VPVariantsStrategy implements ParsingStrategy {
             node.nbConstructorVariants = cVar;
 
             node.types = n.types;
+
             if (config.api_classes !== undefined) {
                 if (config.api_classes.includes(node.name)) {
                     console.log("API class: " + n.name);
@@ -79,6 +80,7 @@ export class VPVariantsStrategy implements ParsingStrategy {
                     node,
                     node.compositionLevel
                 );
+
                 result.district.addBuilding(c);
             });
         }

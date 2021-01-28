@@ -3,9 +3,6 @@ import { Building } from "../entities/building.interface";
 
 export class ClassImplem extends Building {
 
-    heightName: string = "height";
-    widthName: string = "width"
-
     constructor(node: Node, level: number) {
         super();
         Object.assign(this, node);

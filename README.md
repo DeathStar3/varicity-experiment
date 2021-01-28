@@ -191,3 +191,116 @@ Then, run symfinder using the local images that you just built.
 ```bash
 ./run.sh --local
 ```
+
+# Varicity
+
+## Running Varicity
+
+Before using Varicity, make sure to copy the .json files produced by symfinder in the ```varicity/symfinder_files``` folder.
+
+### With Docker
+
+To build Varicity, go to the ```varicity``` folder at the root of the project and run ```./build.sh```. This will create a varicity docker image that you can use by running ```./varicity.sh```.
+
+### Run locally
+
+To run Varicity on your local machine, you first need to install [node](https://nodejs.org/en/). Then, go to the ```varicity``` folder at the root of the project and run ```npm install```, then ```npm start```.
+
+
+
+## Using Varicity
+
+To access the visualization once Varicity is running, you need to access ```localhost:9090``` via a web browser.
+
+### Select a project
+
+To select the project you want to visualize, head to to side menu and click on Project selection, then on the name of your symfinder file (if it does not appear in the list, make sure it is in the ```varicity/symfinder_files``` folder and rerun Varicity).![project selection](readme_files/varicity/Project selection.png)
+
+You have the choice between the Metricity view or the Evostreet view. The Metricity view works, but has been abandoned to focus on the Evostreet visualization, thus it is considered legacy and not exploitable.
+
+When you click on the Evostreet view, you will most probably have to wait for a few seconds while the file is getting parsed before the visualization actually appears on your screen.
+
+### Exploring your city
+
+Once the visualization is up, you can explore the city by moving the camera with the following controls:
+
+- Left mouse button: Drag to turn the camera
+- Right mouse button: Drag to move the camera
+- Scroll up/down: Zoom in/out
+
+You can use the search bar at the top of the side menu to search for a specific class and focus the camera on its corresponding building in the visualization (with autocompletion).
+
+#### Buildings
+
+Buildings represent classes and wear information with how they are displayed:
+
+- Size:
+  - Height: by default, the height of a building depends on the number of method variants of the class.
+  - Width: by default, the width of a building depends on the number of constructor variants of the class.
+- Color: the color of a building depends on the tags of its corresponding class (see the config section)
+- Models: Some building may have additional features to their 3D model:
+  - Design patterns:
+    - Chimneys:  A building with chimneys represents a Factory class
+      ![factory](readme_files/varicity/Factory.png)
+    - Dome: A building with a dome represents a Strategy class
+      ![strategy](readme_files/varicity/strategy.png)
+    - Inverted pyramid: A building with an inverted pyramid represents a Template class
+      ![template](readme_files/varicity/template.png)
+    - Sphere: A building with a sphere represents a Decorator class
+      ![decorator](readme_files/varicity/decorator.png)
+  - Pyramid and outline: The API classes have a pyramid and an outline added to their representation
+    ![api](readme_files/varicity/api.png)
+
+
+
+#### Links
+
+In Varicity, you can also see relations between your classes, in different ways:
+
+- Roads: A road is created when a VP is parsed, and all its variants are displayed next to the road.
+- Aerial links: By default, inheritance links (EXTENDS and IMPLEMENTS) are displayed as aerial links. The building at the darker side is the source (sub class), and the one at the brighter side is the destination (super class).
+  ![aerial link](readme_files/varicity/aerial link.png)
+- Underground links: By default, an underground link between two buildings shows the DUPLICATE links, unique to Varicity and not present in the symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's road because it had already been drawn. Thus, each building is displayed only once.
+  ![underground link](readme_files/varicity/underground link.png)
+
+
+
+By clicking on a building, you can display the links leading to or coming from it, as well as detailed info on the side menu (types, attributes, links, etc.) in the "Object details" section.
+
+![building selected](readme_files/varicity/building selected.png)
+
+
+
+### Configuration
+
+![config menu](readme_files/varicity/configuration menu.png)
+
+In the side menu, you can change various configuration variables in the "Config parameters":
+
+- Algorithmic config: These variables are used during the parsing algorithm, and thus will relaunch it, which may take a few moments:
+  - Composition level: Change the level of composition use to display the city (default is 4).
+  - Orientation: Can be IN, OUT, or IN_OUT. Used to change the orientation of the links used to establish the composition level of each element.
+  - hierarchy_links: Contains the list of link types used to compose the graph of the city.
+  - api_classes: List of names of the API classes used as starting points to build the city.
+  - blacklist: Each class or package in this list will be excluded from the algorithm's parsing.
+  - variables: Names of the variables used to determine the height and the width of the buildings (do not change unless you know the variable names in the source code).
+- Esthetic config: These variables only change some display features and will not relaunch the parsing algorithm:
+  - Building:
+    - padding: Will change the space between each building
+    - colors:
+      - faces: Contains the Colors list in which the buildings should be displayed according to their tags. Every Colors list in the configuration is ordered, and if a class has two of the listed tags, the first one in the list will be taken into account. Putting a ```!```before a tag name will set the color for each class that does not have the tag.
+        Example (default config): 
+        ![colors list](readme_files/varicity/colors list.png)
+      - edges: Colors list for the outlines of the buildings (by default, there is only a black outline for the API classes).
+      - outlines: Deprecated
+  - district:
+    - padding: Space between every district (default is 0)
+    - colors > faces: Colors list for the types of package (tag PACKAGE is for the main road, tag VP is for the other roads).
+  - link:
+    - colors: Colors list for the links.
+    - display:
+      - air_traffic: List of tags corresponding to the links that should be displayed as aerial links.
+      - underground_road: List of tags corresponding to the links that should be displayed as underground links.
+
+The default configuration is retrieved from the ```config/config.yaml``` file in the ```varicity ```folder, which you can modify at any time (you will need to rerun Varicity to take the changes into account). An additional attribute in this file is "default_level", used to determine the default composition level (currently 4).
+

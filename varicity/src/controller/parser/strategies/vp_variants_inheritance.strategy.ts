@@ -152,8 +152,6 @@ export class VPVariantsInheritanceStrategy implements ParsingStrategy {
                     nodeElement,
                     nodeElement.compositionLevel
                 );
-                c.heightName = "methodVariants";
-                c.widthName = "constructorVariants";
                 const res = new VPVariantsImplem(c);
 
                 // construct districts for each of linked nodes
@@ -168,8 +166,6 @@ export class VPVariantsInheritanceStrategy implements ParsingStrategy {
                             n,
                             n.compositionLevel
                         );
-                        c.heightName = "methodVariants";
-                        c.widthName = "constructorVariants";
                         res.addBuilding(c);
                     } else {
                         res.addDistrict(d);
