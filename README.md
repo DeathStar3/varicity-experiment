@@ -2,6 +2,8 @@
 
 Varicity is a program which uses .json files produced by the Symfinder toolchain in order to provide a 3D visualization to the provided metrics. The visualization is based on a city-like model.
 
+[Go to Varicity](#varicity)
+
 # Symfinder
 
 ## Technical Requirements
@@ -270,17 +272,17 @@ In Varicity, you can also see relations between your classes, in different ways:
 
 - Roads: A road is created when a VP is parsed, and all its variants are displayed next to the road.
 - Aerial links: By default, inheritance links (EXTENDS and IMPLEMENTS) are displayed as aerial links. The building at the darker side is the source (sub class), and the one at the brighter side is the destination (super class).  
-  ![aerial link](readme_files/varicity/Aerial_link.png)
+  ![aerial link](readme_files/varicity/Aerial_link.png)  
           *On the left, the bright side of the link means that the yellow building is the super class of the blue building on the other hand, at the dark side.*
 - Underground links / Underground roads: By default, an underground link between two buildings shows the DUPLICATE links, unique to Varicity and not present in the Symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's road because it had already been drawn. Thus, each building is displayed only once.
   Underground links are also oriented, and the source class is represented by the building having a vertical road underneath itself. The destination class is directly linked by the underground link.
   The depth of the vertical part depends on the difference of composition level between the two classes.  
-  ![underground link](readme_files/varicity/Underground_link.png)
+  ![underground link](readme_files/varicity/Underground_link.png)  
   *Here, an underground road goes from the left to the right side of the image. This means that the class on the left side is also present in the district of the class on the right side.*
 
 By clicking on a building, you can display the links leading to or coming from it, as well as detailed info on the side menu (types, attributes, links, etc.) in the "Object details" section.
 
-![building selected](readme_files/varicity/Building_selected.png)
+![building selected](readme_files/varicity/Building_selected.png)  
 *The highlighted building has all its links displayed*
 
 
