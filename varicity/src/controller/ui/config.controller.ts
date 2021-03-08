@@ -35,9 +35,12 @@ export class ConfigController {
         return node;
     }
 
-    private static createInput(value: string, parent: HTMLElement): HTMLInputElement {
+    private static createInput(value: string, parent: HTMLElement, type?: string): HTMLInputElement {
         let input = document.createElement("input");
         input.value = value;
+        if (type !== undefined) {
+            input.type = type;
+        }
         parent.appendChild(input);
         return input;
     }
@@ -82,7 +85,7 @@ export class ConfigController {
             for (let obj of config) {
                 if (Config.instanceOfColor(obj)) {
                     let node = this.createKey(obj.name, parent);
-                    let input = this.createInput(obj.color, node);
+                    let input = this.createInput(obj.color, node, "color");
                     node.className = "child";
 
                     input.className = "right-input";
