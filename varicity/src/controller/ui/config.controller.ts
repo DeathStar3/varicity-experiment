@@ -89,11 +89,9 @@ export class ConfigController {
                     node.className = "child";
 
                     input.className = "right-input";
-                    input.addEventListener("keyup", (ke) => {
-                        if (ke.key == "Enter") {
-                            let arr = this.findValidParents(node);
-                            UIController.changeConfig(arr, { name: node.getAttribute("value"), color: input.value });
-                        }
+                    input.addEventListener("change", (ke) => {
+                        let arr = this.findValidParents(node);
+                        UIController.changeConfig(arr, { name: node.getAttribute("value"), color: input.value });
                     });
                 } else this.populateChildren(obj, parent); // it's a string
             }
