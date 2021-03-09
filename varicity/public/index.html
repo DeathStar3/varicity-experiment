@@ -12,6 +12,34 @@
     <div id="console" class="overflowable">
         <input id="searchbar" style="display: none;">
         <div id="project_selector" class="parent"></div>
+        <div id="documentation" class="parent">Documentation</div>
+        <div id="doc_content">
+            Use left click + drag to rotate camera<br/>
+            Use right click + drag to move camera<br/>
+            Use mouse wheel to zoom in/out<br/>
+            Hover on building to display class info in the details section below<br/>
+            Click on building to lock the info display on it<br/>
+            Legend for design patterns:<br/>
+            <ul>
+                <li>
+                    Chimneys: A building with chimneys represents a Factory class<br/>
+                    <img id="factory_img"/>
+                </li>
+                <li>
+                    Dome: A building with a dome represents a Strategy class<br/>
+                    <img id="strategy_img"/>
+                </li>
+                <li>
+                    Inverted pyramid: A building with an inverted pyramid represents a Template class<br/>
+                    <img id="template_img"/>
+                </li>
+                <li>
+                    Sphere: A building with a sphere represents a Decorator class<br/>
+                    <img id="decorator_img"/>
+                </li>
+            </ul>
+
+        </div>
         <div id="config" class="parent"></div>
         <div class="parent">
             <label for="comp-level">Composition level</label>

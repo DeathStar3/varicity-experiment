@@ -42,6 +42,10 @@ module.exports = {
             type: "json",
             use: "yaml-loader",
             exclude: /node_modules/
+        },
+        {
+            test: /\.(jpe?g|png|gif|svg)$/i,
+            loader: 'file-loader',
         }
       ]
     },

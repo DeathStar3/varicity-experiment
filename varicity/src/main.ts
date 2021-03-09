@@ -11,6 +11,7 @@ class Main {
 
         UIController.initSearchbar();
         UIController.createConfig(config);
+        UIController.createDoc();
         UIController.createProjectSelector(keys);
         UIController.createLogs();
     }

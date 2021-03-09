@@ -7,6 +7,7 @@ import { ConfigController } from './config.controller';
 import { DetailsController } from './details.controller';
 import { ProjectController } from './project-selector.controller';
 import {LogsController} from "./logs.controller";
+import {DocController} from "./doc.controller";
 
 export class UIController {
 
@@ -15,6 +16,10 @@ export class UIController {
 
     public static createHeader(): void {
 
+    }
+
+    public static createDoc(): void {
+        DocController.buildDoc();
     }
 
     public static initSearchbar(): void {
