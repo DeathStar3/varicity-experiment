@@ -28,7 +28,7 @@ export class VPVariantsStrategy implements ParsingStrategy {
             node.nbAttributes = nbAttributes;
             node.nbConstructorVariants = cVar;
 
-            node.types = n.types;
+            node.types = Object.assign([], n.types);
 
             if (config.api_classes !== undefined) {
                 if (config.api_classes.includes(node.name)) {
