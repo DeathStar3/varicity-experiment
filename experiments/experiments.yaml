@@ -34,10 +34,12 @@ maven:
   tagIds:
     - maven-3.6.0
 jhipster:
-  repositoryUrl: https://github.com/jhipster/jhipster
+  repositoryUrl: https://github.com/jhipster/jhipster-bom
   sourcePackage: jhipster-framework/
   tagIds:
-    - 2.0.28
+    - 7.0.1
+  apiFilters:
+    - "tech.jhipster.service.QueryService"
 jfreechart:
   repositoryUrl: https://github.com/jfree/jfreechart
   sourcePackage: .
@@ -109,3 +111,18 @@ sat4j:
   sourcePackage: org.sat4j.core
   commitIds:
     - 22374e5e
+discord4j:
+  repositoryUrl: https://github.com/Discord4J/Discord4J
+  sourcePackage: core
+  tagIds:
+    - 3.1.5
+cucumber:
+  repositoryUrl: https://github.com/cucumber/cucumber-jvm
+  sourcePackage: .
+  tagIds:
+    - v6.8.0
+netbeans:
+  repositoryUrl: https://github.com/apache/netbeans
+  sourcePackage: java
+  tagIds:
+    - 12.1

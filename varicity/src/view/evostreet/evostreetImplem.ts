@@ -11,6 +11,7 @@ export class EvostreetImplem extends SceneRenderer {
         this.camera = new ArcRotateCamera("Camera", 2 * Math.PI / 3, Math.PI / 3, 100, Vector3.Zero(), this.scene);
         this.camera.attachControl(this.canvas, true);
         this.camera.panningSensibility = 100;
+        this.camera.wheelPrecision = 50;
         this.light = new HemisphericLight("light1", new Vector3(0, 1, 0), this.scene);
 
         this.render();
