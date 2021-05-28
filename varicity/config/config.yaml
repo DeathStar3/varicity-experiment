@@ -75,10 +75,19 @@ blacklist: #all classes that must not appear
   # - "org.jfree.chart.renderer.AbstractRenderer"
 
 api_classes: #all API classes
-  - "org.jfree.chart.JFreeChart"
-  - "org.jfree.chart.plot.PlotState"
-  # - "ChristmasTree"
-  - "org.jfree.chart.plot.XYPlot"
+  cucumber-v6.8.0:
+    - "io.cucumber.plugin.event.Event"
+    - "io.cucumber.java.StepDefinitionAnnotation"
+
+#  - "discord4j.core.DiscordClient"
+#  - "discord4j.core.object.entity.Message"
+  jfreechart-v1.5.0:
+    - "org.jfree.chart.JFreeChart"
+    - "org.jfree.chart.plot.PlotState"
+    - "org.jfree.chart.plot.Plot"
+  netbeans-12.2:
+#  - "org.netbeans.api.debugger.DebuggerEngine"
+    - "org.netbeans.api.java.platform.JavaPlatform"
 
 variables: #variables to be used for width and height of a building
   width: "nbConstructorVariants"

@@ -10,7 +10,7 @@ import {ParsingStrategy} from "./parsing.strategy.interface";
 import {Orientation} from "../../../model/entitiesImplems/orientation.enum";
 
 export class VPVariantsStrategy implements ParsingStrategy {
-    public parse(data: JsonInputInterface, config: Config) : EntitiesList {
+    public parse(data: JsonInputInterface, config: Config, project: string) : EntitiesList {
         // console.log('Analyzing with VP and variants strategy: ', data);
 
         let nodesList: NodeElement[] = [];
@@ -30,8 +30,10 @@ export class VPVariantsStrategy implements ParsingStrategy {
 
             node.types = Object.assign([], n.types);
 
-            if (config.api_classes !== undefined) {
-                if (config.api_classes.includes(node.name)) {
+            console.log(config);
+
+            if (config.api_classes[project] !== undefined) {
+                if (config.api_classes[project].includes(node.name)) {
                     console.log("API class: " + n.name);
                     node.types.push("API");
                     apiList.push(node);
@@ -57,9 +59,9 @@ export class VPVariantsStrategy implements ParsingStrategy {
         let result = new EntitiesList();
         result.district = d;
 
-        if (config.api_classes !== undefined){
+        if (config.api_classes[project] !== undefined){
             data.allnodes.filter(
-                nod => config.api_classes.includes(nod.name)
+                nod => config.api_classes[project].includes(nod.name)
                     && !nodesList.map(no => no.name).includes(nod.name)
             ).forEach(n => {
                 let node = new NodeElement(n.name);

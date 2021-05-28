@@ -61,7 +61,7 @@ export class ProjectController {
 
                 if (UIController.scene) UIController.scene.dispose();
                 UIController.clearMap();
-                this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config);
+                this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config, this.filename);
                 let inputElement = document.getElementById("comp-level") as HTMLInputElement;
                 inputElement.min = "1";
                 const maxLvl = this.el.getMaxCompLevel();
@@ -112,7 +112,7 @@ export class ProjectController {
     public static reParse() {
         if (UIController.scene) UIController.scene.dispose();
         UIController.clearMap();
-        this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config);
+        this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config, this.filename);
         let inputElement = document.getElementById("comp-level") as HTMLInputElement;
         inputElement.min = "1";
         const maxLvl = this.el.getMaxCompLevel();

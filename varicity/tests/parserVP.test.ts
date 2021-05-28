@@ -27,7 +27,7 @@ describe('parsing without filtering by composition level', function() {
   it('parse', function() {
     let config = ConfigLoader.loadDataFile("config");
     config.hierarchy_links = ["EXTENDS", "IMPLEMENTS"];
-    let entities = new VPVariantsStrategy().parse(FilesLoader.loadDataFile('test3ForVPParser'), config);
+    let entities = new VPVariantsStrategy().parse(FilesLoader.loadDataFile('test3ForVPParser'), config, "");
     let dis = entities.district.districts
     let numberOfDistricts = countDistricts(dis);
     let numberOfBuiildings = countBuilding(dis) + countDistricts(dis)
@@ -41,7 +41,7 @@ describe('parsing with filtering by composition level', function() {
     let config = ConfigLoader.loadDataFile("config");
     config.hierarchy_links = ["EXTENDS", "IMPLEMENTS"];
     config.orientation = Orientation.IN_OUT;
-    let entities = new VPVariantsStrategy().parse(FilesLoader.loadDataFile('test3ForVPParser'), config);
+    let entities = new VPVariantsStrategy().parse(FilesLoader.loadDataFile('test3ForVPParser'), config, "");
     let ent = entities.filterCompLevel(1);
     let dis = ent.district.districts
     let numberOfDistricts = countDistricts(dis);
