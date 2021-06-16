@@ -30,22 +30,14 @@ export class ProjectController {
             node.innerHTML = key;
             parent.appendChild(node);
 
-            let childEvo = document.createElement("div");
-            let childMetri = document.createElement("div");
-            childEvo.innerHTML = "EvoStreets View";
-            childMetri.innerHTML = "Metricity View";
-
-            childEvo.className = "child";
-            childMetri.className = "child";
-
             // projets en vision evostreet
-            childEvo.addEventListener("click", () => {
+            node.addEventListener("click", () => {
                 this.previousParser = new VPVariantsStrategy();
                 this.filename = key;
 
                 this.reParse();
 
-                parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childEvo.innerHTML;
+                parent.childNodes[0].nodeValue = "Project selection: " + key;
 
                 /* @ts-ignore */
                 for (let child of parent.children) {
@@ -53,46 +45,6 @@ export class ProjectController {
                 }
             });
 
-            // projets en vision metricity
-            childMetri.addEventListener("click", (ev) => {
-                this.previousParser = new ClassesPackagesStrategy();
-                this.filename = key;
-                parent.childNodes[0].nodeValue = "Project selection: " + key + " / " + childMetri.innerHTML;
-
-                if (UIController.scene) UIController.scene.dispose();
-                UIController.clearMap();
-                this.el = this.previousParser.parse(FilesLoader.loadDataFile(this.filename), UIController.config, this.filename);
-                let inputElement = document.getElementById("comp-level") as HTMLInputElement;
-                inputElement.min = "1";
-                const maxLvl = this.el.getMaxCompLevel();
-                inputElement.max = maxLvl.toString();
-                if (+inputElement.value > maxLvl)
-                    inputElement.value = maxLvl.toString();
-                UIController.scene = new MetricityImplem(UIController.config, this.el);
-                UIController.scene.buildScene();
-
-                /* @ts-ignore */
-                for (let child of parent.children) {
-                    child.style.display = "none";
-                }
-            });
-
-            node.appendChild(childEvo);
-            node.appendChild(childMetri);
-
-            /* @ts-ignore */
-            for (let child of node.children) {
-                child.style.display = "none";
-            }
-            node.onclick = (me) => {
-                if (me.target == node) {
-                    /* @ts-ignore */
-                    for (let child of node.children) {
-                        if (child.style.display == "block") child.style.display = "none";
-                        else child.style.display = "block";
-                    }
-                }
-            }
         }
         /* @ts-ignore */
         for (let child of parent.children) {

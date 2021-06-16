@@ -45,6 +45,22 @@ export class ConfigController {
         return input;
     }
 
+    private static createSelect(defaultValue: string, parent: HTMLElement): HTMLSelectElement {
+        let input = document.createElement("select");
+        let options = ["IN", "OUT", "IN_OUT"];
+        options.forEach( function(opt) {
+            let optionElement = document.createElement("option");
+            optionElement.value = opt;
+            optionElement.label = opt;
+            if (opt == defaultValue) {
+                optionElement.defaultSelected = true;
+            }
+            input.add(optionElement)
+        });
+        parent.appendChild(input);
+        return input;
+    }
+
     private static findValidParents(node: HTMLElement): string[] {
         let p = node.parentElement
         let arr = [p.getAttribute("value")];
@@ -140,19 +156,29 @@ export class ConfigController {
                             }
                         }
                         else {
-                            let input = this.createInput(config[key], node);
+                            let input;
+                            if (key == "orientation") {
+                                input = this.createSelect(config[key], node);
+                            } else {
+                                input = this.createInput(config[key], node);
+                            }
                             node.className = "child";
-
-                            input.className = "right-input";
                             if(parent.getAttribute("value") === "variables") {
                                 input.setAttribute("list", "attributelist");
                             }
-                            input.addEventListener("keyup", (ke) => {
-                                if (ke.key == "Enter") {
+                            if (key == "orientation") {
+                                input.addEventListener("click", () => {
                                     let arr = this.findValidParents(input);
                                     UIController.changeConfig(arr, ["", input.value]);
-                                }
-                            });
+                                })
+                            } else {
+                                input.addEventListener("keyup", (ke) => {
+                                    if (ke.key == "Enter") {
+                                        let arr = this.findValidParents(input);
+                                        UIController.changeConfig(arr, ["", input.value]);
+                                    }
+                                });
+                            }
                         }
                     }
                 }
