@@ -99,14 +99,15 @@ export class Link3DImplem implements Link3D {
     //     if(!this.force) this.line.visibility = 0;
     // }
 
-    display(force?: boolean) {
+    display(force?: boolean, show?:boolean) {
         if (force != undefined) this.force = force;
         // if (!this.force && this.mesh.visibility == 1) {
-        if (!this.force && this.mesh) {
+        if (!show && !this.force && this.mesh) {
             // this.mesh.visibility = 0;
             this.render(false);
         } else {
-            if ((force == undefined || this.force) && !this.mesh) this.render(true); // this.mesh.visibility = 1;
+            if (show && ((force == undefined || this.force) && !this.mesh))
+                this.render(true); // this.mesh.visibility = 1;
         }
         // this.line.visibility = 1;
     }

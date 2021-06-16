@@ -18,6 +18,8 @@ export class UndergroundRoad3DImplem implements Link3D {
 
     config: Config;
 
+    destroyed: boolean;
+
     constructor(src: Building3D, dest: Building3D, type: string, scene: Scene, config: Config) {
         this.src = src;
         this.dest = dest;
@@ -153,15 +155,16 @@ export class UndergroundRoad3DImplem implements Link3D {
     //     }
     // }
 
-    display(force?: boolean): void {
+    display(force?: boolean, show?: boolean): void {
         if (force != undefined) this.force = force;
         // if (!this.force && this.downRoadMesh.visibility == 1) {
-        if (!this.force && this.downRoadMesh) {
+        if (!show && !this.force && this.downRoadMesh) {
             // this.roadMesh.visibility = 0;
             // this.downRoadMesh.visibility = 0;
             this.render(false);
+            this.destroyed = true;
         } else {
-            if ((force == undefined || this.force) && !this.downRoadMesh) {
+            if (show && ((force == undefined || this.force) && !this.downRoadMesh)) {
                 this.render(true);
                 // this.downRoadMesh.visibility = 1;
                 // this.roadMesh.visibility = 1;

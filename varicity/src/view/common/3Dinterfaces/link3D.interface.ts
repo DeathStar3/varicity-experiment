@@ -12,5 +12,5 @@ export interface Link3D {
     render(bool: boolean): void;
     // render(config: Config): void;
 
-    display(force?: boolean): void;
+    display(force?: boolean, show?: boolean): void;
 }

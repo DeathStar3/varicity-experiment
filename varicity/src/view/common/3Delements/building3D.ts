@@ -340,7 +340,7 @@ export class Building3D extends Element3D {
                     },
                     () => {
                         this.highlight(true);
-                        this.links.forEach(l => l.display());
+                        this.links.forEach(l => l.display(undefined, true));
                         UIController.displayObjectInfo(this);
                         // document.getElementById("nodes_details").innerText = out;
                     }
@@ -353,7 +353,7 @@ export class Building3D extends Element3D {
                     },
                     () => {
                         this.highlight(false);
-                        this.links.forEach(l => l.display());
+                        this.links.forEach(l => l.display(undefined, false));
                     }
                 )
             );
@@ -365,7 +365,7 @@ export class Building3D extends Element3D {
                     () => {
                         this.flag = !this.flag;
                         this.highlight(this.flag, true);
-                        this.links.forEach(l => l.display(this.flag));
+                        this.links.forEach(l => l.display(this.flag, this.flag));
                         UIController.displayObjectInfo(this, this.flag ? this.flag : undefined);
                     }
                 )
