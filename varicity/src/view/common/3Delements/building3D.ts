@@ -47,6 +47,8 @@ export class Building3D extends Element3D {
 
     config: Config;
 
+    flag: boolean = false;
+
     constructor(scene: Scene, buildingElement: Building, depth: number, config: Config) {
         super(scene);
         this.elementModel = buildingElement;
@@ -361,9 +363,10 @@ export class Building3D extends Element3D {
                         trigger: ActionManager.OnPickTrigger
                     },
                     () => {
-                        this.highlight(true, true);
-                        this.links.forEach(l => l.display(true,));
-                        UIController.displayObjectInfo(this, true);
+                        this.flag = !this.flag;
+                        this.highlight(this.flag, true);
+                        this.links.forEach(l => l.display(this.flag));
+                        UIController.displayObjectInfo(this, this.flag ? this.flag : undefined);
                     }
                 )
             );

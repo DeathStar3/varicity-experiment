@@ -167,7 +167,7 @@ export class ConfigController {
                                 input.setAttribute("list", "attributelist");
                             }
                             if (key == "orientation") {
-                                input.addEventListener("click", () => {
+                                input.addEventListener("change", () => {
                                     let arr = this.findValidParents(input);
                                     UIController.changeConfig(arr, ["", input.value]);
                                 })

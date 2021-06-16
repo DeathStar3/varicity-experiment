@@ -30,8 +30,6 @@ export class VPVariantsStrategy implements ParsingStrategy {
 
             node.types = Object.assign([], n.types);
 
-            console.log(config);
-
             if (config.api_classes[project] !== undefined) {
                 if (config.api_classes[project].includes(node.name)) {
                     console.log("API class: " + n.name);

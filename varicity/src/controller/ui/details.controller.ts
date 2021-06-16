@@ -11,7 +11,6 @@ export class DetailsController {
             this.current.highlight(false, true);
             this.current.showAllLinks(false);
         }
-        this.force = force;
         this.current = obj
         let parent = document.getElementById("nodes_details");
 
