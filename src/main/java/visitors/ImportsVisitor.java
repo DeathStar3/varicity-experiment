@@ -65,7 +65,7 @@ public class ImportsVisitor extends SymfinderVisitor {
         // If there is a type bound, it means that there is a capture binding, e.g. capture-of ? extends Object[]
         // Therefore, we do not use the binding of the field type but the binding of the superclass
         ITypeBinding binding = typeBinding;
-        if(binding.getTypeBounds().length != 0){
+        if (binding.getTypeBounds().length != 0) {
             binding = binding.getTypeBounds()[0];
         }
         String jdtFullName = binding.getQualifiedName();
@@ -75,7 +75,7 @@ public class ImportsVisitor extends SymfinderVisitor {
         }
         String className = getClassBaseName(binding.getName());
         Optional <ImportDeclaration> first = imports.stream()
-                .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith(className))
+                .filter(importDeclaration -> importDeclaration.getName().getFullyQualifiedName().endsWith("." + className))
                 .findFirst();
         if (first.isPresent()) {
             return Optional.of(first.get().getName().getFullyQualifiedName());

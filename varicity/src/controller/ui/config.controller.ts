@@ -97,7 +97,7 @@ export class ConfigController {
             }
             let attr = parent.getAttribute("value");
             let values = ["api_classes", "blacklist", "underground_road", "air_traffic", "hierarchy_links"];
-            if (values.includes(attr)) {
+            if (values.includes(attr) || values.includes(parent.parentElement.getAttribute("value"))) {
                 this.populateChildren("", parent);
             }
         }
@@ -109,9 +109,9 @@ export class ConfigController {
                 input.setAttribute("previous", prev);
                 input.className = "child";
 
-                let attr = parent.getAttribute("value");
+                let attr = parent.getAttribute("value"); // get parent of the parent
                 let values = ["api_classes", "blacklist", "hierarchy_links"];
-                if (values.includes(attr)) {
+                if (values.includes(attr) || values.includes(parent.parentElement.getAttribute("value"))) {
                     input.setAttribute("list", "datalist");
                 }
                 input.addEventListener("keyup", (ke) => this.stringArrayListener(ke, input, parent));

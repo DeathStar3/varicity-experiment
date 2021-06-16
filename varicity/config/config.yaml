@@ -83,11 +83,11 @@ api_classes: #all API classes
 #  - "discord4j.core.object.entity.Message"
   jfreechart-v1.5.0:
     - "org.jfree.chart.JFreeChart"
-    - "org.jfree.chart.plot.PlotState"
     - "org.jfree.chart.plot.Plot"
   netbeans-12.2:
 #  - "org.netbeans.api.debugger.DebuggerEngine"
-    - "org.netbeans.api.java.platform.JavaPlatform"
+#    - "org.netbeans.api.java.platform.JavaPlatform"
+    - "org.netbeans.api.java.source.CompilationInfo"
 
 variables: #variables to be used for width and height of a building
   width: "nbConstructorVariants"
