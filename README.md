@@ -1,10 +1,10 @@
-# Symfinder & Varicity
+# symfinder & VariCity
 
-Varicity is a program which uses .json files produced by the Symfinder toolchain in order to provide a 3D visualization to the provided metrics. The visualization is based on a city-like model.
+VariCity is a program which uses .json files produced by the symfinder toolchain in order to provide a 3D visualization to the provided metrics. The visualization is based on a city-like model.
 
-[Go to Varicity](#varicity)
+[Go to VariCity](#varicity)
 
-# Symfinder
+# symfinder
 
 ## Technical Requirements
 
@@ -27,7 +27,7 @@ If your system does not match any of the requirements above, you must install a 
 - Follow [these short steps](https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user) to allow your user to call Docker commands,
 - Preface the scripts calls with `sudo`.
 
-## Getting Symfinder
+## Getting symfinder
 
 1. Open a terminal and clone the repository by running:
 
@@ -82,7 +82,7 @@ You can specify the projects you want to run by passing their names as parameter
 ./run.sh junit
 ```
 
-More details about the analysed projects and their definition are given in the [Using Symfinder on your project](#using-symfinder-on-your-project) section.
+More details about the analysed projects and their definition are given in the [Using symfinder on your project](#using-symfinder-on-your-project) section.
 
 ### Analysing the output data
 
@@ -115,16 +115,16 @@ The window is made of several parts:
 	- The `Color packages` button display a tab similar to the part ③ where you can enter the name of a package or a class and a new color will be applied to the corresponding nodes.
 	- The `Show legend` button displays a legend to help you read the visualization.
 	- The `Display variants` button displays all the variants of variation points, including the ones not being variation points. Click again on the button to show only variation points.
-- ②: Here you can see the name and tag/commit ID of the project corresponding to the visualization being viewed, as well as the commit corresponding to the version of Symfinder that generated the visualization.
+- ②: Here you can see the name and tag/commit ID of the project corresponding to the visualization being viewed, as well as the commit corresponding to the version of symfinder that generated the visualization.
 - ③: In the `Package/class to filter` field, you can enter the name of a class or package that you want to filter on the visualization.
 When a filter is added, it is added to the list below. The cross on the right of each filter allows you to remove it.
 On the right of this field is a `Filter isolated nodes` button which, when activated, removes the nodes having no relationship from the visualization.
 Click again on the button to unfilter them.
 - ④: Displays metrics on the project concerning variation points and variants
 
-## Using Symfinder on your project
+## Using symfinder on your project
 
-### Symfinder configuration
+### symfinder configuration
 
 The application's settings are set up using a YAML file, called `symfinder.yaml`, that must be at the root of the project.
 Here is an example:
@@ -198,36 +198,33 @@ Then, run symfinder using the local images that you just built.
 ./run.sh --local
 ```
 
-# Varicity
+# VariCity
 
-Varicity provides a configurable 3D visualization to Symfinder under the form of a city. The city is built by creating building, corresponding to classes, and roads, grouping every class linked to the road's starting building.
+VariCity provides a configurable 3D visualization to symfinder under the form of a city. The city is built by creating building, corresponding to classes, and roads, grouping every class linked to the road's starting building.
 
-In order to build the city, Varicity parses the result of Symfinder, and produces a graph composed by classes and their links. The starting points of this graph are API classes, defined by the user.
+In order to build the city, VariCity parses the result of symfinder, and produces a graph composed by classes and their links. The starting points of this graph are API classes, defined by the user.
 API classes are the first buildings placed on the "root" road, and classes linked to them are placed in their corresponding roads.
 
 Links used to produce this hierarchy can be configured, depending on their type (inheritance or composition), and orientation (see the Configuration part).
 
-## Running Varicity
-
-Before using Varicity, make sure to copy the .json files produced by symfinder in the ```varicity/symfinder_files``` folder.
+## Running VariCity
 
 ### With Docker
 
-To build Varicity, go to the ```varicity``` folder at the root of the project and run ```./build.sh```. This will create a varicity docker image that you can use by running ```./varicity.sh```.
+To build VariCity, go to the ```varicity``` folder at the root of the project and run ```./build.sh```. This will create a varicity docker image that you can use by running ```./varicity.sh```.
 
 ### Run locally
 
-To run Varicity on your local machine, you first need to install [node](https://nodejs.org/en/). Then, go to the ```varicity``` folder at the root of the project and run ```npm install```, then ```npm start```.
+To run VariCity on your local machine, you first need to install [NodeJS](https://nodejs.org/en/). Then, go to the ```varicity``` folder at the root of the project and run ```npm install```, then ```npm start```.
+Before using VariCity, make sure to copy the .json files produced by symfinder (found in `generated_visualizations/data`) in the ```varicity/symfinder_files``` folder.
 
+## Using VariCity
 
-
-## Using Varicity
-
-To access the visualization once Varicity is running, you need to access ```localhost:9090``` via a web browser.
+To access the visualization once VariCity is running, you need to access ```localhost:9090``` via a web browser.
 
 ### Select a project
 
-To select the project you want to visualize, head to to side menu and click on Project selection, then on the name of your symfinder file (if it does not appear in the list, make sure it is in the ```varicity/symfinder_files``` folder and rerun Varicity).![project selection](readme_files/varicity/Project_selection.png)
+To select the project you want to visualize, head to to side menu and click on Project selection, then on the name of your symfinder file (if it does not appear in the list, make sure it is in the ```varicity/symfinder_files``` folder and rerun VariCity).![project selection](readme_files/varicity/Project_selection.png)
 
 You have the choice between the Metricity view or the Evostreet view. The Metricity view works, but has been abandoned to focus on the Evostreet visualization, thus it is considered legacy and not exploitable.
 
@@ -268,13 +265,13 @@ Buildings represent classes and wear information with how they are displayed:
 
 #### Links
 
-In Varicity, you can also see relations between your classes, in different ways:
+In VariCity, you can also see relations between your classes, in different ways:
 
 - Roads: A road is created when a VP is parsed, and all its variants are displayed next to the road.
 - Aerial links: By default, inheritance links (EXTENDS and IMPLEMENTS) are displayed as aerial links. The building at the darker side is the source (sub class), and the one at the brighter side is the destination (super class).  
   ![aerial link](readme_files/varicity/Aerial_link.png)  
           *On the left, the bright side of the link means that the yellow building is the super class of the blue building on the other hand, at the dark side.*
-- Underground links / Underground roads: By default, an underground link between two buildings shows the DUPLICATE links, unique to Varicity and not present in the Symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's road because it had already been drawn. Thus, each building is displayed only once.
+- Underground links / Underground roads: By default, an underground link between two buildings shows the DUPLICATE links, unique to VariCity and not present in the symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's road because it had already been drawn. Thus, each building is displayed only once.
   Underground links are also oriented, and the source class is represented by the building having a vertical road underneath itself. The destination class is directly linked by the underground link.
   The depth of the vertical part depends on the difference of composition level between the two classes.  
   ![underground link](readme_files/varicity/Underground_link.png)  
@@ -318,5 +315,5 @@ In the side menu, you can change various configuration variables in the "Config 
   - blacklist: Each class or package in this list will be excluded from visualization.
   - variables: Names of the variables used to determine the height and the width of the buildings (do not change unless you know the variable names in the source code).
 
-The default configuration is retrieved from the ```config/config.yaml``` file in the ```varicity ``` folder, which you can modify at any time (you will need to rerun Varicity to take the changes into account). An additional attribute in this file is "default_level", used to determine the default composition level (currently 4).
+The default configuration is retrieved from the ```config/config.yaml``` file in the ```varicity ``` folder, which you can modify at any time (you will need to rerun VariCity to take the changes into account). An additional attribute in this file is "default_level", used to determine the default composition level (currently 4).
 
