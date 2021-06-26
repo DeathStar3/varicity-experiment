@@ -224,11 +224,9 @@ To access the visualization once VariCity is running, you need to access ```loca
 
 ### Select a project
 
-To select the project you want to visualize, head to to side menu and click on Project selection, then on the name of your symfinder file (if it does not appear in the list, make sure it is in the ```varicity/symfinder_files``` folder and rerun VariCity).![project selection](readme_files/varicity/Project_selection.png)
+To select the project you want to visualize, head to to side menu and click on Project selection, then on the name of your symfinder file..![project selection](readme_files/varicity/Project_selection.png)
 
-You have the choice between the Metricity view or the Evostreet view. The Metricity view works, but has been abandoned to focus on the Evostreet visualization, thus it is considered legacy and not exploitable.
-
-When you click on the Evostreet view, you will most probably have to wait for a few seconds while the file is getting parsed before the visualization actually appears on your screen.
+You will most probably have to wait for a few seconds while the file is getting parsed before the visualization actually appears on your screen.
 
 ### Exploring your city
 
@@ -268,7 +266,7 @@ Buildings represent classes and wear information with how they are displayed:
 In VariCity, you can also see relations between your classes, in different ways:
 
 - Roads: A road is created when a VP is parsed, and all its variants are displayed next to the road.
-- Aerial links: By default, inheritance links (EXTENDS and IMPLEMENTS) are displayed as aerial links. The building at the darker side is the source (sub class), and the one at the brighter side is the destination (super class).  
+- Aerial links: By default, inheritance links (EXTENDS and IMPLEMENTS) are displayed as aerial links. The building at the darker side is the source (subclass), and the one at the brighter side is the destination (superclass).  
   ![aerial link](readme_files/varicity/Aerial_link.png)  
           *On the left, the bright side of the link means that the yellow building is the super class of the blue building on the other hand, at the dark side.*
 - Underground links / Underground roads: By default, an underground link between two buildings shows the DUPLICATE links, unique to VariCity and not present in the symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's road because it had already been drawn. Thus, each building is displayed only once.
@@ -294,7 +292,7 @@ In the side menu, you can change various configuration variables in the "Config 
   - Composition level: Change the level of composition use to display the city (default is 4).
   - Orientation: Can be IN, OUT, or IN_OUT. Used to change the orientation of the links used to establish the composition level of each element.
   - hierarchy_links: Contains the list of link types used to compose the graph of the city.
-  - api_classes: List of names of the API classes used as starting points to build the city.
+  - api_classes: For each project, list of names of the entry point classes used as starting points to build the city.
 - Esthetic config: These variables only change some display features and will not relaunch the parsing algorithm:
   - Building:
     - padding: Will change the space between each building
