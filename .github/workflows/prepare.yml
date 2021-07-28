@@ -52,17 +52,6 @@ jobs:
       - name: Acceptance tests on a pilot project
         run: ./run_acceptance_tests.sh sat4j
 
-  feature_mapping:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Features extractor unit tests
-        run: docker build -f docker/features-extractor/Dockerfile -t deathstar3/features-extractor:local .
-      - name: Mapping features from Sat4j
-        run: ./sat4j-feature-mapping.sh --local
-      - name: Mapping features from ArgoUML
-        run: ./argouml-feature-mapping.sh --local
-
   varcity_project:
     runs-on: ubuntu-latest
     steps:

@@ -23,10 +23,11 @@ version: "3.6"
 
 services:
   visualization:
-    image: deathstar3/varicity:local
+    image: deathstar3/varicity:${TAG}
     container_name: varicity
     ports:
       - 9090:9090
     volumes:
       - ../generated_visualizations/data:/symfinder_files
+      - ./config/:/config
     command: npm run start

@@ -27,22 +27,18 @@ If your system does not match any of the requirements above, you must install a 
 - Follow [these short steps](https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user) to allow your user to call Docker commands,
 - Preface the scripts calls with `sudo`.
 
-## Getting symfinder
 
-1. Open a terminal and clone the repository by running:
+## Using symfinder
 
-    ```bash
-    git clone https://github.com/DeathStar3/symfinder
-    ```
+### Reusing the existing Docker images
 
-2. Move in the project directory
-
-    ```bash
-    cd symfinder
-    ```
-
-
-## Reproducing the experiments
+The following Docker images hosted on the [Docker Hub](https://hub.docker.com/) allow to use symfinder without needing to build it.
+```bash
+deathstar3/symfinder-fetcher
+deathstar3/symfinder-neo4j
+deathstar3/symfinder-engine
+deathstar3/symfinder-runner
+```
 
 Run the analyses by running
 
@@ -64,17 +60,12 @@ This command will analyse the following projects:
 - [Apache CXF 3.2.7](https://github.com/apache/cxf/tree/cxf-3.2.7/core/src/main/java/org/apache/cxf)
 - [JUnit 4.12](https://github.com/junit-team/junit4/tree/r4.12/src/main/java)
 - [Apache Maven 3.6.0](https://github.com/apache/maven/tree/maven-3.6.0)
-- [JHipster 2.0.28](https://github.com/jhipster/jhipster/tree/2.0.28/jhipster-framework/src/main/java)
 - [JFreeChart 1.5.0](https://github.com/jfree/jfreechart/tree/v1.5.0/src/main/java/org/jfree)
-- [JavaGeom](https://github.com/dlegland/javaGeom/tree/7e5ee60ea9febe2acbadb75557d9659d7fafdd28/src)
 - [ArgoUML](https://github.com/marcusvnac/argouml-spl/tree/bcae37308b13b7ee62da0867a77d21a0141a0f18/src)
-- [Jackson Core](https://github.com/FasterXML/jackson-core/tree/jackson-core-2.10.1/src/main/java/)
-- [ZXing](https://github.com/zxing/zxing/tree/zxing-3.4.0/core/src/main/java/)
-- [Mockito](https://github.com/mockito/mockito/tree/v3.1.12/src/main/java/)
-- [DeepLearning4j](https://github.com/eclipse/deeplearning4j/tree/deeplearning4j-1.0.0-beta5/deeplearning4j/)
-- [RxJava](https://github.com/ReactiveX/RxJava/tree/v2.2.15/src/main/java/)
-- [Guava](https://github.com/google/guava/tree/v28.1/guava/src/com/google/common)
-- [Elasticsearch](https://github.com/elastic/elasticsearch/tree/v6.8.5/server/src/)
+- [Cucumber v6.8.0](https://github.com/cucumber/cucumber-jvm/tree/v6.8.0)
+- [Logbook 2.2.1](https://github.com/zalando/logbook/tree/2.2.1)
+- [Riptide 2.11.0](https://github.com/zalando/riptide/tree/2.11.0)
+- [NetBeans 12.2](https://github.com/apache/netbeans/tree/12.2/java)
 
 You can specify the projects you want to run by passing their names as parameters of the running script, for example
 
@@ -84,7 +75,31 @@ You can specify the projects you want to run by passing their names as parameter
 
 More details about the analysed projects and their definition are given in the [Using symfinder on your project](#using-symfinder-on-your-project) section.
 
-### Analysing the output data
+*Note:* The Docker images are automatically downloaded by Docker with the tag `vissoft2021` if they are not found on the host system.
+If an image is not found, you can download it manually with the `docker pull` command
+
+Example:
+```bash
+docker pull deathstar3/symfinder-fetcher:vissoft2021
+```
+
+### Building symfinder
+
+**This step is only needed if you edited symfinder's source code.**
+
+You can build symfinder's Docker images by running
+
+```bash
+./build.sh
+```
+
+Then, run symfinder using the local images that you just built.
+
+```bash
+./run.sh --local
+```
+
+### Using the original symfinder visualization
 
 
 Once the analyses are finished, run
@@ -182,22 +197,6 @@ junit:
     - c3715204786394f461d94953de9a66a4cec684e9
 ```
 
-## Building symfinder
-
-**This step is only needed if you edited symfinder's source code.**
-
-You can build symfinder's Docker images by running
-
-```bash
-./build.sh
-```
-
-Then, run symfinder using the local images that you just built.
-
-```bash
-./run.sh --local
-```
-
 # VariCity
 
 VariCity provides a configurable 3D visualization to symfinder under the form of a city. The city is built by creating building, corresponding to classes, and roads, grouping every class linked to the road's starting building.
@@ -209,9 +208,48 @@ Links used to produce this hierarchy can be configured, depending on their type 
 
 ## Running VariCity
 
-### With Docker
+All the scripts below are located and executed from the `varicity` directory, located at the root of the project.
 
-To build VariCity, go to the ```varicity``` folder at the root of the project and run ```./build.sh```. This will create a varicity docker image that you can use by running ```./varicity.sh```.
+### Reusing the existing Docker image
+
+The following Docker image hosted on the [Docker Hub](https://hub.docker.com/) allows to use VariCity without needing to build it.
+```bash
+deathstar3/varicity
+```
+
+Run the analyses by running
+
+
+- On GNU/Linux and macOS
+
+    ```bash
+    ./varicity.sh
+    ```
+
+- On Windows
+
+    ```batch
+    varicity.bat
+    ```
+
+*Note:* As for symfinder, the Docker image is automatically downloaded by Docker with the tag `vissoft2021` if it is not found on the host system.
+
+### Building VariCity
+
+**This step is only needed if you edited VariCity's source code.**
+
+You can build VariCity's Docker images by running
+
+```bash
+./build.sh
+```
+
+Then, run symfinder using the local images that you just built.
+
+```bash
+./varicity.sh --local
+```
+
 
 ### Run locally
 
@@ -224,7 +262,8 @@ To access the visualization once VariCity is running, you need to access ```loca
 
 ### Select a project
 
-To select the project you want to visualize, head to to side menu and click on Project selection, then on the name of your symfinder file..![project selection](readme_files/varicity/Project_selection.png)
+To select the project you want to visualize, head to the side menu and click on Project selection, then on the name of your analysed project.
+![project selection](readme_files/varicity/Project_selection.png)
 
 You will most probably have to wait for a few seconds while the file is getting parsed before the visualization actually appears on your screen.
 

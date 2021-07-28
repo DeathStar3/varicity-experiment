@@ -20,5 +20,9 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
+export TAG=local
+
+echo "Using $TAG VariCity image"
+
 docker-compose -f varicity.yaml up
 docker-compose -f varicity.yaml down
