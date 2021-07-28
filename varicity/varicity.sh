@@ -20,7 +20,31 @@
 # Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
 #
 
-export TAG=local
+
+export TAG=vissoft2021
+
+
+ARGUMENT_LIST=("local")
+
+opts=$(getopt \
+    --longoptions "$(printf "%s," "${ARGUMENT_LIST[@]}")" \
+    --name "$(basename "$0")" \
+    --options "" \
+    -- "$@"
+)
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --local)
+            export TAG=local
+            shift 1
+            ;;
+
+        *)
+            break
+            ;;
+    esac
+done
 
 echo "Using $TAG VariCity image"
 
