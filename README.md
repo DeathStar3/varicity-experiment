@@ -55,6 +55,14 @@ Run the analyses by running
     run.bat
     ```
 
+**Note:** On Windows, you may encounter the following error:
+```
+docker.errors.DockerException: Credentials store error: StoreError('Credentials store docker-credential-osxkeychain exited with "The user name or passphrase you entered is not correct.".',)
+[49981] Failed to execute script docker-compose
+```
+
+To solve this issue, you may open Docker Desktop and connect to your Docker Hub account.
+
 This command will analyse the following projects:
 - [Java AWT 8u202-b1532](https://github.com/JetBrains/jdk8u_jdk/tree/jb8u202-b1532/src/share/classes/java/awt)
 - [Apache CXF 3.2.7](https://github.com/apache/cxf/tree/cxf-3.2.7/core/src/main/java/org/apache/cxf)

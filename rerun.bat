@@ -27,5 +27,7 @@ set raw_path=%cd%
 set after_slash=%raw_path:\=/%
 SET PWD=%after_slash:C:=/c%
 
+SET TAG=vissoft2021
+
 docker-compose -f runner-compose.yaml up
 docker-compose -f runner-compose.yaml down
