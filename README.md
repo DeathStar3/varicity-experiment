@@ -207,12 +207,12 @@ junit:
 
 # VariCity
 
-VariCity provides a configurable 3D visualization to symfinder under the form of a city. The city is built by creating building, corresponding to classes, and roads, grouping every class linked to the road's starting building.
+VariCity provides a configurable 3D visualization to symfinder under the form of a city. The city is built by creating building, corresponding to classes, and streets, grouping every class linked to the street's starting building.
 
 In order to build the city, VariCity parses the result of symfinder, and produces a graph composed by classes and their links. The starting points of this graph are API classes, defined by the user.
-API classes are the first buildings placed on the "root" road, and classes linked to them are placed in their corresponding roads.
+API classes are the first buildings placed on the "root" street, and classes linked to them are placed in their corresponding streets.
 
-Links used to produce this hierarchy can be configured, depending on their type (inheritance or composition), and orientation (see the Configuration part).
+Links used to produce this hierarchy can be configured, depending on their type (inheritance or usage), and orientation (see the Configuration part).
 
 ## Running VariCity
 
@@ -259,10 +259,10 @@ Then, run symfinder using the local images that you just built.
 ```
 
 
-### Run locally
+### Run without Docker
 
 To run VariCity on your local machine, you first need to install [NodeJS](https://nodejs.org/en/). Then, go to the ```varicity``` folder at the root of the project and run ```npm install```, then ```npm start```.
-Before using VariCity, make sure to copy the .json files produced by symfinder (found in `generated_visualizations/data`) in the ```varicity/symfinder_files``` folder.
+Before using VariCity, make sure to copy the JSON files produced by symfinder (found in `generated_visualizations/data`) in the ```varicity/symfinder_files``` folder.
 
 ## Using VariCity
 
@@ -312,15 +312,15 @@ Buildings represent classes and wear information with how they are displayed:
 
 In VariCity, you can also see relations between your classes, in different ways:
 
-- Roads: A road is created when a VP is parsed, and all its variants are displayed next to the road.
+- Streets: A street is created when a VP is parsed, and all its variants are displayed next to the street.
 - Aerial links: By default, inheritance links (EXTENDS and IMPLEMENTS) are displayed as aerial links. The building at the darker side is the source (subclass), and the one at the brighter side is the destination (superclass).  
   ![aerial link](readme_files/varicity/Aerial_link.png)  
           *On the left, the bright side of the link means that the yellow building is the super class of the blue building on the other hand, at the dark side.*
-- Underground links / Underground roads: By default, an underground link between two buildings shows the DUPLICATE links, unique to VariCity and not present in the symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's road because it had already been drawn. Thus, each building is displayed only once.
-  Underground links are also oriented, and the source class is represented by the building having a vertical road underneath itself. The destination class is directly linked by the underground link.
-  The depth of the vertical part depends on the difference of composition level between the two classes.  
+- Underground links / Underground streets: By default, an underground link between two buildings shows the DUPLICATE links, unique to VariCity and not present in the symfinder files. It means that the starting building is a variant of the target building, but could not be placed in the target's street because it had already been drawn. Thus, each building is displayed only once.
+  Underground links are also oriented, and the source class is represented by the building having a vertical street underneath itself. The destination class is directly linked by the underground link.
+  The depth of the vertical part depends on the difference of usage level between the two classes.  
   ![underground link](readme_files/varicity/Underground_link.png)  
-  *Here, an underground road goes from the left to the right side of the image. This means that the class on the left side is also present in the district of the class on the right side.*
+  *Here, an underground street goes from the left to the right side of the image. This means that the class on the left side is also present in the district of the class on the right side.*
 
 By clicking on a building, you can display the links leading to or coming from it, as well as detailed info on the side menu (types, attributes, links, etc.) in the "Object details" section.
 
@@ -333,32 +333,88 @@ By clicking on a building, you can display the links leading to or coming from i
 
 ![config menu](readme_files/varicity/Configuration_menu.png)
 
-In the side menu, you can change various configuration variables in the "Config parameters":
+In the side menu, you can change various configuration variables in the "Config parameters" submenu:
 
-- Algorithmic config: These variables are used during the parsing algorithm, and thus will relaunch it, which may take a few moments:
-  - Composition level: Change the level of composition use to display the city (default is 4).
-  - Orientation: Can be IN, OUT, or IN_OUT. Used to change the orientation of the links used to establish the composition level of each element.
-  - hierarchy_links: Contains the list of link types used to compose the graph of the city.
-  - api_classes: For each project, list of names of the entry point classes used as starting points to build the city.
-- Esthetic config: These variables only change some display features and will not relaunch the parsing algorithm:
-  - Building:
-    - padding: Will change the space between each building
-    - colors:
-      - faces: Contains the Colors list in which the buildings should be displayed according to their tags. Every Colors list in the configuration is ordered, and if a class has two of the listed tags, the first one in the list will be taken into account. Putting a ```!```before a tag name will set the color for each class that does not have the tag.
-        Example (default config): 
-        ![colors list](readme_files/varicity/Colors_list.png)
-      - edges: Colors list for the outlines of the buildings (by default, there is only a black outline for the API classes).
-      - outlines: Deprecated
-  - district:
-    - padding: Space between every district (default is 0)
-    - colors > faces: Colors list for the types of package (tag PACKAGE is for the main road, tag VP is for the other roads).
-  - link:
-    - colors: Colors list for the links.
-    - display:
-      - air_traffic: List of tags corresponding to the links that should be displayed as aerial links.
-      - underground_road: List of tags corresponding to the links that should be displayed as underground links.
-  - blacklist: Each class or package in this list will be excluded from visualization.
-  - variables: Names of the variables used to determine the height and the width of the buildings (do not change unless you know the variable names in the source code).
+- Usage level: Change the level of usage used to display the city (default is 4).
+- Orientation: Can be IN, OUT, or IN_OUT. Used to change the orientation of the links used to establish the usage level of each element.
+- hierarchy_links: Contains the list of link types used to compose the graph of the city.
+- api_classes: For each project, list of names of the entry point classes used as starting points to build the city.
+- Building:
+  - padding: will change the space between each building
+  - colors:
+    - faces: Contains the colors list in which the buildings should be displayed according to their tags. Every colors list in the configuration is ordered, and if a class has two of the listed tags, the first one in the list will be taken into account. Putting a ```!```before a tag name will set the color for each class that does not have the tag.
+    Example (default configuration): 
+    ![colors list](readme_files/varicity/Colors_list.png)
+    - edges: Colors list for the outlines of the buildings (by default, there is only a black outline for the API classes).
+- district:
+  - padding: Space between every district (default is 0)
+  - colors > faces: Colors list for the types of package (tag PACKAGE is for the root street, tag VP is for the other streets).
+- link:
+  - colors: Colors list for the links.
+  - display:
+    - air_traffic: List of tags corresponding to the links that should be displayed as aerial links.
+    - underground_road: List of tags corresponding to the links that should be displayed as underground links.
+- blacklist: Each class or package in this list will be excluded from visualization.
+- variables: Names of the variables used to determine the height and the width of the buildings (do not change unless you know the variable names in the source code).
 
-The default configuration is retrieved from the ```config/config.yaml``` file in the ```varicity ``` folder, which you can modify at any time (you will need to rerun VariCity to take the changes into account). An additional attribute in this file is "default_level", used to determine the default composition level (currently 4).
+The default configuration is retrieved from the ```config/config.yaml``` file in the ```varicity ``` folder.
+Its structure is identical to the menu displayed on the visualization.
+This file can be modified at any time. However, you will need to rerun VariCity to take the changes into account.
 
+
+An additional attribute in this file is `default_level`, used to determine the default usage level (default is 4).
+
+### Configure VariCity for your project
+
+The `api_classes` section of VariCity's configuration file (being the `config/config.yaml` file in the `varicity ` folder) allows defining default entry point classes for your project.
+
+#### Example:
+
+Let's suppose that you defined the following experiment in symfinder (see [Using symfinder on your project](#using-symfinder-on-your-project) section for more details on how to define a new experiment in symfinder):
+
+```yaml
+myproject:
+  repositoryUrl: https://github.com/myusername/project1
+  sourcePackage: .
+  tagIds:
+    - customtag
+```
+
+In the `api_classes` section of VariCity's configuration file, you may add a new entry for your project, having for name the pattern `<experiment_name>_<experiment_tag_or_commit>`.
+
+```yaml
+api_classes:
+  myproject-customtag:
+    - "my.first.EntryPointClass"
+    - "my.second.EntryPointClass"
+```
+
+This allows you to create different pre-configurations for every commit / tag of a same project.
+
+#### Example:
+
+Let's suppose that you defined the following experiment in symfinder:
+
+```yaml
+myproject:
+  repositoryUrl: https://github.com/myusername/project1
+  sourcePackage: .
+  tagIds:
+    - customtag1
+    - customtag2
+  commitIds:
+    - customcommit 
+```
+
+In the `api_classes` section of VariCity's configuration file, you can define entries wih the following names:
+
+```yaml
+api_classes:
+  myproject-customtag1:
+    - "my.first.EntryPointClass"
+    - "my.second.EntryPointClass"
+  myproject-customtag2:
+    - "my.first.EntryPointClass"
+  myproject-customcommit:
+    - "my.third.EntryPointClass"
+```

@@ -151,3 +151,8 @@ To generate the visualizations files, go to the root of the project and run symf
 
 *Note:* Analysing the 10 projects with symfinder can be time consuming, especially for CXF and NetBeans which can require multiple hours of computation depending on your host system.
 To obtain minimum but viable results for reproduction in a reasonable amount of time, we thus advise to analyse only small projects, like JFreeChart for example.
+
+
+## Reusing VariCity and symfinder on other projects
+
+Instructions to adapt symfinder and VariCity for your project are detailed in the sections "Using symfinder on your project" and "Configure VariCity for your project" in the artifact's README.md file.
