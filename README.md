@@ -225,7 +225,7 @@ The following Docker image hosted on the [Docker Hub](https://hub.docker.com/) a
 deathstar3/varicity
 ```
 
-Run the analyses by running
+Run VariCity by running
 
 
 - On GNU/Linux and macOS
