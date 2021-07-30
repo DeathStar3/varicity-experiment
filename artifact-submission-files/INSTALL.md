@@ -11,7 +11,7 @@ See REQUIREMENTS.md file for more details.
 All the scripts below are located and executed from the `varicity` directory, located at the root of the project.
 
 *Note:* Before running VariCity, you need to have visualizations files generated in the `generated_visualizations` directory at the root of the project.
-These visualizations are obtained by first executing symfinder (see [Running symfinder](#running_symfinder)), or by unpacking pre-generated visualizations present in the`pre_generated_visualizations.zip` archive at the root of the project. 
+These visualizations are obtained by first executing symfinder (see [Running symfinder](#running-symfinder)), or by unpacking pre-generated visualizations present in the`pre_generated_visualizations.zip` archive at the root of the project. 
 
 ### Reusing the existing Docker image
 
