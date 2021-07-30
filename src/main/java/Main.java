@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with symfinder. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2018-2019 Johann Mortara <johann.mortara@univ-cotedazur.fr>
- * Copyright 2018-2019 Xhevahire Tërnava <xhevahire.ternava@lip6.fr>
- * Copyright 2018-2019 Philippe Collet <philippe.collet@univ-cotedazur.fr>
+ * Copyright 2018-2021 Johann Mortara <johann.mortara@univ-cotedazur.fr>
+ * Copyright 2018-2021 Xhevahire Tërnava <t.xheva@gmail.com>
+ * Copyright 2018-2021 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
 import java.util.Optional;

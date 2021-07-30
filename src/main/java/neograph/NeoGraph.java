@@ -15,7 +15,7 @@
  * along with symfinder. If not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2018-2020 Johann Mortara <johann.mortara@univ-cotedazur.fr>
- * Copyright 2018-2020 Xhevahire Tërnava <xhevahire.ternava@lip6.fr>
+ * Copyright 2018-2020 Xhevahire Tërnava <t.xheva@gmail.com>
  * Copyright 2018-2020 Philippe Collet <philippe.collet@univ-cotedazur.fr>
  */
 
