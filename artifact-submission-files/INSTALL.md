@@ -2,7 +2,7 @@
 
 In this document, we assume that you already have system with:
 - a fully functional Docker and Docker Compose install;
-- a web browser.
+- a web browser (our tests have been made with Mozilla Firefox, Google Chrome, and Safari).
 
 See REQUIREMENTS.md file for more details.
 
