@@ -30,10 +30,12 @@ If your system does not match any of the requirements above, you must install a 
 
 ## Using symfinder
 
+*Note:* All the commands given in this section are executed from the directory where this README file is located. 
+
 ### Reusing the existing Docker images
 
 The following Docker images hosted on the [Docker Hub](https://hub.docker.com/) allow to use symfinder without needing to build it.
-```bash
+```
 deathstar3/symfinder-fetcher
 deathstar3/symfinder-neo4j
 deathstar3/symfinder-engine
@@ -45,13 +47,13 @@ Run the analyses by running
 
 - On GNU/Linux and macOS
 
-    ```bash
+    ```
     ./run.sh
     ```
 
 - On Windows
 
-    ```batch
+    ```
     run.bat
     ```
 
@@ -77,7 +79,7 @@ This command will analyse the following projects:
 
 You can specify the projects you want to run by passing their names as parameters of the running script, for example
 
-```bash
+```
 ./run.sh junit
 ```
 
@@ -86,8 +88,8 @@ More details about the analysed projects and their definition are given in the [
 *Note:* The Docker images are automatically downloaded by Docker with the tag `vissoft2021` if they are not found on the host system.
 If an image is not found, you can download it manually with the `docker pull` command
 
-Example:
-```bash
+Example of command to download the `deathstar3/symfinder-fetcher` image with tag `vissoft2021`:
+```
 docker pull deathstar3/symfinder-fetcher:vissoft2021
 ```
 
@@ -97,13 +99,13 @@ docker pull deathstar3/symfinder-fetcher:vissoft2021
 
 You can build symfinder's Docker images by running
 
-```bash
+```
 ./build.sh
 ```
 
 Then, run symfinder using the local images that you just built.
 
-```bash
+```
 ./run.sh --local
 ```
 
@@ -114,13 +116,13 @@ Once the analyses are finished, run
 
 - On GNU/Linux and macOS    
 
-```bash
+```
 ./visualization.sh
 ```
 
 - On Windows
 
-```bash
+```
 visualization.bat
 ```
 Then, in your web browser, go to `http://localhost:8181`.
@@ -221,7 +223,7 @@ All the scripts below are located and executed from the `varicity` directory, lo
 ### Reusing the existing Docker image
 
 The following Docker image hosted on the [Docker Hub](https://hub.docker.com/) allows to use VariCity without needing to build it.
-```bash
+```
 deathstar3/varicity
 ```
 
@@ -230,13 +232,13 @@ Run VariCity by running
 
 - On GNU/Linux and macOS
 
-    ```bash
+    ```
     ./varicity.sh
     ```
 
 - On Windows
 
-    ```batch
+    ```
     varicity.bat
     ```
 
@@ -248,13 +250,13 @@ Run VariCity by running
 
 You can build VariCity's Docker images by running
 
-```bash
+```
 ./build.sh
 ```
 
 Then, run symfinder using the local images that you just built.
 
-```bash
+```
 ./varicity.sh --local
 ```
 
