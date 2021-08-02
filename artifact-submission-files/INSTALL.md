@@ -1,8 +1,8 @@
 # Installation instructions
 
-In this document, we assume that you already have system with:
+In this document, we assume that you already have a system with:
 - a fully functional Docker and Docker Compose install;
-- a web browser (our tests have been made with Mozilla Firefox, Google Chrome, and Safari).
+- a web browser (our tests have been made with Google Chrome, Mozilla Firefox, and Safari).
 
 See REQUIREMENTS.md file for more details.
 
@@ -79,17 +79,22 @@ varicity         | ℹ ｢wds｣: Project is running at http://0.0.0.0:9090/
 varicity         | ℹ ｢wds｣: webpack output is served from /
 varicity         | ℹ ｢wds｣: Content not from webpack is served from /usr/src/app/public
 ```
-- After some seconds (depending on your machine) of compilation, a message indicates that the code compiled successfully.
+- After some seconds (depending on your machine) of compilation, some logs concerning the build appear and a message indicates that the code compiled successfully.
 ```
 varicity         | webpack 5.9.0 compiled successfully in 16679 ms
 varicity         | ℹ ｢wdm｣: Compiled successfully.
 ```
+If the container stops before this message is displayed, it might be due to limitations in the resources that Docker is allowed to allocate. See the `REQUIREMENTS.md` file for more details.
+
 - You can now open your web browser and go to `http://localhost:9090`.
 - On the right panel, click on `Project selection`. The list of the available projects appear.
   ![project_selection_panel](images/project_selection_panel.png)
 - By clicking on the desired project's name, the visualization appears on the left, here JFreeChart.
+  Please note that the visualization may not be centered when appearing.
   ![jfreechart_visualization](images/jfreechart_visualization.png)
 
+*Note:* The rendering time of the visualization increases with the number of buildings to display.
+To limit the loading time when switching between projects, we advise to reduce the value of the usage level to limit the number of buildings to render.
 
 ## Running symfinder
 

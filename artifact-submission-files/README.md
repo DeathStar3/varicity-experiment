@@ -127,9 +127,10 @@ varicity_reproduction-package
 5. On the right panel, click on `Project selection`. A list of the available projects appear.
 ![project_selection_panel](images/project_selection_panel.png)
 6. By clicking on the desired project's name, the visualization appears on the left, here JFreeChart.
+Please note that the visualization may not be centered when appearing.
 ![jfreechart_visualization](images/jfreechart_visualization.png)
 7. The entrypoint classes for all projects are pre-configured with the names present in Table II (in JFreeChart's case, `org.jfree.chart.JFreeChart` and `org.jfree.chart.plot.Plot`).
-However, the usage orientation and usage level need to be set manually.
+However, the usage orientation and usage level need to be set manually for each project.
 These two settings are available on the right panel.
 The usage level setting is present at the top level of the panel, whereas the usage orientation is in the `Config parameters` menu.
 ![visualization_settings_1](images/visualization_settings_1.png)
@@ -137,6 +138,9 @@ The usage level setting is present at the top level of the panel, whereas the us
 Changing the value of one of these parameters regenerates the visualization.
 ![visualization_settings](images/visualization_settings.png)
 The visualization above shows JFreeChart with usage orientation set to OUT and usage level set to 2, shown in Fig. 6a of the paper.
+
+*Note:* The rendering time of the visualization increases with the number of buildings to display.
+To limit the loading time when switching between projects, we advise to reduce the value of the usage level to limit the number of buildings to render.
 
 The pre-configuration is done by modifying the `/varicity/config/config.yaml` file.
 More details about the different configuration options are present in the `README.md` file present in the artifact's root directory.
@@ -146,7 +150,7 @@ More details about the different configuration options are present in the `READM
 symfinder is pre-configured to be executed on the 10 systems presented in the paper.
 More details about the analysed projects and their definition are given in the "Using symfinder on your project" section in the README present in the artifact's root directory.
 
-To generate the visualizations files, go to the root of the project and run symfinder as detailed in the "Running symfinder" section of the INSTALL.md file.
+To generate the visualizations files, go to the root of the project and run symfinder as detailed in the "Running symfinder" section of the `INSTALL.md` file.
 
 *Note:* Analysing the 10 projects with symfinder can be time consuming, especially for CXF and NetBeans which can require multiple hours of computation depending on your host system.
 To obtain minimum but viable results for reproduction in a reasonable amount of time, we thus advise to analyse only small projects, like JFreeChart for example.
@@ -154,4 +158,4 @@ To obtain minimum but viable results for reproduction in a reasonable amount of 
 
 ## Reusing VariCity and symfinder on other projects
 
-Instructions to adapt symfinder and VariCity for your project are detailed in the sections "Using symfinder on your project" and "Configure VariCity for your project" in the artifact's README.md file.
+Instructions to adapt symfinder and VariCity for your project are detailed in the sections "Using symfinder on your project" and "Configure VariCity for your project" in the artifact's `README.md` file.
