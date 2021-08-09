@@ -8,7 +8,7 @@ See REQUIREMENTS.md file for more details.
 
 ## Running VariCity
 
-All the scripts below are located and executed from the `varicity` directory, located at the root of the project.
+All the scripts in this section are located and executed from the `varicity` directory, located at the root of the project.
 
 *Note:* Before running VariCity, you need to have visualizations files generated in the `generated_visualizations` directory at the root of the project.
 These visualizations are obtained by first executing symfinder (see [Running symfinder](#running-symfinder)), or by unpacking pre-generated visualizations present in the`pre_generated_visualizations.zip` archive at the root of the project. 
@@ -73,7 +73,7 @@ Creating varicity ... done
 Attaching to varicity
 varicity         | 
 varicity         | > varicity@1.0.0 start /usr/src/app
-varicity         | > webpack serve
+varicity         | > export NODE_OPTIONS="--max-old-space-size=4096" && webpack serve
 varicity         | 
 varicity         | ℹ ｢wds｣: Project is running at http://0.0.0.0:9090/
 varicity         | ℹ ｢wds｣: webpack output is served from /
@@ -84,21 +84,38 @@ varicity         | ℹ ｢wds｣: Content not from webpack is served from /usr/s
 varicity         | webpack 5.9.0 compiled successfully in 16679 ms
 varicity         | ℹ ｢wdm｣: Compiled successfully.
 ```
-If the container stops before this message is displayed, it might be due to limitations in the resources that Docker is allowed to allocate. See the `REQUIREMENTS.md` file for more details.
+It may happen that the container stops before this message is displayed, and that you obtain an output similar to this:
+```
+Attaching to varicity
+varicity         | 
+varicity         | > varicity@1.0.0 start /usr/src/app
+varicity         | > export NODE_OPTIONS="--max-old-space-size=4096" && webpack serve
+varicity         | 
+varicity         | ℹ ｢wds｣: Project is running at http://0.0.0.0:9090/
+varicity         | ℹ ｢wds｣: webpack output is served from /
+varicity         | ℹ ｢wds｣: Content not from webpack is served from /usr/src/app/public
+varicity         | (node:26) [DEP_WEBPACK_COMPILATION_ASSETS] DeprecationWarning: Compilation.assets will be frozen in future, all modifications are deprecated.
+varicity         | BREAKING CHANGE: No more changes should happen to Compilation.assets after sealing the Compilation.
+varicity         | 	Do changes to assets earlier, e. g. in Compilation.hooks.processAssets.
+varicity         | 	Make sure to select an appropriate stage from Compilation.PROCESS_ASSETS_STAGE_*.
+varicity         | (Use `node --trace-deprecation ...` to show where the warning was created)
+varicity exited with code 0
+```
+This might be due to limitations in the resources that Docker is allowed to allocate. See the `REQUIREMENTS.md` file for more details.
 
 - You can now open your web browser and go to `http://localhost:9090`.
-- On the right panel, click on `Project selection`. The list of the available projects appear.
+- On the right panel, click on `Project selection`. The list of the available projects appears.
   ![project_selection_panel](images/project_selection_panel.png)
 - By clicking on the desired project's name, the visualization appears on the left, here JFreeChart.
-  Please note that the visualization may not be centered when appearing.
-  ![jfreechart_visualization](images/jfreechart_visualization.png)
+  Please note that the visualization may not be centered when appearing. The rendering time of the visualization increases with the number of buildings to display.
+  To limit the loading time when switching between projects, we advise to reduce the value of the usage level to limit the number of buildings to render.
 
-*Note:* The rendering time of the visualization increases with the number of buildings to display.
-To limit the loading time when switching between projects, we advise to reduce the value of the usage level to limit the number of buildings to render.
+  ![jfreechart_visualization](images/jfreechart_visualization.png)
 
 ## Running symfinder
 
 Reproducing the pre-generated visualizations is done by executing symfinder before VariCity.
+All scripts used in this section are located in the artifact's root directory.
 
 ### Reusing the existing Docker images
 
@@ -110,7 +127,7 @@ deathstar3/symfinder-engine
 deathstar3/symfinder-runner
 ```
 
-Run the analyses by running
+To run the analyses of all projects, run:
 
 
 - On GNU/Linux and macOS
@@ -144,7 +161,7 @@ You can therefore specify the projects you want to run by passing their names as
 ./run.sh jfreechart
 ```
 
-More details about the analysed projects and their definition are given in the "Using symfinder on your project" section in the README present in the artifact's root directory.
+More details about the analyzed projects and their definition are given in the "Using symfinder on your project" section in the README present in the artifact's root directory.
 
 *Note:* The Docker images are automatically downloaded by Docker with the tag `vissoft2021` if they are not found on the host system.
 If an image is not found, you can download it manually with the `docker pull` command
@@ -173,8 +190,8 @@ Then, run symfinder using the local images that you just built.
 ### Checking that symfinder works
 Hereafter, we illustrate the different steps of the execution of symfinder by giving excerpts of console outputs corresponding to the execution of symfinder on a single project, JFreeChart.
 
-1. First, symfinder creates the directories containing the analysed project(s) sources and generated visualization files,
-and clones the directory of the analysed project(s), checking out the desired tags/commits.
+1. First, symfinder creates the directories containing the analyzed project(s) sources and generated visualization files,
+and clones the directory of the analyzed project(s), checking out the desired tags/commits.
 ```
 $ ./run.sh jfreechart
 resources directory already exists
@@ -202,7 +219,7 @@ HEAD is now at fd72df7c Prepare for 1.5.0 release.
 HEAD is now at fd72df7c Prepare for 1.5.0 release.
 ```
 2. Then, the `symfinder-runner` container starts, and creates two other Docker containers:
-  - `symfinder-neo4j`, a Neo4j database used to store information about the analysed project (classes, methods, identified variation points and variants…)
+  - `symfinder-neo4j`, a Neo4j database used to store information about the analyzed project (classes, methods, identified variation points and variants…)
   - `symfinder`, being the symfinder engine which parses the codebase of the project and populates the Neo4j database.
 ```
 Creating network "varicity-develop_default" with the default driver
@@ -251,7 +268,7 @@ symfinder-runner | symfinder    | 09:16:17.532 [main] INFO  visitors.SymfinderVi
 Five visitors are run on the codebase: `ClassesVisitor`, `GraphBuilderVisitor`, `StrategyTemplateDecoratorVisitor`, `FactoryVisitor`, and `ComposeTypeVisitor`.
 
 3. At the end of the successive parsings, a summary of the results of the execution is given, and the `symfinder-runner` stops the `symfinder-neo4j` and `symfinder` containers.
-If multiple projects are analysed, step 2. is executed for each project.
+If multiple projects are analyzed, step 2. is executed for each project.
 ```
 symfinder-runner | symfinder    | 09:21:19.953 [main] INFO  visitors.SymfinderVisitor - Visitor: visitors.ComposeTypeVisitor - Class: org.jfree.data.KeyedObjects2D
 symfinder-runner | symfinder    | 09:21:20.224 [main] INFO  visitors.SymfinderVisitor - Visitor: visitors.ComposeTypeVisitor - Class: org.jfree.data.category.IntervalCategoryDataset
@@ -295,73 +312,39 @@ symfinder-runner | Removing network default_default
 symfinder-runner exited with code 0
 ```
 
-5. The `generated_visualizations` directory at the root of the project shall now have the following structure
+5. Supposing that you run symfinder on JFreeChart only, the `generated_visualizations` directory at the root of the project shall now have the following structure:
 ```
 ├── generated_visualizations
-│   ├── argoUML-bcae373-composition.html
-│   ├── argoUML-bcae373.html
-│   ├── argoUML-bcae373.log
-│   ├── awt-jb8u202-b1532-composition.html
-│   ├── awt-jb8u202-b1532.html
-│   ├── awt-jb8u202-b1532.log
-│   ├── cucumber-v6.8.0-composition.html
-│   ├── cucumber-v6.8.0.html
-│   ├── cucumber-v6.8.0.log
-│   ├── cxf-cxf-3.2.7-composition.html
-│   ├── cxf-cxf-3.2.7.html
-│   ├── cxf-cxf-3.2.7.log
-│   ├── data
-│   │   ├── argoUML-bcae373.json
-│   │   ├── argoUML-bcae373-stats.json
-│   │   ├── awt-jb8u202-b1532.json
-│   │   ├── awt-jb8u202-b1532-stats.json
-│   │   ├── cucumber-v6.8.0.json
-│   │   ├── cucumber-v6.8.0-stats.json
-│   │   ├── cxf-cxf-3.2.7.json
-│   │   ├── cxf-cxf-3.2.7-stats.json
-│   │   ├── jfreechart-v1.5.0.json
-│   │   ├── jfreechart-v1.5.0-stats.json
-│   │   ├── junit-r4.12.json
-│   │   ├── junit-r4.12-stats.json
-│   │   ├── logbook-2.2.1.json
-│   │   ├── logbook-2.2.1-stats.json
-│   │   ├── maven-maven-3.6.0.json
-│   │   ├── maven-maven-3.6.0-stats.json
-│   │   ├── netbeans-12.2.json
-│   │   ├── netbeans-12.2-stats.json
-│   │   ├── riptide-2.11.0.json
-│   │   └── riptide-2.11.0-stats.json
-│   ├── index.html
-│   ├── jfreechart-v1.5.0-composition.html
-│   ├── jfreechart-v1.5.0.html
-│   ├── jfreechart-v1.5.0.log
-│   ├── junit-r4.12-composition.html
-│   ├── junit-r4.12.html
-│   ├── junit-r4.12.log
-│   ├── logbook-2.2.1-composition.html
-│   ├── logbook-2.2.1.html
-│   ├── logbook-2.2.1.log
-│   ├── maven-maven-3.6.0-composition.html
-│   ├── maven-maven-3.6.0.html
-│   ├── maven-maven-3.6.0.log
-│   ├── netbeans-12.1-composition.html
-│   ├── netbeans-12.1.html
-│   ├── netbeans-12.1.log
-│   ├── riptide-2.11.0-composition.html
-│   ├── riptide-2.11.0.html
-│   ├── riptide-2.11.0.log
-│   ├── scripts
-│   │   ├── api-filter.js
-│   │   ├── filter.js
-│   │   ├── graphcomposition.js
-│   │   ├── graph.js
-│   │   ├── isolated-filter.js
-│   │   ├── nodes-filter.js
-│   │   ├── package-colorer.js
-│   │   └── variants-filter.js
-│   ├── style.css
-│   ├── symfinder-icon.png
-│   └── symfinder-legend.svg
+│     ├── data
+│     │     ├── jfreechart-v1.5.0.json
+│     │     ├── jfreechart-v1.5.0-stats.json
+│     ├── index.html
+│     ├── jfreechart-v1.5.0-composition.html
+│     ├── jfreechart-v1.5.0.html
+│     ├── jfreechart-v1.5.0.log
+│     ├── scripts
+│     │     ├── api-filter.js
+│     │     ├── filter.js
+│     │     ├── graphcomposition.js
+│     │     ├── graph.js
+│     │     ├── isolated-filter.js
+│     │     ├── nodes-filter.js
+│     │     ├── package-colorer.js
+│     │     └── variants-filter.js
+│     ├── style.css
+│     ├── symfinder-icon.png
+│     └── symfinder-legend.svg
+```
+Files starting by `jfreechart-v1.5.0` correspond to files generated by analysing JFreeChart with symfinder.
+For every project `XXX` of tag `YYY` on which you run symfinder, you should obtain the following additional files:
+```
+├── generated_visualizations
+│     ├── data
+│     │     ├── XXX-YYY.json
+│     │     ├── XXX-YYY.stats.json
+│     ├── XXX-YYY-composition.html
+│     ├── XXX-YYY.html
+│     ├── XXX-YYY.log
 ```
 
 ### Troubleshooting known Windows related issues

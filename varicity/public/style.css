@@ -66,6 +66,7 @@ input {
     padding-right: 10px;
     background-color: lightgrey;
     border: 2px lightgrey solid;
+    cursor: pointer;
 }
 
 .child {
@@ -74,6 +75,7 @@ input {
     padding-right: inherit;
     background-color: white;
     border: 1px black solid;
+    cursor: auto;
 }
 
 #right-input {
