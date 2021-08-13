@@ -13,7 +13,7 @@ Pre-generated source data used to generate visualizations for all 10 subject sys
 
 ## Availability
 
-The artifact is available on Zenodo and accessible through the following DOI: https://doi.org/10.5281/zenodo.5034199
+The artifact is available on Zenodo and accessible through the following DOI: https://doi.org/10.5281/zenodo.5198754
 
 
 ## Reproducing the results presented in the paper
@@ -24,7 +24,7 @@ Set up your host system according to the guidelines given in the `REQUIREMENTS.m
 
 ### B. Getting the sources
 
-1. Download the archive available at https://doi.org/10.5281/zenodo.5034199
+1. Download the archive available at https://doi.org/10.5281/zenodo.5198754
 2. Unzip the archive. You should obtain the following hierarchy (only the files useful for the reproduction are shown):
 ```
 varicity_reproduction-package
