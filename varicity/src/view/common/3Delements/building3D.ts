@@ -15,6 +15,7 @@ import {
 } from '@babylonjs/core';
 import { Building } from '../../../model/entities/building.interface';
 import { Link3D } from '../3Dinterfaces/link3D.interface';
+import {SelectedBuildingController} from "../../../controller/ui/selected-building.controller";
 
 export class Building3D extends Element3D {
     elementModel: Building;
@@ -364,6 +365,11 @@ export class Building3D extends Element3D {
                     },
                     () => {
                         this.flag = !this.flag;
+                        if(this.flag) {
+                            SelectedBuildingController.selectABuilding(this.elementModel);
+                        } else {
+                            SelectedBuildingController.unselectABuilding(this.elementModel);
+                        }
                         this.highlight(this.flag, true);
                         this.links.forEach(l => l.display(this.flag, this.flag));
                         UIController.displayObjectInfo(this, this.flag ? this.flag : undefined);
