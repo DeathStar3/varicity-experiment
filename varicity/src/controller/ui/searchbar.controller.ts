@@ -3,12 +3,14 @@ import { Building3D } from './../../view/common/3Delements/building3D';
 
 export class SearchbarController {
     private static map: Map<string, Building3D>;
+    private static searchbar: HTMLInputElement;
 
     public static initMap() {
         this.map = new Map<string, Building3D>();
 
         /* @ts-ignore */
         let searchbar: HTMLInputElement = document.getElementById("searchbar");
+        SearchbarController.searchbar = searchbar;
         searchbar.style.display = "block";
         searchbar.setAttribute("previous", "");
 
@@ -97,5 +99,10 @@ export class SearchbarController {
         let option = document.createElement("option");
         option.innerHTML = key;
         datalist.appendChild(option);
+    }
+
+    public static focusOn(className: string): void {
+        SearchbarController.searchbar.value = className;
+        SearchbarController.searchbar.dispatchEvent(new KeyboardEvent("keydown", {key: "Enter"}))
     }
 }

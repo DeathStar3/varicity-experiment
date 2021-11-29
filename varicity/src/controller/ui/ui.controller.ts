@@ -76,4 +76,15 @@ export class UIController {
             console.log("not initialized");
         }
     }
+
+    public static parseQueryParameters() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const project = urlParams.get('project');
+        const clazz = urlParams.get('class');
+        if (project) {
+            ProjectController.selectProject(project);
+            if (clazz) SearchbarController.focusOn(clazz);
+        }
+    }
 }

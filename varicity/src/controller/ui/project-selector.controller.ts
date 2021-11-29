@@ -12,6 +12,7 @@ export class ProjectController {
     static el: EntitiesList;
     private static previousParser: ParsingStrategy;
     private static filename: string;
+    private static nodes: { [key: string]: HTMLDivElement } = {};
 
     static createProjectSelector(keys: string[]) {
         let parent = document.getElementById("project_selector");
@@ -27,6 +28,7 @@ export class ProjectController {
 
         for (let key of keys) {
             let node = document.createElement("div");
+            ProjectController.nodes[key] = node;
             node.innerHTML = key;
             parent.appendChild(node);
 
@@ -73,5 +75,10 @@ export class ProjectController {
             inputElement.value = maxLvl.toString();
         UIController.scene = new EvostreetImplem(UIController.config, this.el.filterCompLevel(+inputElement.value));
         UIController.scene.buildScene();
+    }
+
+    public static selectProject(projectName: string) {
+        const node = ProjectController.nodes[projectName];
+        if (node) node.dispatchEvent(new Event("click"));
     }
 }

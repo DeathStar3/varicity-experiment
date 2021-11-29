@@ -14,6 +14,7 @@ class Main {
         UIController.createDoc();
         UIController.createProjectSelector(keys);
         UIController.createLogs();
+        UIController.parseQueryParameters();
     }
 }
 new Main();

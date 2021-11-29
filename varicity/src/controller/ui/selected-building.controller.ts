@@ -13,6 +13,5 @@ export const SelectedBuildingController = {
     },
     display: function () {
         document.cookie = 'selectedBuildings='+JSON.stringify(this.selected)+';path=/';
-        document.getElementById('selected_buildings').innerHTML = JSON.stringify(this.selected);
     }
 }
