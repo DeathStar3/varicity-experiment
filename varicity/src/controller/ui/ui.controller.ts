@@ -83,8 +83,9 @@ export class UIController {
         const project = urlParams.get('project');
         const clazz = urlParams.get('class');
         if (project) {
+            ProjectController.classToFocus = clazz;
             ProjectController.selectProject(project);
-            if (clazz) SearchbarController.focusOn(clazz);
+            // if (clazz) SearchbarController.focusOn(clazz);
         }
     }
 }

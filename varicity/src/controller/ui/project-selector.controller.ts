@@ -6,6 +6,7 @@ import { UIController } from "./ui.controller";
 import { EntitiesList } from "../../model/entitiesList";
 import { FilesLoader } from "../parser/filesLoader";
 import { VPVariantsStrategy } from "../parser/strategies/vp_variants.strategy";
+import {SearchbarController} from "./searchbar.controller";
 
 export class ProjectController {
 
@@ -13,6 +14,7 @@ export class ProjectController {
     private static previousParser: ParsingStrategy;
     private static filename: string;
     private static nodes: { [key: string]: HTMLDivElement } = {};
+    public static classToFocus;
 
     static createProjectSelector(keys: string[]) {
         let parent = document.getElementById("project_selector");
@@ -45,6 +47,7 @@ export class ProjectController {
                 for (let child of parent.children) {
                     child.style.display = "none";
                 }
+                if(this.classToFocus) SearchbarController.focusOn(this.classToFocus);
             });
 
         }
