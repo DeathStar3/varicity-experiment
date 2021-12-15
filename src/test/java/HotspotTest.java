@@ -22,12 +22,12 @@
 import neo4j_types.EntityAttribute;
 import neo4j_types.EntityType;
 import neo4j_types.RelationType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.types.Node;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class HotspotTest extends Neo4jTest {
 

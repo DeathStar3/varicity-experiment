@@ -25,7 +25,8 @@ import neo4j_types.RelationType;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.types.Node;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class AggregationHotspotTest extends Neo4jTest {
 

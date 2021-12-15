@@ -192,10 +192,10 @@ public class NeoGraph {
 
     public void detectHotspotsInAggregation(int threshold) {
         submitRequest("MATCH (vp:VP) " +
-                "CALL apoc.path.subgraphAll(vp, {relationshipFilter: \"INSTANTIATE\", minLevel: 0}) " +
+                "CALL apoc.path.subgraphAll(vp, {relationshipFilter: \"INSTANTIATE\", labelFilter: \"VP\", minLevel: 0, maxLevel: $threshold}) " +
                 "YIELD nodes " +
                 "WITH collect(nodes)[0] AS nodesList, count(nodes) as cnt " +
-                "FOREACH (n IN CASE WHEN cnt >= $threshold THEN nodesList ELSE [] END | SET n.aggregation = TRUE)", "threshold", threshold);
+                "FOREACH (n IN nodesList | SET n.aggregation = TRUE)", "threshold", threshold);
         submitRequest("MATCH (vp)-[:EXTENDS]->(v:VARIANT) " +
                 "WHERE vp.aggregation = TRUE " +
                 "SET v.aggregation = TRUE");
@@ -249,7 +249,6 @@ public class NeoGraph {
         setNbCompositions();
         setAllMethods();
         detectStrategiesWithComposition();
-        detectDensity();
     }
 
     /**
@@ -591,11 +590,6 @@ public class NeoGraph {
     public int getNbAttributeComposeClass() {
         return submitRequest("MATCH (c:CLASS) RETURN (SUM(c.nbCompositions))")
                 .get(0).get(0).asInt();
-    }
-
-    public void detectDensity() {
-        submitRequest("MATCH (v1:VARIANT)-[:INSTANTIATE]->(v2:VARIANT) " +
-                "SET v1:DENSE SET v2:DENSE");
     }
 
     public void detectStrategiesWithComposition() {
