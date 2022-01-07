@@ -81,6 +81,9 @@ api_classes: # configuration given in the paper
     - "io.cucumber.java.StepDefinitionAnnotation"
   cxf-cxf-3.2.7: # 6, OUT
     - "org.apache.cxf.endpoint.Endpoint"
+  ghidra-Ghidra_10.0.4_build: # 2, OUT
+    - "ghidra.app.plugin.core.analysis.ArmAnalyzer"
+    - "ghidra.program.emulation.ARMEmulateInstructionStateModifier"
   jfreechart-v1.5.0: # 2, OUT
     - "org.jfree.chart.JFreeChart"
     - "org.jfree.chart.plot.Plot"
@@ -104,4 +107,4 @@ variables: #variables to be used for width and height of a building
 
 orientation: "OUT"
 
-default_level: 4
+default_level: 2
