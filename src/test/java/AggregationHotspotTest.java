@@ -25,6 +25,7 @@ import neo4j_types.RelationType;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.types.Node;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -52,7 +53,7 @@ public class AggregationHotspotTest extends Neo4jTest {
     }
 
     @Test
-    public void fiveVPsThresholdTwo() {
+    public void fourVPsThresholdTwo() {
         runTest(graph -> {
             Node vp1 = graph.createNode("VP1", EntityType.CLASS, EntityAttribute.VP);
             Node vp2 = graph.createNode("VP2", EntityType.CLASS, EntityAttribute.VP);
@@ -66,9 +67,9 @@ public class AggregationHotspotTest extends Neo4jTest {
             graph.detectHotspotsInAggregation(2);
             assertTrue((boolean) graph.getPropertyValue(graph.getNode("VP1").get(), "aggregation"));
             assertTrue((boolean) graph.getPropertyValue(graph.getNode("VP2").get(), "aggregation"));
-            assertTrue((boolean) graph.getPropertyValue(graph.getNode("VP3").get(), "aggregation"));
-            assertTrue((boolean) graph.getPropertyValue(graph.getNode("VP4").get(), "aggregation"));
-            assertTrue((boolean) graph.getPropertyValue(graph.getNode("V1").get(), "aggregation"));
+            assertNull(graph.getPropertyValue(graph.getNode("VP3").get(), "aggregation"));
+            assertNull(graph.getPropertyValue(graph.getNode("VP4").get(), "aggregation"));
+            assertNull(graph.getPropertyValue(graph.getNode("V1").get(), "aggregation"));
         });
     }
 
