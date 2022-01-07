@@ -97,16 +97,18 @@ describe("Density", () => {
     it('there should be 2 composition links', () => {
         expect(jsonData.alllinks.filter(l => l.type === "INSTANTIATE").length).toBe(2);
     });
-    it('there are 4 DENSE nodes', () => {
-        expect(jsonData.allnodes.filter(n => n.types.includes("DENSE")).length).toBe(4);
+    it('there are 3 HOTSPOT nodes', () => {
+        expect(jsonData.allnodes.filter(n => n.types.includes("HOTSPOT")).length).toBe(3);
     });
-    it('the Renderer subclasses should be DENSE', () => {
-        expect(getNodeWithName(jsonData, "RectangleRenderer").types).toContain("DENSE");
-        expect(getNodeWithName(jsonData, "CircleRenderer").types).toContain("DENSE");
+    it('Renderer and its subclasses should not be HOTSPOT', () => {
+        expect(getNodeWithName(jsonData, "Renderer").types).toContain("HOTSPOT");
+        expect(getNodeWithName(jsonData, "RectangleRenderer").types).toContain("HOTSPOT");
+        expect(getNodeWithName(jsonData, "CircleRenderer").types).toContain("HOTSPOT");
     });
-    it('the Shape subclasses should be DENSE', () => {
-        expect(getNodeWithName(jsonData, "Rectangle").types).toContain("DENSE");
-        expect(getNodeWithName(jsonData, "Circle").types).toContain("DENSE");
+    it('Shape and its subclasses should not be HOTSPOT', () => {
+        expect(getNodeWithName(jsonData, "Shape").types).not.toContain("HOTSPOT");
+        expect(getNodeWithName(jsonData, "Rectangle").types).not.toContain("HOTSPOT");
+        expect(getNodeWithName(jsonData, "Circle").types).not.toContain("HOTSPOT");
     });
 
 });
