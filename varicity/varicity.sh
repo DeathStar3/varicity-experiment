@@ -21,7 +21,7 @@
 #
 
 
-export TAG=vissoft2021
+export TAG=ist
 
 
 ARGUMENT_LIST=("local")

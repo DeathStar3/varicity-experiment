@@ -38,7 +38,7 @@ ARGUMENT_LIST=(
 
 SYMFINDER_PROJECTS=()
 
-export TAG=vissoft2021
+export TAG=ist
 export SYMFINDER_COMPOSE_FILE="symfinder-compose.yaml"
 
 create_directory resources

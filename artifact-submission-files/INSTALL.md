@@ -33,11 +33,11 @@ Run VariCity by running
     varicity.bat
     ```
 
-*Note:* Docker automatically downloads the image with the `vissoft2021` tag if it is not found on the host system.
+*Note:* Docker automatically downloads the image with the `ist` tag if it is not found on the host system.
 
 You can also download it manually with:
 ```
-docker pull deathstar3/varicity:vissoft2021
+docker pull deathstar3/varicity:ist
 ```
 
 VariCity is a NodeJS application written in TypeScript deployed in a webpack environment.
@@ -63,11 +63,11 @@ Then, run symfinder using the local images that you just built.
 
 ### Checking that VariCity works
 
-- The script indicates that the `vissoft2021` image is used.
+- The script indicates that the `ist` image is used.
 - The Docker container starts, and runs the `webpack serve` command, which compiles the sources and exposes the project on `localhost:9090`.
 ```
 $ ./varicity.sh
-Using vissoft2021 VariCity image
+Using ist VariCity image
 Creating network "varicity_default" with the default driver
 Creating varicity ... done
 Attaching to varicity
@@ -163,12 +163,12 @@ You can therefore specify the projects you want to run by passing their names as
 
 More details about the analyzed projects and their definition are given in the "Using symfinder on your project" section in the README present in the artifact's root directory.
 
-*Note:* The Docker images are automatically downloaded by Docker with the tag `vissoft2021` if they are not found on the host system.
+*Note:* The Docker images are automatically downloaded by Docker with the tag `ist` if they are not found on the host system.
 If an image is not found, you can download it manually with the `docker pull` command
 
 Example:
 ```
-docker pull deathstar3/symfinder-fetcher:vissoft2021
+docker pull deathstar3/symfinder-fetcher:ist
 ```
 
 ### Building symfinder
@@ -196,7 +196,7 @@ and clones the directory of the analyzed project(s), checking out the desired ta
 $ ./run.sh jfreechart
 resources directory already exists
 generated_visualizations directory already exists
-Using vissoft2021 images
+Using ist images
 Cloning into 'resources/jfreechart'...
 Note: switching to 'tags/v1.5.0'.
 

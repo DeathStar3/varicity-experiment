@@ -66,7 +66,7 @@ Run VariCity by running
     varicity.bat
     ```
 
-*Note:* As for symfinder, the Docker image is automatically downloaded by Docker with the tag `vissoft2021` if it is not found on the host system.
+*Note:* As for symfinder, the Docker image is automatically downloaded by Docker with the tag `ist` if it is not found on the host system.
 
 ### Building VariCity
 
@@ -307,12 +307,12 @@ You can specify the projects you want to run by passing their names as parameter
 
 More details about the analysed projects and their definition are given in the [Using symfinder on your project](#using-symfinder-on-your-project) section.
 
-*Note:* The Docker images are automatically downloaded by Docker with the tag `vissoft2021` if they are not found on the host system.
+*Note:* The Docker images are automatically downloaded by Docker with the tag `ist` if they are not found on the host system.
 If an image is not found, you can download it manually with the `docker pull` command
 
-Example of command to download the `deathstar3/symfinder-fetcher` image with tag `vissoft2021`:
+Example of command to download the `deathstar3/symfinder-fetcher` image with tag `ist`:
 ```
-docker pull deathstar3/symfinder-fetcher:vissoft2021
+docker pull deathstar3/symfinder-fetcher:ist
 ```
 
 ### Building symfinder
