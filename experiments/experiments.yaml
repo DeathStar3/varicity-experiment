@@ -49,11 +49,6 @@ jfreechart:
     - org.jfree.chart.renderer.AbstractRenderer
   compositionLevel: 4
   compositionType: IN
-javaGeom:
-  repositoryUrl: https://github.com/dlegland/javaGeom
-  sourcePackage: .
-  commitIds:
-    - 7e5ee60ea9febe2acbadb75557d9659d7fafdd28
 argoUML:
   repositoryUrl: https://github.com/marcusvnac/argouml-spl/
   sourcePackage: src/argouml-app

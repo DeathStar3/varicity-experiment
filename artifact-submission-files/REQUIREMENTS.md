@@ -1,9 +1,17 @@
 # Requirements
 
+### For VariCity
+
 - Docker
     - Instructions to install Docker are available [here](https://docs.docker.com/get-docker/).
 - Docker Compose
     - Instructions to install Docker Compose are available [here](https://docs.docker.com/compose/install/#install-compose).
+
+### For the IDE plugin
+
+- JetBrains IntelliJ IDEA 
+  - Instructions to install IntelliJ are available [here](https://www.jetbrains.com/fr-fr/idea/download/).
+
 
 **Note:** You need to have a system running on either
 - GNU/Linux

@@ -1,17 +1,29 @@
 # Installation instructions
 
 In this document, we assume that you already have a system with:
-- a fully functional Docker and Docker Compose install;
+- a fully functional Docker, Docker Compose, and IntelliJ IDEA install;
 - a web browser (our tests have been made with Google Chrome, Mozilla Firefox, and Safari).
 
 See REQUIREMENTS.md file for more details.
 
-## Running VariCity
+## Installing the plugin
 
-All the scripts in this section are located and executed from the `varicity` directory, located at the root of the project.
+- Open IntelliJ IDEA.
+- Navigate to `File | Settings | Plugins`.
+- Click on `Install Plugin from Disk...`.  ![screenshot](images/varicity/install-plugin-from-disk.png)
+- The pre-built plugin can be found in the `prebuilt` directory, and is named `varicity-plugin.zip`.
+  Navigate to this directory and select the plugin.  ![screenshot](images/varicity/select-plugin.png)
+- Click on "Apply" and restart the IDE when prompted.  
+![screenshot](images/varicity/restart-ide.png)
+- Enjoy the plugin! ![screenshot](images/varicity/preview.png)
 
-*Note:* Before running VariCity, you need to have visualizations files generated in the `generated_visualizations` directory at the root of the project.
-These visualizations are obtained by first executing symfinder (see [Running symfinder](#running-symfinder)), or by unpacking pre-generated visualizations present in the`pre_generated_visualizations.zip` archive at the root of the project. 
+
+## Running VariCity standalone
+
+All the scripts in this section are located and executed from the `varicity-src/varicity` directory.
+
+*Note:* Before running VariCity, you need to have visualizations files generated in the `varicity-src/generated_visualizations` directory.
+These visualizations are obtained by first executing symfinder (see [Running symfinder](#running-symfinder)), or by unpacking pre-generated visualizations present in the`pre_generated_visualizations.zip` archive in the `varicity-src` directory. 
 
 ### Reusing the existing Docker image
 
@@ -153,6 +165,7 @@ This command will analyse the following projects:
 - [Logbook 2.2.1](https://github.com/zalando/logbook/tree/2.2.1)
 - [Riptide 2.11.0](https://github.com/zalando/riptide/tree/2.11.0)
 - [NetBeans 12.2](https://github.com/apache/netbeans/tree/12.2/java)
+- [Ghidra 10.0.4](https://github.com/NationalSecurityAgency/ghidra/tree/Ghidra_10.0.4_build/Ghidra)
 
 Running symfinder on all projects can take multiple hours.
 You can therefore specify the projects you want to run by passing their names as parameters of the running script, for example
@@ -161,7 +174,7 @@ You can therefore specify the projects you want to run by passing their names as
 ./run.sh jfreechart
 ```
 
-More details about the analyzed projects and their definition are given in the "Using symfinder on your project" section in the README present in the artifact's root directory.
+More details about the analyzed projects and their definition are given in the "Using symfinder on your project" section in the README present in the `/varicity-src` directory.
 
 *Note:* The Docker images are automatically downloaded by Docker with the tag `ist` if they are not found on the host system.
 If an image is not found, you can download it manually with the `docker pull` command
