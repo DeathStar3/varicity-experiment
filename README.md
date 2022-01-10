@@ -298,6 +298,7 @@ This command will analyse the following projects:
 - [Logbook 2.2.1](https://github.com/zalando/logbook/tree/2.2.1)
 - [Riptide 2.11.0](https://github.com/zalando/riptide/tree/2.11.0)
 - [NetBeans 12.2](https://github.com/apache/netbeans/tree/12.2/java)
+- [Ghidra 10.0.4](https://github.com/NationalSecurityAgency/ghidra/tree/Ghidra_10.0.4_build/Ghidra)
 
 You can specify the projects you want to run by passing their names as parameters of the running script, for example
 

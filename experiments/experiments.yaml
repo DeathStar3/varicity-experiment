@@ -84,3 +84,8 @@ netbeans:
   sourcePackage: java
   tagIds:
     - 12.2
+ghidra:
+  repositoryUrl: https://github.com/NationalSecurityAgency/ghidra/
+  sourcePackage: Ghidra
+  tagIds:
+    - Ghidra_10.0.4_build
