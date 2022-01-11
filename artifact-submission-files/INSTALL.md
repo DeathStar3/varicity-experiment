@@ -1,19 +1,20 @@
 # Installation instructions
 
 In this document, we assume that you already have a system with:
-- a fully functional Docker, Docker Compose, and IntelliJ IDEA install;
-- a web browser (our tests have been made with Google Chrome, Mozilla Firefox, and Safari).
 
-See REQUIREMENTS.md file for more details.
+- a fully functional Docker, Docker Compose, and IntelliJ IDEA install;
+- a web browser (our tests have been made with Google Chrome, Mozilla Firefox, Safari, and Edge).
+
+See `REQUIREMENTS.md` file for more details.
 
 ## Installing the plugin
 
 - Open IntelliJ IDEA.
-- Navigate to `File | Settings | Plugins`.
+- Navigate to `File | Settings | Plugins` (or `IntelliJ IDEA | Preferences | Plugins` on MacOs)
 - Click on `Install Plugin from Disk...`.  ![screenshot](images/varicity/install-plugin-from-disk.png)
 - The pre-built plugin can be found in the `prebuilt` directory, and is named `varicity-plugin.zip`.
   Navigate to this directory and select the plugin.  ![screenshot](images/varicity/select-plugin.png)
-- Click on "Apply" and restart the IDE when prompted.  
+- Click on "Apply" and restart the IDE when prompted (if not prompted, restart anyway to be sure everything is well loaded...) 
 ![screenshot](images/varicity/restart-ide.png)
 - Enjoy the plugin! ![screenshot](images/varicity/preview.png)
 

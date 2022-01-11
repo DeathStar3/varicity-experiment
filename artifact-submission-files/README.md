@@ -7,7 +7,8 @@ This reproduction package goes with the paper "VariCity: Visualizing Object-Orie
 ## Description
 
 The reproduction package is organized as follows:
-- the `plugin-configs` directory contains both the symfinder outputs and VariCity configurations for the three projects studied in the scenarios presented in the paper (_i.e._ JFreeChart, NetBeans and Ghidra).
+
+- the `plugin-configs` directory contains both the symfinder outputs and VariCity configurations for the three projects studied in the scenarios presented in the paper (_i.e._ JFreeChart, NetBeans and Ghidra). Please note that these configuration files are in `.varicity` directories. We also provide source files for JFreeChart, but not for the two other systems, being too large.
 - the `plugin-src` directory contains the source code of the JetBrains IntelliJ IDEA plugin for VariCity.
 - the `prebuilt` directory contains the `varicity-plugin.zip` archive being the pre-built plugin.  
 - the `varicity-src` directory contains the source code of VariCity, the city visualization presented in the paper.
@@ -55,7 +56,7 @@ For example, `/varicity-src` represents the `varicity_reproduction-package/varic
 
 ### A. Preparing your host system
 
-Set up your host system according to the guidelines given in the `REQUIREMENTS.md` file.
+Set up your host system according to the guidelines given in the `REQUIREMENTS.md` file, and install the plugin as specified in `INSTALL.md`
 
 ### B. Using the plugin to explore a code base
 
@@ -98,7 +99,7 @@ The `.varicity` directory contains a JSON being the variation points and variant
 3. Open IntelliJ.
 4. Navigate to `File | Open...` and select the `/plugin-configs/jfreechart/jfreechart-1.5.0` directory. The project should open and display the following project files
 ![project_files.png](images/plugin/project_files.png)
-5. Navigate to `File | Settings` and in the settings window navigate to the VariCity options in `Tools | VariCity | VariCity Settings`.
+5. Navigate to `File | Settings` (or `IntelliJ IDEA | Preferences` on MacOs) and in the settings window navigate to the VariCity options in `Tools | VariCity | VariCity Settings`.
    The two entrypoints should be already set. In case they are not, add them manually, then apply the changes.
    ![entrypoints_window.png](images/plugin/entrypoints_window.png)
 6. A VariCity button is present on the right bar of the IDE. Click on it to open the VariCity panel.
