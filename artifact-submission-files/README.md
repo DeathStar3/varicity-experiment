@@ -67,7 +67,7 @@ We will hereafter detail the steps to make the plugin work on the JFreeChart cod
 Sources and plugin configurations for NetBeans and Ghidra are available at https://doi.org/10.5281/zenodo.5839822.
 
 The plugin configuration consists in a  `.varicity` directory, placed at the root of the analyzed codebase.
-It contains a JSON being the variation points and variants identified by symfinder, as well as the VariCity configuration to display the city with the paramters given in the paper.
+It contains a JSON being the variation points and variants identified by symfinder, as well as the VariCity configuration to display the city with the parameters given in the paper.
 
 1. Open IntelliJ.
 2. Navigate to `File | Open...` and select the `/jfreechart-1.5.0` directory. The project should open and display the following project files
