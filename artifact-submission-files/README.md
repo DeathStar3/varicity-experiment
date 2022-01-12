@@ -8,7 +8,7 @@ This reproduction package goes with the paper "VariCity: Visualizing Object-Orie
 
 The reproduction package is organized as follows:
 
-- the `plugin-configs` directory contains both the symfinder outputs and VariCity configurations for the three projects studied in the scenarios presented in the paper (_i.e._ JFreeChart, NetBeans and Ghidra). Please note that these configuration files are in `.varicity` directories. We also provide source files for JFreeChart, but not for the two other systems, being too large.
+- the `jfreechart-1.5.0` directory contains the sources of JFreeChart 1.5.0 (https://github.com/jfree/jfreechart/tree/v1.5.0) and a `.varicity` directory containing both the symfinder outputs and VariCity configurations for the project, ready to be used with the VariCity plugin.
 - the `plugin-src` directory contains the source code of the JetBrains IntelliJ IDEA plugin for VariCity.
 - the `prebuilt` directory contains the `varicity-plugin.zip` archive being the pre-built plugin.  
 - the `varicity-src` directory contains the source code of VariCity, the city visualization presented in the paper.
@@ -17,17 +17,12 @@ The reproduction package is organized as follows:
 
 ```
 varicity_reproduction-package
-├── plugin-configs
-│     ├── ghidra
-|     │     └── .varicity/
-│     ├── jfreechart
-|     │     └── .varicity/
-|     │     └── jfreechart-1.5.0.zip
-│     └── netbeans
-|           └── .varicity/
+├── jfreechart-1.5.0/
+|      |── .varicity/
+|      └── ...
 ├── plugin-src
 ├── prebuilt
-│     └── varicity-plugin.zip
+│      └── varicity-plugin.zip
 └── varicity-src
        ├── build.bat
        ├── build.sh
@@ -69,36 +64,24 @@ The scenarios presented in the paper use three systems:
 - [Ghidra 10.0.4](https://github.com/NationalSecurityAgency/ghidra/tree/Ghidra_10.0.4_build/)
 
 We will hereafter detail the steps to make the plugin work on the JFreeChart code base, for which we provide the sources and the plugin configuration in this archive.
-Sources and plugin configurations for NetBeans and Ghidra are available at XXXZENODO.
+Sources and plugin configurations for NetBeans and Ghidra are available at https://doi.org/10.5281/zenodo.5839822.
 
 The plugin configuration consists in a  `.varicity` directory, placed at the root of the analyzed codebase.
 It contains a JSON being the variation points and variants identified by symfinder, as well as the VariCity configuration to display the city with the paramters given in the paper.
 
-1. Unzip the `/plugin-configs/jfreechart/jfreechart-1.5.0.zip` archive to obtain the following hierarchy:
-```
-/plugin-configs/jfreechart
-└── jfreechart-1.5.0
-      ├── .varicity
-      ├── licence-LGPL.txt
-      ├── pom.xml
-      ├── README.md
-      ├── README_old.txt
-      ├── src
-      └── svg
-```
-2. Open IntelliJ.
-3. Navigate to `File | Open...` and select the `/plugin-configs/jfreechart/jfreechart-1.5.0` directory. The project should open and display the following project files
+1. Open IntelliJ.
+2. Navigate to `File | Open...` and select the `/jfreechart-1.5.0` directory. The project should open and display the following project files
 ![project_files.png](images/plugin/project_files.png)
-4. Navigate to `File | Settings` (or `IntelliJ IDEA | Preferences` on MacOs) and in the settings window navigate to the VariCity options in `Tools | VariCity | VariCity Settings`.
+3. Navigate to `File | Settings` (or `IntelliJ IDEA | Preferences` on MacOs) and in the settings window navigate to the VariCity options in `Tools | VariCity | VariCity Settings`.
    The two entrypoints should be already set. In case they are not, add them manually, then apply the changes.
    ![entrypoints_window.png](images/plugin/entrypoints_window.png)
-5. A VariCity button is present on the right bar of the IDE. Click on it to open the VariCity panel.
+4. A VariCity button is present on the right bar of the IDE. Click on it to open the VariCity panel.
    ![intellij_window_right.png](images/plugin/intellij_window_right.png)
    ![intellij_varicity_panel.png](images/plugin/intellij_varicity_panel.png)
     The width of the panel is adjustable. Please note however that readjusting the size of the panel while the visualization is displayed deforms it. If needed, reloading the view by clicking on the ![actionVariCityStart.svg](images/plugin/icons/actionVariCityRefresh.svg) rescales the view properly.
-6. The ![actionVariCityStart.svg](images/plugin/icons/actionVariCityStart.svg) icon starts the VariCity server, and displays the city as depicted in Fig. 17a. of the paper.
+5. The ![actionVariCityStart.svg](images/plugin/icons/actionVariCityStart.svg) icon starts the VariCity server, and displays the city as depicted in Fig. 17a. of the paper.
    ![intellij_varicity_panel_on.png](images/plugin/intellij_varicity_panel_on.png)
-7. The scenario presented in the paper then gives further instructions to navigate the visualization and adapt it.
+6. The scenario presented in the paper then gives further instructions to navigate the visualization and adapt it.
    Finally, the VariCity server can be stopped by clicking on the ![actionVariCityStop.svg](images/plugin/icons/actionVariCityStop.svg) icon.
    ![intellij_varicity_panel.png](images/plugin/intellij_varicity_panel.png)
 
