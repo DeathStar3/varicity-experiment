@@ -1,0 +1,63 @@
+---
+building:
+  padding: 0.2
+  colors:
+    faces:
+    - name: "!HOTSPOT"
+      color: "#555555"
+    - name: "VP"
+      color: "#ff6f33"
+    - name: "STRATEGY"
+      color: "#17202a"
+    - name: "FACTORY"
+      color: "#7d3c98"
+    - name: "INTERFACE"
+      color: "#e67e22"
+    - name: "ABSTRACT"
+      color: "#2c3e50"
+    - name: "CLASS"
+      color: "#335dff"
+    edges:
+    - name: "API"
+      color: "#000000"
+    outlines: []
+district:
+  padding: 0.0
+  colors:
+    faces:
+    - name: "PACKAGE"
+      color: "#801A2E"
+    - name: "VP"
+      color: "#1A8039"
+    edges: []
+    outlines: []
+link:
+  colors:
+  - name: "EXTENDS"
+    color: "#3f97ff"
+  - name: "IMPLEMENTS"
+    color: "#ef2222"
+  - name: "INSTANTIATE"
+    color: "#1A8039"
+  - name: "DUPLICATES"
+    color: "#2B914A"
+  display:
+    air_traffic:
+    - "EXTENDS"
+    - "IMPLEMENTS"
+    underground_road:
+    - "INSTANTIATE"
+hierarchy_links:
+- "EXTENDS"
+- "INSTANTIATE"
+- "IMPLEMENTS"
+blacklist: []
+api_classes:
+  jfreechart:
+  - "org.jfree.chart.JFreeChart"
+  - "org.jfree.chart.plot.Plot"
+variables:
+  width: "nbConstructorVariants"
+  height: "nbMethodVariants"
+orientation: "OUT"
+default_level: 4

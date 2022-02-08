@@ -1,0 +1,74 @@
+---
+configName: "DefaultConfig"
+varicity:
+  building:
+    padding: 0.2
+    colors:
+      faces:
+      - name: "!HOTSPOT"
+        color: "#555555"
+      - name: "VP"
+        color: "#ff6f33"
+      - name: "STRATEGY"
+        color: "#17202a"
+      - name: "FACTORY"
+        color: "#7d3c98"
+      - name: "INTERFACE"
+        color: "#e67e22"
+      - name: "ABSTRACT"
+        color: "#2c3e50"
+      - name: "CLASS"
+        color: "#335dff"
+      edges:
+      - name: "API"
+        color: "#000000"
+      outlines: []
+  district:
+    padding: 0.0
+    colors:
+      faces:
+      - name: "PACKAGE"
+        color: "#801a2e"
+      - name: "VP"
+        color: "#1a8039"
+      edges: []
+      outlines: []
+  link:
+    colors:
+    - name: "INSTANTIATE"
+      color: "#1a8039"
+    - name: "DUPLICATES"
+      color: "#2b914a"
+    - name: "IMPLEMENTS"
+      color: "#ef2222"
+    - name: "EXTENDS"
+      color: "#3f97ff"
+    display:
+      air_traffic:
+      - "IMPLEMENTS"
+      - "EXTENDS"
+      underground_road:
+      - "INSTANTIATE"
+  hierarchy_links:
+  - "IMPLEMENTS"
+  - "INSTANTIATE"
+  - "EXTENDS"
+  blacklist: []
+  api_classes:
+    jfreechart-1.5.0:
+    - "org.jfree.chart.JFreeChart"
+    - "org.jfree.chart.plot.Plot"
+  variables:
+    width: "nbConstructorVariants"
+    height: "nbMethodVariants"
+  orientation: "OUT"
+  default_level: 4
+symfinder:
+  experimentsFile: "experiments.yaml"
+  neo4j:
+    boltAddress: "bolt://symfinder-neo4j:7687"
+    user: "neo4j"
+    password: "root"
+  hotspots:
+    nbAggregationsThreshold: 5
+    nbVariantsThreshold: 20

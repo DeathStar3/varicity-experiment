@@ -1,0 +1,9 @@
+---
+experimentsFile: "experiments.yaml"
+neo4j:
+  boltAddress: "bolt://symfinder-neo4j:7687"
+  user: "neo4j"
+  password: "root"
+hotspots:
+  nbAggregationsThreshold: 5
+  nbVariantsThreshold: 20
