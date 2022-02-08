@@ -26,4 +26,4 @@ hs_err_pid*
 *.iml
 target
 /resources
-/generated_visualizations
+# /generated_visualizations
