@@ -45,9 +45,8 @@ export class ConfigController {
         return input;
     }
 
-    private static createSelect(defaultValue: string, parent: HTMLElement): HTMLSelectElement {
+    private static createSelect(defaultValue: string, options: string[], parent: HTMLElement): HTMLSelectElement {
         let input = document.createElement("select");
-        let options = ["IN", "OUT", "IN_OUT"];
         options.forEach( function(opt) {
             let optionElement = document.createElement("option");
             optionElement.value = opt;
@@ -158,7 +157,9 @@ export class ConfigController {
                         else {
                             let input;
                             if (key == "orientation") {
-                                input = this.createSelect(config[key], node);
+                                input = this.createSelect(config[key], ["IN", "OUT", "IN_OUT"], node);
+                            } else if (key == "show_crowns") {
+                                input = this.createSelect(config[key], ["true", "false"], node);
                             } else {
                                 input = this.createInput(config[key], node);
                             }
@@ -166,7 +167,7 @@ export class ConfigController {
                             if(parent.getAttribute("value") === "variables") {
                                 input.setAttribute("list", "attributelist");
                             }
-                            if (key == "orientation") {
+                            if (key == "orientation" || key == "show_crowns") {
                                 input.addEventListener("change", () => {
                                     let arr = this.findValidParents(input);
                                     UIController.changeConfig(arr, ["", input.value]);

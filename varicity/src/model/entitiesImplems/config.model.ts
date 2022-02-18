@@ -80,7 +80,7 @@ export class Config implements ConfigInterface {
         }
         if (fields.includes("show_crowns")) {
             if (Array.isArray(value)) {
-                config.show_crowns = value[1] == "true";
+                config.show_crowns = JSON.parse(value[1]);
                 return CriticalLevel.RERENDER_SCENE;
             }
         }
