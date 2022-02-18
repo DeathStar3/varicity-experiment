@@ -1,9 +1,10 @@
-import { Node } from './../parser/symfinder_elements/nodes/node.element';
-import { Building3D } from './../../view/common/3Delements/building3D';
+import {Node} from './../parser/symfinder_elements/nodes/node.element';
+import {Building3D} from './../../view/common/3Delements/building3D';
 
 export class SearchbarController {
     private static map: Map<string, Building3D>;
     private static searchbar: HTMLInputElement;
+    private static searchbutton: HTMLButtonElement;
 
     public static initMap() {
         this.map = new Map<string, Building3D>();
@@ -11,7 +12,7 @@ export class SearchbarController {
         /* @ts-ignore */
         let searchbar: HTMLInputElement = document.getElementById("searchbar");
         SearchbarController.searchbar = searchbar;
-        searchbar.style.display = "block";
+        searchbar.style.display = "inline";
         searchbar.setAttribute("previous", "");
 
         let datalist = document.createElement("datalist");
@@ -22,22 +23,11 @@ export class SearchbarController {
 
         searchbar.addEventListener("keydown", (ev) => {
             if (ev.key === "Enter") {
-                // recherche and destroy
-                if (searchbar.placeholder === "" && !this.map.has(searchbar.value)) { // the search key doesn't exist 
-                    searchbar.style.backgroundColor = "red";
-                } else {
-                    if (this.map.has(searchbar.value)) { // we take the value because it exists
-                        this.map.get(searchbar.value).focus();
-                    } else { // we take the placeholder
-                        this.map.get(searchbar.placeholder).focus();
-                    }
-                    searchbar.style.backgroundColor = "";
-                    return;
-                }
+                this.focusOnClass(searchbar);
             } else {
                 for (let [k, v] of this.map) {
                     if (k.includes(searchbar.value)) {
-                        searchbar.placeholder = k;
+                        // searchbar.placeholder = k;
                         searchbar.style.backgroundColor = "";
 
                         // NOT YET IMPLEMENTED : HIGHLIGHTS BUILDING OF NAME BEING TYPED
@@ -49,11 +39,19 @@ export class SearchbarController {
                         v.highlight(true);
                         return;
                     }
+                    searchbar.placeholder = "Search class";
+                    // searchbar.style.backgroundColor = "red";
                 }
-                searchbar.placeholder = "";
-                searchbar.style.backgroundColor = "red";
             }
         });
+
+        /* @ts-ignore */
+        let searchbutton: HTMLButtonElement = document.getElementById("searchbutton");
+        SearchbarController.searchbutton = searchbutton;
+        searchbutton.addEventListener("click", () => {
+            this.focusOnClass(searchbar);
+        })
+
 
         let datalist2 = document.createElement("datalist");
         datalist2.id = "attributelist";
@@ -77,6 +75,21 @@ export class SearchbarController {
         }
 
         searchbar.appendChild(datalist2);
+    }
+
+    private static focusOnClass(searchbar: HTMLInputElement) {
+        // recherche and destroy
+        if (searchbar.placeholder === "" && !this.map.has(searchbar.value)) { // the search key doesn't exist
+            searchbar.style.backgroundColor = "red";
+        } else {
+            if (this.map.has(searchbar.value)) { // we take the value because it exists
+                this.map.get(searchbar.value).focus();
+            } else { // we take the placeholder
+                this.map.get(searchbar.placeholder).focus();
+            }
+            searchbar.style.backgroundColor = "";
+            return;
+        }
     }
 
     public static emptyMap() {
@@ -103,6 +116,6 @@ export class SearchbarController {
 
     public static focusOn(className: string): void {
         SearchbarController.searchbar.value = className;
-        SearchbarController.searchbar.dispatchEvent(new KeyboardEvent("keydown", {key: "Enter"}))
+        SearchbarController.searchbutton.dispatchEvent(new MouseEvent("click"));
     }
 }
