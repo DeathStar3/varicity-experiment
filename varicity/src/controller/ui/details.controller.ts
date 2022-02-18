@@ -1,4 +1,4 @@
-import { Building3D } from './../../view/common/3Delements/building3D';
+import { Building3D } from '../../view/common/3Delements/building3D';
 
 export class DetailsController {
 
@@ -90,16 +90,18 @@ export class DetailsController {
     }
 
     private static populateChildren(obj: any, parent: HTMLElement) {
+        console.log(obj);
+        let whitelist = ["name", "nbMethodVariants", "nbAttributes", "nbConstructorVariants", "nbVariants"]
         if (Array.isArray(obj)) {
-            for (let key of obj) {
+            whitelist.forEach(key => {
                 if ((obj[key] == undefined)) { // key is a value
                     this.createEntry(key, parent).className = "child";
                 } else {
                     throw new Error('Not yet implemented');
                 }
-            }
+            });
         } else {
-            for (let key of Object.keys(obj)) {
+            whitelist.forEach(key => {
                 if (!(obj[key] instanceof Object)) { // value of key isn't an object
                     let text: string;
                     text = key + ': ' + obj[key];
@@ -111,7 +113,7 @@ export class DetailsController {
 
                     this.showChildrenOnClick(p);
                 }
-            }
+            })
         }
     }
 }
