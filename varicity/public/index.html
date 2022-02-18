@@ -10,38 +10,77 @@
 <body>
 <div id="main">
     <div id="console" class="overflowable">
-        <div style="vertical-align: middle; display: flex; margin-bottom: 0.5em">
-            <input id="searchbar" style="display: none;" placeholder="Search class">
-            <button id="searchbutton"><img src="images/search_mag.png" alt="mag" style="width: 30px; height: 30px; float: left"></button>
+        <div id="searchdiv">
+            <input id="searchbar" placeholder="Search class">
+            <button id="searchbutton"><img src="images/search_mag.png" alt="mag"></button>
         </div>
         <div id="project_selector" class="parent"></div>
         <div id="documentation" class="parent">Documentation</div>
         <div id="doc_content">
-            Use left click + drag to rotate camera<br/>
-            Use right click + drag to move camera<br/>
-            Use mouse wheel to zoom in/out<br/>
-            Hover on building to display class info in the details section below<br/>
-            Click on building to lock the info display on it<br/>
-            Legend for design patterns:<br/>
+            <h2>Visualization interactions</h2>
+            Rotating the camera: left click + drag<br/>
+            Moving the camera: right click + drag<br/>
+            Zooming in / out: mouse wheel<br/>
+<!--            Hover on building to display class info in the details section below<br/>-->
+<!--            Click on building to lock the info display on it<br/>-->
+            <h2>Legend</h2>
+            <h3>Buildings</h3>
+            <h4>Colors</h4>
             <ul>
                 <li>
-                    Chimneys: A building with chimneys represents a Factory class<br/>
+                    Yellow buildings represent VPs being hotspots<br/>
+                    <img id="hotspot_vp_img"/>
+                </li>
+                <li>
+                    Blue buildings represent variants being hotspots<br/>
+                    <img id="hotspot_variant_img"/>
+                </li>
+                <li>
+                    Grey buildings represent all classes (including VPs and variants) not being hotspots<br/>
+                    <img id="non_hotspot_img"/>
+                </li>
+            </ul>
+            <h4>Crowns</h4>
+
+            <ul>
+                <li>
+                    Chimneys: Factory class<br/>
                     <img id="factory_img"/>
                 </li>
                 <li>
-                    Dome: A building with a dome represents a Strategy class<br/>
+                    Dome: Strategy class<br/>
                     <img id="strategy_img"/>
                 </li>
                 <li>
-                    Inverted pyramid: A building with an inverted pyramid represents a Template class<br/>
+                    Inverted pyramid: Template class<br/>
                     <img id="template_img"/>
                 </li>
                 <li>
-                    Sphere: A building with a sphere represents a Decorator class<br/>
+                    Sphere: Decorator class<br/>
                     <img id="decorator_img"/>
                 </li>
+                <li>
+                    Pyramid: Class defined as an entrypoint to build the visualization<br/>
+                    <img id="entrypoint_img"/>
+                </li>
             </ul>
-
+            <h3>Links</h3>
+            <h4>Colors</h4>
+            <ul>
+                <li>
+                    The red street groups classes defined as entrypoints<br/>
+                    <img id="street_entrypoint_img"/>
+                </li>
+                <li>
+                    Green streets, both on the plan and underground, represent usage relationships<br/>
+                    <img class="large_image" id="street_usage_img"/>
+                    <img class="large_image" id="street_usage_underground_img"/>
+                </li>
+                <li>
+                    Aerial links represent inheritance relationships<br/>
+                    <img class="large_image" id="street_inheritance_img"/>
+                </li>
+            </ul>
         </div>
         <div id="config" class="parent"></div>
         <div class="parent">

@@ -36,6 +36,8 @@
 #main {
     width: 100%;
     height: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 #gameCanvas {
@@ -87,16 +89,39 @@ input {
     color: black;
 }
 
-/* #nodes_details {
-    color: white;
-    font-family: "Roboto Light", serif;
-} */
+#nodes_details {
+    padding-bottom: 10px;
+}
+
+#searchdiv {
+    vertical-align: middle;
+    display: flex;
+    margin-bottom: 0.5em;
+}
+
+#searchbar {
+    display: none;
+}
+
+#searchbutton > img {
+    width: 30px;
+    height: 30px;
+    float: left;
+}
 
 html {
-    height: 100%;
+    height: 98%;
 }
 
 body {
     overflow: hidden;
     height: 100%;
+}
+
+li > img {
+    width: 150px;
+}
+
+li > .large_image {
+    width: 100%;
 }
