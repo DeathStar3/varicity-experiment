@@ -71,6 +71,11 @@ input {
     cursor: pointer;
 }
 
+.parent:hover {
+    background-color: grey;
+    /*border: 2px grey solid;*/
+}
+
 .child {
     width: auto;
     padding-left: inherit;
