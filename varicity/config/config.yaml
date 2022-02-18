@@ -108,3 +108,5 @@ variables: #variables to be used for width and height of a building
 orientation: "OUT"
 
 default_level: 2
+
+show_crowns: true

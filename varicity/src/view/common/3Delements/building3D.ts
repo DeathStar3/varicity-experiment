@@ -194,7 +194,7 @@ export class Building3D extends Element3D {
         let offSet = 0;
 
         // draw sphere for decorator
-        if (this.elementModel.types.includes("DECORATOR")) {
+        if (this.elementModel.types.includes("DECORATOR") && this.config.show_crowns) {
             this.d3ModelSphere = MeshBuilder.CreateSphere("sphere", {
                 diameter: (this.getWidth() - this.padding),
             }, this.scene);
@@ -206,7 +206,7 @@ export class Building3D extends Element3D {
         }
 
         // draw reversed pyramid for template
-        if (this.elementModel.types.includes("TEMPLATE")) {
+        if (this.elementModel.types.includes("TEMPLATE") && this.config.show_crowns) {
             this.d3ModelInvertedPyramid = MeshBuilder.CreateCylinder("reversedPyramid", {
                 diameterTop: 0,
                 tessellation: 4,
@@ -223,7 +223,7 @@ export class Building3D extends Element3D {
         }
 
         // draw 16 faced prism for strategy
-        if (this.elementModel.types.includes("STRATEGY")) {
+        if (this.elementModel.types.includes("STRATEGY") && this.config.show_crowns) {
             this.d3ModelPrism = MeshBuilder.CreateCylinder("prism", {
                 tessellation: 8,
                 diameter: (this.getWidth() - this.padding),
@@ -237,7 +237,7 @@ export class Building3D extends Element3D {
         }
 
         // draw chimney for factories
-        if (this.elementModel.types.includes("FACTORY")) {
+        if (this.elementModel.types.includes("FACTORY") && this.config.show_crowns) {
             this.d3ModelChimney1 = MeshBuilder.CreateCylinder("chimney1", {
                 diameter: (this.getWidth() - this.padding) / 6,
                 height: this.getWidth() - this.padding
@@ -264,7 +264,7 @@ export class Building3D extends Element3D {
         }
 
         // draw top pyramid if API class
-        if (this.elementModel.types.includes("API")) {
+        if (this.elementModel.types.includes("API") && this.config.show_crowns) {
             this.d3ModelPyramid = MeshBuilder.CreateCylinder("pyramid", {
                 diameterTop: 0,
                 tessellation: 4,

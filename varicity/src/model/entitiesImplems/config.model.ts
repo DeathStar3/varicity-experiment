@@ -34,6 +34,7 @@ export class Config implements ConfigInterface {
     parsing_mode: string;
     orientation: Orientation;
     default_level: number;
+    show_crowns: boolean;
 
     constructor() { }
 
@@ -74,6 +75,12 @@ export class Config implements ConfigInterface {
         if (fields.includes("padding")) {
             if (Array.isArray(value)) {
                 config[fields[0]].padding = +value[1];
+                return CriticalLevel.RERENDER_SCENE;
+            }
+        }
+        if (fields.includes("show_crowns")) {
+            if (Array.isArray(value)) {
+                config.show_crowns = value[1] == "true";
                 return CriticalLevel.RERENDER_SCENE;
             }
         }
