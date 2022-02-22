@@ -22,6 +22,8 @@ import Street_Inheritance from "../../../public/images/Street_Inheritance.png"
 import Street_Usage from "../../../public/images/Street_Usage.png"
 // @ts-ignore
 import Street_Usage_Underground from "../../../public/images/Street_Usage_Underground.png"
+// @ts-ignore
+import Sidebar_Class from "../../../public/images/Sidebar_Class.png"
 
 export class DocController {
     public static buildDoc() {
@@ -37,6 +39,7 @@ export class DocController {
         (document.getElementById("street_inheritance_img") as HTMLImageElement).src = Street_Inheritance;
         (document.getElementById("street_usage_img") as HTMLImageElement).src = Street_Usage;
         (document.getElementById("street_usage_underground_img") as HTMLImageElement).src = Street_Usage_Underground;
+        (document.getElementById("sidebar_class_img") as HTMLImageElement).src = Sidebar_Class;
 
         document.getElementById("doc_content").style.display = "none";
 

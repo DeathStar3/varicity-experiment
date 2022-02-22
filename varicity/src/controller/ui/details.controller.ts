@@ -91,7 +91,7 @@ export class DetailsController {
 
     private static populateChildren(obj: any, parent: HTMLElement) {
         console.log(obj);
-        let whitelist = ["name", "nbMethodVariants", "nbAttributes", "nbConstructorVariants", "nbVariants"]
+        let whitelist = ["name", "nbMethodVariants", "nbConstructorVariants", "nbVariants"]
         if (Array.isArray(obj)) {
             whitelist.forEach(key => {
                 if ((obj[key] == undefined)) { // key is a value

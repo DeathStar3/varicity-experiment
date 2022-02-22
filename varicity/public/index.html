@@ -17,6 +17,7 @@
         <div id="project_selector" class="parent"></div>
         <div id="documentation" class="parent">Documentation</div>
         <div id="doc_content">
+            <h1>Visualization</h1>
             <h2>Visualization interactions</h2>
             Rotating the camera: left click + drag<br/>
             Moving the camera: right click + drag<br/>
@@ -77,10 +78,28 @@
                     <img class="large_image" id="street_usage_underground_img"/>
                 </li>
                 <li>
-                    Aerial links represent inheritance relationships<br/>
+                    Aerial links represent inheritance relationships. They can be blue (for a class / subclass relationship) or red (for an interface / implementation relationship).<br/>
                     <img class="large_image" id="street_inheritance_img"/>
+                    The brightest end of the link indicates the parent. On the example above, the class on the right is a superclass.<br/>
                 </li>
             </ul>
+            <h1>Sidebar</h1>
+            <img class="large_image" id="sidebar_class_img"/>
+            <ul>
+                <li>
+                    name: Qualified name of the class (class name + package)<br/>
+                </li>
+                <li>
+                    nbMethodVariants: Number of methods overloads<br/>
+                </li>
+                <li>
+                    nbConstructorVariants: Number of constructors overloads<br/>
+                </li>
+                <li>
+                    nbVariants: Number of class level variants (subclasses of the class / classes implementing the interface). Note: all the variants may not appear on the visualization.<br/>
+                </li>
+            </ul>
+
         </div>
         <div id="config" class="parent"></div>
         <div class="parent">
