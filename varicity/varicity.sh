@@ -21,7 +21,7 @@
 #
 
 
-export TAG=ist
+export TAG=experiment
 
 
 ARGUMENT_LIST=("local")
